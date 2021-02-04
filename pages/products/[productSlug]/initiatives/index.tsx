@@ -1,57 +1,52 @@
 
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps, matchPath } from 'react-router';
 import { Row, Col, Card, Tag, Button } from 'antd';
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks';
 import ReactPlayer from 'react-player';
-import { DynamicHtml, Spinner } from '../../../components';
-import { GET_INITIATIVES } from '../../../graphql/queries';
-import { randomKeys } from '../../../utilities/utils';
-import AddInitiative from '../../../components/AddInitiative';
-import { getProp } from '../../../utilities/filters';
+import { DynamicHtml, Spinner } from '../../../../components';
+import { GET_INITIATIVES } from '../../../../graphql/queries';
+import { randomKeys } from '../../../../utilities/utils';
+import AddInitiative from '../../../../components/Products/AddInitiative';
+import { getProp } from '../../../../utilities/filters';
+import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 
 type Params = {
   productSlug?: any
   userRole?: string;
   match: any;
-} & RouteComponentProps;
+};
 
-const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole }) => {
-  const params: any = matchPath(match.url, {
-    path: "/products/:productSlug/initiatives",
-    exact: false,
-    strict: false
-  });
+const InitiativeList: React.FunctionComponent<Params> = ({ productSlug, history, location, match, userRole }) => {
+  // const params: any = matchPath(match.url, {
+  //   path: "/products/:productSlug/initiatives",
+  //   exact: false,
+  //   strict: false
+  // });
+  const router = useRouter();
   const [showEditModal, setShowEditModal] = useState(false);
-  const [initiatives, setInitiatives] = useState([]);
   const { data, error, loading, refetch } = useQuery(GET_INITIATIVES, {
-    variables: { productSlug: params.params.productSlug }
+    variables: { productSlug }
   });
 
   const goToDetails = (id: number) => {
-    history.push(`${match.url}/${id}`);
+    router.push(`/products/${productSlug}/initiatives/${id}`);
   }
 
   const fetchData = async () => {
-    const { data: newData } = await refetch({
-      productSlug: params.params.productSlug
+    await refetch({
+      productSlug
     });
-
-    setInitiatives(newData.initiatives)
   }
 
-  useEffect(() => {
-    if (data) {
-      setInitiatives(data.initiatives);
-    }
-  }, [data]);
+
 
 
   if(loading) return <Spinner/>
 
   return (
-    <>
+    <LeftPanelContainer productSlug={productSlug}>
       {
         !error && (
           <React.Fragment key={randomKeys()}>
@@ -61,8 +56,8 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
             >
               <Col>
                 <div className="page-title text-center">
-                  { initiatives
-                      ? `Explore ${initiatives.length} initiatives`
+                  { data.initiatives
+                      ? `Explore ${data?.initiatives?.length} initiatives`
                       : 'No initiatives'
                   }
                 </div>
@@ -79,7 +74,7 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
             </Row>
             <Row gutter={[16, 16]}>
             {
-              initiatives && initiatives.map((initiative: any, idx: number) => (
+              data.initiatives && data.initiatives.map((initiative: any, idx: number) => (
                 <Col key={randomKeys()} xs={24} sm={12} md={8}>
                   {/* <Card
                     cover={
@@ -109,7 +104,7 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
             {
               showEditModal && <AddInitiative
                 modal={showEditModal}
-                productSlug={params.params.productSlug}
+                productSlug={productSlug}
                 modalType={false}
                 closeModal={setShowEditModal}
                 submit={fetchData}
@@ -119,7 +114,7 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
           </React.Fragment >
         )
       }
-    </>
+    </LeftPanelContainer>
   );
 };
 
@@ -135,5 +130,11 @@ const InitiativeListContainer = connect(
   // mapStateToProps,
   // mapDispatchToProps
 )(InitiativeList);
+
+InitiativeListContainer.getInitialProps = async ({ query }) => {
+  const { productSlug } = query;
+  return { productSlug }
+
+}
 
 export default InitiativeListContainer;

@@ -9,7 +9,6 @@ import { Layout, Menu, Input, Button, message } from 'antd';
 import { apiDomain } from '../../utilities/constants';
 import Logo from '../../public/assets/logo.png';
 import { useRouter } from 'next/router'
-import '../../styles/Header.module.less'; 
 
 const { Header } = Layout;
 const { Search } = Input;
@@ -25,7 +24,6 @@ const HeaderMenuContainer: React.FunctionComponent = ({
 }) => {
   const router = useRouter()
 
-  console.log(router)
   const onSearch = (e: any) => {
     console.log("search submitted: ", e);
   }

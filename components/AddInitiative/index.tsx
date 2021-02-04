@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Modal, Row, Input, message, Button, Select } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
 import RichTextEditor from 'react-rte';
-import { CREATE_INITIATIVE, UPDATE_INITIATIVE } from '../../../graphql/mutations';
-import { INITIATIVE_TYPES } from '../../../graphql/types';
-import { getProp } from '../../../utilities/filters';
-import { RICHTEXT_EDITOR_WIDTH } from '../../../utilities/constants';
+import { CREATE_INITIATIVE, UPDATE_INITIATIVE } from '../../graphql/mutations';
+import { INITIATIVE_TYPES } from '../../graphql/types';
+import { getProp } from '../../utilities/filters';
+import { RICHTEXT_EDITOR_WIDTH } from '../../utilities/constants';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -30,11 +30,11 @@ const AddInitiative: React.SFC<Props> = ({
   const [name, setName] = useState(
     modalType ? getProp(initiative, 'name', '') : ''
   );
-  // const [description, setDescription] = useState(
-  //   modalType
-  //     ? RichTextEditor.createValueFromString(getProp(initiative, 'description', ''), 'html')
-  //     : RichTextEditor.createEmptyValue()
-  // )
+//   const [description, setDescription] = useState(
+//     modalType
+//       ? RichTextEditor.createValueFromString(getProp(initiative, 'description', ''), 'html')
+//       : RichTextEditor.createEmptyValue()
+//   )
   const [status, setStatus] = useState(
     modalType ? getProp(initiative, 'status', 1) : 1
   )

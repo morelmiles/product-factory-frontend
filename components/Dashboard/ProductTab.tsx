@@ -25,7 +25,6 @@ const ProductTab: React.FunctionComponent<Props> = ({ setProductNum }) => {
       setProductNum(data.products.length);
     }
   },[data]);
-  console.log('data',data)
   const getAvailableTaskText = (availableTasks: number) => {
     if (availableTasks === 0) return "";
     return `${availableTasks} available ${pluralize("task", availableTasks)}`;

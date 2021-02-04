@@ -1,6 +1,7 @@
 const withImages = require('next-images');
 const withLess = require('@zeit/next-less');
 const withSass = require('@zeit/next-sass');
+const withCSS = require('@zeit/next-css')
 const lessToJS = require('less-vars-to-js');
 const fs = require('fs');
 const path = require('path');
@@ -10,7 +11,8 @@ const withPlugins = require('next-compose-plugins');
 
 module.exports = withPlugins([
     [
-        withSass, {
+        withCSS, {
+            ...withSass({
             cssModules: true,
             ...withLess({
                 lessLoaderOptions: {
@@ -46,8 +48,12 @@ module.exports = withPlugins([
                 return config;
                 }
             })
+        })
         }
     ],
+    // [
+    //     withCSS,
+    // ]
     [
         withImages
     ]

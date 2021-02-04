@@ -1,39 +1,37 @@
 
 import React, { useEffect, useState } from 'react';
-import { RouteComponentProps, matchPath } from 'react-router';
 import { connect } from 'react-redux';
 import { Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button } from 'antd';
-import { Link, withRouter } from "react-router-dom";
-
+import Link from "next/link";
+import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
-import { GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT } from '../../../graphql/queries';
-import { TASK_TYPES } from 'graphql/types';
-import { DELETE_TASK } from 'graphql/mutations';
-import { getProp } from 'utilities/filters';
-import { CustomAvatar, EditIcon, DynamicHtml, TaskTable, Spinner } from '../../index';
-import AddTask from 'pages/Products/AddTask';
-import { apiDomain } from "utilities/constants"
-import DeleteModal from 'pages/Products/DeleteModal';
-import ImageIcon from 'assets/icons/image.svg';
-import PDFIcon from 'assets/icons/pdf.svg';
-import DocIcon from 'assets/icons/doc.svg';
-import DownloadIcon from 'assets/icons/download.svg';
+import { GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT } from '../../../../graphql/queries';
+import { TASK_TYPES } from '../../../../graphql/types';
+import { DELETE_TASK } from '../../../../graphql/mutations';
+import { getProp } from '../../../../utilities/filters';
+import { CustomAvatar, EditIcon, DynamicHtml, TaskTable, Spinner } from '../../../../components';
+import AddTask from '../../../../components/Products/AddTask';
+import { apiDomain } from "../../../../utilities/constants"
+import DeleteModal from '../../../../components/Products/DeleteModal';
+import ImageIcon from '../../../../public/assets/icons/image.svg';
+import PDFIcon from '../../../../public/assets/icons/pdf.svg';
+import DocIcon from '../../../../public/assets/icons/doc.svg';
+import DownloadIcon from '../../../../public/assets/icons/download.svg';
 import moment from 'moment';
+import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 
 interface CommentListProps {
   user: any;
-  match: any;
 }
 
 interface AddCommentFormProps {
-  match: any
   user: any
   onAdded: () => void
   replyToID?: number
 }
 
-const AddCommentForm = function({ match, user, replyToID = 0, onAdded }: AddCommentFormProps) {
+const AddCommentForm = function({ taskId, user, replyToID = 0, onAdded }: AddCommentFormProps) {
   const [comment, setComment] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
   function handleCommentChanged(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -45,7 +43,7 @@ const AddCommentForm = function({ match, user, replyToID = 0, onAdded }: AddComm
       method: 'POST',
       body: JSON.stringify({
         content_type: 'work.task',
-        object_pk: match.params.taskId,
+        object_pk: taskId,
         text: comment,
         reply_to: replyToID
       }),
@@ -74,11 +72,11 @@ const AddCommentForm = function({ match, user, replyToID = 0, onAdded }: AddComm
   )
 }
 
-const CommentList = function({ user, match }: CommentListProps) {
+const CommentList = function({ taskId, user }: CommentListProps) {
   const [comments, setComments] = useState([]);
   const [shownSubCommentID, setShownSubCommentID] = useState(0)
   const fetchComments = function() {
-    fetch(`${apiDomain}/comments/api/list/?content_type=work.task&object_pk=${match.params.taskId}`)
+    fetch(`${apiDomain}/comments/api/list/?content_type=work.task&object_pk=${taskId}`)
       .then((response) => response.json())
       .then((commentsResponse) => {
         setComments(commentsResponse)
@@ -98,7 +96,7 @@ const CommentList = function({ user, match }: CommentListProps) {
     return (
       <Row>
         <Col span={22} style={{marginLeft: "48px"}}>
-          <AddCommentForm user={user} match={match} onAdded={handleSubCommentAdded} replyToID={comment.id} />
+          <AddCommentForm taskId={taskId} user={user} onAdded={handleSubCommentAdded} replyToID={comment.id} />
         </Col>
       </Row>
     )
@@ -153,7 +151,7 @@ const CommentList = function({ user, match }: CommentListProps) {
         }
       }
         />
-      {user && user.isLoggedIn ? <AddCommentForm user={user} match={match} onAdded={fetchComments}/> : <></>}
+      {user && user.isLoggedIn ? <AddCommentForm taskId={taskId} user={user} onAdded={fetchComments}/> : <></>}
   </>
   )
 }
@@ -164,9 +162,8 @@ type Params = {
   taskId?: any;
   userRole?: string;
   user?: any;
-  match: any;
   currentProduct: any;
-} & RouteComponentProps;
+};
 
 const Icon = (fileType: any) => {
   switch(fileType) {
@@ -179,37 +176,38 @@ const Icon = (fileType: any) => {
   }
 }
 
-const Task: React.SFC<Params> = ({ match, history, userRole, user, currentProduct }) => {
-
+const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, user, currentProduct }) => {
+  const router = useRouter();
   const [deleteModal, showDeleteModal] = useState(false);
   const [task, setTask] = useState({});
   const [tasks, setTasks] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
 
   const { data: original, error, loading, refetch } = useQuery(GET_TASK_BY_ID, {
-    variables: { id: match.params.taskId }
+    variables: { id: taskId }
   });
 
   const getBasePath = () => {
-    if (match.url.includes("/products")) {
-      const params: any = matchPath(match.url, {
-        path: "/products/:productSlug/tasks/:taskId",
-        exact: false,
-        strict: false
-      });
+      //TODO: fix it
+    // if (match.url.includes("/products")) {
+    //   const params: any = matchPath(match.url, {
+    //     path: "/products/:productSlug/tasks/:taskId",
+    //     exact: false,
+    //     strict: false
+    //   });
 
-      return `/products/${params.params.productSlug}`;
-    }
+      return `/products/${productSlug}`;
+    // }
     return "";
   }
 
   const [deleteTask] = useMutation(DELETE_TASK, {
     variables: {
-      id: match.params.taskId
+      id: taskId
     },
     onCompleted() {
       message.success("Item is successfully deleted!");
-      history.push(getBasePath() === "" ? "/" : `${getBasePath()}/tasks` );
+      router.push(getBasePath() === "" ? "/" : `${getBasePath()}/tasks` );
     },
     onError(err) {
       console.log("Delete item error: ", err);
@@ -239,7 +237,7 @@ const Task: React.SFC<Params> = ({ match, history, userRole, user, currentProduc
 
   const fetchData = async () => {
     const data: any = await refetch({
-      id: match.params.taskId
+      id: taskId
     })
 
     if (!data.errors) {
@@ -259,7 +257,7 @@ const Task: React.SFC<Params> = ({ match, history, userRole, user, currentProduc
   if(loading) return <Spinner/>
 
   return (
-    <>
+    <LeftPanelContainer productSlug={productSlug}>
       {
         !error && (
           <>
@@ -267,14 +265,14 @@ const Task: React.SFC<Params> = ({ match, history, userRole, user, currentProduc
               {getBasePath() !== "" && (
                 <>
                   <Link
-                    to={getBasePath()}
+                    href={getBasePath()}
                     className="text-grey"
                   >
                     {getProp(currentProduct, 'name', '')}
                   </Link>
                   <span> / </span>
                   <Link
-                    to={`${getBasePath()}/tasks`}
+                    href={`${getBasePath()}/tasks`}
                     className="text-grey"
                   >
                     Tasks
@@ -339,7 +337,7 @@ const Task: React.SFC<Params> = ({ match, history, userRole, user, currentProduc
                   </div>
                   <div className="my-auto">
                     <Link
-                      to={`/people/${getProp(task, 'createdBy.slug', '')}`}
+                      href={`/people/${getProp(task, 'createdBy.slug', '')}`}
                       className="text-grey-9"
                     >
                       {getProp(task, 'createdBy.fullName', '')}
@@ -398,7 +396,7 @@ const Task: React.SFC<Params> = ({ match, history, userRole, user, currentProduc
                       Related Capability:
                     </strong>
                     <Link
-                      to={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}
+                      href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}
                       className='ml-5'
                     >
                       {getProp(task, 'capability.name', '')}
@@ -414,7 +412,7 @@ const Task: React.SFC<Params> = ({ match, history, userRole, user, currentProduc
               statusList={getProp(original, 'statusList', [])}
             />
             <Divider />
-            <CommentList user={user} match={match} />
+            <CommentList user={user} />
             <Row>
               {/* <Col span={16}>
                 <div className="attachment-item" style={{padding: '24px'}}>
@@ -464,22 +462,26 @@ const Task: React.SFC<Params> = ({ match, history, userRole, user, currentProduc
           </>
         )
       }
-    </>
+    </LeftPanelContainer>
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  user: state.user,
-  userRole: state.work.userRole,
-  currentProduct: state.work.currentProduct
-});
+// const mapStateToProps = (state: any) => ({
+//   user: state.user,
+//   userRole: state.work.userRole,
+//   currentProduct: state.work.currentProduct
+// });
 
-const mapDispatchToProps = (dispatch: any) => ({
-});
+// const mapDispatchToProps = (dispatch: any) => ({
+// });
 
 const TaskContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
+//   mapStateToProps,
+//   mapDispatchToProps
 )(Task);
 
-export default withRouter(TaskContainer);
+TaskContainer.getInitialProps = async ({ query, ...rest }) => {
+  const { taskId, productSlug } = query;
+  return { taskId, productSlug };
+}
+export default TaskContainer;

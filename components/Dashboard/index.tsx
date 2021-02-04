@@ -17,7 +17,6 @@ type Props = {
 
 const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAction, ...rest }) => {
   const router = useRouter();
-  console.log('rest', rest)
   let searchParams: any = new URLSearchParams(router.asPath.split('?')[1]);
   const [mode, setMode] = useState('products');
   const [tagType, setTagType] = useState("all");
@@ -32,7 +31,7 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
 
   const changeSearchTerm = (key: string, value: any) => {
     searchParams.set(key, value.toString());
-    history.push({
+    router.push({
       pathname: location.pathname,
       search: searchParams.toString()
     });

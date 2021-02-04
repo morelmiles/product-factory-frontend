@@ -3,14 +3,14 @@ import { connect } from 'react-redux';
 import { Modal, Row, Col, Input, Select, message, Button } from 'antd';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import RichTextEditor from 'react-rte';
-import { GET_INITIATIVES } from 'graphql/queries';
-import { CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK } from 'graphql/mutations';
-import { TASK_TYPES } from 'graphql/types';
-import { addRepository } from 'store/actions';
-import { WorkState } from 'store/reducers/work.reducer';
-import AddInitiative from 'pages/Products/AddInitiative';
+import { GET_INITIATIVES } from '../../../graphql/queries';
+import { CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK } from '../../../graphql/mutations';
+import { TASK_TYPES } from '../../../graphql/types';
+// import { addRepository } from 'store/actions';
+// import { WorkState } from 'store/reducers/work.reducer';
+import AddInitiative from '../AddInitiative';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { RICHTEXT_EDITOR_WIDTH } from 'utilities/constants';
+import { RICHTEXT_EDITOR_WIDTH } from '../../../utilities/constants';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -49,11 +49,11 @@ const AddTask: React.SFC<Props> = ({
   tasks
 }) => {
   const [title, setTitle] = useState(modalType? task.title : '');
-  const [description, setDescription] = useState(
-    modalType
-      ? RichTextEditor.createValueFromString(task.description, 'html')
-      : RichTextEditor.createEmptyValue()
-  );
+  // const [description, setDescription] = useState(
+  //   modalType
+  //     ? RichTextEditor.createValueFromString(task.description, 'html')
+  //     : RichTextEditor.createEmptyValue()
+  // );
   const [shortDescription, setShortDescription] = useState(
     modalType ? task.shortDescription : ''
   );
@@ -234,10 +234,10 @@ const AddTask: React.SFC<Props> = ({
           className="rich-editor mb-15"
         >
           <label>Description:</label>
-          <RichTextEditor
+          {/* <RichTextEditor
             value={description}
             onChange={onDescriptionChange}
-          />
+          /> */}
         </Row>
         {modalType && (
           <Row className='mb-15'>
@@ -423,22 +423,22 @@ const AddTask: React.SFC<Props> = ({
   );
 }
 
-const mapStateToProps = (state: any) => ({
-  user: state.user,
-  currentProduct: state.work.currentProduct,
-  repositories: state.work.repositories,
-  userRole: state.work.userRole,
-  allTags: state.work.allTags,
-  tags: state.work.tags
-});
+// const mapStateToProps = (state: any) => ({
+//   user: state.user,
+//   currentProduct: state.work.currentProduct,
+//   repositories: state.work.repositories,
+//   userRole: state.work.userRole,
+//   allTags: state.work.allTags,
+//   tags: state.work.tags
+// });
 
-const mapDispatchToProps = (dispatch: any) => ({
-  addRepository: (data: WorkState) => dispatch(addRepository(data))
-});
+// const mapDispatchToProps = (dispatch: any) => ({
+//   addRepository: (data: WorkState) => dispatch(addRepository(data))
+// });
 
 const AddTaskContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  // mapStateToProps,
+  // mapDispatchToProps
 )(AddTask);
 
 export default AddTaskContainer;

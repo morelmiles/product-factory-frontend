@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Avatar, Menu, Row } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_PRODUCT_INFO_BY_ID } from '../../../graphql/queries';
@@ -41,35 +42,34 @@ const Icon = (name: any) => {
 }
 
 const LeftPanel: React.FunctionComponent<Props> = ({
-  history,
   productSlug ,
-  location,
   saveProductToStore
 }): any => {
+  const router = useRouter();
   const { data, error, loading } = useQuery(GET_PRODUCT_INFO_BY_ID, {
     variables: { slug: productSlug }
   });
   const selectedIndex: number = links.findIndex((item: any) => {
-    return location.pathname.includes(item.type);
+    return router.asPath.includes(item.type);
   });
   const selectedLink = selectedIndex === -1
     ? links[0].type : links[selectedIndex].type;
 
   const goToDetail = (type: string) => {
-    history.push(`/products/${productSlug}${type}`);
+    router.push(`/products/${productSlug}${type}`);
   }
 
-  useEffect(() => {
-    if (data) {
-      saveProductToStore({
-        userRole: data.userRole,
-        tags: data.product.tag,
-        currentProduct: data.product,
-        repositories: data.repositories,
-        allTags: data.tags
-      })
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     saveProductToStore({
+  //       userRole: data.userRole,
+  //       tags: data.product.tag,
+  //       currentProduct: data.product,
+  //       repositories: data.repositories,
+  //       allTags: data.tags
+  //     })
+  //   }
+  // }, [data]);
 
   if(loading) return <Spinner/>
 

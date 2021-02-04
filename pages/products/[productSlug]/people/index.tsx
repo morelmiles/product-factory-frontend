@@ -1,23 +1,23 @@
 
 import React from 'react';
-import { RouteComponentProps, matchPath } from 'react-router';
 import { Divider } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
-import { GET_PRODUCT_ROLES } from '../../../graphql/queries';
-import { getProp } from '../../../utilities/filters';
-import { randomKeys } from '../../../utilities/utils';
-import { CustomAvatar, Spinner } from '../../../components';
+import { GET_PRODUCT_ROLES } from '../../../../graphql/queries';
+import { getProp } from '../../../../utilities/filters';
+import { randomKeys } from '../../../../utilities/utils';
+import { CustomAvatar, Spinner } from '../../../../components';
+import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 
 type Params = {
   productSlug?: any
 }
 
-const User: React.FunctionComponent<Params> = ({ productSlug }) => {
-  // const params: any = matchPath(match.url, {
-  //   path: "/products/:productSlug/people",
-  //   exact: false,
-  //   strict: false
-  // });
+const PeopleList: React.FunctionComponent<Params> = ({ productSlug }) => {
+//   const params: any = matchPath(match.url, {
+//     path: "/products/:productSlug/people",
+//     exact: false,
+//     strict: false
+//   });
   const { data, error, loading } = useQuery(GET_PRODUCT_ROLES, {
     variables: { productSlug }
   });
@@ -25,7 +25,7 @@ const User: React.FunctionComponent<Params> = ({ productSlug }) => {
   if(loading) return <Spinner/>
 
   return (
-    <>
+    <LeftPanelContainer productSlug={productSlug}>
       {
         !error && (
           <>
@@ -42,13 +42,13 @@ const User: React.FunctionComponent<Params> = ({ productSlug }) => {
           </>
         )
       }
-    </>
+    </LeftPanelContainer>
   );
 };
 
-
-User.getInitialProps = async ({ query }) => {
-  const { productSlug } = query;
-  return { productSlug }
+PeopleList.getInitialProps = async ({ query }) => {
+    const { productSlug } = query;
+    return { productSlug }
 }
-export default User;
+
+export default PeopleList;
