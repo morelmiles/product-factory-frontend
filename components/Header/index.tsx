@@ -21,13 +21,13 @@ type Props = {
 
 const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, setUserRole
 }) => {
-  const router = useRouter()
+  const router = useRouter();
 
   const onSearch = (e: any) => {
     console.log("search submitted: ", e);
   }
   const getSelectedItem = () => {
-    switch(router.pathname) {
+    switch(router.asPath) {
       case "/product/add":
         return "2";
       case "/profiles":

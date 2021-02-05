@@ -60,7 +60,7 @@ const AddCommentForm = function({ taskId, user, replyToID = 0, onAdded }: AddCom
   }
   return (
     <>
-      <Form.Item>
+      <Form.Item className='mb-20'>
         <Input.TextArea rows={2} onChange={handleCommentChanged} value={comment} />
       </Form.Item>
       <Form.Item>

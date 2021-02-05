@@ -173,10 +173,10 @@ const AddInitiative: React.SFC<Props> = ({
                 className="rich-editor mb-15"
               >
                 <label>Description:</label>
-                {/* <RichTextEditor
+                <RichTextEditor
                   value={description}
                   onChange={onDescriptionChange}
-                /> */}
+                />
               </Row>
               <Row className='mb-15'>
                 <label>Status:</label>
