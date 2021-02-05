@@ -10,7 +10,7 @@ export const getInitialName = (fullName: string): string => {
   const names: string[] = fullName.split(" ");
   const initial: string = names.length === 1
     ? names[0].charAt(0)
-    : `${names[0].charAt(0)}${names[0].charAt(1)}`;
+    : `${names[0].charAt(0)}${names[1].charAt(0)}`;
 
   return initial;
 }

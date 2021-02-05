@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from 'graphql-tag'
 
 export const GET_PRODUCTS = gql`
   query GetProducts {
@@ -30,7 +30,7 @@ export const GET_PRODUCTS = gql`
       totalTaskNum
     }
   }
-`;
+`
 
 export const GET_PRODUCT_INFO_BY_ID = gql`
   query GetProduct($slug: String!) {
@@ -90,7 +90,7 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
       name
     }
   }
-`;
+`
 
 export const GET_PRODUCT_BY_ID = gql`
   query GetProduct($slug: String!) {
@@ -150,7 +150,7 @@ export const GET_PRODUCT_BY_ID = gql`
       name
     }
   }
-`;
+`
 
 export const GET_TASKS = gql`
   query GetTasks {
@@ -195,7 +195,7 @@ export const GET_TASKS = gql`
     }
     statusList
   }
-`;
+`
 
 export const GET_TASKS_BY_PRODUCT = gql`
   query GetTasks($productSlug: String) {
@@ -235,7 +235,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
     }
     statusList
   }
-`;
+`
 
 export const GET_CAPABILITIES = gql`
   query GetCapabilities($productSlug: String) {
@@ -267,7 +267,7 @@ export const GET_CAPABILITIES = gql`
       }
     }
   }
-`;
+`
 
 export const GET_CAPABILITY_BY_ID = gql`
   query GetCapability($id: Int!) {
@@ -329,7 +329,7 @@ export const GET_CAPABILITY_BY_ID = gql`
       }
     }
   }
-`;
+`
 
 export const GET_CAPABILITY_CHILDREN = gql`
 query GetChildCapabilities($capabilityId: Int, $productSlug: String) {
@@ -352,7 +352,7 @@ query GetChildCapabilities($capabilityId: Int, $productSlug: String) {
     }
   }
 }
-`;
+`
 
 export const GET_INITIATIVES = gql`
   query GetInitiatives($productSlug: String) {
@@ -370,7 +370,7 @@ export const GET_INITIATIVES = gql`
       }
     }
   }
-`;
+`
 
 export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
   initiative(id: $id) {
@@ -471,7 +471,7 @@ export const GET_TASK_BY_ID = gql`
     }
     statusList
   }
-`;
+`
 
 export const GET_PRODUCT_ROLES = gql`
   query GetProductRoles($productSlug: String) {
@@ -514,7 +514,7 @@ export const GET_USERS = gql`
       fullName
     }
   }
-`;
+`
 
 export const GET_PROFILES = gql`
   query GetProfiles {
@@ -530,11 +530,11 @@ export const GET_PROFILES = gql`
       rank
     }
   }
-`;
+`
 
-export const GET_PROFILE = gql`
-  query GetProfile($personSlug: String) {
-    profile(personSlug: $personSlug) {
+export const GET_PERSON_PROFILE = gql`
+  query GetPersonProfile($personSlug: String) {
+    personProfile(personSlug: $personSlug) {
       id
       person {
         id
@@ -568,7 +568,7 @@ export const GET_PROFILE = gql`
       updatedAt
     }
   }
-`;
+`
 
 export const GET_REVIEWS = gql`
   query GetReviews($personSlug: String) {
@@ -588,6 +588,7 @@ export const GET_REVIEWS = gql`
         website
         shortDescription
         fullDescription
+        videoUrl
       }
       initiative {
         id
@@ -603,7 +604,7 @@ export const GET_REVIEWS = gql`
       updatedAt
     }
   }
-`;
+`
 
 export const GET_REVIEW_BY_ID = gql`
   query GetReview($reviewId: Int!, $personSlug: String) {
@@ -689,4 +690,4 @@ export const GET_REVIEW_BY_ID = gql`
       }
     }
   }
-`;
+`
