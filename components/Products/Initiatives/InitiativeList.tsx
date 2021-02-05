@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps, matchPath } from 'react-router';
 import { Row, Col, Card, Tag, Button } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
 import ReactPlayer from 'react-player';
@@ -15,7 +14,7 @@ type Params = {
   productSlug?: any
   userRole?: string;
   match: any;
-} & RouteComponentProps;
+};
 
 const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole }) => {
   const params: any = matchPath(match.url, {
@@ -123,17 +122,17 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
   );
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   userRole: state.work.userRole
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  userRole: state.work.userRole
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+});
 
 const InitiativeListContainer = connect(
-  // mapStateToProps,
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(InitiativeList);
 
 export default InitiativeListContainer;

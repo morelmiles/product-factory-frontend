@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Row, Col, message, Input, Button } from 'antd';
-import RichTextEditor from 'react-rte';
 import { useMutation } from '@apollo/react-hooks';
 import { useRouter } from 'next/router';
 import { CREATE_PRODUCT } from '../../graphql/mutations';
 import { Header } from '../../components';
 
 import { ContainerFlex } from '../../components';
-import process from 'process';
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(
+  () => import('../../components/TextEditor'),
+  { ssr: false }
+)
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -23,13 +27,6 @@ const AddProduct: React.FunctionComponent = ({ }) => {
   const [mode, setMode] = useState(true);
   const [createProduct] = useMutation(CREATE_PRODUCT);
 
-  console.log('process',process.browser);
-
-  // useEffect(() => {
-  //   if(process.browser) {
-  //     setFullDescription(RichTextEditor.createEmptyValue())
-  //   }
-  // },[process.browser]);
   const addNewProduct = async() => {
     if (!name || !shortDescription || !website) {
       message.error("Please fill the forms");
@@ -83,14 +80,11 @@ const AddProduct: React.FunctionComponent = ({ }) => {
           <Row className="rich-editor mb-15">
             <label>Full description:</label>
             
-            {/* {
-              process.browser && (
-              <RichTextEditor
-                value={fullDescription}
-                onChange={(value: any) => setFullDescription(value)}
-              />
-              )
-            } */}
+            
+            <RichTextEditor
+                setValue={setFullDescription}
+            />
+              
             
             
           </Row>
@@ -112,7 +106,7 @@ const AddProduct: React.FunctionComponent = ({ }) => {
           </Row>
           <Row className='mt-15'>
             <Button onClick={() => addNewProduct()} className='mr-15'>Add</Button>
-            <Button onClick={() => router.goBack()}>Back</Button>
+            <Button onClick={() => router.back()}>Back</Button>
           </Row>
         </Content>
       </Layout>

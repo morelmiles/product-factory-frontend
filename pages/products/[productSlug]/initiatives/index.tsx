@@ -118,17 +118,17 @@ const InitiativeList: React.FunctionComponent<Params> = ({ productSlug, history,
   );
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   userRole: state.work.userRole
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  userRole: state.work.userRole
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+});
 
 const InitiativeListContainer = connect(
-  // mapStateToProps,
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(InitiativeList);
 
 InitiativeListContainer.getInitialProps = async ({ query }) => {

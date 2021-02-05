@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Typography, Row, Col, Radio, Select } from 'antd';
+import { Typography, Row, Col, Radio, Select, Layout } from 'antd';
 import { useRouter } from 'next/router'
 import { TASK_TYPES } from '../../graphql/types';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
+import { ContainerFlex } from '../index';
 import classnames from 'classnames';
 
 const { Title } = Typography;
 const { Option } = Select;
+const { Content } = Layout;
 
 type Props = {
   onClick?: () => void;
@@ -52,7 +54,7 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
   }
 
   return (
-    <>
+      <Content className="container main-page">
       <div
         className="page-title text-center mb-40"
       >
@@ -131,7 +133,7 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
           <TaskTab setTaskNum={setTaskNum} />
         )
       }
-    </>
+    </Content>
   )
 };
 

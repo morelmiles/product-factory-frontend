@@ -24,7 +24,7 @@ type Params = {
   currentProduct: any;
 };
 
-const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initiativeId, match, history, userRole, currentProduct }) => {
+const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initiativeId, userRole, currentProduct = {} }) => {
 //   const params: any = matchPath(match.url, {
 //     path: "/products/:productSlug/initiatives/:initiativeId",
 //     exact: false,
@@ -68,6 +68,8 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initia
     }
   }, [original]);
 
+  console.log('original',original);
+  console.log('currentProduct',currentProduct)
   if(loading) return <Spinner/>
 
   return (
@@ -94,14 +96,14 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initia
                   <span> / </span>
                 </>
               }
-              <span>{getProp(initiative, 'name', '')}</span>
+              <span>{getProp(original.initiative, 'name', '')}</span>
             </div>
             <Row
               justify="space-between"
               className="right-panel-headline mb-15"
             >
               <div className="page-title">
-                {getProp(initiative, 'name', '')}
+                {getProp(original.initiative, 'name', '')}
               </div>
               {(userRole === "Manager" || userRole === "Admin") && (
                 <Col>
@@ -125,15 +127,15 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initia
                   url='https://www.youtube.com/watch?v=ysz5S6PUM-U'
                 />
               </Col> */}
-              <Col span={10} className='ml-10'>
+              <Col span={10}>
                 <DynamicHtml
                   className='mb-10'
-                  text={getProp(initiative, 'description', '')}
+                  text={getProp(original.initiative, 'description', '')}
                 />
               </Col>
             </Row>
             <TaskTable
-              tasks={getProp(initiative, 'taskSet', [])}
+              tasks={getProp(original.initiative, 'taskSet', [])}
               productSlug={productSlug}
             />
             {deleteModal && (
@@ -162,21 +164,21 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initia
   );
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   userRole: state.work.userRole,
-//   currentProduct: state.work.currentProduct,
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  userRole: state.work.userRole,
+  currentProduct: state.work.currentProduct,
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+});
 
 const InitiativeDetailContainer = connect(
-//   mapStateToProps,
-//   mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(InitiativeDetail);
 
-InitiativeDetail.getInitialProps = async ({ query }) => {
+InitiativeDetailContainer.getInitialProps = async ({ query }) => {
     console.log('initiativeId in getInitialProps',query)
     const { initiativeId, productSlug } = query;
     return { initiativeId, productSlug }

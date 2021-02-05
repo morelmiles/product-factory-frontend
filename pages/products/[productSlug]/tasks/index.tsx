@@ -127,19 +127,19 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   )
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   currentProduct: state.work.currentProduct,
-//   repositories: state.work.repositories,
-//   userRole: state.work.userRole
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  currentProduct: state.work.currentProduct,
+  repositories: state.work.repositories,
+  userRole: state.work.userRole
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+});
 
 const TasksPageContainer = connect(
-//   mapStateToProps,
-//   mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(TasksPage);
 
 TasksPageContainer.getInitialProps = async ({ query }) => {

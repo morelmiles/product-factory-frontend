@@ -466,18 +466,18 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
   );
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   userRole: state.work.userRole,
-//   currentProduct: state.work.currentProduct
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  userRole: state.work.userRole,
+  currentProduct: state.work.currentProduct
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+});
 
 const TaskContainer = connect(
-//   mapStateToProps,
-//   mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(Task);
 
 TaskContainer.getInitialProps = async ({ query, ...rest }) => {

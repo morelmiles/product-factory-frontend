@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { Modal, Row, Input, message, Button, Select } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
-import RichTextEditor from 'react-rte';
 import { CREATE_INITIATIVE, UPDATE_INITIATIVE } from '../../../graphql/mutations';
 import { INITIATIVE_TYPES } from '../../../graphql/types';
 import { getProp } from '../../../utilities/filters';
 import { RICHTEXT_EDITOR_WIDTH } from '../../../utilities/constants';
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(
+  () => import('../../TextEditor'),
+  { ssr: false }
+)
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -30,11 +35,7 @@ const AddInitiative: React.SFC<Props> = ({
   const [name, setName] = useState(
     modalType ? getProp(initiative, 'name', '') : ''
   );
-  // const [description, setDescription] = useState(
-  //   modalType
-  //     ? RichTextEditor.createValueFromString(getProp(initiative, 'description', ''), 'html')
-  //     : RichTextEditor.createEmptyValue()
-  // )
+  const [description, setDescription] = useState('')
   const [status, setStatus] = useState(
     modalType ? getProp(initiative, 'status', 1) : 1
   )
@@ -139,10 +140,10 @@ const AddInitiative: React.SFC<Props> = ({
                 className="rich-editor mb-15"
               >
                 <label>Description:</label>
-                {/* <RichTextEditor
-                  value={description}
-                  onChange={onDescriptionChange}
-                /> */}
+                <RichTextEditor
+                  initialValue={modalType ? getProp(initiative, 'description', '') : null}
+                  setValue={onDescriptionChange}
+                />
               </Row>
               <Row className="mb-15">
                 <label>Status:</label>
@@ -172,10 +173,10 @@ const AddInitiative: React.SFC<Props> = ({
                 className="rich-editor mb-15"
               >
                 <label>Description:</label>
-                {/* <RichTextEditor
-                  value={description}
-                  onChange={onDescriptionChange}
-                /> */}
+                <RichTextEditor
+                  initialValue={modalType ? getProp(initiative, 'description', '') : null}
+                  setValue={onDescriptionChange}
+                />
               </Row>
               <Row className='mb-15'>
                 <label>Status:</label>

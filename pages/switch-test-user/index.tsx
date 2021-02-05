@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useRouter } from 'next/router';
 
 import { useQuery } from '@apollo/react-hooks';
 import { GET_USERS } from '../../graphql/queries';
 import { Row, Button, Select, message } from "antd";
 
-// import { HeaderMenu } from 'navigation';
+import { Header } from '../../components';
 import { getProp } from '../../utilities/filters';
 import { apiDomain } from '../../utilities/constants';
-// import { userLogInAction } from '../../store/actions';
-// import { UserState } from 'store/reducers/user.reducer';
+import { userLogInAction } from '../../lib/actions';
+import { UserState } from '../../lib/reducers/user.reducer';
 
 const { Option } = Select;
 
 type Props = {
   user: any;
   userLogInAction: any;
-} & RouteComponentProps;
+};
 
-const TestUser: React.SFC<Props> = ({ history, location, match, userLogInAction, user }) => {
+const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => {
+  const router = useRouter();
   const { data, error, loading } = useQuery(GET_USERS);
   const [userId, setUserId] = useState(0);
 
@@ -31,12 +32,13 @@ const TestUser: React.SFC<Props> = ({ history, location, match, userLogInAction,
     fetch(`${apiDomain}/github/detect_user/?user_id=${userId}`)
       .then(response => response.json())
       .then(res => {
+        console.log('res',res)
         if (res.status) {
           message.success(`${res.user.fullName} is logged in successfully!`);
           userLogInAction({ isLoggedIn: res.status });
           localStorage.setItem("user_id", res.user.id);
           localStorage.setItem("fullName", res.user.fullName);
-          history.push("/");
+          router.push("/");
         } else {
           message.warning("User id is invalid!");
           userLogInAction({ isLoggedIn: false });
@@ -53,7 +55,7 @@ const TestUser: React.SFC<Props> = ({ history, location, match, userLogInAction,
   return (
     <>
       {user && user.isLoggedIn && (
-        <></>// <HeaderMenu history={history} location={location} match={match} />
+        <Header/>
       )}
       {(!user || !user.isLoggedIn) && !error && !loading && (
         <Row justify="center" className='mt-40'>
@@ -79,17 +81,17 @@ const TestUser: React.SFC<Props> = ({ history, location, match, userLogInAction,
   );
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-//   userLogInAction: (data: UserState) => dispatch(userLogInAction(data))
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+  userLogInAction: (data: UserState) => dispatch(userLogInAction(data))
+});
 
 const TestUserContainer = connect(
-  // mapStateToProps,
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(TestUser);
 
 export default TestUserContainer;

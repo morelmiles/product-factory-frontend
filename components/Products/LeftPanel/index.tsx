@@ -7,8 +7,8 @@ import { useQuery } from '@apollo/react-hooks';
 import { GET_PRODUCT_INFO_BY_ID } from '../../../graphql/queries';
 import { getProp } from '../../../utilities/filters';
 import { getInitialName } from '../../../utilities/utils';
-// import { WorkState } from 'store/reducers/work.reducer';
-// import { setWorkState } from 'store/actions';
+import { WorkState } from '../../../lib/reducers/work.reducer';
+import { setWorkState } from '../../../lib/actions';
 import { Spinner } from '../../../components/Spinner';
 
 type Props = {
@@ -59,17 +59,17 @@ const LeftPanel: React.FunctionComponent<Props> = ({
     router.push(`/products/${productSlug}${type}`);
   }
 
-  // useEffect(() => {
-  //   if (data) {
-  //     saveProductToStore({
-  //       userRole: data.userRole,
-  //       tags: data.product.tag,
-  //       currentProduct: data.product,
-  //       repositories: data.repositories,
-  //       allTags: data.tags
-  //     })
-  //   }
-  // }, [data]);
+  useEffect(() => {
+    if (data) {
+      saveProductToStore({
+        userRole: data.userRole,
+        tags: data.product.tag,
+        currentProduct: data.product,
+        repositories: data.repositories,
+        allTags: data.tags
+      })
+    }
+  }, [data]);
 
   if(loading) return <Spinner/>
 
@@ -107,18 +107,18 @@ const LeftPanel: React.FunctionComponent<Props> = ({
   );
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   work: state.work,
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  work: state.work,
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-//   saveProductToStore: (data: WorkState) => dispatch(setWorkState(data))
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+  saveProductToStore: (data: WorkState) => dispatch(setWorkState(data))
+});
 
 const LeftPanelContainer = connect(
-  // mapStateToProps,
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(LeftPanel);
 
 export default LeftPanelContainer;

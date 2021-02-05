@@ -5,7 +5,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { CREATE_CAPABILITY, UPDATE_CAPABILITY } from '../../../graphql/mutations';
 import Attachment from '../../../components/Attachment';
 import { getProp } from '../../../utilities/filters';
-// import { addCapability } from 'store/actions';
+import { addCapability } from '../../../lib/actions';
 
 const { Option } = Select;
 
@@ -22,7 +22,7 @@ type Props = {
   hideParentOptions?: boolean;
 };
 
-const AddCapability: React.SFC<Props> = ({
+const AddCapability: React.FunctionComponent<Props> = ({
   modal,
   productSlug,
   capability,
@@ -167,20 +167,20 @@ const AddCapability: React.SFC<Props> = ({
 }
 
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   currentProduct: state.work.currentProduct,
-//   userRole: state.work.userRole,
-//   allTags: state.work.allTags
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  currentProduct: state.work.currentProduct,
+  userRole: state.work.userRole,
+  allTags: state.work.allTags
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-//   addCapability: (data: any) => dispatch(addCapability(data))
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+  addCapability: (data: any) => dispatch(addCapability(data))
+});
 
 const AddCapabilityContainer = connect(
-  // mapStateToProps,
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(AddCapability);
 
 export default AddCapabilityContainer;

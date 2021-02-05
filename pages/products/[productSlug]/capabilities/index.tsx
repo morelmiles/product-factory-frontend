@@ -207,17 +207,17 @@ const CapabilityList: React.FunctionComponent<Params> = ({ userRole, productSlug
   );
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   userRole: state.work.userRole
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  userRole: state.work.userRole
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+});
 
 const CapabilityListContainer = connect(
-//   mapStateToProps,
-//   mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(CapabilityList);
 
 CapabilityListContainer.getInitialProps = async ({ query}) => {

@@ -1,26 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image'
 import { connect } from 'react-redux';
 import Link from 'next/link'
 import { Layout, Menu, Input, Button, message } from 'antd';
-// import { userLogInAction, setUserRole } from 'store/actions';
-// import { UserState } from 'store/reducers/user.reducer';
-// import { WorkState } from 'store/reducers/work.reducer';
+import { userLogInAction, setUserRole } from '../../lib/actions';
+import { UserState } from '../../lib/reducers/user.reducer';
+import { WorkState } from '../../lib/reducers/work.reducer';
 import { apiDomain } from '../../utilities/constants';
-import Logo from '../../public/assets/logo.png';
+import Logo from '../../public/assets/logo.svg';
 import { useRouter } from 'next/router'
 
 const { Header } = Layout;
 const { Search } = Input;
 
-// type Props = {
-//   user?: any;
-//   userLogInAction?: any;
-//   setUserRole?: any;
-// } & RouteComponentProps;
+type Props = {
+  user?: any;
+  userLogInAction?: any;
+  setUserRole?: any;
+};
 
-const HeaderMenuContainer: React.FunctionComponent = ({
-  history, match, user, userLogInAction, setUserRole
+const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, setUserRole
 }) => {
   const router = useRouter()
 
@@ -38,6 +37,11 @@ const HeaderMenuContainer: React.FunctionComponent = ({
     }
   }
 
+  useEffect(() => {
+    if(localStorage.getItem("user_id")) {
+      userLogInAction({ isLoggedIn: true });
+    }
+  },[]);
   const logout = () => {
     fetch(`${apiDomain}/github/logout`)
       .then(response => response.json())
@@ -127,8 +131,8 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 const HeaderMenu = connect(
-  // mapStateToProps,
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(HeaderMenuContainer);
 
 export default HeaderMenu;

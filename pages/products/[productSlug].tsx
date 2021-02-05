@@ -16,8 +16,8 @@ import { getProp } from '../../utilities/filters';
 import { randomKeys } from '../../utilities/utils';
 import { DataNode, TreeNode } from '../../utilities/constants';
 import { apiDomain } from '../../utilities/constants';
-// import { setWorkState } from 'store/actions';
-// import { WorkState } from 'store/reducers/work.reducer';
+import { setWorkState } from '../../lib/actions';
+import { WorkState } from '../../lib/reducers/work.reducer';
 
 // import 'react-sortable-tree/style.css';
 
@@ -171,23 +171,24 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
       .then(response => response.json())
       .then((res) => {
         if (res) {
-          setTreeData(formatData(res));
+          console.log('res',res)
+          // setTreeData(formatData(res));
         }
       })
   }
 
   useEffect(() => {
-    // if (original) {
-    //   saveProductToStore({
-    //     userRole: original.userRole,
-    //     tags: original.product.tag,
-    //     currentProduct: original.product,
-    //     repositories: original.repositories,
-    //     allTags: original.tags
-    //   })
-    //   setData(original);
-    //   fetchData();
-    // }
+    if (original) {
+      saveProductToStore({
+        userRole: original.userRole,
+        tags: original.product.tag,
+        currentProduct: original.product,
+        repositories: original.repositories,
+        allTags: original.tags
+      })
+      setData(original);
+      fetchData();
+    }
   }, [original]);
 
   const [deleteCapability] = useMutation(DELETE_CAPABILITY, {
@@ -454,18 +455,18 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
   );
 };
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   work: state.work,
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  work: state.work,
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-//   saveProductToStore: (data: WorkState) => dispatch(setWorkState(data))
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+  saveProductToStore: (data: WorkState) => dispatch(setWorkState(data))
+});
 
 const SummaryContainer = connect(
-  // mapStateToProps,
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(Summary);
 
 SummaryContainer.getInitialProps = async ({ query }) => {

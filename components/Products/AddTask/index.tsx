@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Row, Col, Input, Select, message, Button } from 'antd';
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import RichTextEditor from 'react-rte';
+// import RichTextEditor from 'react-rte';
 import { GET_INITIATIVES } from '../../../graphql/queries';
 import { CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK } from '../../../graphql/mutations';
 import { TASK_TYPES } from '../../../graphql/types';
-// import { addRepository } from 'store/actions';
-// import { WorkState } from 'store/reducers/work.reducer';
+import { addRepository } from '../../../lib/actions';
+import { WorkState } from '../../../lib/reducers/work.reducer';
 import AddInitiative from '../AddInitiative';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { RICHTEXT_EDITOR_WIDTH } from '../../../utilities/constants';
@@ -423,22 +423,22 @@ const AddTask: React.SFC<Props> = ({
   );
 }
 
-// const mapStateToProps = (state: any) => ({
-//   user: state.user,
-//   currentProduct: state.work.currentProduct,
-//   repositories: state.work.repositories,
-//   userRole: state.work.userRole,
-//   allTags: state.work.allTags,
-//   tags: state.work.tags
-// });
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+  currentProduct: state.work.currentProduct,
+  repositories: state.work.repositories,
+  userRole: state.work.userRole,
+  allTags: state.work.allTags,
+  tags: state.work.tags
+});
 
-// const mapDispatchToProps = (dispatch: any) => ({
-//   addRepository: (data: WorkState) => dispatch(addRepository(data))
-// });
+const mapDispatchToProps = (dispatch: any) => ({
+  addRepository: (data: WorkState) => dispatch(addRepository(data))
+});
 
 const AddTaskContainer = connect(
-  // mapStateToProps,
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(AddTask);
 
 export default AddTaskContainer;
