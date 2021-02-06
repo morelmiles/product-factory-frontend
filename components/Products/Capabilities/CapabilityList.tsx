@@ -68,7 +68,7 @@ const CapabilityList: React.SFC<Params> = ({ match, userRole }) => {
                   to={getBasePath() + `/tasks/${task.id}`}
                   className='mt-5'
                 >
-                  #{task.id}
+                  {`#${task.id}`}
                 </Link>
               ))
             : null
@@ -89,7 +89,7 @@ const CapabilityList: React.SFC<Params> = ({ match, userRole }) => {
                   to={getBasePath() + `/tasks/${task.id}`}
                   className='mr-5'
                 >
-                  #{task.id}
+                  {`#${task.id}`}
                 </Link>
               ))
             : null

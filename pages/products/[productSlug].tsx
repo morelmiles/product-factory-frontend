@@ -421,7 +421,7 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
                                   href={`/products/${productSlug}/tasks/${task.id}`}
                                   className='ml-5'
                                 >
-                                  #{task.id}
+                                  {`#${task.id}`}
                                 </Link>
                               </span>
                             )

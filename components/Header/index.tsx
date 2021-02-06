@@ -67,7 +67,7 @@ const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, s
               href="/"
               className={ selectedItem === "1" ? "active" : ""}
             >
-              Work on Open Products
+              {'Work on Open Products'}
             </Link>
           </Menu.Item>
           <Menu.Item key="2">
@@ -75,7 +75,7 @@ const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, s
               href="/product/add"
               className={ selectedItem === "2" ? "active" : ""}
             >
-              Add Product
+              {'Add Product'}
             </Link>
           </Menu.Item>
           <Menu.Item key="3">
@@ -83,7 +83,7 @@ const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, s
               href=""
               className={ selectedItem === "3" ? "active" : ""}
             >
-              Find Talent
+              {'Find Talent'}
             </Link>
           </Menu.Item>
         </Menu>

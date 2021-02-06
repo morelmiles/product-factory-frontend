@@ -28,9 +28,7 @@ export const CustomAvatar = (item: any, attr="name", size: any = 'default', role
               <Link
                 className="text-grey-9"
                 href={`/people/${item.slug}`}
-              >
-                {item[attr]}
-              </Link>
+              >{item[attr]}</Link>
             ) : (
               item[attr]
             )}
