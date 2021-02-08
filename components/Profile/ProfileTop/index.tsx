@@ -10,7 +10,7 @@ import {BehanceSquareOutlined, DribbbleSquareOutlined, InstagramFilled, Linkedin
 import {useRouter} from "next/router"
 
 
-const ProfileTop: React.FC = () => {
+const ProfileTop: React.FunctionComponent = () => {
     const router = useRouter()
     const {personSlug} = router.query
 

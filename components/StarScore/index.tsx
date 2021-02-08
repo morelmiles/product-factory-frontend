@@ -3,18 +3,16 @@ import { Row } from "antd";
 import { randomKeys } from '../../utilities/utils';
 //import StarIcon from "../../public/assets/icons/star.svg";
 //import StarFilledIcon from "../../public/assets/icons/star-filled.svg";
-import classnames from "classnames";
 
 type Props = {
-  score: any;
+  score: number;
   style?: any;
   className?: string;
 };
 
-const StarScore = (props: Props) => {
-  const { score, style, className } = props;
+const StarScore: React.FunctionComponent<Props> = ({score, style, className}) => {
 
-  const getStarItems = (score: any) => {
+  const getStarItems = (score: number) => {
     const renderItems = [];
     for (let i = 0; i < 5; i += 1) {
       if (i < score) {
