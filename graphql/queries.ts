@@ -624,6 +624,7 @@ export const GET_REVIEW_BY_ID = gql`
           website
           shortDescription
           fullDescription
+          videoUrl
           attachment {
             name
             fileType
@@ -651,7 +652,7 @@ export const GET_REVIEW_BY_ID = gql`
           emailAddress
           photo
           slug
-          role: productroleSet {
+          role: productpersonSet {
             right
             product {
               name
@@ -678,7 +679,7 @@ export const GET_REVIEW_BY_ID = gql`
           emailAddress
           photo
           slug
-          role: productroleSet {
+          role: productpersonSet {
             right
             product {
               name

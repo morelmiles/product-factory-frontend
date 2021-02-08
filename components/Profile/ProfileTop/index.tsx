@@ -36,7 +36,7 @@ const ProfileTop: React.FunctionComponent = () => {
                                         {getProp(data, 'personProfile.person.fullName', '')}
                                     </strong>
                                     <div className="my-auto">
-                                        <StarFilled/>
+                                        <StarFilled style={{color: '#FAAD14', marginLeft: 8, marginRight: 3, fontSize: 16}}/>
                                         <strong>{getProp(data, 'personProfile.rank', 0)}</strong>
                                     </div>
                                 </Row>

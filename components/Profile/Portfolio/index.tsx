@@ -10,7 +10,7 @@ import {useRouter} from "next/router";
 import Link from 'next/link';
 
 
-const Portfolio: React.FunctionComponent = () => {
+const PortfolioItem: React.FunctionComponent = () => {
     const router = useRouter()
     const {personSlug} = router.query
 
@@ -22,28 +22,26 @@ const Portfolio: React.FunctionComponent = () => {
         variables: {personSlug}
     })
 
-    console.log(reviews, reviewError, reviewLoading)
-
     if (reviewLoading) return <Spinner/>
 
     return (
         <>
             <div className="profile-section">
-                <h3 className="section-title">Portfolio</h3>
+                <h3 className="section-title" style={{marginBottom: 20}}>Portfolio</h3>
                 {reviewLoading ? (
                     <Spin size="large"/>
                 ) : !reviewError && (
                     <>
-                        {reviews && getProp(reviews, 'reviews', []).map((review: any, idx: number) => {
+                        {reviews && getProp(reviews, 'reviews', []).map((review: any, index: number) => {
                             const reviewInitiative = getProp(review, 'product.initiative', null)
                             return (
-                                <div key={`review-${idx}`} className="grey-border p-24 mb-24">
+                                <div key={`review-${index}`} className="grey-border p-24 mb-24">
                                     <Row>
-                                        <Col span={18}>
+                                        <Col span={17}>
                                             <Link
-                                              href={`${router.pathname}/profiles/${getProp(review, 'id', '')}`}
+                                              href={`/people/${personSlug}/portfolio/${getProp(review, 'id', '')}`}
                                             >
-                                              <span className="text-grey-9">{getProp(review, 'product.name', '')}</span>
+                                              <a className="text-grey-9">{getProp(review, 'product.name', '')}</a>
                                             </Link>
                                             {reviewInitiative && (
                                               <>
@@ -64,10 +62,10 @@ const Portfolio: React.FunctionComponent = () => {
                                                 />
                                             </p>
                                             <Row className="mb-14">
-                                                {/*<StarScore*/}
-                                                {/*    score={parseInt(getProp(review, 'score', 0))}*/}
-                                                {/*    style={{margin: '1px 16px 0px 0'}}*/}
-                                                {/*/>*/}
+                                                <StarScore
+                                                    score={parseInt(getProp(review, 'score', 0))}
+                                                    style={{margin: '1px 16px 0px 0'}}
+                                                />
                                                 <span className="text-grey-9 text-sm">
                                                             {formatDate(getProp(review, 'updatedAt', new Date()))}
                                                         </span>
@@ -80,11 +78,11 @@ const Portfolio: React.FunctionComponent = () => {
                                                 />
                                             </p>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col span={7}>
                                             <ReactPlayer
                                                 width="100%"
                                                 height="160px"
-                                                url='https://www.youtube.com/watch?v=ysz5S6PUM-U'
+                                                url={getProp(review, 'product.videoUrl', '')}
                                             />
                                         </Col>
                                     </Row>
@@ -98,4 +96,4 @@ const Portfolio: React.FunctionComponent = () => {
     )
 }
 
-export default Portfolio
+export default PortfolioItem;
