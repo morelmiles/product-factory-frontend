@@ -19,7 +19,6 @@ import { apiDomain } from '../../utilities/constants';
 import { setWorkState } from '../../lib/actions';
 import { WorkState } from '../../lib/reducers/work.reducer';
 
-// import 'react-sortable-tree/style.css';
 
 import LeftPanelContainer from '../../components/HOC/withLeftPanel';
 
@@ -172,13 +171,14 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
       .then((res) => {
         if (res) {
           console.log('res',res)
-          // setTreeData(formatData(res));
+          setTreeData(formatData(res));
         }
       })
   }
 
   useEffect(() => {
     if (original) {
+      console.log('should run')
       saveProductToStore({
         userRole: original.userRole,
         tags: original.product.tag,
@@ -421,7 +421,7 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
                                   href={`/products/${productSlug}/tasks/${task.id}`}
                                   className='ml-5'
                                 >
-                                  #{task.id}
+                                  {`#${task.id}`}
                                 </Link>
                               </span>
                             )

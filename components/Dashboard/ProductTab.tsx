@@ -74,9 +74,7 @@ const ProductTab: React.FunctionComponent<Props> = ({ setProductNum }) => {
                           <Link
                             href={`/products/${product.slug}`}
                             className="card-title"
-                          >
-                            {getProp(product, 'name', '')}
-                          </Link>
+                          >{getProp(product, 'name', '')}</Link>
                         </div>
                         <div className="text-grey">
                           {parse(getProp(product, 'shortDescription', ''))}
@@ -93,14 +91,16 @@ const ProductTab: React.FunctionComponent<Props> = ({ setProductNum }) => {
                               (e) => goTo(`/products/${product.slug}/tasks`, e)
                             }
                           >
-                            <img
-                              src={CheckCircle}
-                              className="check-circle-icon"
-                              alt="status"
-                            />
-                            <span>
-                              {getAvailableTaskText(availableTasks)}
-                            </span>
+                            <div>
+                              <img
+                                src={CheckCircle}
+                                className="check-circle-icon"
+                                alt="status"
+                              />
+                              <span>
+                                {getAvailableTaskText(availableTasks)}
+                              </span>
+                            </div>
                           </Link>
                         )}
                         <span>

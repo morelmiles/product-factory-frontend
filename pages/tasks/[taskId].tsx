@@ -6,20 +6,23 @@ import Link from "next/link";
 import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
-import { GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT } from '../../../../graphql/queries';
-import { TASK_TYPES } from '../../../../graphql/types';
-import { DELETE_TASK } from '../../../../graphql/mutations';
-import { getProp } from '../../../../utilities/filters';
-import { CustomAvatar, EditIcon, DynamicHtml, TaskTable, Spinner } from '../../../../components';
-import AddTask from '../../../../components/Products/AddTask';
-import { apiDomain } from "../../../../utilities/constants"
-import DeleteModal from '../../../../components/Products/DeleteModal';
-import ImageIcon from '../../../../public/assets/icons/image.svg';
-import PDFIcon from '../../../../public/assets/icons/pdf.svg';
-import DocIcon from '../../../../public/assets/icons/doc.svg';
-import DownloadIcon from '../../../../public/assets/icons/download.svg';
+import { GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT } from '../../graphql/queries';
+import { TASK_TYPES } from '../../graphql/types';
+import { DELETE_TASK } from '../../graphql/mutations';
+import { getProp } from '../../utilities/filters';
+import { CustomAvatar, EditIcon, DynamicHtml, TaskTable, Spinner, ContainerFlex } from '../../components';
+import HeaderMenu from '../../components/Header';
+import AddTask from '../../components/Products/AddTask';
+import { apiDomain } from "../../utilities/constants"
+import DeleteModal from '../../components/Products/DeleteModal';
+import ImageIcon from '../../public/assets/icons/image.svg';
+import PDFIcon from '../../public/assets/icons/pdf.svg';
+import DocIcon from '../../public/assets/icons/doc.svg';
+import DownloadIcon from '../../public/assets/icons/download.svg';
 import moment from 'moment';
-import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
+import LeftPanelContainer from '../../components/HOC/withLeftPanel';
+import { Layout } from 'antd';
+const { Content } = Layout;
 
 interface CommentListProps {
   user: any;
@@ -176,7 +179,7 @@ const Icon = (fileType: any) => {
   }
 }
 
-const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, user, currentProduct }) => {
+const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, user, currentProduct = {} }) => {
   const router = useRouter();
   const [deleteModal, showDeleteModal] = useState(false);
   const [task, setTask] = useState({});
@@ -187,6 +190,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
     variables: { id: taskId }
   });
 
+  console.log('currentProduct',currentProduct)
   const getBasePath = () => {
       //TODO: fix it
     // if (match.url.includes("/products")) {
@@ -257,7 +261,10 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
   if(loading) return <Spinner/>
 
   return (
-    <LeftPanelContainer productSlug={productSlug}>
+    <ContainerFlex>
+    <Layout>
+      <HeaderMenu/>
+      <Content className="container main-page">
       {
         !error && (
           <>
@@ -462,7 +469,9 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
           </>
         )
       }
-    </LeftPanelContainer>
+    </Content>
+    </Layout>
+    </ContainerFlex>
   );
 };
 
