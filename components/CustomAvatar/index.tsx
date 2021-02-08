@@ -9,7 +9,6 @@ import {getProp} from '../../utilities/filters'
 export const CustomAvatar = (item: any, attr = "name", size: any = 'default', role?: any, avatarStyle?: any) => {
     if (!item) return
 
-
     return (
         <Row>
             {
@@ -17,13 +16,13 @@ export const CustomAvatar = (item: any, attr = "name", size: any = 'default', ro
                     <Avatar
                         size={size}
                         style={avatarStyle ? avatarStyle : {
-                            marginRight: 40,
+                            marginRight: size >= 100 ? 40 : 8,
                             background: 'linear-gradient(140deg, #F833CD, #1734CC)',
                             borderRadius: 100,
                             textAlign: 'center',
-                            lineHeight: '100px',
+                            lineHeight: `${size}px`,
                             color: 'white',
-                            fontSize: '3rem',
+                            fontSize: size >= 100 ? '3rem' : '1rem',
                             userSelect: 'none'
                         }}
                     >
@@ -43,7 +42,7 @@ export const CustomAvatar = (item: any, attr = "name", size: any = 'default', ro
                                 href={`/people/${item.slug}`}
                             >{item[attr]}</Link>
                         ) : (
-                            <Avatar size={size} src={item.photo}/>
+                            <Avatar size={size} src={item.photo} style={{background: 'linear-gradient(140deg, #F833CD, #1734CC)'}}/>
                         )}
                         {role && (
                             <div className="my-auto">

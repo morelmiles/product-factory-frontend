@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import '../../../../styles/Profile.module.less';
-import {Col, Layout, Row, Spin, Table, Typography} from "antd";
+import {Col, Layout, Radio, Row, Spin, Table, Typography} from "antd";
 import Header from "../../../../components/Header";
 import ContainerFlex from "../../../../components/ContainerFlex";
 import {getProp} from "../../../../utilities/filters";
@@ -12,6 +12,7 @@ import {useRouter} from "next/router";
 import {CustomAvatar, StarScore} from "../../../../components";
 import ReactPlayer from "react-player";
 import ProfileTop from "../../../../components/Profile/ProfileTop";
+import {RadioChangeEvent} from "antd/es";
 
 const {Content} = Layout;
 
@@ -20,11 +21,16 @@ const ProfileItem: React.FunctionComponent = () => {
     const router = useRouter()
     const {personSlug, profileItemId} = router.query
 
-    const [mode, setMode] = useState("given");
+    const [mode, setMode] = useState('received');
     const [dataSource, setDataSource] = useState<any>([]);
-    // const {data, error, loading} = useQuery(GET_PERSON_PROFILE, {
-    //     variables: {personSlug}
-    // });
+
+    const {
+        data: person,
+        error: personError,
+        loading: personLoading
+    } = useQuery(GET_PERSON_PROFILE, {
+        variables: {personSlug}
+    });
 
     const {
         data: review,
@@ -37,10 +43,15 @@ const ProfileItem: React.FunctionComponent = () => {
         }
     });
 
-    console.log(review);
-    // const {refetch} = useQuery(GET_TASKS_BY_PRODUCT, {
-    //     variables: {productId: null, status: 3}
-    // });
+    const {
+        data: tasks,
+        error: tasksError,
+        loading: tasksLoading
+    } = useQuery(GET_TASKS_BY_PRODUCT, {
+        variables: {productId: profileItemId, status: 3}
+    });
+
+    console.log(tasks);
 
     const filterReviews = (type: string) => {
         const newReviews = getProp(review, 'review.productReviews', []);
@@ -53,30 +64,23 @@ const ProfileItem: React.FunctionComponent = () => {
             )
     }
 
-    // const fetchData = async (review: any) => {
-    //     const {data} = await refetch({
-    //         productId: review.review.review.product.id,
-    //         status: 3
-    //     });
-    //
-    //     const source: any = getProp(data, 'tasks', []).map((task: any, index: number) => {
-    //         return {
-    //             key: `task-${index}`,
-    //             task: task,
-    //             description: task.description
-    //         }
-    //     });
-    //
-    //     setDataSource(source);
-    // }
-    //
-    // useEffect(() => {
-    //     if (review) {
-    //         (async () => {
-    //             await fetchData(review);
-    //         })();
-    //     }
-    // }, [review]);
+    const fetchData = () => {
+        const source: any = getProp(tasks, 'tasks', []).map((task: any, index: number) => {
+            return {
+                key: `task-${index}`,
+                task: task,
+                description: task.description
+            }
+        });
+
+        setDataSource(source);
+    }
+
+    useEffect(() => {
+        if (review) {
+            fetchData();
+        }
+    }, [review]);
 
     const columns = [
         {
@@ -85,19 +89,19 @@ const ProfileItem: React.FunctionComponent = () => {
             key: 'task',
             render: (task: any) => (
                 <div style={{width: 200}}>
-                    <div>
-                        <Link href={`/products/${getProp(review, 'review.review.product.id', '')}/tasks/${task.id}`}>
-                            {task.title}
-                        </Link>
-                    </div>
-                    <div className="text-grey">{formatDate(task.createdAt)}</div>
-                    {
-                        task.detailUrl ? (
-                            <a href={task.detailUrl} target="_blank">
-                                Link to the work on GitHub
-                            </a>
-                        ) : null
-                    }
+                    {/*<div>*/}
+                    {/*    <Link href={`/products/${getProp(review, 'review.review.product.id', '')}/tasks/${task.id}`}>*/}
+                    {/*        {task.title}*/}
+                    {/*    </Link>*/}
+                    {/*</div>*/}
+                    {/*<div className="text-grey">{formatDate(task.createdAt)}</div>*/}
+                    {/*{*/}
+                    {/*    task.detailUrl ? (*/}
+                    {/*        <a href={task.detailUrl} target="_blank">*/}
+                    {/*            Link to the work on GitHub*/}
+                    {/*        </a>*/}
+                    {/*    ) : null*/}
+                    {/*}*/}
                 </div>
             )
         },
@@ -117,6 +121,7 @@ const ProfileItem: React.FunctionComponent = () => {
     const initiatives = getProp(review, 'review.review.product.initiatives', []);
     const initiative = initiatives.length > 0 ? initiatives[0] : null;
     const attachment = getProp(review, 'review.review.product.attachment', []);
+    const videUrl = getProp(review, 'review.review.product.videoUrl', '');
 
     return (
         <ContainerFlex>
@@ -129,14 +134,13 @@ const ProfileItem: React.FunctionComponent = () => {
                             <h3 className="section-title">Portfolio item</h3>
                             <div className="mb-15">
                                 <Row>
-                                    <Col span={18}>
+                                    <Col span={17}>
                                         <p style={{marginBottom: 5}}>
                                             <Typography.Text strong>Product: </Typography.Text>
                                             <Link
                                                 href={`/products/${getProp(review, 'review.review.product.id', '')}/summary`}
-                                                // className="text-black"
                                             >
-                                                <span>{getProp(review, 'review.review.product.name', '')}</span>
+                                                <a className="text-black">{getProp(review, 'review.review.product.name', '')}</a>
                                             </Link>
                                         </p>
                                         {initiative && (
@@ -144,9 +148,8 @@ const ProfileItem: React.FunctionComponent = () => {
                                                 <Typography.Text strong>Initiative: </Typography.Text>
                                                 <Link
                                                     href={`/products/${getProp(review, 'review.review.product.id', '')}/initiatives/${initiative.id}`}
-                                                    // className="text-black"
                                                 >
-                                                    <span>{initiative.name}</span>
+                                                    <a className="text-black">{initiative.name}</a>
                                                 </Link>
                                             </p>
                                         )}
@@ -158,81 +161,88 @@ const ProfileItem: React.FunctionComponent = () => {
                                         </p>
                                         {attachment && attachment.length > 0 && (
                                             <div>
-                                                <strong>Attachments: </strong>
-                                                {/*<span></span>*/}
+                                                <Typography.Text strong>Attachments: </Typography.Text>
                                             </div>
                                         )}
                                     </Col>
-                                    <Col span={6}>
+                                    <Col span={7}>
                                         <ReactPlayer
                                             width={"100%"}
                                             height="160px"
-                                            url={getProp(review, 'product.videoUrl', '')}
+                                            url={videUrl}
                                         />
                                     </Col>
                                 </Row>
                             </div>
 
-                            <h3 className="text-md font-bold">Reviews: </h3>
-                            <div className="mb-15">
-                                {/*<div>*/}
-                                {/*    <Radio.Group*/}
-                                {/*        onChange={(e: RadioChangeEvent) => setMode(e.target.value)}*/}
-                                {/*        value={mode}*/}
-                                {/*    >*/}
-                                {/*        <Radio.Button value="received">Received</Radio.Button>*/}
-                                {/*        <Radio.Button value="given">Given</Radio.Button>*/}
-                                {/*    </Radio.Group>*/}
-                                {/*</div>*/}
-                                {reviewLoading ? (
-                                    <Spin size="large"/>
-                                ) : !reviewError && (
-                                    <div style={{marginTop: 15}}>
-                                        {productReviews.map((item: any, index: number) => (
-                                            <div key={`received-${index}`} style={{marginBottom: 15}}>
-                                                <Row>
-                                                    <Col xs={24} lg={18}>
-                                                        <Row>
+                            <Typography.Text style={{fontSize: '1.4rem'}}>Reviews:</Typography.Text>
+                            <div className="mb-15" style={{marginTop: 10}}>
+                                <Radio.Group
+                                    onChange={(e: RadioChangeEvent) => setMode(e.target.value)}
+                                    value={mode}
+                                    style={{marginBottom: 10}}
+                                >
+                                    <Radio.Button value="received"
+                                                  style={{borderRadius: '5px 0 0 5px'}}>Received</Radio.Button>
+                                    <Radio.Button value="given"
+                                                  style={{borderRadius: '0 5px 5px 0'}}>Given</Radio.Button>
+                                </Radio.Group>
+
+                                {
+                                    reviewLoading ? (
+                                        <Spin size="large"/>
+                                    ) : !reviewError && (
+                                        <div style={{marginTop: 15}}>
+                                            {productReviews.map((item: any, index: number) => (
+                                                <div key={`received-${index}`} style={{marginBottom: 15}}>
+                                                    <Row style={{marginBottom: 25}}>
+                                                        <Col xs={24} lg={18}>
                                                             <Row>
-                                                                {CustomAvatar(
-                                                                    item.createdBy,
-                                                                    "fullName",
-                                                                    "default",
-                                                                    getProp(item, 'createdBy.role', [{}])[0],
-                                                                    {margin: 'auto 6px auto 0'}
-                                                                )}
+                                                                <Row>
+                                                                    {CustomAvatar(item.createdBy, 'fullName', 40)}
+                                                                    <Typography.Text
+                                                                        strong
+                                                                        style={{fontSize: 12}}
+                                                                    >{getProp(item, 'createdBy.fullName', '')}</Typography.Text>
+                                                                </Row>
+                                                                <StarScore
+                                                                    score={getProp(item, 'score', 0)}
+                                                                    className="review-star"
+                                                                />
                                                             </Row>
-                                                            <StarScore
-                                                                score={getProp(item, 'score', 0)}
-                                                                className="review-star"
-                                                            />
-                                                        </Row>
-                                                        <p
-                                                            className="text-sm"
-                                                            style={{marginTop: 10}}
-                                                        >
-                                                            <strong>Review: </strong>
-                                                            <span className="text-grey font-sm">
+                                                            <p
+                                                                className="text-sm"
+                                                                style={{marginTop: 10}}
+                                                            >
+                                                                <strong>Review: </strong>
+                                                                <span className="text-grey font-sm">
                                                                 {getProp(item, 'text', '')}
                                                             </span>
-                                                        </p>
-                                                    </Col>
-                                                </Row>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                                            </p>
+                                                        </Col>
+                                                    </Row>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                             </div>
 
-                            {/*<div className="completed-task-section">*/}
-                            {/*    <h3 className="text-md font-bold">*/}
-                            {/*        Tasks completed by {getProp(data, 'personProfile.person.fullName', '')}*/}
-                            {/*    </h3>*/}
-                            {/*    <Table*/}
-                            {/*        dataSource={dataSource}*/}
-                            {/*        columns={columns}*/}
-                            {/*    />*/}
-                            {/*</div>*/}
+                            {
+                                reviewLoading && personLoading ? (
+                                    <Spin size="large"/>
+                                ) : !reviewError && !personError && (
+                                    <div className="completed-task-section">
+                                        <Typography.Text strong>
+                                            Stories done by {getProp(person, 'personProfile.person.fullName', '').split(' ')[0]}
+                                        </Typography.Text>
+                                        <Table
+                                            dataSource={dataSource}
+                                            columns={columns}
+                                        />
+                                    </div>
+                                )
+                            }
+
                         </div>
                     </>
                 </Content>
