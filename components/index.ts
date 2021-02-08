@@ -8,5 +8,5 @@ export { default as TaskTable } from './TaskTable';
 export { default as CustomAvatar } from './CustomAvatar';
 export { default as DynamicTextPanel } from './DynamicTextPanel';
 export { default as Header } from './Header';
-
+export { default as Attachment} from './Attachment';
 export * from './typography';
