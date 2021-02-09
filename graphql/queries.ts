@@ -568,7 +568,16 @@ export const GET_PERSON_PROFILE = gql`
       updatedAt
     }
   }
-`
+`;
+
+export const GET_PERSON_SOCIALS = gql`
+  query GetPersonSocials($personId: Int!) {
+    personSocials(personId: $personId) {
+        name
+        url
+      }
+  }
+`;
 
 export const GET_REVIEWS = gql`
   query GetReviews($personSlug: String) {

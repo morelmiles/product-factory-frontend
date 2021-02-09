@@ -1,13 +1,33 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {Row, Col, Spin, Space} from 'antd'
 import {StarFilled} from '@ant-design/icons';
 import {useQuery} from '@apollo/react-hooks'
-import {GET_PERSON_PROFILE} from '../../../graphql/queries'
+import {GET_PERSON_PROFILE, GET_PERSON_SOCIALS} from '../../../graphql/queries'
 import {CustomAvatar} from '../../CustomAvatar'
 import {getProp} from '../../../utilities/filters'
 import {formatDate} from '../../../utilities/utils'
 import {BehanceSquareOutlined, DribbbleSquareOutlined, InstagramFilled, LinkedinFilled} from "@ant-design/icons"
 import {useRouter} from "next/router"
+
+
+type SocialProps = {
+    name: string
+}
+
+const Social: React.FunctionComponent<SocialProps> = ({name}) => {
+    switch (name) {
+        case 'instagram':
+            return <InstagramFilled/>
+        case 'linkedin':
+            return <LinkedinFilled/>
+        case 'behance':
+            return <BehanceSquareOutlined/>
+        case 'dribbble':
+            return <DribbbleSquareOutlined/>
+        default:
+            return null
+    }
+}
 
 
 const ProfileTop: React.FunctionComponent = () => {
@@ -18,13 +38,23 @@ const ProfileTop: React.FunctionComponent = () => {
         variables: {personSlug}
     })
 
+    const {
+        data: socialsData,
+        error: socialsDataError,
+        loading: socialsDataLoading
+    } = useQuery(GET_PERSON_SOCIALS, {
+        variables: {personId: getProp(data, 'personProfile.person.id', '')}
+    })
+
+    const socials = getProp(socialsData, 'personSocials', []);
+    console.log(socials);
 
     return (
         <>
             {
-                loading ? (
+                loading && socialsDataLoading ? (
                     <Spin size="large"/>
-                ) : !error && (
+                ) : !error && !socialsDataError && (
                     <>
                         <Row>
                             <Col>
@@ -36,7 +66,8 @@ const ProfileTop: React.FunctionComponent = () => {
                                         {getProp(data, 'personProfile.person.fullName', '')}
                                     </strong>
                                     <div className="my-auto">
-                                        <StarFilled style={{color: '#FAAD14', marginLeft: 8, marginRight: 3, fontSize: 16}}/>
+                                        <StarFilled
+                                            style={{color: '#FAAD14', marginLeft: 8, marginRight: 3, fontSize: 16}}/>
                                         <strong>{getProp(data, 'personProfile.rank', 0)}</strong>
                                     </div>
                                 </Row>
@@ -47,10 +78,14 @@ const ProfileTop: React.FunctionComponent = () => {
                                 </Row>
                                 <Row style={{fontSize: 24, color: '#8C8C8C'}}>
                                     <Space size={8}>
-                                        <BehanceSquareOutlined/>
-                                        <DribbbleSquareOutlined/>
-                                        <LinkedinFilled/>
-                                        <InstagramFilled/>
+                                        {
+                                            socials.map((social: any, index: number) => (
+                                                <a key={index} style={{color: '#999'}} href={social.url}>
+                                                    <Social name={social.name}/>
+                                                </a>
+                                            ))
+                                        }
+
                                     </Space>
                                 </Row>
                                 <Row>
