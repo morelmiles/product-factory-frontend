@@ -543,6 +543,7 @@ export const GET_PERSON_PROFILE = gql`
         photo
         slug
         createdAt
+        headline
         reviews: reviewSet {
           id
           product {
@@ -626,6 +627,7 @@ export const GET_REVIEW_BY_ID = gql`
           photo
           slug
           createdAt
+          headline
         }
         product {
           id
@@ -661,6 +663,7 @@ export const GET_REVIEW_BY_ID = gql`
           emailAddress
           photo
           slug
+          headline
           role: productpersonSet {
             right
             product {
@@ -688,6 +691,7 @@ export const GET_REVIEW_BY_ID = gql`
           emailAddress
           photo
           slug
+          headline
           role: productpersonSet {
             right
             product {

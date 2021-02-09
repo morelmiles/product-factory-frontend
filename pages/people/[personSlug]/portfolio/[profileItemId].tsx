@@ -51,16 +51,14 @@ const ProfileItem: React.FunctionComponent = () => {
         variables: {productId: profileItemId, status: 3}
     });
 
-    console.log(tasks);
-
     const filterReviews = (type: string) => {
         const newReviews = getProp(review, 'review.productReviews', []);
         return type === "given"
             ? newReviews.filter(
-                (item: any) => item.createdBy.slug === profileItemId
+                (item: any) => item.createdBy.slug === personSlug
             )
             : newReviews.filter(
-                (item: any) => item.createdBy.slug !== profileItemId
+                (item: any) => item.createdBy.slug !== personSlug
             )
     }
 
@@ -89,19 +87,19 @@ const ProfileItem: React.FunctionComponent = () => {
             key: 'task',
             render: (task: any) => (
                 <div style={{width: 200}}>
-                    {/*<div>*/}
-                    {/*    <Link href={`/products/${getProp(review, 'review.review.product.id', '')}/tasks/${task.id}`}>*/}
-                    {/*        {task.title}*/}
-                    {/*    </Link>*/}
-                    {/*</div>*/}
-                    {/*<div className="text-grey">{formatDate(task.createdAt)}</div>*/}
-                    {/*{*/}
-                    {/*    task.detailUrl ? (*/}
-                    {/*        <a href={task.detailUrl} target="_blank">*/}
-                    {/*            Link to the work on GitHub*/}
-                    {/*        </a>*/}
-                    {/*    ) : null*/}
-                    {/*}*/}
+                    <div>
+                        <Link href={`/products/${getProp(review, 'review.review.product.id', '')}/tasks/${task.id}`}>
+                            {task.title}
+                        </Link>
+                    </div>
+                    <div className="text-grey">{formatDate(task.createdAt)}</div>
+                    {
+                        task.detailUrl ? (
+                            <a href={task.detailUrl} target="_blank">
+                                Link to the work on GitHub
+                            </a>
+                        ) : null
+                    }
                 </div>
             )
         },
@@ -199,11 +197,23 @@ const ProfileItem: React.FunctionComponent = () => {
                                                         <Col xs={24} lg={18}>
                                                             <Row>
                                                                 <Row>
-                                                                    {CustomAvatar(item.createdBy, 'fullName', 40)}
-                                                                    <Typography.Text
-                                                                        strong
-                                                                        style={{fontSize: 12}}
-                                                                    >{getProp(item, 'createdBy.fullName', '')}</Typography.Text>
+                                                                    <Col>
+                                                                        {CustomAvatar(item.createdBy, 'fullName', 40)}
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <Row>
+                                                                            <Typography.Text
+                                                                                strong
+                                                                                style={{fontSize: 12}}
+                                                                            >{getProp(item, 'createdBy.fullName', '')}</Typography.Text>
+
+                                                                        </Row>
+                                                                        <Row>
+                                                                            <Typography.Text
+                                                                                style={{fontSize: 12}}
+                                                                            >{getProp(item, 'person.headline', '')}</Typography.Text>
+                                                                        </Row>
+                                                                    </Col>
                                                                 </Row>
                                                                 <StarScore
                                                                     score={getProp(item, 'score', 0)}
@@ -233,11 +243,13 @@ const ProfileItem: React.FunctionComponent = () => {
                                 ) : !reviewError && !personError && (
                                     <div className="completed-task-section">
                                         <Typography.Text strong>
-                                            Stories done by {getProp(person, 'personProfile.person.fullName', '').split(' ')[0]}
+                                            Tasks done
+                                            by {getProp(person, 'personProfile.person.fullName', '').split(' ')[0]}:
                                         </Typography.Text>
                                         <Table
                                             dataSource={dataSource}
                                             columns={columns}
+                                            style={{marginTop: 10}}
                                         />
                                     </div>
                                 )

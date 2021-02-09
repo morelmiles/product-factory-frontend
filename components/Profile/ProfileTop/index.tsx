@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Row, Col, Spin, Space} from 'antd'
 import {StarFilled} from '@ant-design/icons';
 import {useQuery} from '@apollo/react-hooks'
@@ -12,7 +12,7 @@ import {useRouter} from "next/router"
 
 type SocialProps = {
     name: string
-}
+};
 
 const Social: React.FunctionComponent<SocialProps> = ({name}) => {
     switch (name) {
@@ -27,7 +27,7 @@ const Social: React.FunctionComponent<SocialProps> = ({name}) => {
         default:
             return null
     }
-}
+};
 
 
 const ProfileTop: React.FunctionComponent = () => {
@@ -36,7 +36,7 @@ const ProfileTop: React.FunctionComponent = () => {
 
     const {data, error, loading} = useQuery(GET_PERSON_PROFILE, {
         variables: {personSlug}
-    })
+    });
 
     const {
         data: socialsData,
@@ -44,10 +44,9 @@ const ProfileTop: React.FunctionComponent = () => {
         loading: socialsDataLoading
     } = useQuery(GET_PERSON_SOCIALS, {
         variables: {personId: getProp(data, 'personProfile.person.id', '')}
-    })
-
+    });
     const socials = getProp(socialsData, 'personSocials', []);
-    console.log(socials);
+
 
     return (
         <>
