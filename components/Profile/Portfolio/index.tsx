@@ -33,7 +33,7 @@ const Portfolio: React.FunctionComponent = () => {
                 ) : !reviewError && (
                     <>
                         {reviews && getProp(reviews, 'reviews', []).map((review: any, index: number) => {
-                            const reviewInitiative = getProp(review, 'product.initiative', null)
+                            const reviewInitiative = getProp(review, 'initiative', null)
                             return (
                                 <div key={`review-${index}`} className="grey-border p-24 mb-24">
                                     <Row>

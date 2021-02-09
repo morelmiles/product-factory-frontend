@@ -599,10 +599,10 @@ export const GET_REVIEWS = gql`
         shortDescription
         fullDescription
         videoUrl
-      }
-      initiative {
-        id
-        name
+        initiativeSet {
+          id
+          name
+        }
       }
       score
       text

@@ -59,8 +59,8 @@ const ProfileItem: React.FunctionComponent = () => {
             )
             : newReviews.filter(
                 (item: any) => item.createdBy.slug !== personSlug
-            )
-    }
+            );
+    };
 
     const fetchData = () => {
         const source: any = getProp(tasks, 'tasks', []).map((task: any, index: number) => {
@@ -68,11 +68,11 @@ const ProfileItem: React.FunctionComponent = () => {
                 key: `task-${index}`,
                 task: task,
                 description: task.description
-            }
+            };
         });
 
         setDataSource(source);
-    }
+    };
 
     useEffect(() => {
         if (review) {
@@ -116,7 +116,7 @@ const ProfileItem: React.FunctionComponent = () => {
     ];
 
     const productReviews = filterReviews(mode);
-    const initiatives = getProp(review, 'review.review.product.initiatives', []);
+    const initiatives = getProp(review, 'review.review.product.initiativeSet', []);
     const initiative = initiatives.length > 0 ? initiatives[0] : null;
     const attachment = getProp(review, 'review.review.product.attachment', []);
     const videUrl = getProp(review, 'review.review.product.videoUrl', '');

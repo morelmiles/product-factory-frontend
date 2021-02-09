@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {Row, Col, Spin, Space} from 'antd'
 import {StarFilled} from '@ant-design/icons';
 import {useQuery} from '@apollo/react-hooks'
@@ -99,4 +99,4 @@ const ProfileTop: React.FunctionComponent = () => {
     )
 }
 
-export default ProfileTop
+export default ProfileTop;
