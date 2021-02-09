@@ -43,7 +43,7 @@ const ProfileTop: React.FunctionComponent = () => {
         error: socialsDataError,
         loading: socialsDataLoading
     } = useQuery(GET_PERSON_SOCIALS, {
-        variables: {personId: getProp(data, 'personProfile.person.id', '')}
+        variables: {personId: getProp(data, 'personProfile.person.id', '') | 0}
     });
     const socials = getProp(socialsData, 'personSocials', []);
 

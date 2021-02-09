@@ -38,7 +38,7 @@ const ProfileItem: React.FunctionComponent = () => {
         loading: reviewLoading
     } = useQuery(GET_REVIEW_BY_ID, {
         variables: {
-            reviewId: parseInt(profileItemId as string),
+            reviewId: parseInt(profileItemId as string) | 0,
             personSlug
         }
     });
@@ -238,9 +238,9 @@ const ProfileItem: React.FunctionComponent = () => {
                             </div>
 
                             {
-                                reviewLoading && personLoading ? (
+                                tasksLoading && personLoading ? (
                                     <Spin size="large"/>
-                                ) : !reviewError && !personError && (
+                                ) : !tasksError && !personError && (
                                     <div className="completed-task-section">
                                         <Typography.Text strong>
                                             Tasks done
