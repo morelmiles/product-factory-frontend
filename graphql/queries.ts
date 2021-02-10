@@ -80,7 +80,7 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
       }
       isAdmin
     }
-    userRole(slug: $slug)
+    userPerson(slug: $slug)
     repositories(slug: $slug) {
       id
       repository
@@ -140,7 +140,7 @@ export const GET_PRODUCT_BY_ID = gql`
       }
       isAdmin
     }
-    userRole(slug: $slug)
+    userPerson(slug: $slug)
     repositories(slug: $slug) {
       id
       repository
@@ -195,47 +195,47 @@ export const GET_TASKS = gql`
     }
     statusList
   }
-`
+`;
 
-export const GET_TASKS_BY_PRODUCT = gql`
-  query GetTasks($productSlug: String) {
-    tasks(productSlug: $productSlug) {
-      id
-      detailUrl
-      description
-      shortDescription
-      title
-      status
-      initiative {
-        id
-        name
-      }
-      capability {
-        id
-        name
-      }
-      tag {
-        id
-        name
-      }
-      dependOn {
-        id
-        title
-        status
-      }
-      taskclaimSet {
-        person {
-          id
-          fullName
-          emailAddress
-          slug
-        }
-        kind
-      }
-    }
-    statusList
-  }
-`
+// export const GET_TASKS_BY_PRODUCT = gql`
+//   query GetTasks($productSlug: String) {
+//     tasks(productSlug: $productSlug) {
+//       id
+//       detailUrl
+//       description
+//       shortDescription
+//       title
+//       status
+//       initiative {
+//         id
+//         name
+//       }
+//       capability {
+//         id
+//         name
+//       }
+//       tag {
+//         id
+//         name
+//       }
+//       dependOn {
+//         id
+//         title
+//         status
+//       }
+//       taskclaimSet {
+//         person {
+//           id
+//           fullName
+//           emailAddress
+//           slug
+//         }
+//         kind
+//       }
+//     }
+//     statusList
+//   }
+// `;
 
 export const GET_CAPABILITIES = gql`
   query GetCapabilities($productSlug: String) {
@@ -267,7 +267,7 @@ export const GET_CAPABILITIES = gql`
       }
     }
   }
-`
+`;
 
 export const GET_CAPABILITY_BY_ID = gql`
   query GetCapability($id: Int!) {
@@ -329,7 +329,7 @@ export const GET_CAPABILITY_BY_ID = gql`
       }
     }
   }
-`
+`;
 
 export const GET_CAPABILITY_CHILDREN = gql`
 query GetChildCapabilities($capabilityId: Int, $productSlug: String) {
@@ -352,7 +352,7 @@ query GetChildCapabilities($capabilityId: Int, $productSlug: String) {
     }
   }
 }
-`
+`;
 
 export const GET_INITIATIVES = gql`
   query GetInitiatives($productSlug: String) {
@@ -370,7 +370,7 @@ export const GET_INITIATIVES = gql`
       }
     }
   }
-`
+`;
 
 export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
   initiative(id: $id) {
@@ -410,7 +410,7 @@ export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
       }
     }
   }
-}`
+}`;
 
 export const GET_TASK_BY_ID = gql`
   query GetTask($id: Int!) {
@@ -471,11 +471,27 @@ export const GET_TASK_BY_ID = gql`
     }
     statusList
   }
-`
+`;
 
-export const GET_PRODUCT_ROLES = gql`
-  query GetProductRoles($productSlug: String) {
-    productRoles(productSlug: $productSlug) {
+export const GET_TASKS_BY_PRODUCT = gql`
+  query GetTasksByProduct($productId: Int, $reviewId: Int, $status: String!) {
+    tasksByProduct (productId: $productId, reviewId: $reviewId, status: $status) {
+      id
+      title
+      description
+      detailUrl
+      updatedAt
+      createdAt
+      status
+      blocked
+      featured
+    }
+  }
+`;
+
+export const GET_PRODUCT_PERSONS = gql`
+  query GetProductPerson($productSlug: String) {
+    productPersons(productSlug: $productSlug) {
       person {
         id
         fullName
@@ -501,7 +517,7 @@ export const GET_PARTNERS = gql`
       product {
         name
       }
-      role
+      person
     }
   }
 `
@@ -664,7 +680,7 @@ export const GET_REVIEW_BY_ID = gql`
           photo
           slug
           headline
-          role: productpersonSet {
+          person: productpersonSet {
             right
             product {
               name
@@ -692,7 +708,7 @@ export const GET_REVIEW_BY_ID = gql`
           photo
           slug
           headline
-          role: productpersonSet {
+          person: productpersonSet {
             right
             product {
               name

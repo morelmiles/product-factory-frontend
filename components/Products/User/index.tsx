@@ -3,7 +3,7 @@ import React from 'react';
 import { RouteComponentProps, matchPath } from 'react-router';
 import { Divider } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
-import { GET_PRODUCT_ROLES } from '../../../graphql/queries';
+import { GET_PRODUCT_PERSONS } from '../../../graphql/queries';
 import { getProp } from '../../../utilities/filters';
 import { randomKeys } from '../../../utilities/utils';
 import { CustomAvatar, Spinner } from '../../../components';
@@ -18,7 +18,7 @@ const User: React.FunctionComponent<Params> = ({ productSlug }) => {
   //   exact: false,
   //   strict: false
   // });
-  const { data, error, loading } = useQuery(GET_PRODUCT_ROLES, {
+  const { data, error, loading } = useQuery(GET_PRODUCT_PERSONS, {
     variables: { productSlug }
   });
 

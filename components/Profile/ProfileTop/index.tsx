@@ -27,6 +27,7 @@ const Social: React.FunctionComponent<SocialProps> = ({name}) => {
         default:
             return null
     }
+
 };
 
 
@@ -37,6 +38,7 @@ const ProfileTop: React.FunctionComponent = () => {
     const {data, error, loading} = useQuery(GET_PERSON_PROFILE, {
         variables: {personSlug}
     });
+
 
     const {
         data: socialsData,
