@@ -43,16 +43,6 @@ const Portfolio: React.FunctionComponent = () => {
                       >
                         <a className="text-grey-9">{getProp(review, 'product.name', '')}</a>
                       </Link>
-                      {reviewInitiative && (
-                        <>
-                          &nbsp
-                          <Link href={`/initiatives/${reviewInitiative.id}`}>
-                            <h4>
-                              {`/ ${reviewInitiative.name}`}
-                            </h4>
-                          </Link>
-                        </>
-                      )}
 
                       <p className="pr-15 text-sm mb-14">
                         <strong>Summary: </strong>

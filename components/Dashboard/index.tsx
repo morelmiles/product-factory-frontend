@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { Typography, Row, Col, Radio, Select, Layout } from 'antd';
-import { useRouter } from 'next/router'
-import { TASK_TYPES } from '../../graphql/types';
-import { RadioChangeEvent } from 'antd/lib/radio';
+import React, {useState} from 'react';
+import {Row, Col, Radio, Select, Layout} from 'antd';
+import {useRouter} from 'next/router'
+import {TASK_TYPES} from '../../graphql/types';
+import {RadioChangeEvent} from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
-import { ContainerFlex } from '../index';
+// import { ContainerFlex } from '../index';
 import classnames from 'classnames';
 
-const { Title } = Typography;
-const { Option } = Select;
-const { Content } = Layout;
+const {Option} = Select;
+const {Content} = Layout;
 
 type Props = {
   onClick?: () => void;
   userLogInAction: any;
 };
 
-const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAction, ...rest }) => {
+const Dashboard: React.FunctionComponent<Props> = ({userLogInAction}) => {
   const router = useRouter();
   let searchParams: any = new URLSearchParams(router.asPath.split('?')[1]);
   const [mode, setMode] = useState('products');
@@ -38,7 +37,7 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
       search: searchParams.toString()
     });
 
-    switch(key) {
+    switch (key) {
       case "tag":
         setTagType(value.toString());
         break;
@@ -54,7 +53,7 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
   }
 
   return (
-      <Content className="container main-page">
+    <Content className="container main-page">
       <div
         className="page-title text-center mb-40"
       >
@@ -77,13 +76,13 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
             md={16}
           >
             <div
-              className={classnames("tag-section", { 'mr-16': mode === "products" })}
+              className={classnames("tag-section", {'mr-16': mode === "products"})}
             >
               <div>
                 <label className='mr-15'>Tags: </label>
                 <Select
                   defaultValue={tagType}
-                  style={{ minWidth: 120 }}
+                  style={{minWidth: 120}}
                   onChange={(value: any) => changeSearchTerm("tag", value)}
                 >
                   <Option value="all">All</Option>
@@ -97,7 +96,7 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
                   <label className='mr-15'>Sorted by: </label>
                   <Select
                     defaultValue={sortType}
-                    style={{ minWidth: 120 }}
+                    style={{minWidth: 120}}
                     onChange={(value: any) => changeSearchTerm("initiatives", value)}
                   >
                     <Option value="initiatives">Number of initiatives</Option>
@@ -112,12 +111,12 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
                   <label className='mr-15'>Status: </label>
                   <Select
                     defaultValue={taskStatus}
-                    style={{ minWidth: 120 }}
+                    style={{minWidth: 120}}
                     onChange={(value: any) => changeSearchTerm("status", value)}
                   >
                     <Option value={-1}>All</Option>
-                    {TASK_TYPES.map((option: string, idx: number) => (
-                      <Option key={`status${idx}`} value={idx}>{option}</Option>
+                    {TASK_TYPES.map((option: string, index: number) => (
+                      <Option key={`status${index}`} value={index}>{option}</Option>
                     ))}
                   </Select>
                 </div>
@@ -128,11 +127,12 @@ const Dashboard: React.FunctionComponent<Props> = ({ history, match, userLogInAc
       </div>
       {
         mode === "products" ? (
-          <ProductTab setProductNum={setProductNum} history={history} />
+          <ProductTab setProductNum={setProductNum}/>
         ) : (
-          <TaskTab setTaskNum={setTaskNum} />
+          <TaskTab setTaskNum={setTaskNum}/>
         )
       }
+      <div style={{marginBottom: 50}}/>
     </Content>
   )
 };

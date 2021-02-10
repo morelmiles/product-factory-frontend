@@ -150,7 +150,7 @@ export const GET_PRODUCT_BY_ID = gql`
       name
     }
   }
-`
+`;
 
 export const GET_TASKS = gql`
   query GetTasks {
@@ -192,50 +192,15 @@ export const GET_TASKS = gql`
           status
         }
       }
+      producttaskSet {
+        product {
+          name
+          slug
+        }
+      }
     }
-    statusList
   }
 `;
-
-// export const GET_TASKS_BY_PRODUCT = gql`
-//   query GetTasks($productSlug: String) {
-//     tasks(productSlug: $productSlug) {
-//       id
-//       detailUrl
-//       description
-//       shortDescription
-//       title
-//       status
-//       initiative {
-//         id
-//         name
-//       }
-//       capability {
-//         id
-//         name
-//       }
-//       tag {
-//         id
-//         name
-//       }
-//       dependOn {
-//         id
-//         title
-//         status
-//       }
-//       taskclaimSet {
-//         person {
-//           id
-//           fullName
-//           emailAddress
-//           slug
-//         }
-//         kind
-//       }
-//     }
-//     statusList
-//   }
-// `;
 
 export const GET_CAPABILITIES = gql`
   query GetCapabilities($productSlug: String) {
@@ -543,7 +508,6 @@ export const GET_PROFILES = gql`
         slug
       }
       overview
-      rank
     }
   }
 `
@@ -580,7 +544,6 @@ export const GET_PERSON_PROFILE = gql`
         }
       }
       overview
-      rank
       createdAt
       updatedAt
     }

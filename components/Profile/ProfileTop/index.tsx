@@ -1,6 +1,5 @@
 import React from 'react'
 import {Row, Col, Spin, Space} from 'antd'
-import {StarFilled} from '@ant-design/icons';
 import {useQuery} from '@apollo/react-hooks'
 import {GET_PERSON_PROFILE, GET_PERSON_SOCIALS} from '../../../graphql/queries'
 import {CustomAvatar} from '../../CustomAvatar'
@@ -27,7 +26,6 @@ const Social: React.FunctionComponent<SocialProps> = ({name}) => {
         default:
             return null
     }
-
 };
 
 
@@ -66,11 +64,6 @@ const ProfileTop: React.FunctionComponent = () => {
                                     <strong className="page-title">
                                         {getProp(data, 'personProfile.person.fullName', '')}
                                     </strong>
-                                    <div className="my-auto">
-                                        <StarFilled
-                                            style={{color: '#FAAD14', marginLeft: 8, marginRight: 3, fontSize: 16}}/>
-                                        <strong>{getProp(data, 'personProfile.rank', 0)}</strong>
-                                    </div>
                                 </Row>
                                 <Row>
                                   <span className="text-grey">

@@ -12,6 +12,8 @@ type Props = {
 
 const TaskTab: React.FunctionComponent<Props> = ({ setTaskNum }) => {
   const { data, error, loading } = useQuery(GET_TASKS);
+  // console.log('tasks', data)
+
   useEffect(() => {
     if (!error && data && data.tasks) {
       setTaskNum(data.tasks.length);
