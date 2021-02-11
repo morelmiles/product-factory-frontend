@@ -51,8 +51,6 @@ const ProfileItem: React.FunctionComponent = () => {
     variables: {reviewId: profileItemId, status: 'done'}
   });
 
-  console.log(tasks);
-
   const filterReviews = (type: string) => {
     const newReviews = getProp(review, 'review.productReviews', []);
     return type === "given"
@@ -79,9 +77,7 @@ const ProfileItem: React.FunctionComponent = () => {
   };
 
   useEffect(() => {
-    if (review) {
-      fetchData();
-    }
+    if (review) fetchData();
   }, [review]);
 
   const columns = [
@@ -92,7 +88,7 @@ const ProfileItem: React.FunctionComponent = () => {
       render: (task: any) => (
         <div style={{width: 200}}>
           <div>
-            <Link href={`/products/${getProp(review, 'review.review.product.id', '')}/tasks/${task.id}`}>
+            <Link href={`/products/${getProp(review, 'review.review.product.slug', '')}/tasks/${task.id}`}>
               <a className="text-grey-9">{task.title}</a>
             </Link>
           </div>
@@ -230,8 +226,8 @@ const ProfileItem: React.FunctionComponent = () => {
                               >
                                 <strong>Review: </strong>
                                 <span className="text-grey font-sm">
-                                                                {getProp(item, 'text', '')}
-                                                            </span>
+                                  {getProp(item, 'text', '')}
+                                </span>
                               </p>
                             </Col>
                           </Row>

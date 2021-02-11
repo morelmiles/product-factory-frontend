@@ -610,6 +610,7 @@ export const GET_REVIEW_BY_ID = gql`
         }
         product {
           id
+          slug
           name
           website
           shortDescription
