@@ -6,12 +6,12 @@ import { CREATE_CAPABILITY, UPDATE_CAPABILITY } from '../../../graphql/mutations
 import Attachment from '../../../components/Attachment';
 import { getProp } from '../../../utilities/filters';
 import { addCapability } from '../../../lib/actions';
+import {useRouter} from "next/router";
 
 const { Option } = Select;
 
 type Props = {
   modal?: boolean;
-  productSlug: string;
   capability?: any;
   closeModal: any;
   modalType: boolean;
@@ -24,7 +24,6 @@ type Props = {
 
 const AddCapability: React.FunctionComponent<Props> = ({
   modal,
-  productSlug,
   capability,
   closeModal,
   modalType,
@@ -34,6 +33,9 @@ const AddCapability: React.FunctionComponent<Props> = ({
   addCapability,
   hideParentOptions,
 }) => {
+  const router = useRouter();
+  const {productSlug} = router.query;
+
   const [title, setTitle] = useState(
     modalType ? getProp(capability, 'name', '') : ''
   );
@@ -164,8 +166,7 @@ const AddCapability: React.FunctionComponent<Props> = ({
       </Modal>
     </>
   );
-}
-
+};
 
 const mapStateToProps = (state: any) => ({
   user: state.user,

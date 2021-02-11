@@ -84,8 +84,14 @@ const TaskTable: React.FunctionComponent<Props> = ({
                         <Link
                           href={`/tasks/${task.id}`}
                         >
-                          <a className="text-grey-9"><ThunderboltFilled
-                            style={{color: '#999', marginRight: 4, marginLeft: 8, fontSize: 16}}/>{task.title}</a>
+                          <a className="text-grey-9">
+                            <Row align="middle">
+                              <ThunderboltFilled
+                                style={{color: '#999', marginRight: 4, marginLeft: 8, fontSize: 16}}
+                              />
+                              {task.title}
+                            </Row>
+                          </a>
                         </Link>
                       </Col>
                     </Row>
@@ -100,15 +106,13 @@ const TaskTable: React.FunctionComponent<Props> = ({
                       ) ? (
                         <>
                           {statusList[getProp(task, 'status')] === "Done" && (
-                            <CheckCircleFilled/>
+                            <CheckCircleFilled style={{color: '#389E0D', marginRight: 8}}/>
                           )}
                           <span>{statusList[getProp(task, 'status')]}</span>
                         </>
                       ) : taskClaimSet ? (
                         <>
-                          <div>
-                            {taskStatus}
-                          </div>
+                          <div>{taskStatus}</div>
                           <Row>
                             {CustomAvatar(taskClaimSet.person, "fullName")}
                             <div className="my-auto">

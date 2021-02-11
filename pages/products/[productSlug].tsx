@@ -1,83 +1,74 @@
-
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
 import Link from 'next/link';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Row, Col, Tag, Divider, Input, message, Button } from 'antd';
+import {useMutation, useQuery} from '@apollo/react-hooks';
+import {Button, Col, Divider, Input, message, Row, Tag} from 'antd';
 import ReactPlayer from 'react-player';
-import SortableTree, { getVisibleNodeCount } from 'react-sortable-tree';
-import parse from 'html-react-parser';
-import { GET_PRODUCT_BY_ID } from '../../graphql/queries';
-import { UPDATE_CAPABILITY, DELETE_CAPABILITY } from '../../graphql/mutations';
-import { TagType } from '../../graphql/types';
+import SortableTree, {getVisibleNodeCount} from 'react-sortable-tree';
+import {GET_PRODUCT_BY_ID} from '../../graphql/queries';
+import {DELETE_CAPABILITY, UPDATE_CAPABILITY} from '../../graphql/mutations';
+import {TagType} from '../../graphql/types';
 import AddCapability from '../../components/Products/AddCapability';
-import { DynamicHtml, Spinner } from '../../components';
-import { getProp } from '../../utilities/filters';
-import { randomKeys } from '../../utilities/utils';
-import { DataNode, TreeNode } from '../../utilities/constants';
-import { apiDomain } from '../../utilities/constants';
-import { setWorkState } from '../../lib/actions';
-import { WorkState } from '../../lib/reducers/work.reducer';
-
+import {DynamicHtml, Spinner} from '../../components';
+import {getProp} from '../../utilities/filters';
+import {randomKeys} from '../../utilities/utils';
+import {apiDomain, DataNode, TreeNode} from '../../utilities/constants';
+import {setWorkState} from '../../lib/actions';
+import {WorkState} from '../../lib/reducers/work.reducer';
 
 import LeftPanelContainer from '../../components/HOC/withLeftPanel';
-
 import classnames from 'classnames';
+import {useRouter} from "next/router";
 
-var pluralize = require('pluralize');
+const pluralize = require('pluralize');
+const {Search} = Input;
 
-const { Search } = Input;
 
-type Params = {
-  productSlug?: any;
-  saveProductToStore: any;
-}
+const Summary: React.FunctionComponent = () => {
+  const router = useRouter();
+  const {productSlug} = router.query;
 
-const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToStore }) => {
   const initialData: TreeNode[] = [];
   const [data, setData] = useState<any>({});
   const [treeData, setTreeData] = useState<TreeNode[]>(initialData);
   const [searchString, setSearchString] = useState('');
   const [searchFocusIndex, setSearchFocusIndex] = useState(0);
   const [searchFoundCount, setSearchFoundCount] = useState<any>(null);
-  // modal attributes
+
   const [showEditModal, setShowEditModal] = useState(false);
   const [capabilityNode, setCapabilityNode] = useState<any>(null);
   const [isEdit, setModalType] = useState(false);
   const [hideParent, setHideParent] = useState(false);
-
-  // const params: any = matchPath(match.url, {
-  //   path: "/products/:productSlug",
-  //   exact: false,
-  //   strict: false
-  // });
+  const [userId, setUserId] = useState<string | null>(null);
 
 
-  console.log('productSlug in [productSlug].tsx', productSlug)
-  const { data: original, error, loading } = useQuery(GET_PRODUCT_BY_ID, {
-    variables: { slug: productSlug }
+  useEffect(() => {
+    setUserId(localStorage.getItem('userId'));
+  }, [])
+
+  const {data: original, error, loading} = useQuery(GET_PRODUCT_BY_ID, {
+    variables: {slug: productSlug, userId: userId == null ? 0 : userId}
   });
 
-  const [updateCapability, { error: updateError }] = useMutation(UPDATE_CAPABILITY, {
-    onCompleted(data) {
+  const [updateCapability, {error: updateError}] = useMutation(UPDATE_CAPABILITY, {
+    onCompleted() {
       setTreeData(
         updatedTreeData(treeData, 0, [])
       );
     },
     onError(err) {
       console.log("update item error: ", err);
-      message.error("Failed to update tree!");
+      message.error("Failed to update tree!").then();
     }
   });
 
   const onSearch = (value: string) => setSearchString(value);
 
   const getSubTitle = (item: any) => {
-    let subtitle = item.available_tasks > 0
+    // subtitle += item.children.length > 0 ? pluralize("Capability", item.children.length, true) : '';
+    return item.available_tasks > 0
       ? `${item.available_tasks}/${item.tasks.length} ` + pluralize("Task", item.available_tasks) + " Available"
       : '';
-    // subtitle += item.children.length > 0 ? pluralize("Capability", item.children.length, true) : '';
-    return subtitle;
   }
 
   /* Functions for format api response and tree changes */
@@ -132,11 +123,11 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
         }
       } else {
         if (node.children) {
-          const newchildren = updatedTreeData(node.children, index, children);
+          const newChildren = updatedTreeData(node.children, index, children);
           return {
             ...node,
             subtitle: getSubTitle(node),
-            children: newchildren
+            children: newChildren
           }
         }
 
@@ -146,7 +137,7 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
   }
 
   const changeTree = (data: any) => {
-    const { node, nextParentNode } = data;
+    const {node, nextParentNode} = data;
 
     if (nextParentNode && node.id === nextParentNode.id) {
     } else {
@@ -161,7 +152,7 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
           },
           id: node.id
         }
-      });
+      }).then();
     }
   }
 
@@ -170,7 +161,6 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
       .then(response => response.json())
       .then((res) => {
         if (res) {
-          console.log('res',res)
           setTreeData(formatData(res));
         }
       })
@@ -178,27 +168,19 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
 
   useEffect(() => {
     if (original) {
-      console.log('should run')
-      saveProductToStore({
-        userRole: original.userRole,
-        tags: original.product.tag,
-        currentProduct: original.product,
-        repositories: original.repositories,
-        allTags: original.tags
-      })
       setData(original);
       fetchData();
     }
   }, [original]);
 
   const [deleteCapability] = useMutation(DELETE_CAPABILITY, {
-    onCompleted(data) {
+    onCompleted() {
       fetchData();
-      message.success("Item is successfully deleted!");
+      message.success("Item is successfully deleted!").then();
     },
     onError(err) {
       console.log("Delete item error: ", err);
-      message.error("Failed to delete item!");
+      message.error("Failed to delete item!").then();
     }
   });
 
@@ -208,11 +190,11 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
       variables: {
         id: node.id
       }
-    });
+    }).then();
   }
 
   const customSearchMethod = (data: any) => {
-    const { node, searchQuery } = data;
+    const {node, searchQuery} = data;
     return searchQuery &&
       node.title.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
   }
@@ -247,13 +229,15 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
     setShowEditModal(true);
   }
 
-  const count = getVisibleNodeCount({ treeData });
+  const count = getVisibleNodeCount({treeData});
   const mapHeight = count * 62;
 
-  if(loading) return <Spinner/>
+  const isAdminOrManager = getProp(original, 'isAdminOrManager', false);
+
+  if (loading) return <Spinner/>
 
   return (
-    <LeftPanelContainer productSlug={productSlug}>
+    <LeftPanelContainer>
       {
         !error && !updateError && (
           <div>
@@ -295,7 +279,7 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
                 }
               </Col>
             </Row>
-            <Divider />
+            <Divider/>
             <div className='mt-15'>
               <Row justify="space-between" className='mb-10'>
                 <Col>
@@ -304,7 +288,7 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
                 {/* <Col>See all available work</Col> */}
               </Row>
               <Row
-               
+
                 justify="space-between"
               >
                 {
@@ -326,11 +310,11 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
                 }
               </Row>
             </div>
-            <Divider />
+            <Divider/>
             <div className='mt-15'>
               <Row justify="space-between">
                 <Col>
-                <div className="section-title mb-15">Product Map</div>
+                  <div className="section-title mb-15">Product Map</div>
                 </Col>
               </Row>
               <Row justify="space-between">
@@ -340,7 +324,7 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
                 <Col>
                   <div>
 
-                  <Search placeholder="Search text" className='mr-10' onSearch={onSearch} style={{ width: 200 }} />
+                    <Search placeholder="Search text" className='mr-10' onSearch={onSearch} style={{width: 200}}/>
                     {
                       searchFoundCount > 0 && (
                         <>
@@ -360,48 +344,48 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
                       )
                     }
                   </div>
-                  <div>{ searchFoundCount > 0 && `${searchFoundCount} items found!`}</div>
+                  <div>{searchFoundCount > 0 && `${searchFoundCount} items found!`}</div>
                 </Col>
               </Row>
-              <div style={{ height: mapHeight }}>
+              <div style={{height: mapHeight}}>
                 <SortableTree
                   treeData={treeData}
                   onChange={(treeData: TreeNode[]) => setTreeData(treeData)}
                   onMoveNode={changeTree}
-                  canDrag={() => getProp(data, 'product.isAdmin', false)}
-                  generateNodeProps={({ node, path }) => ({
-                    buttons: getProp(data, 'product.isAdmin', false)
+                  canDrag={() => isAdminOrManager}
+                  generateNodeProps={({node}) => ({
+                    buttons: isAdminOrManager
                       ? [
-                          <>
-                            <button
-                              className='mr-10'
-                              onClick={() => {
-                                setHideParent(true);
-                                editNode(false, node)
-                              }}
-                            >
-                              Add
-                            </button>
-                            <button
-                              className='mr-10'
-                              onClick={() => {
-                                setHideParent(true);
-                                editNode(true, node);
-                              }}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => removeNode(node)}
-                            >
-                              Remove
-                            </button>
-                          </>
-                        ]
+                        <>
+                          <button
+                            className="mr-10"
+                            onClick={() => {
+                              setHideParent(true);
+                              editNode(false, node)
+                            }}
+                          >
+                            Add
+                          </button>
+                          <button
+                            className="mr-10"
+                            onClick={() => {
+                              setHideParent(true);
+                              editNode(true, node);
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => removeNode(node)}
+                          >
+                            Remove
+                          </button>
+                        </>
+                      ]
                       : [],
                     title: (
                       <Row
-                       
+
                         justify="space-between"
                         style={{minWidth: 200}}
                       >
@@ -412,16 +396,15 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
                       </Row>
                     ),
                     subtitle: (
-                      <div className={classnames({ 'mt-5': getProp(node, 'tasks', []).length > 0 })}>
+                      <div className={classnames({'mt-5': getProp(node, 'tasks', []).length > 0})}>
                         {
                           getProp(node, 'tasks', []).map((task: any) => {
                             return task.status === 0 && (
                               <span key={randomKeys()}>
                                 <Link
                                   href={`/products/${productSlug}/tasks/${task.id}`}
-                                  className='ml-5'
                                 >
-                                  {`#${task.id}`}
+                                  <a className="ml-5">{`#${task.id}`}</a>
                                 </Link>
                               </span>
                             )
@@ -438,13 +421,12 @@ const Summary: React.FunctionComponent<Params> = ({ productSlug, saveProductToSt
               </div>
               {
                 showEditModal && <AddCapability
-                  modal={showEditModal}
-                  productSlug={productSlug}
-                  modalType={isEdit}
-                  capability={capabilityNode}
-                  closeModal={setShowEditModal}
-                  submit={fetchData}
-                  hideParentOptions={hideParent}
+                    modal={showEditModal}
+                    modalType={isEdit}
+                    capability={capabilityNode}
+                    closeModal={setShowEditModal}
+                    submit={fetchData}
+                    hideParentOptions={hideParent}
                 />
               }
             </div>
@@ -469,8 +451,4 @@ const SummaryContainer = connect(
   mapDispatchToProps
 )(Summary);
 
-SummaryContainer.getInitialProps = async ({ query }) => {
-  const { productSlug } = query;
-  return { productSlug }
-}
 export default SummaryContainer;

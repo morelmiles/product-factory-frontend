@@ -78,9 +78,9 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
         fileType
         path
       }
-      isAdmin
+      # isAdmin
     }
-    userPerson(slug: $slug)
+    # userPerson(slug: $slug)
     repositories(slug: $slug) {
       id
       repository
@@ -93,7 +93,7 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
 `
 
 export const GET_PRODUCT_BY_ID = gql`
-  query GetProduct($slug: String!) {
+  query GetProduct($slug: String!, $userId: Int!) {
     product(slug: $slug) {
       name
       id
@@ -138,9 +138,8 @@ export const GET_PRODUCT_BY_ID = gql`
         fileType
         path
       }
-      isAdmin
     }
-    userPerson(slug: $slug)
+    # userPerson(slug: $slug)
     repositories(slug: $slug) {
       id
       repository
@@ -149,6 +148,7 @@ export const GET_PRODUCT_BY_ID = gql`
       id
       name
     }
+    isAdminOrManager(slug: $slug, userId: $userId)
   }
 `;
 

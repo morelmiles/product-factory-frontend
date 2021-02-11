@@ -11,12 +11,12 @@ import classnames from 'classnames';
 const {Option} = Select;
 const {Content} = Layout;
 
-type Props = {
-  onClick?: () => void;
-  userLogInAction: any;
-};
+// type Props = {
+//   onClick?: () => void;
+//   userLogInAction: any;
+// };
 
-const Dashboard: React.FunctionComponent<Props> = ({userLogInAction}) => {
+const Dashboard: React.FunctionComponent = () => {
   const router = useRouter();
   let searchParams: any = new URLSearchParams(router.asPath.split('?')[1]);
   const [mode, setMode] = useState('products');
@@ -35,7 +35,7 @@ const Dashboard: React.FunctionComponent<Props> = ({userLogInAction}) => {
     router.push({
       pathname: location.pathname,
       search: searchParams.toString()
-    });
+    }).then();
 
     switch (key) {
       case "tag":

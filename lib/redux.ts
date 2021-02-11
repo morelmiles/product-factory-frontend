@@ -18,7 +18,8 @@ export const reducer = (state, {type, payload}) => {
 };
 
 const makeConfiguredStore = (reducer) =>
-    createStore(reducer, undefined, applyMiddleware(logger));
+    // createStore(reducer, undefined, applyMiddleware(logger));
+    createStore(reducer, undefined);
 
 const makeStore = () => {
 

@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import Dashboard from '../components/Dashboard';
 import Header from '../components/Header';
 import withApollo from '../lib/apolloClient'

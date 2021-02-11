@@ -26,21 +26,21 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
 
   const signIn = (userId: any) => {
     if (!userId || userId === 0) {
-      message.warning("Please select user before clicking sign in button");
+      message.warning("Please select user before clicking sign in button").then();
       return;
     }
+
     fetch(`${apiDomain}/github/detect_user/?user_id=${userId}`)
       .then(response => response.json())
       .then(res => {
-        console.log('res',res)
         if (res.status) {
-          message.success(`${res.user.fullName} is logged in successfully!`);
+          message.success(`${res.user.fullName} is logged in successfully!`).then();
           userLogInAction({ isLoggedIn: res.status });
-          localStorage.setItem("user_id", res.user.id);
-          localStorage.setItem("fullName", res.user.fullName);
-          router.push("/");
+          localStorage.setItem('userId', res.user.id);
+          localStorage.setItem('fullName', res.user.fullName);
+          router.push("/").then();
         } else {
-          message.warning("User id is invalid!");
+          message.warning("User id is invalid!").then();
           userLogInAction({ isLoggedIn: false });
         }
       });
@@ -48,7 +48,7 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
 
   useEffect(() => {
     if (user && user.isLoggedIn && user.fullName) {
-      message.success(`${user.fullName} is logged in!`);
+      message.success(`${user.fullName} is logged in!`).then();
     }
   }, []);
 

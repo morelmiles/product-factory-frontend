@@ -5,7 +5,7 @@ export type UserState = {
   fullName: string;
 };
 
-// const userId = window.localStorage.getItem("user_id");
+// const userId = window.localStorage.getItem("userId");
 // const fullName = window.localStorage.getItem("fullName");
 
 export const userReducer = (

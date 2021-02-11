@@ -1,21 +1,19 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, {useEffect} from 'react';
+import {connect} from 'react-redux';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Avatar, Menu, Row } from 'antd';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_PRODUCT_INFO_BY_ID } from '../../../graphql/queries';
-import { getProp } from '../../../utilities/filters';
-import { getInitialName } from '../../../utilities/utils';
-import { WorkState } from '../../../lib/reducers/work.reducer';
-import { setWorkState } from '../../../lib/actions';
-import { Spinner } from '../../../components/Spinner';
+import {useRouter} from 'next/router';
+import {Avatar, Menu, Row} from 'antd';
+import {useQuery} from '@apollo/react-hooks';
+import {GET_PRODUCT_INFO_BY_ID} from '../../../graphql/queries';
+import {getProp} from '../../../utilities/filters';
+import {getInitialName} from '../../../utilities/utils';
+import {WorkState} from '../../../lib/reducers/work.reducer';
+import {setWorkState} from '../../../lib/actions';
+import {Spinner} from '../../Spinner';
 
 type Props = {
   productSlug: any;
-  location: any;
-  history: any;
-  saveProductToStore: any;
+  saveProductToStore?: any;
 };
 
 type LinkType = {
@@ -25,29 +23,18 @@ type LinkType = {
 }
 
 const links: LinkType[] = [
-  { url: '/', type: 'summary', name: 'Summary' },
-  { url: '/initiatives', type: 'initiatives', name: 'Initiatives' },
-  { url: '/tasks', type: 'tasks', name: 'Tasks' },
-  { url: '/capabilities', type: 'capabilities', name: 'Capabilities' },
-  { url: '/people', type: 'people', name: 'People' },
-  { url: '/partners', type: 'partners', name: 'Commercial Partners' }
+  {url: '/', type: 'summary', name: 'Summary'},
+  {url: '/initiatives', type: 'initiatives', name: 'Initiatives'},
+  {url: '/tasks', type: 'tasks', name: 'Tasks'},
+  {url: '/capabilities', type: 'capabilities', name: 'Capabilities'},
+  {url: '/people', type: 'people', name: 'People'},
+  {url: '/partners', type: 'partners', name: 'Commercial Partners'}
 ]
 
-const Icon = (name: any) => {
-  return (
-    <Avatar className='mr-10'>
-      {getInitialName(name)}
-    </Avatar>
-  )
-}
-
-const LeftPanel: React.FunctionComponent<Props> = ({
-  productSlug ,
-  saveProductToStore
-}): any => {
+const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
   const router = useRouter();
-  const { data, error, loading } = useQuery(GET_PRODUCT_INFO_BY_ID, {
-    variables: { slug: productSlug }
+  const {data, error, loading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
+    variables: {slug: productSlug}
   });
   const selectedIndex: number = links.findIndex((item: any) => {
     return router.asPath.includes(item.type);
@@ -56,22 +43,23 @@ const LeftPanel: React.FunctionComponent<Props> = ({
     ? links[0].type : links[selectedIndex].type;
 
   const goToDetail = (type: string) => {
-    router.push(`/products/${productSlug}${type}`);
+    router.push(`/products/${productSlug}${type}`).then();
   }
 
-  useEffect(() => {
-    if (data) {
-      saveProductToStore({
-        userRole: data.userRole,
-        tags: data.product.tag,
-        currentProduct: data.product,
-        repositories: data.repositories,
-        allTags: data.tags
-      })
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     saveProductToStore({
+  //       userRole: data.userRole,
+  //       tags: data.product.tag,
+  //       currentProduct: data.product,
+  //       repositories: data.repositories,
+  //       allTags: data.tags
+  //     })
+  //   }
+  // }, [data]);
+  console.log(data, error, loading)
 
-  if(loading) return <Spinner/>
+  if (loading) return <Spinner/>
 
   return (
     <>
@@ -80,19 +68,23 @@ const LeftPanel: React.FunctionComponent<Props> = ({
           <div className="left-panel">
             <Row className="profile">
               <div className="my-auto">
-                {Icon(getProp(data, 'product.name', ''))}
+                <Avatar style={{marginRight: 15}}>
+                  {getInitialName(getProp(data, 'product.name', ''))}
+                </Avatar>
               </div>
               <div>
                 <div className="page-title">{getProp(data, 'product.name', '')}</div>
                 <div>
-                  <Link href="" className="custom-link">{getProp(data, 'product.website', '')}</Link>
+                  <Link href="">
+                    <a className="custom-link">{getProp(data, 'product.website', '')}</a>
+                  </Link>
                 </div>
               </div>
             </Row>
             <Menu mode="inline" selectedKeys={[selectedLink]}>
-              {links.map((link: any, idx: number) => (
+              {links.map((link: any, index: number) => (
                 <Menu.Item
-                  key={link.type}
+                  key={index}
                   onClick={() => goToDetail(link.url)}
                 >
                   {link.name}

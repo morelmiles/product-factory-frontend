@@ -1,33 +1,30 @@
-import React, { useEffect } from 'react';
-import Image from 'next/image'
-import { connect } from 'react-redux';
+import React, {useEffect} from 'react';
+import {connect} from 'react-redux';
 import Link from 'next/link'
-import { Layout, Menu, Input, Button, message } from 'antd';
-import { userLogInAction, setUserRole } from '../../lib/actions';
-import { UserState } from '../../lib/reducers/user.reducer';
-import { WorkState } from '../../lib/reducers/work.reducer';
-import { apiDomain } from '../../utilities/constants';
+import {Layout, Menu, Input, Button, message} from 'antd';
+import {userLogInAction} from '../../lib/actions';
+import {UserState} from '../../lib/reducers/user.reducer';
+import {apiDomain} from '../../utilities/constants';
+// @ts-ignore
 import Logo from '../../public/assets/logo.svg';
-import { useRouter } from 'next/router'
+import {useRouter} from 'next/router'
 
-const { Header } = Layout;
-const { Search } = Input;
+const {Header} = Layout;
+const {Search} = Input;
 
 type Props = {
   user?: any;
   userLogInAction?: any;
-  setUserRole?: any;
 };
 
-const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, setUserRole
-}) => {
+const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction}) => {
   const router = useRouter();
 
   const onSearch = (e: any) => {
     console.log("search submitted: ", e);
   }
   const getSelectedItem = () => {
-    switch(router.asPath) {
+    switch (router.asPath) {
       case "/product/add":
         return "2";
       case "/profiles":
@@ -38,20 +35,21 @@ const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, s
   }
 
   useEffect(() => {
-    if(localStorage.getItem("user_id")) {
-      userLogInAction({ isLoggedIn: true });
+    if (localStorage.getItem("userId")) {
+      userLogInAction({isLoggedIn: true});
     }
-  },[]);
+  }, []);
+
   const logout = () => {
     fetch(`${apiDomain}/github/logout`)
       .then(response => response.json())
       .then(res => {
         if (res.status) {
-          message.success(`You are logged out !`);
-          userLogInAction({ isLoggedIn: false });
-          setUserRole({ userRole: "Watcher" });
-          window.localStorage.removeItem("user_id");
-          router.push("/switch-test-user");
+          message.success(`You are logged out !`).then();
+          userLogInAction({isLoggedIn: false});
+          localStorage.removeItem('userId');
+          localStorage.removeItem('fullName');
+          router.push("/switch-test-user").then();
         }
       });
   }
@@ -63,33 +61,25 @@ const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, s
       <div className="inner-navbar">
         <Menu className="header-menu" mode="horizontal" defaultSelectedKeys={[selectedItem]}>
           <Menu.Item key="1">
-            <Link
-              href="/"
-              className={ selectedItem === "1" ? "active" : ""}
-            >
-              {'Work on Open Products'}
+            <Link href="/">
+              <a className={selectedItem === "1" ? "active" : ""}>{'Work on Open Products'}</a>
             </Link>
           </Menu.Item>
           <Menu.Item key="2">
-            <Link
-              href="/product/add"
-              className={ selectedItem === "2" ? "active" : ""}
-            >
-              {'Add Product'}
+            {/*<Link href="/product/add">*/}
+            <Link href="/">
+              <a className={selectedItem === "2" ? "active" : ""}>{'Add Product'}</a>
             </Link>
           </Menu.Item>
           <Menu.Item key="3">
-            <Link
-              href=""
-              className={ selectedItem === "3" ? "active" : ""}
-            >
-              {'Find Talent'}
+            <Link href="">
+              <a className={selectedItem === "3" ? "active" : ""}>{'Find Talent'}</a>
             </Link>
           </Menu.Item>
         </Menu>
         <div className="logo-section">
           <Link href="/">
-            <img src={Logo} alt="logo" />
+            <img src={Logo} alt="logo"/>
           </Link>
         </div>
         <div className='login-container'>
@@ -112,7 +102,7 @@ const HeaderMenuContainer: React.FunctionComponent = ({ user, userLogInAction, s
                 onClick={() => router.push("/switch-test-user")}
               >
                 Sign in
-              </Button>    
+              </Button>
             )
           }
         </div>
@@ -127,7 +117,6 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
-  setUserRole: (data: WorkState) => dispatch(setUserRole(data))
 });
 
 const HeaderMenu = connect(
