@@ -439,8 +439,8 @@ export const GET_TASK_BY_ID = gql`
 `;
 
 export const GET_TASKS_BY_PRODUCT = gql`
-  query GetTasksByProduct($productId: Int, $reviewId: Int, $status: String!) {
-    tasksByProduct (productId: $productId, reviewId: $reviewId, status: $status) {
+  query GetTasksByProduct($productSlug: String, $reviewId: Int, $status: String) {
+    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, status: $status) {
       id
       title
       description
@@ -450,6 +450,12 @@ export const GET_TASKS_BY_PRODUCT = gql`
       status
       blocked
       featured
+      producttaskSet {
+        product {
+          name
+          slug
+        }
+      }
     }
   }
 `;

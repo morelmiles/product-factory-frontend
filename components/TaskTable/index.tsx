@@ -18,12 +18,14 @@ type Props = {
 
 const TaskTable: React.FunctionComponent<Props> = ({
                                                      tasks,
-                                                     productSlug,
                                                      statusList = TASK_CLAIM_TYPES,
                                                      title = 'Related Tasks',
                                                      hideTitle = false,
                                                      showPendingTasks = false
                                                    }) => {
+
+    console.log("data3", tasks);
+
 
   return tasks && tasks.length > 0 ? (
     <>

@@ -22,7 +22,7 @@ const filterRepositoryId = (arr: Array<any>, url: string) => {
 
 type Props = {
   modal?: boolean;
-  productSlug: string;
+  productSlug?: string;
   closeModal: any;
   currentProduct?: any;
   repositories?: Array<any>;
@@ -35,10 +35,10 @@ type Props = {
   tasks?: Array<any>;
 };
 
-const AddTask: React.SFC<Props> = ({
+const AddTask: React.FunctionComponent<Props> = ({
   modal,
-  productSlug,
-  closeModal,
+  // productSlug,
+  // closeModal,
   currentProduct,
   repositories,
   addRepository,
@@ -86,7 +86,7 @@ const AddTask: React.SFC<Props> = ({
   );
 
   const { data: originalIniaitves, refetch: fetchIniatives } = useQuery(GET_INITIATIVES, {
-    variables: { productSlug: productSlug }
+    variables: { productSlug }
   });
   const [createTask] = useMutation(CREATE_TASK);
   const [updateTask] = useMutation(UPDATE_TASK);
