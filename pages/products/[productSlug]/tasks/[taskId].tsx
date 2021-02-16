@@ -1,42 +1,42 @@
-
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button } from 'antd';
+import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
+import {Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button} from 'antd';
 import Link from "next/link";
-import { useRouter } from 'next/router';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import {useRouter} from 'next/router';
+import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
-import { GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT } from '../../../../graphql/queries';
-import { TASK_TYPES } from '../../../../graphql/types';
-import { DELETE_TASK } from '../../../../graphql/mutations';
-import { getProp } from '../../../../utilities/filters';
-import { CustomAvatar, EditIcon, DynamicHtml, TaskTable, Spinner } from '../../../../components';
+import {GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT} from '../../../../graphql/queries';
+import {TASK_TYPES} from '../../../../graphql/types';
+import {DELETE_TASK} from '../../../../graphql/mutations';
+import {getProp} from '../../../../utilities/filters';
+import {CustomAvatar, EditIcon, DynamicHtml, TaskTable, Spinner} from '../../../../components';
 import AddTask from '../../../../components/Products/AddTask';
-import { apiDomain } from "../../../../utilities/constants"
+import {apiDomain} from "../../../../utilities/constants"
 import DeleteModal from '../../../../components/Products/DeleteModal';
-import ImageIcon from '../../../../public/assets/icons/image.svg';
-import PDFIcon from '../../../../public/assets/icons/pdf.svg';
-import DocIcon from '../../../../public/assets/icons/doc.svg';
-import DownloadIcon from '../../../../public/assets/icons/download.svg';
+import {FileFilled, FilePdfFilled, FileImageFilled, DownloadOutlined} from "@ant-design/icons";
 import moment from 'moment';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 
 interface CommentListProps {
-  user: any;
+  taskId: string | string[] | undefined,
+  user: any,
 }
 
 interface AddCommentFormProps {
-  user: any
-  onAdded: () => void
-  replyToID?: number
+  taskId: string | string[] | undefined,
+  user: any,
+  onAdded: () => void,
+  replyToID?: number,
 }
 
-const AddCommentForm = function({ taskId, user, replyToID = 0, onAdded }: AddCommentFormProps) {
+const AddCommentForm: React.FunctionComponent<AddCommentFormProps> = ({taskId, user, replyToID = 0, onAdded}) => {
   const [comment, setComment] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
+
   function handleCommentChanged(event: React.ChangeEvent<HTMLTextAreaElement>) {
     setComment(event.target.value)
   }
+
   function submitComment() {
     setSubmittingComment(true);
     fetch(`${apiDomain}/comments/api/create/`, {
@@ -50,7 +50,7 @@ const AddCommentForm = function({ taskId, user, replyToID = 0, onAdded }: AddCom
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(function(response) {
+    }).then(function (response) {
       if (response.status == 201) {
         setSubmittingComment(false)
         setComment('')
@@ -58,10 +58,11 @@ const AddCommentForm = function({ taskId, user, replyToID = 0, onAdded }: AddCom
       }
     })
   }
+
   return (
     <>
       <Form.Item className='mb-20'>
-        <Input.TextArea rows={2} onChange={handleCommentChanged} value={comment} />
+        <Input.TextArea rows={2} onChange={handleCommentChanged} value={comment}/>
       </Form.Item>
       <Form.Item>
         <Button htmlType="submit" loading={submittingComment} onClick={submitComment} type="primary">
@@ -72,37 +73,43 @@ const AddCommentForm = function({ taskId, user, replyToID = 0, onAdded }: AddCom
   )
 }
 
-const CommentList = function({ taskId, user }: CommentListProps) {
+const CommentList: React.FunctionComponent<CommentListProps> = ({taskId, user}) => {
   const [comments, setComments] = useState([]);
-  const [shownSubCommentID, setShownSubCommentID] = useState(0)
-  const fetchComments = function() {
+  const [shownSubCommentID, setShownSubCommentID] = useState(0);
+
+  const fetchComments = function () {
     fetch(`${apiDomain}/comments/api/list/?content_type=work.task&object_pk=${taskId}`)
       .then((response) => response.json())
       .then((commentsResponse) => {
         setComments(commentsResponse)
       })
   }
-  const handleReplyToClicked = function(comment: any) {
+
+  const handleReplyToClicked = function (comment: any) {
     setShownSubCommentID(comment.id)
   }
-  const handleSubCommentAdded = function() {
+
+  const handleSubCommentAdded = function () {
     setShownSubCommentID(0)
     fetchComments()
   }
-  const SubCommentForm = function({ comment }: any) {
+
+  const SubCommentForm = function ({comment}: any) {
     if (shownSubCommentID != comment.id) {
       return null
     }
+
     return (
       <Row>
         <Col span={22} style={{marginLeft: "48px"}}>
-          <AddCommentForm taskId={taskId} user={user} onAdded={handleSubCommentAdded} replyToID={comment.id} />
+          <AddCommentForm taskId={taskId} user={user} onAdded={handleSubCommentAdded} replyToID={comment.id}/>
         </Col>
       </Row>
     )
   }
-  const RenderedComment = function({ comment }: any) {
-    let renderedChildComments = []
+  const RenderedComment = function ({comment}: any) {
+    let renderedChildComments = [];
+
     if (comment.children) {
       renderedChildComments = comment.children.map((childComment: any) => (
         <>
@@ -110,13 +117,15 @@ const CommentList = function({ taskId, user }: CommentListProps) {
         </>
       ))
     }
+
     return (
       <>
         <Row>
           <Col span={24}>
             <Comment
               author={comment.user_name}
-              actions={[<span key="comment-nested-reply-to" onClick={() => handleReplyToClicked(comment)}>Reply to</span>]}
+              actions={[<span key="comment-nested-reply-to"
+                              onClick={() => handleReplyToClicked(comment)}>Reply to</span>]}
               avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
               content={<pre>{comment.text}</pre>}
               datetime={
@@ -132,9 +141,11 @@ const CommentList = function({ taskId, user }: CommentListProps) {
       </>
     )
   }
+
   useEffect(() => {
     fetchComments()
-  }, [])
+  }, []);
+
   return (
     <>
       <List
@@ -144,51 +155,51 @@ const CommentList = function({ taskId, user }: CommentListProps) {
         dataSource={comments}
         renderItem={(item: any) => {
           return (
-          <li>
-            <RenderedComment comment={item}/>
-          </li>
+            <li>
+              <RenderedComment comment={item}/>
+            </li>
           )
         }
-      }
-        />
+        }
+      />
       {user && user.isLoggedIn ? <AddCommentForm taskId={taskId} user={user} onAdded={fetchComments}/> : <></>}
-  </>
+    </>
   )
 }
 
 
 type Params = {
-  productSlug?: any;
-  taskId?: any;
   userRole?: string;
   user?: any;
   currentProduct: any;
 };
 
 const Icon = (fileType: any) => {
-  switch(fileType) {
+  switch (fileType) {
     case "doc":
-      return <img src={DocIcon} alt="No doc" />
+      return <FileFilled/>
     case "pdf":
-      return <img src={PDFIcon} alt="No pdf" />
+      return <FilePdfFilled/>
     default:
-      return <img src={ImageIcon} alt="No attachment" />
+      return <FileImageFilled/>
   }
 }
 
-const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, user, currentProduct }) => {
+const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct}) => {
   const router = useRouter();
+  const {taskId, productSlug} = router.query;
+
   const [deleteModal, showDeleteModal] = useState(false);
   const [task, setTask] = useState({});
   const [tasks, setTasks] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const { data: original, error, loading, refetch } = useQuery(GET_TASK_BY_ID, {
-    variables: { id: taskId }
+  const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
+    variables: {id: taskId}
   });
 
   const getBasePath = () => {
-      //TODO: fix it
+    //TODO: fix it
     // if (match.url.includes("/products")) {
     //   const params: any = matchPath(match.url, {
     //     path: "/products/:productSlug/tasks/:taskId",
@@ -196,9 +207,9 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
     //     strict: false
     //   });
 
-      return `/products/${productSlug}`;
+    return `/products/${productSlug}`;
     // }
-    return "";
+    return '';
   }
 
   const [deleteTask] = useMutation(DELETE_TASK, {
@@ -206,17 +217,17 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
       id: taskId
     },
     onCompleted() {
-      message.success("Item is successfully deleted!");
-      router.push(getBasePath() === "" ? "/" : `${getBasePath()}/tasks` );
+      message.success("Item is successfully deleted!").then();
+      router.push(getBasePath() === "" ? "/" : `${getBasePath()}/tasks`).then();
     },
     onError(err) {
       console.log("Delete item error: ", err);
-      message.error("Failed to delete item!");
+      message.error("Failed to delete item!").then();
     }
   });
 
-  const { data: tasksData } = useQuery(GET_TASKS_BY_PRODUCT, {
-    variables: { productSlug: getBasePath().replace("/products/", "") }
+  const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT, {
+    variables: {productSlug: getBasePath().replace("/products/", "")}
   });
 
   // const taskclaimSet = getProp(data, 'task.taskclaimSet', null)
@@ -225,7 +236,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
 
   const getCausedBy = () => {
     const status = TASK_TYPES[getProp(task, 'status')];
-    switch(status) {
+    switch (status) {
       case "Claimed":
         return "Proposed By";
       case "Done":
@@ -254,28 +265,22 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
     }
   }, [original]);
 
-  if(loading) return <Spinner/>
+  if (loading) return <Spinner/>
 
   return (
-    <LeftPanelContainer productSlug={productSlug}>
+    <LeftPanelContainer>
       {
         !error && (
           <>
             <div className="text-grey">
               {getBasePath() !== "" && (
                 <>
-                  <Link
-                    href={getBasePath()}
-                    className="text-grey"
-                  >
-                    {getProp(currentProduct, 'name', '')}
+                  <Link href={getBasePath()}>
+                    <a className="text-grey">{getProp(currentProduct, 'name', '')}</a>
                   </Link>
                   <span> / </span>
-                  <Link
-                    href={`${getBasePath()}/tasks`}
-                    className="text-grey"
-                  >
-                    Tasks
+                  <Link href={`${getBasePath()}/tasks`}>
+                    <a className="text-grey">Tasks</a>
                   </Link>
                   <span> / </span>
                 </>
@@ -318,91 +323,85 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
                 <DynamicHtml
                   text={getProp(task, 'description', '')}
                 />
-                <Row
-                  className="text-sm mt-22"
-                  >
+                <Row className="text-sm mt-22">
                   <strong className="my-auto">Created By: </strong>
                   <div className="ml-12">
                     {
                       getProp(task, 'createdBy', null) !== null
                         ? CustomAvatar(
-                            getProp(task, 'createdBy'),
-                            "fullName",
-                            "default",
-                            null,
-                            {margin: 'auto 8px auto 0'}
-                          )
+                        getProp(task, 'createdBy'),
+                        "fullName",
+                        "default",
+                        null,
+                        {margin: 'auto 8px auto 0'}
+                        )
                         : null
                     }
                   </div>
                   <div className="my-auto">
-                    <Link
-                      href={`/people/${getProp(task, 'createdBy.slug', '')}`}
-                      className="text-grey-9"
-                    >
-                      {getProp(task, 'createdBy.fullName', '')}
+                    <Link href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
+                      <a className="text-grey-9">{getProp(task, 'createdBy.fullName', '')}</a>
                     </Link>
                   </div>
                 </Row>
-                <Row
-                  className="text-sm mt-8"
 
-                >
-                  {(
-                    TASK_TYPES[getProp(task, 'status')] === "Available" ||
-                    TASK_TYPES[getProp(task, 'status')] === "Draft" ||
-                    TASK_TYPES[getProp(task, 'status')] === "Pending"
-                  ) ? (
-                    <strong className="my-auto">
-                      Status: {TASK_TYPES[getProp(task, 'status')]}
-                    </strong>
-                  ) : (
-                    <>
+                <Row className="text-sm mt-8">
+                  {
+                    (
+                      TASK_TYPES[getProp(task, 'status')] === "Available" ||
+                      TASK_TYPES[getProp(task, 'status')] === "Draft" ||
+                      TASK_TYPES[getProp(task, 'status')] === "Pending"
+                    ) ? (
                       <strong className="my-auto">
-                        Status: {getCausedBy()}
+                        Status: {TASK_TYPES[getProp(task, 'status')]}
                       </strong>
-                      <div className='ml-5'>
-                        {
-                          getProp(task, 'createdBy', null) !== null
-                            ? (
-                              <Row>
-                                {
-                                  CustomAvatar(
-                                    getProp(task, 'createdBy'),
-                                    "fullName"
-                                  )
-                                }
-                                <div className="my-auto">
+                    ) : (
+                      <>
+                        <strong className="my-auto">
+                          Status: {getCausedBy()}
+                        </strong>
+                        <div className='ml-5'>
+                          {
+                            getProp(task, 'createdBy', null) !== null
+                              ? (
+                                <Row>
                                   {
-                                    getProp(
+                                    CustomAvatar(
                                       getProp(task, 'createdBy'),
-                                      'fullName',
-                                      ''
+                                      "fullName"
                                     )
                                   }
-                                </div>
-                              </Row>
-                            ) : null
-                        }
-                      </div>
-                    </>
-                  )}
+                                  <div className="my-auto">
+                                    {
+                                      getProp(
+                                        getProp(task, 'createdBy'),
+                                        'fullName',
+                                        ''
+                                      )
+                                    }
+                                  </div>
+                                </Row>
+                              ) : null
+                          }
+                        </div>
+                      </>
+                    )
+                  }
                 </Row>
-                {getProp(task, 'capability.id', null) && (
-                  <Row
-                    className="text-sm mt-8"
-                  >
-                    <strong className="my-auto">
-                      Related Capability:
-                    </strong>
-                    <Link
-                      href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}
-                      className='ml-5'
+                {
+                  getProp(task, 'capability.id', null) && (
+                    <Row
+                      className="text-sm mt-8"
                     >
-                      {getProp(task, 'capability.name', '')}
-                    </Link>
-                  </Row>
-                )}
+                      <strong className="my-auto">
+                        Related Capability:
+                      </strong>
+                      <Link href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
+                        <a className="ml-5">{getProp(task, 'capability.name', '')}</a>
+                      </Link>
+                    </Row>
+                  )
+                }
               </Col>
             </Row>
             <TaskTable
@@ -411,14 +410,14 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
               productSlug={getBasePath().replace("/products/", "")}
               statusList={getProp(original, 'statusList', [])}
             />
-            <Divider />
-            <CommentList user={user} />
+            <Divider/>
+            <CommentList taskId={taskId} user={user}/>
             <Row>
-              {/* <Col span={16}>
+              <Col span={16}>
                 <div className="attachment-item" style={{padding: '24px'}}>
                   <div className="section-title" style={{paddingBottom: '24px'}}>Attachments</div>
                   {
-                    getProp(data, 'task.attachment', []).map((item: any) => (
+                    getProp(tasksData, 'task.attachment', []).map((item: any) => (
                       <Row justify="space-between" style={{paddingBottom: '15px'}}>
                         <Col>
                           <Row>
@@ -430,7 +429,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
                           <Row>
                             <Col className="attachment-item__text">{getProp(item, 'fileSize', '412kb')}</Col>
                             <Col>
-                              <img src={DownloadIcon} alt="No download icon" />
+                              <DownloadOutlined />
                             </Col>
                           </Row>
                         </Col>
@@ -438,7 +437,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
                     ))
                   }
                 </div>
-              </Col> */}
+              </Col>
             </Row>
             {deleteModal && (
               <DeleteModal
@@ -449,7 +448,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
                 title="Delete task"
               />
             )}
-            { showEditModal && <AddTask
+            {showEditModal && <AddTask
                 modal={showEditModal}
                 productSlug={getBasePath().replace("/products/", "")}
                 modalType={true}
@@ -457,7 +456,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
                 task={task}
                 submit={fetchData}
                 tasks={tasks}
-              />
+            />
             }
           </>
         )
@@ -472,16 +471,11 @@ const mapStateToProps = (state: any) => ({
   currentProduct: state.work.currentProduct || {}
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-});
+const mapDispatchToProps = (dispatch: any) => ({});
 
 const TaskContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(Task);
 
-TaskContainer.getInitialProps = async ({ query, ...rest }) => {
-  const { taskId, productSlug } = query;
-  return { taskId, productSlug };
-}
 export default TaskContainer;
