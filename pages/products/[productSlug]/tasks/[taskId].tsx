@@ -13,7 +13,6 @@ import {CustomAvatar, EditIcon, DynamicHtml, Spinner} from '../../../../componen
 // import AddTask from '../../../../components/Products/AddTask';
 import {apiDomain} from "../../../../utilities/constants"
 import DeleteModal from '../../../../components/Products/DeleteModal';
-import {FileFilled, LinkOutlined, VideoCameraFilled, DownloadOutlined} from "@ant-design/icons";
 import moment from 'moment';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";
@@ -175,17 +174,6 @@ type Params = {
   currentProduct: any;
 };
 
-const Icon = (fileType: any) => {
-  switch (fileType) {
-    case "file":
-      return <FileFilled/>
-    case "link":
-      return <LinkOutlined/>
-    default:
-      return <VideoCameraFilled/>
-  }
-}
-
 const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct}) => {
   const router = useRouter();
   const {taskId, productSlug} = router.query;
@@ -222,8 +210,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
       message.success("Item is successfully deleted!").then();
       router.push(getBasePath() === "" ? "/" : `${getBasePath()}/tasks`).then();
     },
-    onError(err) {
-      console.log("Delete item error: ", err);
+    onError() {
+      // console.log("Delete item error: ", err);
       message.error("Failed to delete item!").then();
     }
   });
@@ -231,8 +219,6 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   // const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT, {
   //   variables: {productSlug: getBasePath().replace("/products/", "")}
   // });
-
-  console.log('task', original);
 
   // const taskclaimSet = getProp(data, 'task.taskclaimSet', null)
   //   ? getProp(data, 'task.taskclaimSet', null)[0]
@@ -289,7 +275,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   <span> / </span>
                 </>
               )}
-              <span>{getProp(task, 'title', '')}</span>
+              <span>{getProp(original, 'task.title', '')}</span>
             </div>
             <Row
               justify="space-between"

@@ -16,7 +16,6 @@ interface IProps {
 }
 
 const Attachments: React.FunctionComponent<IProps> = ({data}) => {
-  console.log(data)
   return (
     <>
       <List
