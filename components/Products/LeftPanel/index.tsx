@@ -1,6 +1,5 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {connect} from 'react-redux';
-import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {Avatar, Menu, Row} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
@@ -33,6 +32,7 @@ const links: LinkType[] = [
 
 const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
   const router = useRouter();
+
   const {data, error, loading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
     variables: {slug: productSlug}
   });
@@ -57,7 +57,6 @@ const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
   //     })
   //   }
   // }, [data]);
-  console.log(data, error, loading)
 
   if (loading) return <Spinner/>
 
@@ -75,9 +74,11 @@ const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
               <div>
                 <div className="page-title">{getProp(data, 'product.name', '')}</div>
                 <div>
-                  <Link href="">
-                    <a className="custom-link">{getProp(data, 'product.website', '')}</a>
-                  </Link>
+                  <a className="custom-link"
+                     href={getProp(data, 'product.website', '')}
+                  >
+                    {getProp(data, 'product.website', '')}
+                  </a>
                 </div>
               </div>
             </Row>

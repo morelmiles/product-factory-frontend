@@ -161,6 +161,7 @@ const Summary: React.FunctionComponent = () => {
       .then(response => response.json())
       .then((res) => {
         if (res) {
+          console.log(res)
           setTreeData(formatData(res));
         }
       })
@@ -323,7 +324,6 @@ const Summary: React.FunctionComponent = () => {
                 </Col>
                 <Col>
                   <div>
-
                     <Search placeholder="Search text" className='mr-10' onSearch={onSearch} style={{width: 200}}/>
                     {
                       searchFoundCount > 0 && (
@@ -352,7 +352,7 @@ const Summary: React.FunctionComponent = () => {
                   treeData={treeData}
                   onChange={(treeData: TreeNode[]) => setTreeData(treeData)}
                   onMoveNode={changeTree}
-                  canDrag={() => isAdminOrManager}
+                  canDrag={false}
                   generateNodeProps={({node}) => ({
                     buttons: isAdminOrManager
                       ? [
