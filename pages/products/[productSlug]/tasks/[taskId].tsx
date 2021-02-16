@@ -5,17 +5,18 @@ import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
-import {GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT} from '../../../../graphql/queries';
+import {GET_TASK_BY_ID} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
 import {DELETE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
-import {CustomAvatar, EditIcon, DynamicHtml, TaskTable, Spinner} from '../../../../components';
-import AddTask from '../../../../components/Products/AddTask';
+import {CustomAvatar, EditIcon, DynamicHtml, Spinner} from '../../../../components';
+// import AddTask from '../../../../components/Products/AddTask';
 import {apiDomain} from "../../../../utilities/constants"
 import DeleteModal from '../../../../components/Products/DeleteModal';
-import {FileFilled, FilePdfFilled, FileImageFilled, DownloadOutlined} from "@ant-design/icons";
+import {FileFilled, LinkOutlined, VideoCameraFilled, DownloadOutlined} from "@ant-design/icons";
 import moment from 'moment';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
+import Attachments from "../../../../components/Attachments";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -29,7 +30,7 @@ interface AddCommentFormProps {
   replyToID?: number,
 }
 
-const AddCommentForm: React.FunctionComponent<AddCommentFormProps> = ({taskId, user, replyToID = 0, onAdded}) => {
+const AddCommentForm: React.FunctionComponent<AddCommentFormProps> = ({taskId, replyToID = 0, onAdded}) => {
   const [comment, setComment] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
 
@@ -176,12 +177,12 @@ type Params = {
 
 const Icon = (fileType: any) => {
   switch (fileType) {
-    case "doc":
+    case "file":
       return <FileFilled/>
-    case "pdf":
-      return <FilePdfFilled/>
+    case "link":
+      return <LinkOutlined/>
     default:
-      return <FileImageFilled/>
+      return <VideoCameraFilled/>
   }
 }
 
@@ -190,16 +191,18 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const {taskId, productSlug} = router.query;
 
   const [deleteModal, showDeleteModal] = useState(false);
-  const [task, setTask] = useState({});
-  const [tasks, setTasks] = useState([]);
-  const [showEditModal, setShowEditModal] = useState(false);
+  // const [task, setTask] = useState({});
+  const [task] = useState({});
+  // const [tasks, setTasks] = useState([]);
+  // const [showEditModal, setShowEditModal] = useState(false);
 
-  const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
+  // const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
+  const {data: original, error, loading} = useQuery(GET_TASK_BY_ID, {
     variables: {id: taskId}
   });
 
   const getBasePath = () => {
-    //TODO: fix it
+    //fix it
     // if (match.url.includes("/products")) {
     //   const params: any = matchPath(match.url, {
     //     path: "/products/:productSlug/tasks/:taskId",
@@ -209,7 +212,6 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
 
     return `/products/${productSlug}`;
     // }
-    return '';
   }
 
   const [deleteTask] = useMutation(DELETE_TASK, {
@@ -226,9 +228,11 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     }
   });
 
-  const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT, {
-    variables: {productSlug: getBasePath().replace("/products/", "")}
-  });
+  // const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT, {
+  //   variables: {productSlug: getBasePath().replace("/products/", "")}
+  // });
+
+  console.log('task', original);
 
   // const taskclaimSet = getProp(data, 'task.taskclaimSet', null)
   //   ? getProp(data, 'task.taskclaimSet', null)[0]
@@ -246,24 +250,24 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     }
   }
 
-  const fetchData = async () => {
-    const data: any = await refetch({
-      id: taskId
-    })
+  // const fetchData = async () => {
+  //   const data: any = await refetch({
+  //     id: taskId
+  //   })
+  //
+  //   if (!data.errors) {
+  //     setTask(data.data.task);
+  //   }
+  // }
 
-    if (!data.errors) {
-      setTask(data.data.task);
-    }
-  }
-
-  useEffect(() => {
-    if (original) {
-      setTask(original.task);
-    }
-    if (tasksData) {
-      setTasks(tasksData.tasks);
-    }
-  }, [original]);
+  // useEffect(() => {
+  //   if (original) {
+  //     setTask(original.task);
+  //   }
+  //   if (tasksData) {
+  //     setTasks(tasksData.tasks);
+  //   }
+  // }, [original]);
 
   if (loading) return <Spinner/>
 
@@ -302,8 +306,10 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                     Delete
                   </Button>
                   <EditIcon
-                    className='ml-10'
-                    onClick={() => setShowEditModal(true)}
+                    className="ml-10"
+                    // onClick={() => setShowEditModal(true)}
+                    onClick={() => {
+                    }}
                   />
                 </Col>
               )}
@@ -404,60 +410,37 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                 }
               </Col>
             </Row>
-            <TaskTable
-              title={'Dependant Tasks'}
-              tasks={getProp(task, 'dependOn', [])}
-              productSlug={getBasePath().replace("/products/", "")}
-              statusList={getProp(original, 'statusList', [])}
-            />
+            {/*<TaskTable*/}
+            {/*  title={'Dependant Tasks'}*/}
+            {/*  tasks={getProp(task, 'dependOn', [])}*/}
+            {/*  productSlug={getBasePath().replace("/products/", "")}*/}
+            {/*  statusList={getProp(original, 'statusList', [])}*/}
+            {/*/>*/}
+
             <Divider/>
             <CommentList taskId={taskId} user={user}/>
-            <Row>
-              <Col span={16}>
-                <div className="attachment-item" style={{padding: '24px'}}>
-                  <div className="section-title" style={{paddingBottom: '24px'}}>Attachments</div>
-                  {
-                    getProp(tasksData, 'task.attachment', []).map((item: any) => (
-                      <Row justify="space-between" style={{paddingBottom: '15px'}}>
-                        <Col>
-                          <Row>
-                            <Col>{Icon(item.fileType)}</Col>
-                            <Col className="attachment-item__text">{getProp(item, 'name', '')}</Col>
-                          </Row>
-                        </Col>
-                        <Col>
-                          <Row>
-                            <Col className="attachment-item__text">{getProp(item, 'fileSize', '412kb')}</Col>
-                            <Col>
-                              <DownloadOutlined />
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    ))
-                  }
-                </div>
-              </Col>
-            </Row>
+
+            <Attachments data={getProp(original, 'task.attachment', [])}/>
+
             {deleteModal && (
               <DeleteModal
                 modal={deleteModal}
-                productSlug={""}
+                productSlug={''}
                 closeModal={() => showDeleteModal(false)}
                 submit={deleteTask}
-                title="Delete task"
+                title='Delete task'
               />
             )}
-            {showEditModal && <AddTask
-                modal={showEditModal}
-                productSlug={getBasePath().replace("/products/", "")}
-                modalType={true}
-                closeModal={setShowEditModal}
-                task={task}
-                submit={fetchData}
-                tasks={tasks}
-            />
-            }
+            {/*{showEditModal && <AddTask*/}
+            {/*    modal={showEditModal}*/}
+            {/*    productSlug={getBasePath().replace("/products/", "")}*/}
+            {/*    modalType={true}*/}
+            {/*    closeModal={setShowEditModal}*/}
+            {/*    task={task}*/}
+            {/*    submit={fetchData}*/}
+            {/*    tasks={tasks}*/}
+            {/*/>*/}
+            {/*}*/}
           </>
         )
       }
@@ -471,7 +454,8 @@ const mapStateToProps = (state: any) => ({
   currentProduct: state.work.currentProduct || {}
 });
 
-const mapDispatchToProps = (dispatch: any) => ({});
+const mapDispatchToProps = () => ({});
+// const mapDispatchToProps = (dispatch: any) => ({});
 
 const TaskContainer = connect(
   mapStateToProps,

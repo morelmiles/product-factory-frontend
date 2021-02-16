@@ -33,7 +33,7 @@ const Portfolio: React.FunctionComponent = () => {
         ) : !reviewError && (
           <>
             {reviews && getProp(reviews, 'reviews', []).map((review: any, index: number) => {
-              const reviewInitiative = getProp(review, 'initiative', null)
+              // const reviewInitiative = getProp(review, 'initiative', null)
               return (
                 <div key={`review-${index}`} className="grey-border p-24 mb-24">
                   <Row>
@@ -57,8 +57,8 @@ const Portfolio: React.FunctionComponent = () => {
                           style={{margin: '1px 16px 0px 0'}}
                         />
                         <span className="text-grey-9 text-sm">
-                                                            {formatDate(getProp(review, 'updatedAt', new Date()))}
-                                                        </span>
+                          {formatDate(getProp(review, 'updatedAt', new Date()))}
+                        </span>
                       </Row>
                       <p className="pr-15 text-sm">
                         <strong>Review: </strong>

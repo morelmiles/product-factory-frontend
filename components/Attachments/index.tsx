@@ -1,29 +1,74 @@
 import * as React from "react";
-import {List, Typography} from "antd";
+import {Col, List, Row, Typography} from "antd";
+import {LinkOutlined, VideoCameraOutlined, FileOutlined, DownloadOutlined} from "@ant-design/icons";
+import ReactPlayer from "react-player";
 
 
-const data = [
-  'Racing car sprays burning fuel into crowd.',
-  'Japanese princess to wed commoner.',
-  'Australian walks 100km after outback crash.',
-  'Man charged over missing wedding girl.',
-  'Los Angeles battles huge wildfires.',
-];
+interface IAttachment {
+  fileType: string,
+  id: number,
+  name: string,
+  path: string,
+}
 
-const Attachments: React.FunctionComponent = () => {
+interface IProps {
+  data: IAttachment[]
+}
+
+const Attachments: React.FunctionComponent<IProps> = ({data}) => {
+  console.log(data)
   return (
     <>
       <List
-        header={<div>Attachments</div>}
+        header={<Typography.Text strong>Attachments</Typography.Text>}
         bordered
         dataSource={data}
-        renderItem={(item: React.ReactChild) => (
+        renderItem={(attachment: IAttachment) => (
           <List.Item>
-            <Typography.Text>{item}</Typography.Text>
+            {
+              attachment.fileType == 'link' &&
+              <Row>
+                  <Col>
+                      <LinkOutlined style={{marginRight: 10}}/>
+                      <a href={attachment.path} target="_blank">{attachment.name}</a>
+                  </Col>
+              </Row>
+            }
+            {
+              attachment.fileType == 'video' &&
+              <>
+                  <Row>
+                      <Col>
+                          <VideoCameraOutlined style={{marginRight: 10}}/>
+                          <Typography.Text>{attachment.name}</Typography.Text>
+                      </Col>
+                  </Row>
+                  <Row>
+                      <ReactPlayer
+                          width="100%"
+                          height="160px"
+                          url={attachment.path}
+                      />
+                  </Row>
+              </>
+            }
+            {
+              attachment.fileType == 'file' &&
+              <Row style={{width: '100%'}} justify="space-between">
+                  <Col>
+                      <FileOutlined style={{marginRight: 10}}/>
+                      <Typography.Text>{attachment.name}</Typography.Text>
+                  </Col>
+                  <Col>
+                      <a href={attachment.path} download={attachment.name} target="_blank">
+                          <DownloadOutlined />
+                      </a>
+                  </Col>
+              </Row>
+            }
           </List.Item>
         )}
       >
-
       </List>
     </>
   );

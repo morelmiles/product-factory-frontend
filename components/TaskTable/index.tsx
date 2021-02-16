@@ -16,17 +16,15 @@ type Props = {
   showPendingTasks?: boolean;
 };
 
-const TaskTable: React.FunctionComponent<Props> = ({
-                                                     tasks,
-                                                     statusList = TASK_CLAIM_TYPES,
-                                                     title = 'Related Tasks',
-                                                     hideTitle = false,
-                                                     showPendingTasks = false
-                                                   }) => {
-
-    console.log("data3", tasks);
-
-
+const TaskTable: React.FunctionComponent<Props> = (
+  {
+    tasks,
+    statusList = TASK_CLAIM_TYPES,
+    title = 'Related Tasks',
+    hideTitle = false,
+    showPendingTasks = false
+  }
+) => {
   return tasks && tasks.length > 0 ? (
     <>
       {!hideTitle && <div className="mt-30">{title}</div>}
@@ -64,7 +62,6 @@ const TaskTable: React.FunctionComponent<Props> = ({
             const productName = task.producttaskSet[0] ? task.producttaskSet[0].product.name : '';
             const productSlug = task.producttaskSet[0] ? task.producttaskSet[0].product.slug : '';
 
-
             return (
               <Col key={index} span={24}>
                 <Divider/>
@@ -84,7 +81,7 @@ const TaskTable: React.FunctionComponent<Props> = ({
                       </Col>
                       <Col>
                         <Link
-                          href={`/tasks/${task.id}`}
+                          href={`/products/${productSlug}/tasks/${task.id}`}
                         >
                           <a className="text-grey-9">
                             <Row align="middle">

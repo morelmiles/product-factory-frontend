@@ -13,6 +13,7 @@ import {CustomAvatar, StarScore} from "../../../../components";
 import ReactPlayer from "react-player";
 import ProfileTop from "../../../../components/Profile/ProfileTop";
 import {RadioChangeEvent} from "antd/es";
+import Attachments from "../../../../components/Attachments";
 
 const {Content} = Layout;
 
@@ -133,35 +134,44 @@ const ProfileItem: React.FunctionComponent = () => {
               <div className="mb-15">
                 <Row>
                   <Col span={17}>
-                    <p style={{marginBottom: 5}}>
+                    <Row style={{marginBottom: 3}}>
                       <Typography.Text strong>Product: </Typography.Text>
                       <Link
-                        href={`/products/${getProp(review, 'review.review.product.id', '')}/summary`}
+                        href={`/products/${getProp(review, 'review.review.product.slug', '')}`}
                       >
-                        <a className="text-black">{getProp(review, 'review.review.product.name', '')}</a>
+                        <a className="text-black"
+                           style={{marginLeft: 5}}>{getProp(review, 'review.review.product.name', '')}</a>
                       </Link>
-                    </p>
-                    {initiative && (
-                      <p className="text-sm" style={{marginBottom: 5}}>
-                        <Typography.Text strong>Initiative: </Typography.Text>
-                        <Link
-                          href={`/products/${getProp(review, 'review.review.product.id', '')}/initiatives/${initiative.id}`}
-                        >
-                          <a className="text-black">{initiative.name}</a>
-                        </Link>
-                      </p>
-                    )}
-                    <p className="text-sm" style={{marginBottom: 5}}>
+                    </Row>
+
+                    {
+                      initiative && (
+                        <Row style={{marginBottom: 3}}>
+                          <Typography.Text strong>Initiative: </Typography.Text>
+                          <Link
+                            href={`/products/${getProp(review, 'review.review.product.id', '')}/initiatives/${initiative.id}`}
+                          >
+                            <a className="text-black">{initiative.name}</a>
+                          </Link>
+                        </Row>
+                      )
+                    }
+                    <Row style={{marginBottom: 3}}>
                       <Typography.Text strong>Summary: </Typography.Text>
-                      <span className="text-grey">
-                                                {getProp(review, 'review.review.product.shortDescription', '')}
-                                            </span>
-                    </p>
-                    {attachment && attachment.length > 0 && (
-                      <div>
-                        <Typography.Text strong>Attachments: </Typography.Text>
-                      </div>
-                    )}
+                      <Typography.Text type="secondary" style={{marginLeft: 5}}>
+                        {getProp(review, 'review.review.product.shortDescription', '')}
+                      </Typography.Text>
+                    </Row>
+
+                    {
+                      attachment && attachment.length > 0 && (
+                        <Row style={{marginTop: 20, marginBottom: 10}}>
+                          <Col span={20}>
+                            <Attachments data={attachment}/>
+                          </Col>
+                        </Row>
+                      )
+                    }
                   </Col>
                   <Col span={7}>
                     <ReactPlayer

@@ -57,7 +57,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
               </Button>
               <AddTask
                 modal={showAddTaskModal}
-                // productSlug={productSlug}
                 closeModal={closeTaskModal}
                 tasks={data?.tasks}
                 submit={fetchTasks}
