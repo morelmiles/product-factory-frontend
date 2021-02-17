@@ -1,40 +1,38 @@
-
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Row, Col, Avatar, message, Button } from 'antd';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import ReactPlayer from 'react-player';
-import parse from 'html-react-parser';
-import { GET_INITIATIVE_BY_ID } from '../../../../graphql/queries';
-import { DELETE_INITIATIVE } from '../../../../graphql/mutations';
+import {useRouter} from 'next/router';
+import {Row, Col, message, Button} from 'antd';
+import {useQuery, useMutation} from '@apollo/react-hooks';
+// import ReactPlayer from 'react-player';
+// import parse from 'html-react-parser';
+import {GET_INITIATIVE_BY_ID, GET_PRODUCT_INFO_BY_ID} from '../../../../graphql/queries';
+import {DELETE_INITIATIVE} from '../../../../graphql/mutations';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import AddInitiative from '../../../../components/Products/AddInitiative';
-import { TaskTable, DynamicHtml, Spinner } from '../../../../components';
+import {TaskTable, DynamicHtml, Spinner} from '../../../../components';
 import EditIcon from '../../../../components/EditIcon';
-import { getProp } from '../../../../utilities/filters';
-import { getInitialName, randomKeys } from '../../../../utilities/utils';
+import {getProp} from '../../../../utilities/filters';
+import {randomKeys} from '../../../../utilities/utils';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 
+
 type Params = {
-  productSlug?: any;
-  initiativeId?: any;
   userRole?: string;
-  currentProduct: any;
 };
 
-const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initiativeId, userRole, currentProduct = {} }) => {
-//   const params: any = matchPath(match.url, {
-//     path: "/products/:productSlug/initiatives/:initiativeId",
-//     exact: false,
-//     strict: false
-//   });
-  console.log('initiativeId in initiative details', initiativeId)
+const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
   const router = useRouter();
-  const { data: original, error, loading, refetch } = useQuery(GET_INITIATIVE_BY_ID, {
-    variables: { id: initiativeId }
+  let {initiativeId, productSlug} = router.query;
+  productSlug = String(productSlug);
+
+  const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
+    variables: {id: initiativeId}
   });
+  const {data: product, error: productError, loading: productLoading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
+    variables: {slug: productSlug}
+  });
+
   const [initiative, setInitiative] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
@@ -43,12 +41,11 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initia
       id: initiativeId
     },
     onCompleted() {
-      message.success("Item is successfully deleted!");
-      router.push(`/products/${productSlug}/initiatives`);
+      message.success("Item is successfully deleted!").then();
+      router.push(`/products/${productSlug}/initiatives`).then();
     },
-    onError(err) {
-      console.log("Delete item error: ", err);
-      message.error("Failed to delete item!");
+    onError() {
+      message.error("Failed to delete item!").then();
     }
   });
 
@@ -68,30 +65,22 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initia
     }
   }, [original]);
 
-  console.log('original',original);
-  console.log('currentProduct',currentProduct)
-  if(loading) return <Spinner/>
+  if (loading || productLoading) return <Spinner/>
 
   return (
-    <LeftPanelContainer productSlug={productSlug}>
+    <LeftPanelContainer>
       {
-        !error && (
+        !error && !productError && (
           <React.Fragment key={randomKeys()}>
             <div className="text-grey">
               {
                 <>
-                  <Link
-                    href={`/products/${productSlug}`}
-                    className="text-grey"
-                  >
-                    {getProp(currentProduct, 'name', '')}
+                  <Link href={`/products/${productSlug}`}>
+                    <a className="text-grey">{getProp(product, 'name', '')}</a>
                   </Link>
                   <span> / </span>
-                  <Link
-                    href={`/products/${productSlug}/initiatives`}
-                    className="text-grey"
-                  >
-                    Initiatives
+                  <Link href={`/products/${productSlug}/initiatives`}>
+                    <a className="text-grey">Initiatives</a>
                   </Link>
                   <span> / </span>
                 </>
@@ -149,12 +138,12 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initia
             )}
             {
               showEditModal && <AddInitiative
-                modal={showEditModal}
-                productSlug={productSlug}
-                modalType={true}
-                closeModal={setShowEditModal}
-                submit={fetchData}
-                initiative={initiative}
+                  modal={showEditModal}
+                  productSlug={productSlug}
+                  modalType={true}
+                  closeModal={setShowEditModal}
+                  submit={fetchData}
+                  initiative={initiative}
               />
             }
           </React.Fragment>
@@ -167,21 +156,14 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({ productSlug, initia
 const mapStateToProps = (state: any) => ({
   user: state.user,
   userRole: state.work.userRole,
-  currentProduct: state.work.currentProduct,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-});
+// const mapDispatchToProps = (dispatch: any) => ({});
+const mapDispatchToProps = () => ({});
 
 const InitiativeDetailContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(InitiativeDetail);
 
-InitiativeDetailContainer.getInitialProps = async ({ query }) => {
-    console.log('initiativeId in getInitialProps',query)
-    const { initiativeId, productSlug } = query;
-    return { initiativeId, productSlug }
-  
-  }
 export default InitiativeDetailContainer;

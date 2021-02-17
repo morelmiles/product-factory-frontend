@@ -31,7 +31,7 @@ type Props = {
   setAttachments?: any;
 }
 
-const Attachment: React.SFC<Props> = ({
+const Attachment: React.FunctionComponent<Props> = ({
   attachments,
   capabilityId,
   editMode,
@@ -40,7 +40,7 @@ const Attachment: React.SFC<Props> = ({
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT, {
     onCompleted(res) {
-      message.success("Item is successfully deleted!");
+      message.success("Item is successfully deleted!").then();
       if (res.deleteAttachment && res.deleteAttachment.status) {
         const newAttachments = Object.assign([], attachments);
         let idx = _.findIndex(newAttachments, (entry: any) => {
@@ -53,7 +53,7 @@ const Attachment: React.SFC<Props> = ({
       }
     },
     onError(err) {
-      console.log("Delete item error: ", err);
+      // console.log("Delete item error: ", err);
       message.error("Failed to delete item!");
     }
   });

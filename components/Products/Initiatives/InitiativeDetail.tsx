@@ -44,7 +44,7 @@ const InitiativeDetail: React.SFC<Params> = ({ match, history, userRole, current
       history.push(`/products/${params.params.productSlug}/initiatives`);
     },
     onError(err) {
-      console.log("Delete item error: ", err);
+      // console.log("Delete item error: ", err);
       message.error("Failed to delete item!");
     }
   });

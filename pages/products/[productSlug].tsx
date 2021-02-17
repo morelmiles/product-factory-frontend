@@ -57,7 +57,7 @@ const Summary: React.FunctionComponent = () => {
       );
     },
     onError(err) {
-      console.log("update item error: ", err);
+      // console.log("update item error: ", err);
       message.error("Failed to update tree!").then();
     }
   });
@@ -161,7 +161,7 @@ const Summary: React.FunctionComponent = () => {
       .then(response => response.json())
       .then((res) => {
         if (res) {
-          console.log(res)
+          // console.log(res)
           setTreeData(formatData(res));
         }
       })
@@ -180,7 +180,7 @@ const Summary: React.FunctionComponent = () => {
       message.success("Item is successfully deleted!").then();
     },
     onError(err) {
-      console.log("Delete item error: ", err);
+      // console.log("Delete item error: ", err);
       message.error("Failed to delete item!").then();
     }
   });

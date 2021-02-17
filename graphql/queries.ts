@@ -291,6 +291,12 @@ export const GET_CAPABILITY_BY_ID = gql`
           }
           kind
         }
+        producttaskSet {
+          product {
+            name
+            slug
+          }
+        }
       }
     }
   }
@@ -372,6 +378,12 @@ export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
           slug
         }
         kind
+      }
+      producttaskSet {
+        product {
+          name
+          slug
+        }
       }
     }
   }

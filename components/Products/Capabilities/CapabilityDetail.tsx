@@ -58,7 +58,7 @@ const CapabilityDetail: React.SFC<Params> = ({ match, history, userRole }) => {
       history.push(`/products/${params.params.productSlug}/capabilities`);
     },
     onError(err) {
-      console.log("Delete item error: ", err);
+      // console.log("Delete item error: ", err);
       message.error("Failed to delete item!");
     }
   });

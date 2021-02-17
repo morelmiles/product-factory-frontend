@@ -5,7 +5,7 @@ const Tree: React.FunctionComponent = () => {
         <SortableTree
             treeData={treeData}
             // onChange={(treeData: TreeNode[]) => setTreeData(treeData)}
-            onChange={(treeData: TreeNode[]) => console.log('window',window)}
+            onChange={(treeData: TreeNode[]) => {}}
 
             onMoveNode={changeTree}
             canDrag={() => getProp(data, 'product.isAdmin', false)}

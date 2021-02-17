@@ -13,12 +13,12 @@ const props = {
   onChange(info: any) {
     const { status } = info.file;
     if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
+      // console.log(info.file, info.fileList);
     }
     if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
+      message.success(`${info.file.name} file uploaded successfully.`).then();
     } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
+      message.error(`${info.file.name} file upload failed.`).then();
     }
   },
 };
@@ -30,7 +30,7 @@ type Props = {
     capabilityId?: number;
 };
 
-const Add: React.SFC<Props> = ({
+const Add: React.FunctionComponent<Props> = ({
   modal,
   closeModal,
   submit,
@@ -45,10 +45,10 @@ const Add: React.SFC<Props> = ({
 
   const handleOk = () => {
     if (validURL(path)) {
-      onCreate();
+      onCreate().then();
       closeModal();
     } else {
-      message.error("Attachment url is not valid");
+      message.error("Attachment url is not valid").then();
     }
   }
   

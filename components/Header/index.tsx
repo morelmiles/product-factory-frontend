@@ -21,7 +21,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   const router = useRouter();
 
   const onSearch = (e: any) => {
-    console.log("search submitted: ", e);
+    // console.log("search submitted: ", e);
   }
   const getSelectedItem = () => {
     switch (router.asPath) {

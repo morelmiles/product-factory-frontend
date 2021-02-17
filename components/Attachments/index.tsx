@@ -2,6 +2,7 @@ import * as React from "react";
 import {Col, List, Row, Typography} from "antd";
 import {LinkOutlined, VideoCameraOutlined, FileOutlined, DownloadOutlined} from "@ant-design/icons";
 import ReactPlayer from "react-player";
+import Add from "../Attachment/add";
 
 
 interface IAttachment {
@@ -12,13 +13,15 @@ interface IAttachment {
 }
 
 interface IProps {
-  data: IAttachment[]
+  data: IAttachment[],
+  style?: any
 }
 
-const Attachments: React.FunctionComponent<IProps> = ({data}) => {
+const Attachments: React.FunctionComponent<IProps> = ({data, style}) => {
   return (
     <>
       <List
+        style={style}
         header={<Typography.Text strong>Attachments</Typography.Text>}
         bordered
         dataSource={data}
@@ -60,7 +63,7 @@ const Attachments: React.FunctionComponent<IProps> = ({data}) => {
                   </Col>
                   <Col>
                       <a href={attachment.path} download={attachment.name} target="_blank">
-                          <DownloadOutlined />
+                          <DownloadOutlined/>
                       </a>
                   </Col>
               </Row>
@@ -69,6 +72,13 @@ const Attachments: React.FunctionComponent<IProps> = ({data}) => {
         )}
       >
       </List>
+
+      {/*<Add*/}
+      {/*  modal={showEditModal}*/}
+      {/*  submit={submit}*/}
+      {/*  closeModal={setShowEditModal}*/}
+      {/*  capabilityId={capabilityId}*/}
+      {/*/>*/}
     </>
   );
 };

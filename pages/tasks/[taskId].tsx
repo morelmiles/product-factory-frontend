@@ -189,7 +189,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
     variables: { id: taskId }
   });
 
-  console.log('currentProduct',currentProduct)
+  // console.log('currentProduct',currentProduct);
   const getBasePath = () => {
       //TODO: fix it
     // if (match.url.includes("/products")) {
@@ -213,7 +213,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
       router.push(getBasePath() === "" ? "/" : `${getBasePath()}/tasks` );
     },
     onError(err) {
-      console.log("Delete item error: ", err);
+      // console.log("Delete item error: ", err);
       message.error("Failed to delete item!");
     }
   });
