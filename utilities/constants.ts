@@ -1,24 +1,24 @@
 // Type for tree
 export type DataNode = {
-  id: number;
+  id?: number;
   name: string;
-  description: string;
+  description?: string;
   children: DataNode[];
-  tasks: any;
+  tasks?: any;
   available_tasks?: any;
   parent?: any;
   tags?: Array<any>;
 }
-  
+
 export type TreeNode = {
-  id: number;
-  title: string;
-  description: string;
+  id?: number;
+  title?: string;
+  description?: string;
   subtitle?: string;
   children?: TreeNode[];
   parent?: number;
   parentId?: number;
-  tasks: any;
+  tasks?: any;
   available_tasks?: any;
   tags?: Array<any>;
 }

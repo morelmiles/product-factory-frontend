@@ -5,19 +5,18 @@ import {useMutation, useQuery} from '@apollo/react-hooks';
 import {Button, Col, Divider, Input, message, Row, Tag} from 'antd';
 import ReactPlayer from 'react-player';
 import SortableTree, {getVisibleNodeCount} from 'react-sortable-tree';
-import {GET_PRODUCT_BY_ID} from '../../graphql/queries';
+import {GET_CAPABILITIES_BY_PRODUCT, GET_PRODUCT_BY_ID} from '../../graphql/queries';
 import {DELETE_CAPABILITY, UPDATE_CAPABILITY} from '../../graphql/mutations';
 import {TagType} from '../../graphql/types';
-import AddCapability from '../../components/Products/AddCapability';
+import AddOrEditCapability from '../../components/Products/AddOrEditCapability';
 import {DynamicHtml, Spinner} from '../../components';
 import {getProp} from '../../utilities/filters';
-import {randomKeys} from '../../utilities/utils';
-import {apiDomain, DataNode, TreeNode} from '../../utilities/constants';
+// import {randomKeys} from '../../utilities/utils';
+import {TreeNode} from '../../utilities/constants';
 import {setWorkState} from '../../lib/actions';
 import {WorkState} from '../../lib/reducers/work.reducer';
 
 import LeftPanelContainer from '../../components/HOC/withLeftPanel';
-import classnames from 'classnames';
 import {useRouter} from "next/router";
 
 const pluralize = require('pluralize');
@@ -28,14 +27,13 @@ const Summary: React.FunctionComponent = () => {
   const router = useRouter();
   const {productSlug} = router.query;
 
-  const initialData: TreeNode[] = [];
   const [data, setData] = useState<any>({});
-  const [treeData, setTreeData] = useState<TreeNode[]>(initialData);
+  const [treeData, setTreeData] = useState<any>([]);
   const [searchString, setSearchString] = useState('');
   const [searchFocusIndex, setSearchFocusIndex] = useState(0);
   const [searchFoundCount, setSearchFoundCount] = useState<any>(null);
 
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddCapabilityModal, setShowAddCapabilityModal] = useState(false);
   const [capabilityNode, setCapabilityNode] = useState<any>(null);
   const [isEdit, setModalType] = useState(false);
   const [hideParent, setHideParent] = useState(false);
@@ -52,12 +50,11 @@ const Summary: React.FunctionComponent = () => {
 
   const [updateCapability, {error: updateError}] = useMutation(UPDATE_CAPABILITY, {
     onCompleted() {
-      setTreeData(
-        updatedTreeData(treeData, 0, [])
-      );
+      // setTreeData(
+      //   updatedTreeData(treeData, 0, [])
+      // );
     },
-    onError(err) {
-      // console.log("update item error: ", err);
+    onError() {
       message.error("Failed to update tree!").then();
     }
   });
@@ -65,53 +62,18 @@ const Summary: React.FunctionComponent = () => {
   const onSearch = (value: string) => setSearchString(value);
 
   const getSubTitle = (item: any) => {
-    // subtitle += item.children.length > 0 ? pluralize("Capability", item.children.length, true) : '';
     return item.available_tasks > 0
       ? `${item.available_tasks}/${item.tasks.length} ` + pluralize("Task", item.available_tasks) + " Available"
       : '';
   }
 
-  /* Functions for format api response and tree changes */
-  const formatData = (data: DataNode[]): TreeNode[] => {
-    return data.map((item: DataNode) => {
-      if (item.children.length === 0) {
-        return {
-          id: item.id,
-          title: item.name,
-          description: item.description,
-          parentId: item.parent,
-          subtitle: getSubTitle(item),
-          tasks: item.tasks,
-          available_tasks: item.available_tasks,
-          children: []
-        }
-      } else {
-        if (item.children) {
-          return {
-            id: item.id,
-            title: item.name,
-            description: item.description,
-            parentId: item.parent,
-            subtitle: getSubTitle(item),
-            tasks: item.tasks,
-            available_tasks: item.available_tasks,
-            children: formatData(item.children)
-          }
-        }
-
-        return {
-          id: item.id,
-          title: item.name,
-          description: item.description,
-          parentId: item.parent,
-          subtitle: getSubTitle(item),
-          tasks: item.tasks,
-          available_tasks: item.available_tasks,
-          children: []
-        }
-      }
-    });
-  }
+  const formatData = (data: any) => {
+    return data.map((node: any) => ({
+      id: getProp(node, 'id'),
+      title: getProp(node, 'data.name'),
+      children: node.children ? formatData(getProp(node, 'children', [])) : []
+    }))
+  };
 
   const updatedTreeData = (data: TreeNode[], index: number, children: TreeNode[]): TreeNode[] => {
     return data.map((node: TreeNode) => {
@@ -156,31 +118,35 @@ const Summary: React.FunctionComponent = () => {
     }
   }
 
-  const fetchData = () => {
-    fetch(`${apiDomain}/api/${productSlug}/capabilities/`)
-      .then(response => response.json())
-      .then((res) => {
-        if (res) {
-          // console.log(res)
-          setTreeData(formatData(res));
-        }
-      })
-  }
+  const {data: capabilities, error: capabilitiesError, loading: capabilitiesLoading, refetch} = useQuery(GET_CAPABILITIES_BY_PRODUCT, {
+    variables: {productSlug}
+  });
+
+  useEffect(() => {
+    let capabilitiesStr: string = getProp(capabilities, 'capabilityNodes', '');
+    capabilitiesStr = capabilitiesStr.replaceAll('\'', '"');
+
+    if (capabilitiesStr.length > 0) {
+      let capabilitiesData = JSON.parse(capabilitiesStr);
+
+      setTreeData(formatData(capabilitiesData[0].children));
+    }
+  }, [capabilities]);
+
 
   useEffect(() => {
     if (original) {
       setData(original);
-      fetchData();
+      // fetchData();
     }
   }, [original]);
 
   const [deleteCapability] = useMutation(DELETE_CAPABILITY, {
     onCompleted() {
-      fetchData();
+      // fetchData();
       message.success("Item is successfully deleted!").then();
     },
-    onError(err) {
-      // console.log("Delete item error: ", err);
+    onError() {
       message.error("Failed to delete item!").then();
     }
   });
@@ -227,7 +193,7 @@ const Summary: React.FunctionComponent = () => {
       name: node.title
     });
     setModalType(type);
-    setShowEditModal(true);
+    setShowAddCapabilityModal(true);
   }
 
   const count = getVisibleNodeCount({treeData});
@@ -249,7 +215,7 @@ const Summary: React.FunctionComponent = () => {
                     () => {
                       setModalType(false);
                       setHideParent(false);
-                      setShowEditModal(true)
+                      setShowAddCapabilityModal(true)
                     }
                   }
                 >
@@ -395,23 +361,23 @@ const Summary: React.FunctionComponent = () => {
                         <div className='pl-25'>{node.subtitle}</div>
                       </Row>
                     ),
-                    subtitle: (
-                      <div className={classnames({'mt-5': getProp(node, 'tasks', []).length > 0})}>
-                        {
-                          getProp(node, 'tasks', []).map((task: any) => {
-                            return task.status === 0 && (
-                              <span key={randomKeys()}>
-                                <Link
-                                  href={`/products/${productSlug}/tasks/${task.id}`}
-                                >
-                                  <a className="ml-5">{`#${task.id}`}</a>
-                                </Link>
-                              </span>
-                            )
-                          })
-                        }
-                      </div>
-                    )
+                    // subtitle: (
+                    //   <div className={classnames({'mt-5': getProp(node, 'tasks', []).length > 0})}>
+                    //     {
+                    //       getProp(node, 'tasks', []).map((task: any) => {
+                    //         return task.status === 0 && (
+                    //           <span key={randomKeys()}>
+                    //             <Link
+                    //               href={`/products/${productSlug}/tasks/${task.id}`}
+                    //             >
+                    //               <a className="ml-5">{`#${task.id}`}</a>
+                    //             </Link>
+                    //           </span>
+                    //         )
+                    //       })
+                    //     }
+                    //   </div>
+                    // )
                   })}
                   searchMethod={customSearchMethod}
                   searchQuery={searchString}
@@ -420,12 +386,13 @@ const Summary: React.FunctionComponent = () => {
                 />
               </div>
               {
-                showEditModal && <AddCapability
-                    modal={showEditModal}
+                showAddCapabilityModal &&
+                <AddOrEditCapability
+                    modal={showAddCapabilityModal}
                     modalType={isEdit}
                     capability={capabilityNode}
-                    closeModal={setShowEditModal}
-                    submit={fetchData}
+                    closeModal={setShowAddCapabilityModal}
+                    submit={refetch}
                     hideParentOptions={hideParent}
                 />
               }

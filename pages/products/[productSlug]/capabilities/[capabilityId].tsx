@@ -12,7 +12,7 @@ import {TagType} from '../../../../graphql/types';
 import {getProp} from '../../../../utilities/filters';
 import {TaskTable, Attachment, DynamicHtml, Spinner, ContainerFlex, Header} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
-import AddCapability from '../../../../components/Products/AddCapability';
+import AddCapability from '../../../../components/Products/AddOrEditCapability';
 import EditIcon from '../../../../components/EditIcon';
 import Attachments from "../../../../components/Attachments";
 

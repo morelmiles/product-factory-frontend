@@ -702,4 +702,10 @@ export const GET_REVIEW_BY_ID = gql`
       }
     }
   }
-`
+`;
+
+export const GET_CAPABILITIES_BY_PRODUCT = gql`
+  query GetCapabilities($productSlug: String) {
+    capabilityNodes(productSlug: $productSlug)
+  }
+`;

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { Modal, Row, Input, message, Button, Select } from 'antd';
-import { useMutation } from '@apollo/react-hooks';
-import { CREATE_CAPABILITY, UPDATE_CAPABILITY } from '../../../graphql/mutations';
+import React, {useState} from 'react';
+import {connect} from 'react-redux';
+import {Modal, Row, Input, message, Button, Select} from 'antd';
+import {useMutation} from '@apollo/react-hooks';
+import {CREATE_CAPABILITY, UPDATE_CAPABILITY} from '../../../graphql/mutations';
 import Attachment from '../../../components/Attachment';
-import { getProp } from '../../../utilities/filters';
-import { addCapability } from '../../../lib/actions';
+import {getProp} from '../../../utilities/filters';
+// import {addCapability} from '../../../lib/actions';
 import {useRouter} from "next/router";
 
-const { Option } = Select;
+const {Option} = Select;
 
 type Props = {
   modal?: boolean;
@@ -18,21 +18,23 @@ type Props = {
   submit: Function;
   userRole: string;
   currentProduct?: any;
-  addCapability: any;
+  // addCapability: any;
   hideParentOptions?: boolean;
 };
 
-const AddCapability: React.FunctionComponent<Props> = ({
-  modal,
-  capability,
-  closeModal,
-  modalType,
-  submit,
-  userRole,
-  currentProduct,
-  addCapability,
-  hideParentOptions,
-}) => {
+const AddOrEditCapability: React.FunctionComponent<Props> = (
+  {
+    modal,
+    capability,
+    closeModal,
+    modalType,
+    submit,
+    // userRole,
+    currentProduct,
+    // addCapability,
+    hideParentOptions,
+  }
+) => {
   const router = useRouter();
   const {productSlug} = router.query;
 
@@ -47,21 +49,21 @@ const AddCapability: React.FunctionComponent<Props> = ({
   );
   const [createCapability] = useMutation(CREATE_CAPABILITY);
   const [updateCapability] = useMutation(UPDATE_CAPABILITY);
-  
+
   const handleCancel = () => {
     closeModal(!modal);
   };
 
   const handleOk = () => {
     if (title === "") {
-      message.error("Title can't be empty!");
+      message.error("Title can't be empty!").then();
       return;
     }
 
     if (modalType) {
-      onUpdate();
+      onUpdate().then();
     } else {
-      onCreate();
+      onCreate().then();
     }
 
     closeModal();
@@ -74,7 +76,7 @@ const AddCapability: React.FunctionComponent<Props> = ({
       parent: parent ? parseInt(parent) : 0,
       attachments: attachments.map((item: any) => item.id)
     };
-    
+
     try {
       const res = await updateCapability({
         variables: {
@@ -82,7 +84,7 @@ const AddCapability: React.FunctionComponent<Props> = ({
           id: capability ? capability.id : 0
         }
       });
-      
+
       if (res.data && res.data.updateCapability) {
         message.success('Capability is updated successfully!');
         submit();
@@ -91,23 +93,21 @@ const AddCapability: React.FunctionComponent<Props> = ({
       message.success(`Capability modification is failed!  Reason: ${e.message}`);
     }
   }
-  
+
   const onCreate = async () => {
-    const input = {
-      name: title,
-      productSlug,
-      parent: capability ? capability.id : parseInt(parent),
-      attachments: attachments.map((item: any) => item.id)
-    };
-    
     try {
       const res = await createCapability({
-        variables: { input }
+        variables: {
+          name: title,
+          productSlug: productSlug,
+          attachments: attachments.map((item: any) => item.id)
+        }
       });
-      
-      if (res.data && res.data.createCapability) {
+      console.log(res)
+
+      if (res.data && res.data.createCapabilityNode && res.data.createCapabilityNode.status) {
         message.success('Capability is created successfully!');
-        addCapability(res.data.createCapability.capability);
+        // addCapability(res.data.createCapability.capability);
         submit();
       }
     } catch (e) {
@@ -118,7 +118,7 @@ const AddCapability: React.FunctionComponent<Props> = ({
   return (
     <>
       <Modal
-        title={ modalType ? "Edit capability" : "Add capability" }
+        title={modalType ? "Edit capability" : "Add capability"}
         visible={modal}
         onCancel={handleCancel}
         footer={[
@@ -126,7 +126,7 @@ const AddCapability: React.FunctionComponent<Props> = ({
             Cancel
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            { modalType ? "Edit" : "Add" }
+            {modalType ? "Edit" : "Add"}
           </Button>
         ]}
       >
@@ -140,28 +140,32 @@ const AddCapability: React.FunctionComponent<Props> = ({
               required
             />
           </Row>
-          {!hideParentOptions && currentProduct && currentProduct.capabilitySet && (
-            <Row className="mt-15">
-              <label>Parent capability:</label>
-              <Select
-                defaultValue={parent}
-                onChange={setParent}
-              >
-                <Option value={0}>Select parent</Option>
-                {currentProduct.capabilitySet.map((option: any, idx: number) => (
-                  <Option key={`cap${idx}`} value={option.id}>
-                    {option.name}
-                  </Option>
-                ))}
-              </Select>
-            </Row>
-          )}
-          {<Attachment
-            attachments={attachments}
-            capabilityId={capability ? capability.id : null}
-            editMode={true}
-            setAttachments={setAttachments}
-          />}
+          {
+            !hideParentOptions && currentProduct && currentProduct.capabilitySet && (
+              <Row className="mt-15">
+                <label>Parent capability:</label>
+                <Select
+                  defaultValue={parent}
+                  onChange={setParent}
+                >
+                  <Option value={0}>Select parent</Option>
+                  {currentProduct.capabilitySet.map((option: any, idx: number) => (
+                    <Option key={`cap${idx}`} value={option.id}>
+                      {option.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Row>
+            )
+          }
+          {
+            <Attachment
+              attachments={attachments}
+              capabilityId={capability ? capability.id : null}
+              editMode={true}
+              setAttachments={setAttachments}
+            />
+          }
         </>
       </Modal>
     </>
@@ -175,13 +179,14 @@ const mapStateToProps = (state: any) => ({
   allTags: state.work.allTags
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-  addCapability: (data: any) => dispatch(addCapability(data))
+// const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = () => ({
+  // addCapability: (data: any) => dispatch(addCapability(data))
 });
 
 const AddCapabilityContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(AddCapability);
+)(AddOrEditCapability);
 
 export default AddCapabilityContainer;

@@ -45,56 +45,38 @@ export const CREATE_CODE_REPOSITORY = gql`
 `;
 
 export const CREATE_CAPABILITY = gql`
-  mutation CreateCapability($input: CapabilityInput!) {
-    createCapability(input: $input) {
+  mutation CreateCapability($name: String!, $nodeId: Int, $productSlug: String, $attachments: [Int]) {
+    createCapabilityNode(input: {name: $name, nodeId: $nodeId, productSlug: $productSlug, attachments: $attachments}) {
+      status
       capability {
         id
+        path
+        depth
         name
-        parent {
-          id
-          name
-          product {
-            id
-            slug
-          }
-        }
-        product {
-          id
-          slug
-        }
       }
     }
   }
 `;
 
 export const UPDATE_CAPABILITY = gql`
-  mutation UpdateCapability($input: CapabilityInput!, $id: Int!) {
-    updateCapability(input: $input, id: $id) {
+  mutation UpdateCapability($nodeId: Int!, $name: String, $productSlug: String, $attachments: [Int]) {
+    updateCapabilityNode(nodeId: $nodeId, input: {name: $name, nodeId: $nodeId, productSlug: $productSlug, attachments: $attachments}) {
+      status
       capability {
         id
+        path
+        depth
         name
-        parent {
-          id
-          name
-          product {
-            id
-            slug
-          }
-        }
-        product {
-          id
-          slug
-        }
       }
     }
   }
 `;
 
 export const DELETE_CAPABILITY = gql`
-  mutation DeleteCapability($id: Int!) {
-    deleteCapability(id: $id) {
-      capabilityId
+  mutation DeleteCapability($nodeId: Int!) {
+    deleteCapabilityNode(nodeId: $nodeId) {
       status
+      capabilityId
     }
   }
 `;
