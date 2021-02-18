@@ -8,7 +8,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { GET_CAPABILITIES } from '../../../../graphql/queries';
 import { getProp } from '../../../../utilities/filters';
 import { randomKeys } from '../../../../utilities/utils';
-import AddCapability from '../../../../components/Products/AddCapability';
+import AddCapability from '../../../../components/Products/AddOrEditCapability';
 import PaperClipIcon from '../../../../public/assets/icons/paper-clip.svg';
 import { Spinner } from '../../../../components';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
