@@ -1,51 +1,35 @@
-
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Row, Col, Button, Table } from 'antd';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_CAPABILITIES } from '../../../../graphql/queries';
-import { getProp } from '../../../../utilities/filters';
-import { randomKeys } from '../../../../utilities/utils';
+import {useRouter} from 'next/router';
+import {Row, Col, Button, Table} from 'antd';
+import {PaperClipOutlined} from "@ant-design/icons";
+import {useQuery} from '@apollo/react-hooks';
+import {GET_CAPABILITIES_BY_PRODUCT_AS_LIST} from '../../../../graphql/queries';
+import {getProp} from '../../../../utilities/filters';
+import {randomKeys} from '../../../../utilities/utils';
 import AddCapability from '../../../../components/Products/AddOrEditCapability';
-import PaperClipIcon from '../../../../public/assets/icons/paper-clip.svg';
-import { Spinner } from '../../../../components';
+import {Spinner} from '../../../../components';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 
-var pluralize = require('pluralize');
 
 type Params = {
-  productSlug?: string;
   userRole?: string;
 };
 
-const CapabilityList: React.FunctionComponent<Params> = ({ userRole, productSlug }) => {
-//   const params: any = match.url.includes("/products")
-//     ? matchPath(match.url, {
-//         path: "/products/:productSlug/capabilities",
-//         exact: false,
-//         strict: false
-//       })
-//     : matchPath(match.url, {
-//         path: "/capabilities",
-//         exact: false,
-//         strict: false
-//       })
+const CapabilityList: React.FunctionComponent<Params> = ({userRole}) => {
   const router = useRouter();
-  const { data, error, loading, refetch } = useQuery(GET_CAPABILITIES, {
-    variables: { productSlug }
+  const {productSlug} = router.query;
+
+  const {data, error, loading, refetch} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
+    variables: {productSlug}
   });
   const [dataSource, setDataSource] = useState<any>([]);
   const [showEditModal, setShowEditModal] = useState(false);
 
   const getBasePath = () => {
-    // if (match.url.includes("/products")) {
-      return `/products/${productSlug}`;
-    // }
-    return "";
+    return `/products/${productSlug}`;
   }
-  const isEdit = false;
   const columns = [
     {
       title: 'Capability',
@@ -63,14 +47,13 @@ const CapabilityList: React.FunctionComponent<Params> = ({ userRole, productSlug
         <>
           {todo_tasks
             ? todo_tasks.map((task: any) => (
-                <Link
-                  key={randomKeys()}
-                  href={getBasePath() + `/tasks/${task.id}`}
-                  className='mt-5'
-                >
-                  <>#{task.id}</>
-                </Link>
-              ))
+              <Link
+                key={randomKeys()}
+                href={getBasePath() + `/tasks/${task.id}`}
+              >
+                <a className="mt-5">#{task.id}</a>
+              </Link>
+            ))
             : null
           }
         </>
@@ -84,14 +67,13 @@ const CapabilityList: React.FunctionComponent<Params> = ({ userRole, productSlug
         <>
           {done_tasks
             ? done_tasks.map((task: any) => (
-                <Link
-                  key={randomKeys()}
-                  href={getBasePath() + `/tasks/${task.id}`}
-                  className='mr-5'
-                >
-                  <>#{task.id}</>
-                </Link>
-              ))
+              <Link
+                key={randomKeys()}
+                href={getBasePath() + `/tasks/${task.id}`}
+              >
+                <a className="mr-5">#{task.id}</a>
+              </Link>
+            ))
             : null
           }
         </>
@@ -106,17 +88,12 @@ const CapabilityList: React.FunctionComponent<Params> = ({ userRole, productSlug
           {
             attachments > 0
               ? (
-                  <span>
-                    <img
-                      alt='paper clip'
-                      src={PaperClipIcon}
-                      className='mr-3'
-                    />
-                    {attachments}
+                <span>
+                    <PaperClipOutlined />
+                  {attachments}
                   </span>
-                )
+              )
               : null
-  
           }
         </>
       )
@@ -128,17 +105,13 @@ const CapabilityList: React.FunctionComponent<Params> = ({ userRole, productSlug
     }
   ];
 
-  const fetchData = async () => {
-    const { data: capabilities } = await refetch({
-      productSlug
-    });
-
-    const source: any[] = getProp(capabilities, 'capabilities', []).map((item: any, idx:number) => {
+  const fetchData = (capabilities: any) => {
+    const source: any[] = getProp(capabilities, 'capabilitiesAsList', []).map((item: any, idx: number) => {
       const done_tasks: any[] = [];
       const todo_tasks: any[] = [];
-      
+
       getProp(item, 'taskSet', []).forEach((child: any) => {
-        switch(child.status) {
+        switch (child.status) {
           case 0:
             todo_tasks.push(child);
             break;
@@ -166,20 +139,22 @@ const CapabilityList: React.FunctionComponent<Params> = ({ userRole, productSlug
   }
 
   useEffect(() => {
-    (async () => { await fetchData(); })();
-  }, []);
+    if (!error)  {
+      fetchData(data);
+    }
+  }, [data]);
 
-  if(loading) return <Spinner/>
+  if (loading) return <Spinner/>
 
   return (
-    <LeftPanelContainer productSlug={productSlug}>
+    <LeftPanelContainer>
       {
         !error && (
           <>
             <Row justify="space-between">
               <Col>
                 <div className="page-title text-center mb-15">
-                  {`Explore ${pluralize("capability", data.capabilities.length, true)}`}
+                  Explore capabilities {getProp(data, 'capabilitiesAsList.length', 0)}
                 </div>
               </Col>
               {(userRole === "Manager" || userRole === "Admin") && (
@@ -191,15 +166,15 @@ const CapabilityList: React.FunctionComponent<Params> = ({ userRole, productSlug
               )}
             </Row>
             {
-              showEditModal && <AddCapability
-                modal={showEditModal}
-                productSlug={productSlug}
-                modalType={isEdit}
-                closeModal={setShowEditModal}
-                submit={fetchData}
+              showEditModal &&
+              <AddCapability
+                  modal={showEditModal}
+                  modalType={'add-root'}
+                  closeModal={setShowEditModal}
+                  submit={fetchData}
               />
             }
-            <Table dataSource={dataSource} columns={columns} />
+            <Table dataSource={dataSource} columns={columns}/>
           </>
         )
       }
@@ -212,16 +187,11 @@ const mapStateToProps = (state: any) => ({
   userRole: state.work.userRole
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-});
+const mapDispatchToProps = () => ({});
 
 const CapabilityListContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CapabilityList);
 
-CapabilityListContainer.getInitialProps = async ({ query}) => {
-    const { productSlug } = query;
-    return { productSlug };
-}
 export default CapabilityListContainer;

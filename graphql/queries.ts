@@ -653,7 +653,34 @@ export const GET_REVIEW_BY_ID = gql`
 `;
 
 export const GET_CAPABILITIES_BY_PRODUCT = gql`
-  query GetCapabilities($productSlug: String) {
+  query GetCapabilities($productSlug: String!) {
     capabilities(productSlug: $productSlug)
+  }
+`;
+
+export const GET_CAPABILITIES_BY_PRODUCT_AS_LIST = gql`
+  query GetCapabilities($productSlug: String!) {
+    capabilitiesAsList(productSlug: $productSlug) {
+      id
+      name
+      product {
+        id
+        name
+        shortDescription
+        videoUrl
+      }
+      tasks {
+        id
+        title
+        description
+        shortDescription
+        status
+      }
+      attachments {
+        id
+        name
+        path
+      }
+    }
   }
 `;
