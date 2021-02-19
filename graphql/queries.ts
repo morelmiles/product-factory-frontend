@@ -235,7 +235,7 @@ export const GET_CAPABILITIES = gql`
 `;
 
 export const GET_CAPABILITY_BY_ID = gql`
-  query GetCapability($nodeId: Int!) {
+  query GetCapability($nodeId: Int!, $slug: String!, $userId: Int!) {
     capability(nodeId: $nodeId) {
       id
       path
@@ -269,6 +269,7 @@ export const GET_CAPABILITY_BY_ID = gql`
         }
       }
     }
+    isAdminOrManager(slug: $slug, userId: $userId)
   }
 `;
 

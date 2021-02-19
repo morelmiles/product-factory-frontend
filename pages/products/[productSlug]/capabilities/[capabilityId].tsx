@@ -11,39 +11,36 @@ import {TagType} from '../../../../graphql/types';
 import {getProp} from '../../../../utilities/filters';
 import {TaskTable, DynamicHtml, Spinner, ContainerFlex, Header} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
-import AddCapability from '../../../../components/Products/AddOrEditCapability';
+import AddOrEditCapability from '../../../../components/Products/AddOrEditCapability';
 import EditIcon from '../../../../components/EditIcon';
 import Attachments from "../../../../components/Attachments";
 
 
 const {Content} = Layout;
 
-type Params = {
-  userRole?: string;
-  user: any;
-};
-
-const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => {
+const CapabilityDetail: React.FunctionComponent = () => {
   const router = useRouter();
   let {capabilityId, productSlug} = router.query;
   productSlug = String(productSlug);
-  // console.log('role', user);
 
   const [capability, setCapability] = useState({});
+  const [isAdminOrManager, setIsAdminOrManager] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const {data, error, loading, refetch} = useQuery(GET_CAPABILITY_BY_ID, {
-    variables: {nodeId: capabilityId}
+    variables: {nodeId: capabilityId, slug: productSlug, userId: userId == null ? 0 : userId}
   });
 
   const [deleteModal, showDeleteModal] = useState(false);
 
   const [deleteCapability] = useMutation(DELETE_CAPABILITY, {
     variables: {
-      id: capabilityId
+      nodeId: capabilityId
     },
     onCompleted() {
       message.success("Item is successfully deleted!").then();
+      refetch().then();
       router.push(`/products/${productSlug}/capabilities`).then();
     },
     onError() {
@@ -59,8 +56,13 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
   }
 
   useEffect(() => {
+    setUserId(localStorage.getItem('userId'));
+  }, []);
+
+  useEffect(() => {
     if (!error) {
       setCapability(getProp(data, 'capability', {}));
+      setIsAdminOrManager(getProp(data, 'isAdminOrManager', false));
     }
   }, [data]);
 
@@ -92,46 +94,47 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
                       {getProp(capability, 'name', '')}
                     </div>
                   </Col>
-                  {(userRole === "Manager" || userRole === "Admin") && (
+                  {
+                    isAdminOrManager &&
                     <Col>
-                      <Button
-                        onClick={() => showDeleteModal(true)}
-                      >
-                        Delete
-                      </Button>
-                      <EditIcon
-                        className='ml-10'
-                        onClick={() => setShowEditModal(true)}
-                      />
+                        <Button
+                            onClick={() => showDeleteModal(true)}
+                        >
+                            Delete
+                        </Button>
+                        <EditIcon
+                            className='ml-10'
+                            onClick={() => setShowEditModal(true)}
+                        />
                     </Col>
-                  )}
+                  }
                 </Row>
                 <Row>
                   <Space align="start" size={20}>
                     {getProp(capability, 'product.videoUrl', null) && (
-                    <Col>
-                      <ReactPlayer
-                        width="100%"
-                        height="170px"
-                        className="mr-10"
-                        url={getProp(capability, 'product.videoUrl')}
-                      />
-                    </Col>
-                  )}
-                  <Col xs={24} md={10}>
-                    <DynamicHtml
-                      className='mb-10'
-                      text={getProp(capability, 'product.shortDescription', '')}
-                    />
-                    {
-                      getProp(capability, 'product.tag', []).map((tag: TagType, idx: number) => (
-                        <Tag key={`tag-${idx}`}>{tag.name}</Tag>
-                      ))
-                    }
-                    {getProp(capability, 'attachment', []).length > 0 && (
-                      <Attachments style={{marginTop: 20}} data={getProp(capability, 'attachment', [])}/>
+                      <Col>
+                        <ReactPlayer
+                          width="100%"
+                          height="170px"
+                          className="mr-10"
+                          url={getProp(capability, 'product.videoUrl')}
+                        />
+                      </Col>
                     )}
-                  </Col>
+                    <Col xs={24} md={10}>
+                      <DynamicHtml
+                        className='mb-10'
+                        text={getProp(capability, 'product.shortDescription', '')}
+                      />
+                      {
+                        getProp(capability, 'product.tag', []).map((tag: TagType, idx: number) => (
+                          <Tag key={`tag-${idx}`}>{tag.name}</Tag>
+                        ))
+                      }
+                      {getProp(capability, 'attachment', []).length > 0 && (
+                        <Attachments style={{marginTop: 20}} data={getProp(capability, 'attachment', [])}/>
+                      )}
+                    </Col>
                   </Space>
                 </Row>
                 <TaskTable
@@ -139,18 +142,18 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
                   productSlug={productSlug}
                 />
                 {
-                  deleteModal && (
-                    <DeleteModal
+                  deleteModal &&
+                  <DeleteModal
                       modal={deleteModal}
                       productSlug={productSlug}
                       closeModal={() => showDeleteModal(false)}
                       submit={deleteCapability}
-                      title="Delete initiative"
-                    />
-                  )
+                      title="Delete capability"
+                  />
                 }
                 {
-                  showEditModal && <AddCapability
+                  showEditModal &&
+                  <AddOrEditCapability
                       modal={showEditModal}
                       modalType={'edit'}
                       closeModal={setShowEditModal}
@@ -167,10 +170,7 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  user: state.user,
-  userRole: state.work.userRole
-});
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = () => ({});
 

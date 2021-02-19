@@ -18,9 +18,7 @@ import LeftPanelContainer from '../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
 
 
-const pluralize = require('pluralize');
 const {Search} = Input;
-
 
 const Summary: React.FunctionComponent = () => {
   const router = useRouter();
@@ -41,7 +39,7 @@ const Summary: React.FunctionComponent = () => {
 
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
-  }, [])
+  }, []);
 
   const {data: original, error, loading} = useQuery(GET_PRODUCT_BY_ID, {
     variables: {slug: productSlug, userId: userId == null ? 0 : userId}
@@ -280,10 +278,11 @@ const Summary: React.FunctionComponent = () => {
                             {capability.name}
                           </Link>&nbsp;
                           {`(${capability.availableTaskNum}/${capability.taskSet.length} 
-                            Available ${pluralize("Task", capability.availableTaskNum)})`}
+                            Available Tasks ${capability.availableTaskNum})`}
                         </Col>
                       )
                     }
+
                     return null;
                   })
                 }
