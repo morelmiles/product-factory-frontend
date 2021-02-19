@@ -51,9 +51,7 @@ const ProfileTop: React.FunctionComponent = () => {
     return (
         <>
             {
-                loading && socialsDataLoading ? (
-                    <Spin size="large"/>
-                ) : !error && !socialsDataError && (
+                loading && socialsDataLoading ? null : !error && !socialsDataError && (
                     <>
                         <Row>
                             <Col>

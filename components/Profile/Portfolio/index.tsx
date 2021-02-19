@@ -22,7 +22,8 @@ const Portfolio: React.FunctionComponent = () => {
     variables: {personSlug}
   })
 
-  if (reviewLoading) return <Spinner/>
+  // if (reviewLoading) return <Spinner/>
+  if (reviewLoading) return null;
 
   return (
     <>
