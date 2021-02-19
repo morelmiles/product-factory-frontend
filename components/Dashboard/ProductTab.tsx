@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { Row, Col, Card, Tag } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
@@ -18,8 +17,9 @@ type Props = {
 };
 
 const ProductTab: React.FunctionComponent<Props> = ({ setProductNum }) => {
-  const { data, error, loading, refetch } = useQuery(GET_PRODUCTS);
+  const { data, error, loading } = useQuery(GET_PRODUCTS);
   const router = useRouter();
+
   useEffect(() => {
     if (data && data.products) {
       setProductNum(data.products.length);
@@ -39,7 +39,7 @@ const ProductTab: React.FunctionComponent<Props> = ({ setProductNum }) => {
     if (e) {
       e.preventDefault();
     }
-    router.push(link);
+    router.push(link).then();
   }
 
   if(loading) return <Spinner/>

@@ -5,12 +5,11 @@ import {useRouter} from 'next/router'
 import {Row, Col, Tag, Button, message, Layout} from 'antd';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player';
-// import parse from 'html-react-parser';
 import {GET_CAPABILITY_BY_ID} from '../../../../graphql/queries';
 import {DELETE_CAPABILITY} from '../../../../graphql/mutations';
 import {TagType} from '../../../../graphql/types';
 import {getProp} from '../../../../utilities/filters';
-import {TaskTable, Attachment, DynamicHtml, Spinner, ContainerFlex, Header} from '../../../../components';
+import {TaskTable, DynamicHtml, Spinner, ContainerFlex, Header} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import AddCapability from '../../../../components/Products/AddOrEditCapability';
 import EditIcon from '../../../../components/EditIcon';
@@ -21,19 +20,22 @@ const {Content} = Layout;
 
 type Params = {
   userRole?: string;
+  user: any;
 };
 
-const CapabilityDetail: React.FunctionComponent<Params> = ({userRole}) => {
+const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => {
   const router = useRouter();
   let {capabilityId, productSlug} = router.query;
   productSlug = String(productSlug);
+  console.log('role', user);
 
   const [capability, setCapability] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
 
   const {data: original, error, loading, refetch} = useQuery(GET_CAPABILITY_BY_ID, {
-    variables: {id: capabilityId}
+    variables: {nodeId: capabilityId}
   });
+  console.log('capability', original);
 
   const [deleteModal, showDeleteModal] = useState(false);
 
@@ -57,14 +59,14 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole}) => {
     return "/capabilities";
   }
 
-  const fetchData = async () => {
-    const data = await refetch({
-      id: capabilityId
-    })
-    if (!data.errors) {
-      setCapability(data.data.capability);
-    }
-  }
+  // const fetchData = async () => {
+  //   const data = await refetch({
+  //     id: capabilityId
+  //   })
+  //   if (!data.errors) {
+  //     setCapability(data.data.capability);
+  //   }
+  // }
 
   useEffect(() => {
     if (original) {
@@ -87,16 +89,16 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole}) => {
                     Capabilities
                   </Link>
                   <span> / </span>
-                  {getProp(capability, 'breadcrumb', []).map((item: any, idx: number) => (
-                    <React.Fragment key={`breadcrumb-${idx}`}>
-                      <Link href={getBasePath() + `/${item.id}`}>
-                        {item.name}
-                      </Link>
-                      {idx !== getProp(capability, 'breadcrumb', []).length - 1 && (
-                        <><span> / </span></>
-                      )}
-                    </React.Fragment>
-                  ))}
+                  {/*{getProp(capability, 'breadcrumb', []).map((item: any, idx: number) => (*/}
+                  {/*  <React.Fragment key={`breadcrumb-${idx}`}>*/}
+                  {/*    <Link href={getBasePath() + `/${item.id}`}>*/}
+                  {/*      {item.name}*/}
+                  {/*    </Link>*/}
+                  {/*    {idx !== getProp(capability, 'breadcrumb', []).length - 1 && (*/}
+                  {/*      <><span> / </span></>*/}
+                  {/*    )}*/}
+                  {/*  </React.Fragment>*/}
+                  {/*))}*/}
                 </div>
                 <Row
                   justify="space-between"
@@ -169,7 +171,7 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole}) => {
                       modal={showEditModal}
                       modalType={'edit'}
                       closeModal={setShowEditModal}
-                      submit={fetchData}
+                      submit={() => refetch()}
                       capability={capability}
                   />
                 }
@@ -187,7 +189,6 @@ const mapStateToProps = (state: any) => ({
   userRole: state.work.userRole
 });
 
-// const mapDispatchToProps = (dispatch: any) => ({});
 const mapDispatchToProps = () => ({});
 
 const CapabilityDetailContainer = connect(

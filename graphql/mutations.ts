@@ -46,12 +46,10 @@ export const CREATE_CODE_REPOSITORY = gql`
 
 export const CREATE_CAPABILITY = gql`
   mutation CreateCapability($name: String!, $nodeId: Int, $productSlug: String, $attachments: [Int]) {
-    createCapabilityNode(input: {name: $name, nodeId: $nodeId, productSlug: $productSlug, attachments: $attachments}) {
+    createCapability(input: {name: $name, nodeId: $nodeId, productSlug: $productSlug, attachments: $attachments}) {
       status
       capability {
         id
-        path
-        depth
         name
       }
     }
@@ -60,12 +58,10 @@ export const CREATE_CAPABILITY = gql`
 
 export const UPDATE_CAPABILITY = gql`
   mutation UpdateCapability($nodeId: Int!, $name: String, $attachments: [Int]) {
-    updateCapabilityNode(nodeId: $nodeId, input: {name: $name, nodeId: $nodeId, attachments: $attachments}) {
+    updateCapability(nodeId: $nodeId, input: {name: $name, nodeId: $nodeId, attachments: $attachments}) {
       status
       capability {
         id
-        path
-        depth
         name
       }
     }
@@ -74,7 +70,7 @@ export const UPDATE_CAPABILITY = gql`
 
 export const DELETE_CAPABILITY = gql`
   mutation DeleteCapability($nodeId: Int!) {
-    deleteCapabilityNode(nodeId: $nodeId) {
+    deleteCapability(nodeId: $nodeId) {
       status
       capabilityId
     }

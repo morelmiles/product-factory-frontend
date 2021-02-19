@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {Modal, Row, Input, message, Button, Select} from 'antd';
 import {useMutation} from '@apollo/react-hooks';
@@ -78,7 +78,7 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
         }
       });
 
-      if (res.data && res.data.updateCapabilityNode && res.data.updateCapabilityNode.status) {
+      if (res.data && res.data.updateCapability && res.data.updateCapability.status) {
         message.success('Capability is updated successfully!');
         submit();
       }
@@ -94,8 +94,6 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
       let nodeTitle = title;
       nodeTitle = nodeTitle.replaceAll("'", "\\'");
       nodeTitle = nodeTitle.replaceAll('"', "\\'");
-
-      console.log(nodeTitle);
 
       if (modalType === 'add-root') {
         input = {
@@ -115,9 +113,9 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
 
       const res = await createCapability({variables: input});
 
-      if (res.data && res.data.createCapabilityNode && res.data.createCapabilityNode.status) {
+      if (res.data && res.data.createCapability && res.data.createCapability.status) {
         message.success('Capability is created successfully!');
-        submit();
+        // submit();
       }
     } catch (e) {
       message.error(`Capability creation is failed!: Reason: ${e.message}`);
@@ -188,7 +186,6 @@ const mapStateToProps = (state: any) => ({
   allTags: state.work.allTags
 });
 
-// const mapDispatchToProps = (dispatch: any) => ({
 const mapDispatchToProps = () => ({});
 
 const AddCapabilityContainer = connect(

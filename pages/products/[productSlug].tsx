@@ -14,9 +14,9 @@ import {getProp} from '../../utilities/filters';
 import {TreeNode} from '../../utilities/constants';
 import {setWorkState} from '../../lib/actions';
 import {WorkState} from '../../lib/reducers/work.reducer';
-
 import LeftPanelContainer from '../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
+
 
 const pluralize = require('pluralize');
 const {Search} = Input;
@@ -33,7 +33,7 @@ const Summary: React.FunctionComponent = () => {
   const [searchFoundCount, setSearchFoundCount] = useState<any>(null);
 
   const [showAddCapabilityModal, setShowAddOrEditModal] = useState(false);
-  const [capabilityNode, setCapabilityNode] = useState<any>(null);
+  const [capability, setCapability] = useState<any>(null);
   const [modalType, setModalType] = useState<string>('');
   const [hideParent, setHideParent] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -60,11 +60,11 @@ const Summary: React.FunctionComponent = () => {
 
   const onSearch = (value: string) => setSearchString(value);
 
-  const getSubTitle = (item: any) => {
-    return item.available_tasks > 0
-      ? `${item.available_tasks}/${item.tasks.length} ` + pluralize("Task", item.available_tasks) + " Available"
-      : '';
-  }
+  // const getSubTitle = (item: any) => {
+  //   return item.available_tasks > 0
+  //     ? `${item.available_tasks}/${item.tasks.length} ` + pluralize("Task", item.available_tasks) + " Available"
+  //     : '';
+  // }
 
   const formatData = (data: any) => {
     return data.map((node: any) => ({
@@ -74,28 +74,28 @@ const Summary: React.FunctionComponent = () => {
     }))
   };
 
-  const updatedTreeData = (data: TreeNode[], index: number, children: TreeNode[]): TreeNode[] => {
-    return data.map((node: TreeNode) => {
-      if (node.id === index) {
-        return {
-          ...node,
-          subtitle: getSubTitle(node),
-          children
-        }
-      } else {
-        if (node.children) {
-          const newChildren = updatedTreeData(node.children, index, children);
-          return {
-            ...node,
-            subtitle: getSubTitle(node),
-            children: newChildren
-          }
-        }
-
-        return node;
-      }
-    });
-  }
+  // const updatedTreeData = (data: TreeNode[], index: number, children: TreeNode[]): TreeNode[] => {
+  //   return data.map((node: TreeNode) => {
+  //     if (node.id === index) {
+  //       return {
+  //         ...node,
+  //         subtitle: getSubTitle(node),
+  //         children
+  //       }
+  //     } else {
+  //       if (node.children) {
+  //         const newChildren = updatedTreeData(node.children, index, children);
+  //         return {
+  //           ...node,
+  //           subtitle: getSubTitle(node),
+  //           children: newChildren
+  //         }
+  //       }
+  //
+  //       return node;
+  //     }
+  //   });
+  // }
 
   // const changeTree = (data: any) => {
   //   const {node, nextParentNode} = data;
@@ -128,9 +128,9 @@ const Summary: React.FunctionComponent = () => {
 
   const convertDataAndSetTree = (capabilities: any) => {
     try {
-      let capabilitiesStr: string = getProp(capabilities, 'capabilityNodes', '');
+      let capabilitiesStr: string = getProp(capabilities, 'capabilities', '');
       capabilitiesStr = capabilitiesStr.replaceAll("'", '"');
-      capabilitiesStr = capabilitiesStr.replaceAll(/\\\\"/g, "'");
+      capabilitiesStr = capabilitiesStr.replaceAll('\\\\"', "'");
 
       if (capabilitiesStr.length > 0) {
         let capabilitiesData = JSON.parse(capabilitiesStr);
@@ -199,7 +199,7 @@ const Summary: React.FunctionComponent = () => {
   }
 
   const editNode = (type: string, node: any) => {
-    setCapabilityNode({
+    setCapability({
       ...node,
       name: node.title
     });
@@ -403,7 +403,7 @@ const Summary: React.FunctionComponent = () => {
                 <AddOrEditCapability
                     modal={showAddCapabilityModal}
                     modalType={modalType}
-                    capability={capabilityNode}
+                    capability={capability}
                     closeModal={setShowAddOrEditModal}
                     submit={refetch}
                     hideParentOptions={hideParent}

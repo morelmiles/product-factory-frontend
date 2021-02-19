@@ -47,28 +47,28 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
         id
         name
       }
-      capabilitySet {
-        id
-        name
-        availableTaskNum
-        taskSet {
-          id
-          title
-          status
-        }
-        children {
-          id
-          name
-          children {
-            id
-            name
-            children {
-              id
-              name
-            }
-          }
-        }
-      }
+      #capabilitySet {
+      #  id
+      #  name
+      #  availableTaskNum
+      #  taskSet {
+      #    id
+      #    title
+      #    status
+      #  }
+      #  children {
+      #    id
+      #    name
+      #    children {
+      #      id
+      #      name
+      #      children {
+      #       id
+      #        name
+      #      }
+      #    }
+      #  }
+      #}
       tag {
         id
         name
@@ -107,28 +107,28 @@ export const GET_PRODUCT_BY_ID = gql`
         id
         name
       }
-      capabilitySet {
-        id
-        name
-        availableTaskNum
-        taskSet {
-          id
-          title
-          status
-        }
-        children {
-          id
-          name
-          children {
-            id
-            name
-            children {
-              id
-              name
-            }
-          }
-        }
-      }
+      #capabilitySet {
+      #  id
+      #  name
+      #  availableTaskNum
+      #  taskSet {
+      #    id
+      #    title
+      #    status
+      #  }
+      #  children {
+      #    id
+      #    name
+      #    children {
+      #      id
+      #      name
+      #      children {
+      #        id
+      #        name
+      #      }
+      #    }
+      #  }
+      #}
       tag {
         id
         name
@@ -235,95 +235,43 @@ export const GET_CAPABILITIES = gql`
 `;
 
 export const GET_CAPABILITY_BY_ID = gql`
-  query GetCapability($id: Int!) {
-    capability(id: $id) {
+  query GetCapability($nodeId: Int!) {
+    capability(nodeId: $nodeId) {
       id
+      path
+      depth
       name
-      breadcrumb {
-        id
-        name
-      }
-      product {
-        id
-        name
-        website
-        shortDescription
-        fullDescription
-        tag {
-          id
-          name
-        }
-      }
-      children {
-        id
-        name
-      }
-      attachment {
+      attachments {
         id
         name
         path
         fileType
       }
-      parent {
-        id
-        name
-      }
       tasks {
         id
         detailUrl
-        description
         title
-        status
-        initiative {
+        repository
+        description
+        shortDescription
+        tag {
           id
           name
         }
-        capability {
+      }
+      product {
+        name
+        videoUrl,
+        shortDescription,
+        tag {
           id
           name
-        }
-        taskclaimSet {
-          person {
-            id
-            fullName
-            emailAddress
-            slug
-          }
-          kind
-        }
-        producttaskSet {
-          product {
-            name
-            slug
-          }
         }
       }
     }
   }
 `;
 
-export const GET_CAPABILITY_CHILDREN = gql`
-query GetChildCapabilities($capabilityId: Int, $productSlug: String) {
-	childCapabilities(capabilityId: $capabilityId, productSlug: $productSlug){
-    id
-    name
-    children {
-      id
-      name
-      availableTaskNum
-      taskSet {
-        id
-        status
-      }
-    }
-    availableTaskNum
-    taskSet {
-      id
-      status
-    }
-  }
-}
-`;
 
 export const GET_INITIATIVES = gql`
   query GetInitiatives($productSlug: String) {
@@ -424,14 +372,14 @@ export const GET_TASK_BY_ID = gql`
         }
         kind
       }
-      capability {
-        id
-        name
-        breadcrumb {
-          id
-          name
-        }
-      }
+      #capability {
+      #  id
+      #  name
+      #  breadcrumb {
+      #    id
+      #    name
+      #  }
+      #}
       initiative {
         id
         name
@@ -706,6 +654,6 @@ export const GET_REVIEW_BY_ID = gql`
 
 export const GET_CAPABILITIES_BY_PRODUCT = gql`
   query GetCapabilities($productSlug: String) {
-    capabilityNodes(productSlug: $productSlug)
+    capabilities(productSlug: $productSlug)
   }
 `;
