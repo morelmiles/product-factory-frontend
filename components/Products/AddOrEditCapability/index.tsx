@@ -115,7 +115,7 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
 
       if (res.data && res.data.createCapability && res.data.createCapability.status) {
         message.success('Capability is created successfully!');
-        // submit();
+        submit();
       }
     } catch (e) {
       message.error(`Capability creation is failed!: Reason: ${e.message}`);
