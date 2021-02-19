@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import Link from "next/link";
 import {useRouter} from 'next/router'
-import {Row, Col, Tag, Button, message, Layout} from 'antd';
+import {Row, Col, Tag, Button, message, Layout, Space} from 'antd';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player';
 import {GET_CAPABILITY_BY_ID} from '../../../../graphql/queries';
@@ -27,15 +27,14 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
   const router = useRouter();
   let {capabilityId, productSlug} = router.query;
   productSlug = String(productSlug);
-  console.log('role', user);
+  // console.log('role', user);
 
   const [capability, setCapability] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const {data: original, error, loading, refetch} = useQuery(GET_CAPABILITY_BY_ID, {
+  const {data, error, loading, refetch} = useQuery(GET_CAPABILITY_BY_ID, {
     variables: {nodeId: capabilityId}
   });
-  console.log('capability', original);
 
   const [deleteModal, showDeleteModal] = useState(false);
 
@@ -59,20 +58,11 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
     return "/capabilities";
   }
 
-  // const fetchData = async () => {
-  //   const data = await refetch({
-  //     id: capabilityId
-  //   })
-  //   if (!data.errors) {
-  //     setCapability(data.data.capability);
-  //   }
-  // }
-
   useEffect(() => {
-    if (original) {
-      setCapability(original.capability);
+    if (!error) {
+      setCapability(getProp(data, 'capability', {}));
     }
-  }, [original]);
+  }, [data]);
 
   if (loading) return <Spinner/>
 
@@ -89,16 +79,7 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
                     Capabilities
                   </Link>
                   <span> / </span>
-                  {/*{getProp(capability, 'breadcrumb', []).map((item: any, idx: number) => (*/}
-                  {/*  <React.Fragment key={`breadcrumb-${idx}`}>*/}
-                  {/*    <Link href={getBasePath() + `/${item.id}`}>*/}
-                  {/*      {item.name}*/}
-                  {/*    </Link>*/}
-                  {/*    {idx !== getProp(capability, 'breadcrumb', []).length - 1 && (*/}
-                  {/*      <><span> / </span></>*/}
-                  {/*    )}*/}
-                  {/*  </React.Fragment>*/}
-                  {/*))}*/}
+                  {getProp(capability, 'name', '')}
                 </div>
                 <Row
                   justify="space-between"
@@ -126,7 +107,8 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
                   )}
                 </Row>
                 <Row>
-                  {getProp(capability, 'product.videoUrl', null) && (
+                  <Space align="start" size={20}>
+                    {getProp(capability, 'product.videoUrl', null) && (
                     <Col>
                       <ReactPlayer
                         width="100%"
@@ -150,6 +132,7 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
                       <Attachments style={{marginTop: 20}} data={getProp(capability, 'attachment', [])}/>
                     )}
                   </Col>
+                  </Space>
                 </Row>
                 <TaskTable
                   tasks={getProp(capability, 'tasks', [])}
@@ -162,7 +145,7 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({userRole, user}) => 
                       productSlug={productSlug}
                       closeModal={() => showDeleteModal(false)}
                       submit={deleteCapability}
-                      title="Delete iniatiative"
+                      title="Delete initiative"
                     />
                   )
                 }
