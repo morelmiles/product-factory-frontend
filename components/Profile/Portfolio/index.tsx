@@ -3,7 +3,7 @@ import {Row, Col, Spin} from 'antd'
 import {useQuery} from '@apollo/react-hooks'
 import {GET_REVIEWS} from '../../../graphql/queries'
 import ReactPlayer from 'react-player'
-import {StarScore, DynamicTextPanel, Spinner} from '../../../components'
+import {StarScore, DynamicTextPanel} from '../../../components'
 import {getProp} from '../../../utilities/filters';
 import {formatDate} from '../../../utilities/utils';
 import {useRouter} from "next/router";

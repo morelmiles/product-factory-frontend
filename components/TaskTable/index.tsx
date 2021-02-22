@@ -1,10 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import {Row, Tag, Divider, Col, Typography} from 'antd';
+import {Row, Tag, Divider, Col, Typography, Menu, Dropdown} from 'antd';
 import {CustomAvatar} from '../CustomAvatar';
 import {getProp} from '../../utilities/filters';
 import {TASK_CLAIM_TYPES} from '../../graphql/types';
-import {CheckCircleFilled, ThunderboltFilled} from '@ant-design/icons';
+import {CheckCircleFilled, ThunderboltFilled, DownOutlined} from '@ant-design/icons';
+import Priorities from "../Priorities";
 
 
 type Props = {
@@ -14,7 +15,10 @@ type Props = {
   title?: string;
   hideTitle?: boolean;
   showPendingTasks?: boolean;
+  showProductName?: boolean;
+  isAdminOrManager: boolean;
 };
+
 
 const TaskTable: React.FunctionComponent<Props> = (
   {
@@ -22,7 +26,9 @@ const TaskTable: React.FunctionComponent<Props> = (
     statusList = TASK_CLAIM_TYPES,
     title = 'Related Tasks',
     hideTitle = false,
-    showPendingTasks = false
+    showPendingTasks = false,
+    showProductName = false,
+    isAdminOrManager = false
   }
 ) => {
   return tasks && tasks.length > 0 ? (
@@ -59,45 +65,54 @@ const TaskTable: React.FunctionComponent<Props> = (
               ? getProp(task, 'taskClaimSet', null)[0]
               : null;
 
-            const productName = task.producttaskSet[0] ? task.producttaskSet[0].product.name : '';
-            const productSlug = task.producttaskSet[0] ? task.producttaskSet[0].product.slug : '';
+            const productName = getProp(task, 'product.name', '');
+            const productSlug = getProp(task, 'product.slug', '');
 
             return (
               <Col key={index} span={24}>
                 <Divider/>
                 <Row justify="space-between">
-                  <Col flex="1" className="flex-column" style={{minHeight: 50}}>
-                    <Link
-                      href={`/products/${productSlug}`}
-                    >
-                      <a className="text-grey-9">{productName}</a>
-                    </Link>
-                    <Typography.Text type="secondary" style={{marginBottom: 5}}>{task.description}</Typography.Text>
+                  <Col span={16}>
+                    <Row>
+                      <Link
+                        href={`/products/${productSlug}/tasks/${task.id}`}
+                      >
+                        <a className="text-grey-9">
+                          <Row align="middle">
+                            <ThunderboltFilled
+                              style={{color: '#999', marginRight: 4, marginLeft: 8, fontSize: 16}}
+                            />
+                            {task.title}
+                          </Row>
+                        </a>
+                      </Link>
+                    </Row>
+                    <Row>
+                      <Typography.Text type="secondary" style={{marginBottom: 5}}>{task.description}</Typography.Text>
+                    </Row>
                     <Row align="middle">
-                      <Col>
-                        {getProp(task, 'tag', []).map((tag: any, taskIndex: number) =>
-                          <Tag key={`${index}-tag${taskIndex}`}>{tag.name}</Tag>
-                        )}
-                      </Col>
-                      <Col>
+                      {getProp(task, 'tag', []).map((tag: any, taskIndex: number) =>
+                        <Tag key={`${index}-tag${taskIndex}`}>{tag.name}</Tag>
+                      )}
+
+                      {
+                        showProductName &&
                         <Link
-                          href={`/products/${productSlug}/tasks/${task.id}`}
+                            href={`/products/${productSlug}`}
                         >
-                          <a className="text-grey-9">
-                            <Row align="middle">
-                              <ThunderboltFilled
-                                style={{color: '#999', marginRight: 4, marginLeft: 8, fontSize: 16}}
-                              />
-                              {task.title}
-                            </Row>
-                          </a>
+                            <a className="text-grey-9">{productName}</a>
                         </Link>
-                      </Col>
+                      }
                     </Row>
                   </Col>
-                  <Col
-                    className="my-auto ml-auto"
-                    style={{textAlign: "right"}}
+
+                  <Col span={4} className="my-auto ml-auto" style={{textAlign: "center"}}>
+                    <Priorities isAdminOrManager={isAdminOrManager} task={task}/>
+                  </Col>
+
+                  <Col span={4}
+                       className="my-auto ml-auto"
+                       style={{textAlign: "right"}}
                   >
                     {
                       (

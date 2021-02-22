@@ -129,7 +129,7 @@ const Dashboard: React.FunctionComponent = () => {
         mode === "products" ? (
           <ProductTab setProductNum={setProductNum}/>
         ) : (
-          <TaskTab setTaskNum={setTaskNum}/>
+          <TaskTab setTaskNum={setTaskNum} showProductName={true}/>
         )
       }
       <div style={{marginBottom: 50}}/>

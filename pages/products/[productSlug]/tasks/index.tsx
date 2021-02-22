@@ -7,6 +7,7 @@ import {TaskTable} from '../../../../components';
 import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
+import {getProp} from "../../../../utilities/filters";
 
 const {Option} = Select;
 
@@ -27,15 +28,20 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const [sortType, setSortType] = useState("initiatives");
   const [taskType, setTaskType] = useState("all");
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const {data, error, loading, refetch} = useQuery(GET_TASKS_BY_PRODUCT, {
-    variables: {productSlug}
+    variables: {productSlug, userId: userId == null ? 0 : userId}
   });
 
   const closeTaskModal = (flag: boolean) => {
     setShowAddTaskModal(flag);
     refetch({productSlug});
   }
+
+  useEffect(() => {
+    setUserId(localStorage.getItem('userId'));
+  }, []);
 
   const fetchTasks = async () => {
     await refetch({
@@ -110,7 +116,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
             <Spin size="large"/>
           ) : !error ? (
             <TaskTable tasks={data.tasksByProduct} statusList={data.statusList} hideTitle={true}
-                       showPendingTasks={userRole === "Manager" || userRole === "Admin"}/>
+                       showPendingTasks={userRole === "Manager" || userRole === "Admin"} isAdminOrManager={getProp(data, 'isAdminOrManager', false)}/>
           ) : (
             <h3 className="text-center mt-30">No tasks</h3>
           )

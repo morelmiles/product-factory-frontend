@@ -192,11 +192,10 @@ export const GET_TASKS = gql`
           status
         }
       }
-      producttaskSet {
-        product {
-          name
-          slug
-        }
+      priority
+      product {
+        name
+        slug
       }
     }
   }
@@ -398,26 +397,26 @@ export const GET_TASK_BY_ID = gql`
     statusList
   }
 `;
-// test
+
 export const GET_TASKS_BY_PRODUCT = gql`
-  query GetTasksByProduct($productSlug: String, $reviewId: Int, $status: String) {
+  query GetTasksByProduct($productSlug: String, $reviewId: Int, $status: String, $userId: Int) {
     tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, status: $status) {
       id
       title
       description
       detailUrl
       updatedAt
+      product {
+        name
+        slug
+      }
       createdAt
       status
       blocked
       featured
-      producttaskSet {
-        product {
-          name
-          slug
-        }
-      }
+      priority
     }
+    isAdminOrManager(slug: $productSlug, userId: $userId)
   }
 `;
 
