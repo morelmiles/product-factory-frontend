@@ -140,7 +140,7 @@ const CapabilityDetail: React.FunctionComponent = () => {
                 <TaskTable
                   tasks={getProp(capability, 'tasks', [])}
                   productSlug={productSlug}
-                  isAdminOrManager={}
+                  isAdminOrManager={false}
                 />
                 {
                   deleteModal &&
