@@ -153,9 +153,11 @@ export const GET_PRODUCT_BY_ID = gql`
 `;
 
 export const GET_TASKS = gql`
-  query GetTasks {
+  query GetTasks($userId: Int!) {
     tasks {
       id
+      canEdit(userId: $userId)
+      priority
       detailUrl
       description
       shortDescription
@@ -192,7 +194,6 @@ export const GET_TASKS = gql`
           status
         }
       }
-      priority
       product {
         name
         slug
@@ -338,9 +339,10 @@ export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
 }`;
 
 export const GET_TASK_BY_ID = gql`
-  query GetTask($id: Int!) {
+  query GetTask($id: Int!, $userId: Int) {
     task(id: $id) {
       id
+      canEdit(userId: $userId)
       detailUrl
       repository
       title
@@ -402,6 +404,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
   query GetTasksByProduct($productSlug: String, $reviewId: Int, $status: String, $userId: Int) {
     tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, status: $status) {
       id
+      canEdit(userId: $userId)
       title
       description
       detailUrl
@@ -416,7 +419,6 @@ export const GET_TASKS_BY_PRODUCT = gql`
       featured
       priority
     }
-    isAdminOrManager(slug: $productSlug, userId: $userId)
   }
 `;
 

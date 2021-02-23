@@ -138,9 +138,9 @@ const CapabilityDetail: React.FunctionComponent = () => {
                   </Space>
                 </Row>
                 <TaskTable
+                  submit={() => refetch()}
                   tasks={getProp(capability, 'tasks', [])}
                   productSlug={productSlug}
-                  isAdminOrManager={false}
                 />
                 {
                   deleteModal &&

@@ -137,6 +137,14 @@ export const DELETE_ATTACHMENT = gql`
   }
 `;
 
+export const  CHANGE_TASK_PRIORITY = gql`
+  mutation ChangeTaskPriority($taskId: Int!, $priority: String!) {
+    changeTaskPriority(taskId: $taskId, priority: $priority) {
+      status
+    }
+  }
+`;
+
 export const DELETE_EVENT = gql`
   mutation DeleteEvent($id: uuid!) {
     delete_event(where: { id: { _eq: $id } }) {

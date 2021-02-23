@@ -16,7 +16,7 @@ type Props = {
   hideTitle?: boolean;
   showPendingTasks?: boolean;
   showProductName?: boolean;
-  isAdminOrManager: boolean;
+  submit: Function;
 };
 
 
@@ -28,7 +28,7 @@ const TaskTable: React.FunctionComponent<Props> = (
     hideTitle = false,
     showPendingTasks = false,
     showProductName = false,
-    isAdminOrManager = false
+    submit
   }
 ) => {
   return tasks && tasks.length > 0 ? (
@@ -107,7 +107,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                   </Col>
 
                   <Col span={4} className="my-auto ml-auto" style={{textAlign: "center"}}>
-                    <Priorities isAdminOrManager={isAdminOrManager} task={task}/>
+                    <Priorities task={task} submit={() => submit()}/>
                   </Col>
 
                   <Col span={4}

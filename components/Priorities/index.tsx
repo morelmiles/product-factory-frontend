@@ -1,17 +1,32 @@
-import {Dropdown, Menu} from "antd";
-import React, {useEffect, useState} from "react";
+import {Dropdown, Menu, message} from "antd";
+import React from "react";
 import {getProp} from "../../utilities/filters";
 import {DownOutlined} from "@ant-design/icons";
+import {useMutation} from "@apollo/react-hooks";
+import {CHANGE_TASK_PRIORITY} from "../../graphql/mutations";
 
 
 interface IProps {
-  isAdminOrManager: boolean,
-  task: any
+  task: any,
+  submit: Function
 }
 
-const Priorities: React.FunctionComponent<IProps> = ({isAdminOrManager = false, task}) => {
+const Priorities: React.FunctionComponent<IProps> = ({task, submit}) => {
   const currentPriority = getProp(task, 'priority', '');
+  const taskId = getProp(task, 'id', 0);
   const otherPriorities = ['High', 'Medium', 'Low'].filter(priority => priority != currentPriority);
+
+
+  const [changeTaskPriority] = useMutation(CHANGE_TASK_PRIORITY, {
+    onCompleted() {
+      message.success('Priority is successfully updated!').then();
+      submit();
+    },
+    onError(err) {
+      message.error('Failed to update priority!').then();
+    }
+  });
+
 
   const getColor = (priorityName: string) => {
     switch (priorityName) {
@@ -24,22 +39,28 @@ const Priorities: React.FunctionComponent<IProps> = ({isAdminOrManager = false, 
     }
   }
 
+  const canEdit = getProp(task, 'canEdit', false);
+
   return (
     <Dropdown overlay={
-      isAdminOrManager ?
+      canEdit ?
         <Menu>
           {
             otherPriorities.map((priority: any, index: number) => (
-              <Menu.Item key={index} style={{
-                color: getColor(priority),
-                textAlign: 'center'
-              }}>{priority}</Menu.Item>
+              <Menu.Item
+                key={index}
+                style={{
+                  color: getColor(priority),
+                  textAlign: 'center'
+                }}
+                onClick={() => changeTaskPriority({variables: {taskId, priority}})}
+              >{priority}</Menu.Item>
             ))
           }
         </Menu> : <></>
     } trigger={['click']}>
       <a style={{color: getColor(currentPriority)}}>
-        {currentPriority} {isAdminOrManager && <DownOutlined/>}
+        {currentPriority} {canEdit && <DownOutlined/>}
       </a>
     </Dropdown>
 

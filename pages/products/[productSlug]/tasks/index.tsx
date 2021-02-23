@@ -7,7 +7,6 @@ import {TaskTable} from '../../../../components';
 import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
-import {getProp} from "../../../../utilities/filters";
 
 const {Option} = Select;
 
@@ -33,6 +32,8 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const {data, error, loading, refetch} = useQuery(GET_TASKS_BY_PRODUCT, {
     variables: {productSlug, userId: userId == null ? 0 : userId}
   });
+
+  console.log(data);
 
   const closeTaskModal = (flag: boolean) => {
     setShowAddTaskModal(flag);
@@ -115,8 +116,8 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
           loading ? (
             <Spin size="large"/>
           ) : !error ? (
-            <TaskTable tasks={data.tasksByProduct} statusList={data.statusList} hideTitle={true}
-                       showPendingTasks={userRole === "Manager" || userRole === "Admin"} isAdminOrManager={getProp(data, 'isAdminOrManager', false)}/>
+            <TaskTable submit={() => refetch()} tasks={data.tasksByProduct} statusList={data.statusList} hideTitle={true}
+                       showPendingTasks={userRole === "Manager" || userRole === "Admin"}/>
           ) : (
             <h3 className="text-center mt-30">No tasks</h3>
           )
