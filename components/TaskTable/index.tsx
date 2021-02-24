@@ -1,10 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import {Row, Tag, Divider, Col, Typography, Menu, Dropdown} from 'antd';
+import {Row, Tag, Divider, Col, Typography} from 'antd';
 import {CustomAvatar} from '../CustomAvatar';
 import {getProp} from '../../utilities/filters';
 import {TASK_CLAIM_TYPES} from '../../graphql/types';
-import {CheckCircleFilled, ThunderboltFilled, DownOutlined} from '@ant-design/icons';
+import {CheckCircleFilled, ThunderboltFilled} from '@ant-design/icons';
 import Priorities from "../Priorities";
 
 
@@ -18,7 +18,6 @@ type Props = {
   showProductName?: boolean;
   submit: Function;
 };
-
 
 const TaskTable: React.FunctionComponent<Props> = (
   {

@@ -16,6 +16,7 @@ const TaskTab: React.FunctionComponent<Props> = ({ setTaskNum, showProductName= 
   const { data, error, loading, refetch } = useQuery(GET_TASKS, {
     variables: {userId: userId == null ? 0 : userId}
   });
+  console.log(data);
 
   useEffect(() => {
     if (!error && data && data.tasks) {
