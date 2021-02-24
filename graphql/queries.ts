@@ -401,8 +401,8 @@ export const GET_TASK_BY_ID = gql`
 `;
 
 export const GET_TASKS_BY_PRODUCT = gql`
-  query GetTasksByProduct($productSlug: String, $reviewId: Int, $status: String, $userId: Int) {
-    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, status: $status) {
+  query GetTasksByProduct($productSlug: String, $reviewId: Int, $userId: Int, $input: TaskListInput) {
+    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
       id
       canEdit(userId: $userId)
       title

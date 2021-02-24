@@ -2,18 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Row, Col, Select, Spin, Button} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
-import {GET_TASKS_BY_PRODUCT} from '../../../../graphql/queries';
+import {GET_TAGS, GET_TASKS_BY_PRODUCT} from '../../../../graphql/queries';
 import {TaskTable} from '../../../../components';
 import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
+import {TASK_TYPES} from "../../../../graphql/types";
 
 const {Option} = Select;
 
 type Props = {
   onClick?: () => void;
-  currentProduct: any;
-  repositories: Array<any>;
   userRole: string;
   productSlug: string;
 };
@@ -21,33 +20,36 @@ type Props = {
 const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter()
   const {productSlug} = router.query
-
-  const {currentProduct, repositories, userRole} = props;
-  const [tagType, setTagType] = useState("all");
-  const [sortType, setSortType] = useState("initiatives");
-  const [taskType, setTaskType] = useState("all");
+  const {userRole} = props;
+  const [tags, setTags] = useState([]);
+  const [sortedBy, setSortedBy] = useState("priority");
+  const [statuses, setStatuses] = useState([]);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
-  const {data, error, loading, refetch} = useQuery(GET_TASKS_BY_PRODUCT, {
-    variables: {productSlug, userId: userId == null ? 0 : userId}
-  });
+  const productsVariable = {
+    productSlug,
+    userId: userId == null ? 0 : userId,
+    input: {sortedBy, statuses, tags}
+  };
 
-  console.log(data);
+  let {data, error, loading, refetch} = useQuery(GET_TASKS_BY_PRODUCT, {
+    variables: productsVariable
+  });
 
   const closeTaskModal = (flag: boolean) => {
     setShowAddTaskModal(flag);
-    refetch({productSlug});
-  }
+    refetch(productsVariable);
+  };
+
+  const tagsData = useQuery(GET_TAGS);
 
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
   }, []);
 
   const fetchTasks = async () => {
-    await refetch({
-      productSlug
-    });
+    await refetch(productsVariable);
   }
 
   return (
@@ -72,40 +74,40 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
           )}
           <Col className="tag-section ml-auto">
             <div>
-              <label className='mr-15'>Tags: </label>
+              <label className='mr-15'>Tags: </label><br/>
               <Select
-                defaultValue={tagType}
-                style={{width: 120}}
-                onChange={setTagType}
+                defaultValue={tags}
+                mode="multiple"
+                style={{minWidth: 120}}
+                onChange={(value: any[]) => setTags(value)}
               >
-                <Option value="all">All</Option>
-                <Option value="django">Django</Option>
-                <Option value="react">React</Option>
-                <Option value="graphql">Graphql</Option>
+                {tagsData?.data ? tagsData.data.tags.map(tag =>
+                  <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
               </Select>
             </div>
             <div className='ml-15'>
-              <label className='mr-15'>Sorted by: </label>
+              <label className='mr-15'>Sorted by: </label><br/>
               <Select
-                defaultValue={sortType}
-                style={{width: 120}}
-                onChange={setSortType}
+                defaultValue={sortedBy}
+                style={{width: 150}}
+                onChange={(value: string) => setSortedBy(value)}
               >
-                <Option value="initiatives">Number of initiatives</Option>
-                <Option value="stroies">Number of tasks</Option>
+                <Option value="title">Name</Option>
+                <Option value="priority">Priority</Option>
+                <Option value="status">Status</Option>
               </Select>
             </div>
             <div className='ml-15'>
-              <label className='mr-15'>Tasks: </label>
+              <label className='mr-15'>Status: </label>
               <Select
-                defaultValue={taskType}
-                style={{width: 120}}
-                onChange={setTaskType}
+                value={statuses}
+                style={{minWidth: 120}}
+                mode="multiple"
+                onChange={(value: any[]) => setStatuses(value)}
               >
-                <Option value="all">All</Option>
-                <Option value="django">Django</Option>
-                <Option value="react">React</Option>
-                <Option value="graphql">Graphql</Option>
+                {TASK_TYPES.map((option: { id: number, name: string }) => (
+                  <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
+                ))}
               </Select>
             </div>
           </Col>
@@ -116,7 +118,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
           loading ? (
             <Spin size="large"/>
           ) : !error ? (
-            <TaskTable submit={() => refetch()} tasks={data.tasksByProduct} statusList={data.statusList} hideTitle={true}
+            <TaskTable submit={() => refetch(productsVariable)} tasks={data.tasksByProduct} statusList={data.statusList} hideTitle={true}
                        showPendingTasks={userRole === "Manager" || userRole === "Admin"}/>
           ) : (
             <h3 className="text-center mt-30">No tasks</h3>
@@ -129,8 +131,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
-  currentProduct: state.work.currentProduct,
-  repositories: state.work.repositories,
   userRole: state.work.userRole
 });
 
