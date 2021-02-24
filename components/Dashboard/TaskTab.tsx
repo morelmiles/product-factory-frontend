@@ -8,15 +8,20 @@ import TaskTable from '../TaskTable'
 type Props = {
   setTaskNum: (value: number) => void;
   showProductName?: boolean;
+  sortedBy: string,
+  statuses: string[],
+  tags: string[],
 };
 
-const TaskTab: React.FunctionComponent<Props> = ({ setTaskNum, showProductName= false }) => {
+const TaskTab: React.FunctionComponent<Props> = ({ setTaskNum, sortedBy, statuses, showProductName= false, tags }) => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const { data, error, loading, refetch } = useQuery(GET_TASKS, {
-    variables: {userId: userId == null ? 0 : userId}
+    variables: {
+      userId: userId == null ? 0 : userId,
+      input: {sortedBy, statuses, tags}
+    }
   });
-  console.log(data);
 
   useEffect(() => {
     if (!error && data && data.tasks) {

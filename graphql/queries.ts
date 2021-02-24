@@ -153,8 +153,8 @@ export const GET_PRODUCT_BY_ID = gql`
 `;
 
 export const GET_TASKS = gql`
-  query GetTasks($userId: Int!) {
-    tasks {
+  query GetTasks($userId: Int!, $input: TaskListInput) {
+    tasks (input: $input) {
       id
       canEdit(userId: $userId)
       priority
@@ -683,6 +683,16 @@ export const GET_CAPABILITIES_BY_PRODUCT_AS_LIST = gql`
         name
         path
       }
+    }
+  }
+`;
+
+export const GET_TAGS = gql`
+  query GetTags {
+    tags {
+      id,
+      name,
+      createdAt
     }
   }
 `;

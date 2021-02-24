@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
-import Link from 'next/link'
 import {Layout, Menu, Input, Button, message} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
@@ -8,6 +7,7 @@ import {apiDomain} from '../../utilities/constants';
 // @ts-ignore
 import Logo from '../../public/assets/logo.svg';
 import {useRouter} from 'next/router'
+import Link from 'antd/lib/typography/Link';
 
 const {Header} = Layout;
 const {Search} = Input;
@@ -61,19 +61,18 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
       <div className="inner-navbar">
         <Menu className="header-menu" mode="horizontal" defaultSelectedKeys={[selectedItem]}>
           <Menu.Item key="1">
-            <Link href="/">
-              <a className={selectedItem === "1" ? "active" : ""}>{'Work on Open Products'}</a>
+            <Link href="/" className={selectedItem === "1" ? "active" : ""}>
+              {'Work on Open Products'}
             </Link>
           </Menu.Item>
           <Menu.Item key="2">
-            {/*<Link href="/product/add">*/}
-            <Link href="/">
-              <a className={selectedItem === "2" ? "active" : ""}>{'Add Product'}</a>
+            <Link href="/product/add" className={selectedItem === "2" ? "active" : ""}>
+              {'Add Product'}
             </Link>
           </Menu.Item>
           <Menu.Item key="3">
-            <Link href="">
-              <a className={selectedItem === "3" ? "active" : ""}>{'Find Talent'}</a>
+            <Link href="" className={selectedItem === "3" ? "active" : ""}>
+              {'Find Talent'}
             </Link>
           </Menu.Item>
         </Menu>

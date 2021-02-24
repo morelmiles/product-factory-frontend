@@ -7,6 +7,8 @@ import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
 // import { ContainerFlex } from '../index';
 import classnames from 'classnames';
+import {useQuery} from "@apollo/react-hooks";
+import {GET_TAGS} from "../../graphql/queries";
 
 const {Option} = Select;
 const {Content} = Layout;
@@ -20,11 +22,14 @@ const Dashboard: React.FunctionComponent = () => {
   const router = useRouter();
   let searchParams: any = new URLSearchParams(router.asPath.split('?')[1]);
   const [mode, setMode] = useState('products');
-  const [tagType, setTagType] = useState("all");
-  const [sortType, setSortType] = useState("initiatives");
-  const [taskStatus, setTaskStatus] = useState(-1);
+  const [productTags, setProductTags] = useState([]);
+  const [taskTags, setTaskTags] = useState([]);
+  const [productSortType, setProductSortType] = useState("initiatives");
+  const [taskSortType, setTaskSortType] = useState("priority");
+  const [taskStatus, setTaskStatus] = useState([]);
   const [productNum, setProductNum] = useState(0);
   const [taskNum, setTaskNum] = useState(0);
+  const tagsData = useQuery(GET_TAGS);
 
   const handleModeChange = (e: RadioChangeEvent): void => {
     setMode(e.target.value);
@@ -38,14 +43,20 @@ const Dashboard: React.FunctionComponent = () => {
     }).then();
 
     switch (key) {
-      case "tag":
-        setTagType(value.toString());
+      case "product-tag":
+        setProductTags(value);
         break;
       case "initiatives":
-        setSortType(value.toString());
+        setProductSortType(value.toString());
+        break;
+      case "task-sorted":
+        setTaskSortType(value.toString());
         break;
       case "status":
-        setTaskStatus(value.toString());
+        setTaskStatus(value);
+        break;
+      case "task-tag":
+        setTaskTags(value);
         break;
       default:
         break;
@@ -78,48 +89,74 @@ const Dashboard: React.FunctionComponent = () => {
             <div
               className={classnames("tag-section", {'mr-16': mode === "products"})}
             >
-              <div>
-                <label className='mr-15'>Tags: </label>
-                <Select
-                  defaultValue={tagType}
-                  style={{minWidth: 120}}
-                  onChange={(value: any) => changeSearchTerm("tag", value)}
-                >
-                  <Option value="all">All</Option>
-                  <Option value="django">Django</Option>
-                  <Option value="react">React</Option>
-                  <Option value="graphql">Graphql</Option>
-                </Select>
-              </div>
               {mode === "products" ? (
-                <div className='ml-15'>
-                  <label className='mr-15'>Sorted by: </label>
-                  <Select
-                    defaultValue={sortType}
-                    style={{minWidth: 120}}
-                    onChange={(value: any) => changeSearchTerm("initiatives", value)}
-                  >
-                    <Option value="initiatives">Number of initiatives</Option>
-                    <Option value="1">1</Option>
-                    <Option value="2">2</Option>
-                    <Option value="3">3</Option>
-                    <Option value="4">4</Option>
-                  </Select>
-                </div>
+                <>
+                  <div>
+                    <label className='mr-15'>Tags: </label>
+                    <Select
+                      defaultValue={productTags}
+                      style={{minWidth: 120}}
+                      onChange={(value: any) => changeSearchTerm("product-tag", value)}
+                    >
+                      {tagsData?.data ? tagsData.data.tags.map(tag =>
+                        <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
+                    </Select>
+                  </div>
+                  <div className='ml-15'>
+                    <label className='mr-15'>Sorted by: </label>
+                    <Select
+                      defaultValue={productSortType}
+                      style={{minWidth: 120}}
+                      onChange={(value: any) => changeSearchTerm("initiatives", value)}
+                    >
+                      <Option value="initiatives">Number of initiatives</Option>
+                      <Option value="1">1</Option>
+                      <Option value="2">2</Option>
+                      <Option value="3">3</Option>
+                      <Option value="4">4</Option>
+                    </Select>
+                  </div>
+                </>
               ) : (
-                <div className='ml-15'>
-                  <label className='mr-15'>Status: </label>
-                  <Select
-                    defaultValue={taskStatus}
-                    style={{minWidth: 120}}
-                    onChange={(value: any) => changeSearchTerm("status", value)}
-                  >
-                    <Option value={-1}>All</Option>
-                    {TASK_TYPES.map((option: string, index: number) => (
-                      <Option key={`status${index}`} value={index}>{option}</Option>
-                    ))}
-                  </Select>
-                </div>
+                <>
+                  <div>
+                    <label className='mr-15'>Tags: </label>
+                    <Select
+                      value={taskTags}
+                      mode="multiple"
+                      style={{minWidth: 120}}
+                      onChange={(value: any) => changeSearchTerm("task-tag", value)}
+                    >
+                      {tagsData?.data ? tagsData.data.tags.map(tag =>
+                        <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
+                    </Select>
+                  </div>
+                  <div className='ml-15'>
+                    <label className='mr-15'>Sorted by: </label>
+                    <Select
+                      value={taskSortType}
+                      style={{minWidth: 120}}
+                      onChange={(value: any) => changeSearchTerm("task-sorted", value)}
+                    >
+                      <Option value="title">Name</Option>
+                      <Option value="priority">Priority</Option>
+                      <Option value="status">Status</Option>
+                    </Select>
+                  </div>
+                  <div className='ml-15'>
+                    <label className='mr-15'>Status: </label>
+                    <Select
+                      value={taskStatus}
+                      style={{minWidth: 120}}
+                      mode="multiple"
+                      onChange={(value: any) => changeSearchTerm("status", value)}
+                    >
+                      {TASK_TYPES.map((option: { id: number, name: string }) => (
+                        <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
+                      ))}
+                    </Select>
+                  </div>
+                </>
               )}
             </div>
           </Col>
@@ -129,7 +166,11 @@ const Dashboard: React.FunctionComponent = () => {
         mode === "products" ? (
           <ProductTab setProductNum={setProductNum}/>
         ) : (
-          <TaskTab setTaskNum={setTaskNum} showProductName={true}/>
+          <TaskTab setTaskNum={setTaskNum}
+                   showProductName={true}
+                   sortedBy={taskSortType}
+                   statuses={taskStatus}
+                   tags={taskTags} />
         )
       }
       <div style={{marginBottom: 50}}/>
