@@ -13,7 +13,7 @@ type SocialProps = {
     name: string
 };
 
-const Social: React.FunctionComponent<SocialProps> = ({name}) => {
+export const Social: React.FunctionComponent<SocialProps> = ({name}) => {
     switch (name) {
         case 'instagram':
             return <InstagramFilled/>

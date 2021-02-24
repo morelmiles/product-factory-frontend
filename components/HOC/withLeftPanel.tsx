@@ -22,7 +22,7 @@ const LeftPanelContainer: React.FunctionComponent = ({children}) => {
             <Col xs={24} sm={8} md={6}>
               <LeftPanel productSlug={productSlug}/>
             </Col>
-            <Col xs={24} sm={16} md={18}>
+            <Col xs={24} sm={16} md={18} style={{paddingLeft: 32, paddingRight: 32}}>
               {children}
             </Col>
           </Row>

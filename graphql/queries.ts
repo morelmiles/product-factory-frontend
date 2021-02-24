@@ -431,6 +431,12 @@ export const GET_PRODUCT_PERSONS = gql`
         emailAddress
         photo
         slug
+        headline
+        personsocialSet {
+          id,
+          name,
+          url
+        }
       }
       product {
         name
