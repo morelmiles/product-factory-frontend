@@ -98,7 +98,7 @@ const Dashboard: React.FunctionComponent = () => {
                       style={{minWidth: 120}}
                       onChange={(value: any) => changeSearchTerm("product-tag", value)}
                     >
-                      {tagsData?.data ? tagsData.data.tags.map(tag =>
+                      {tagsData?.data ? tagsData.data.tags.map((tag: any) =>
                         <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
                     </Select>
                   </div>
@@ -127,7 +127,7 @@ const Dashboard: React.FunctionComponent = () => {
                       style={{minWidth: 120}}
                       onChange={(value: any) => changeSearchTerm("task-tag", value)}
                     >
-                      {tagsData?.data ? tagsData.data.tags.map(tag =>
+                      {tagsData?.data ? tagsData.data.tags.map((tag: any) =>
                         <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
                     </Select>
                   </div>

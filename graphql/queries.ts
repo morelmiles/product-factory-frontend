@@ -343,6 +343,7 @@ export const GET_TASK_BY_ID = gql`
     task(id: $id) {
       id
       canEdit(userId: $userId)
+      priority
       detailUrl
       repository
       title

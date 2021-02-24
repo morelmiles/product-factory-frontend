@@ -78,9 +78,9 @@ const TaskTable: React.FunctionComponent<Props> = (
                       >
                         <a className="text-grey-9">
                           <Row align="middle">
-                            <ThunderboltFilled
-                              style={{color: '#999', marginRight: 4, marginLeft: 8, fontSize: 16}}
-                            />
+                            {/*<ThunderboltFilled*/}
+                            {/*  style={{color: '#999', marginRight: 4, marginLeft: 8, fontSize: 16}}*/}
+                            {/*/>*/}
                             {task.title}
                           </Row>
                         </a>

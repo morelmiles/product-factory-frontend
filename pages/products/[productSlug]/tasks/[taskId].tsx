@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button} from 'antd';
+import {Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button, Typography} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -16,6 +16,7 @@ import DeleteModal from '../../../../components/Products/DeleteModal';
 import moment from 'moment';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";
+import Priorities from "../../../../components/Priorities";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -179,15 +180,19 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const {taskId, productSlug} = router.query;
 
   const [deleteModal, showDeleteModal] = useState(false);
-  // const [task, setTask] = useState({});
-  const [task] = useState({});
+  const [task, setTask] = useState<any>({});
+  const [userId, setUserId] = useState<string | null>(null);
   // const [tasks, setTasks] = useState([]);
   // const [showEditModal, setShowEditModal] = useState(false);
 
   // const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
-  const {data: original, error, loading} = useQuery(GET_TASK_BY_ID, {
-    variables: {id: taskId}
+  const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
+    variables: {id: taskId, userId: userId == null ? 0 : userId}
   });
+
+  useEffect(() => {
+    setUserId(localStorage.getItem('userId'));
+  }, [])
 
   const getBasePath = () => {
     //fix it
@@ -225,15 +230,17 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   //   : null;
 
   const getCausedBy = () => {
-    const status = TASK_TYPES[getProp(task, 'status')];
-    switch (status) {
-      case "Claimed":
-        return "Proposed By";
-      case "Done":
-        return "Done By";
-      default:
-        return status;
-    }
+    // const status = TASK_TYPES[getProp(task, 'status')];
+    // switch (status) {
+    //   case "Claimed":
+    //     return "Proposed By";
+    //   case "Done":
+    //     return "Done By";
+    //   default:
+    //     return status;
+    // }
+
+    return 'None'
   }
 
   // const fetchData = async () => {
@@ -246,14 +253,11 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   //   }
   // }
 
-  // useEffect(() => {
-  //   if (original) {
-  //     setTask(original.task);
-  //   }
-  //   if (tasksData) {
-  //     setTasks(tasksData.tasks);
-  //   }
-  // }, [original]);
+  useEffect(() => {
+    if (original) {
+      setTask(getProp(original, 'task', {}));
+    }
+  }, [original]);
 
   if (loading) return <Spinner/>
 
@@ -340,9 +344,10 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                 <Row className="text-sm mt-8">
                   {
                     (
-                      TASK_TYPES[getProp(task, 'status')] === "Available" ||
-                      TASK_TYPES[getProp(task, 'status')] === "Draft" ||
-                      TASK_TYPES[getProp(task, 'status')] === "Pending"
+                      // TASK_TYPES[getProp(task, 'status')] === "Available" ||
+                      // TASK_TYPES[getProp(task, 'status')] === "Draft" ||
+                      // TASK_TYPES[getProp(task, 'status')] === "Pending"
+                      false
                     ) ? (
                       <strong className="my-auto">
                         Status: {TASK_TYPES[getProp(task, 'status')]}
@@ -380,6 +385,13 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                     )
                   }
                 </Row>
+                {
+                  getProp(task, 'priority', null) &&
+                    <Row style={{marginTop: 10}}>
+                        <Typography.Text strong style={{marginRight: 20}}>Priority: </Typography.Text>
+                        <Priorities task={task} submit={refetch}/>
+                    </Row>
+                }
                 {
                   getProp(task, 'capability.id', null) && (
                     <Row
