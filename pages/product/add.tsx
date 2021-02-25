@@ -25,7 +25,12 @@ const AddProduct: React.FunctionComponent = ({ }) => {
   const [website, setWebsite] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [mode, setMode] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const [createProduct] = useMutation(CREATE_PRODUCT);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem('userId'));
+  }, []);
 
   const addNewProduct = async() => {
     if (!name || !shortDescription || !website) {
@@ -34,14 +39,15 @@ const AddProduct: React.FunctionComponent = ({ }) => {
     try {
       const res = await createProduct({
         variables: {
-          input: {
+          productInfo: {
             name,
             shortDescription,
             fullDescription: fullDescription.toString('html'),
             website,
             addGit: mode,
             videoUrl
-          }
+          },
+          userId: userId == null ? 0 : userId
         }
       });
       if (res.data && res.data.createProduct && res.data.createProduct.product) {

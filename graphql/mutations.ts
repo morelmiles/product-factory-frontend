@@ -1,13 +1,9 @@
 import gql from 'graphql-tag';
 
 export const CREATE_PRODUCT = gql`
-  mutation CreateProduct($input: ProductInput!) {
-    createProduct(input: $input) {
-      product {
-        name
-        shortDescription
-        website
-      }
+  mutation CreateProduct($productInfo: ProductInput!, $userId: Int!) {
+    createProduct(productInfo: $productInfo, userId: $userId) {
+      status
       error
     }
   }
