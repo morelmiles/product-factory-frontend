@@ -15,7 +15,7 @@ type Props = {
   title?: string;
   hideTitle?: boolean;
   showPendingTasks?: boolean;
-  showProductName?: boolean;
+  showInitiativeName?: boolean;
   submit: Function;
 };
 
@@ -26,7 +26,7 @@ const TaskTable: React.FunctionComponent<Props> = (
     title = 'Related Tasks',
     hideTitle = false,
     showPendingTasks = false,
-    showProductName = false,
+    showInitiativeName = false,
     submit
   }
 ) => {
@@ -64,8 +64,9 @@ const TaskTable: React.FunctionComponent<Props> = (
               ? getProp(task, 'taskClaimSet', null)[0]
               : null;
 
-            const productName = getProp(task, 'product.name', '');
             const productSlug = getProp(task, 'product.slug', '');
+            const initiativeName = getProp(task, 'initiative.name', '');
+            const initiativeId = getProp(task, 'initiative.id', '');
 
             return (
               <Col key={index} span={24}>
@@ -78,9 +79,6 @@ const TaskTable: React.FunctionComponent<Props> = (
                       >
                         <a className="text-grey-9">
                           <Row align="middle">
-                            <ThunderboltFilled
-                              style={{color: '#999', marginRight: 4, marginLeft: 8, fontSize: 16}}
-                            />
                             {task.title}
                           </Row>
                         </a>
@@ -95,11 +93,15 @@ const TaskTable: React.FunctionComponent<Props> = (
                       )}
 
                       {
-                        showProductName &&
-                        <Link
-                            href={`/products/${productSlug}`}
-                        >
-                            <a className="text-grey-9">{productName}</a>
+                        showInitiativeName &&
+
+                        <Link href={`/products/${productSlug}/initiatives/${initiativeId}`}>
+                          <span className="text-grey-9 pointer link">
+                            <ThunderboltFilled
+                                style={{color: '#999', marginRight: 4, fontSize: 16}}
+                            />
+                            {initiativeName}
+                          </span>
                         </Link>
                       }
                     </Row>

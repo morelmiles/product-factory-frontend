@@ -167,7 +167,7 @@ const Dashboard: React.FunctionComponent = () => {
           <ProductTab setProductNum={setProductNum}/>
         ) : (
           <TaskTab setTaskNum={setTaskNum}
-                   showProductName={true}
+                   showInitiativeName={true}
                    sortedBy={taskSortType}
                    statuses={taskStatus}
                    tags={taskTags} />

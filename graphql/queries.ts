@@ -418,6 +418,10 @@ export const GET_TASKS_BY_PRODUCT = gql`
       blocked
       featured
       priority
+      initiative {
+        name
+        id
+      }
     }
   }
 `;

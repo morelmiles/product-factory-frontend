@@ -118,7 +118,11 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
           loading ? (
             <Spin size="large"/>
           ) : !error ? (
-            <TaskTable submit={() => refetch(productsVariable)} tasks={data.tasksByProduct} statusList={data.statusList} hideTitle={true}
+            <TaskTable submit={() => refetch(productsVariable)}
+                       tasks={data.tasksByProduct}
+                       statusList={data.statusList}
+                       showInitiativeName={true}
+                       hideTitle={true}
                        showPendingTasks={userRole === "Manager" || userRole === "Admin"}/>
           ) : (
             <h3 className="text-center mt-30">No tasks</h3>
