@@ -198,6 +198,12 @@ export const GET_TASKS = gql`
         name
         slug
       }
+      assignedTo {
+        id,
+        fullName,
+        photo,
+        slug
+      }
     }
   }
 `;
@@ -351,6 +357,12 @@ export const GET_TASK_BY_ID = gql`
       description
       shortDescription
       status
+      assignedTo {
+        id
+        fullName,
+        photo,
+        slug
+      }
       attachment {
         id
         name
@@ -376,14 +388,10 @@ export const GET_TASK_BY_ID = gql`
         }
         kind
       }
-      #capability {
-      #  id
-      #  name
-      #  breadcrumb {
-      #    id
-      #    name
-      #  }
-      #}
+      capability {
+        id
+        name
+      }
       initiative {
         id
         name
@@ -420,6 +428,16 @@ export const GET_TASKS_BY_PRODUCT = gql`
       blocked
       featured
       priority
+      initiative {
+        name
+        id
+      }
+      assignedTo {
+        id,
+        fullName,
+        photo,
+        slug
+      }
     }
   }
 `;

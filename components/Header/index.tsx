@@ -36,7 +36,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
   useEffect(() => {
     if (localStorage.getItem("userId")) {
-      userLogInAction({isLoggedIn: true});
+      userLogInAction({isLoggedIn: true, id: localStorage.getItem("userId")});
     }
   }, []);
 

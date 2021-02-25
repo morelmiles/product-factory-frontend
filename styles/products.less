@@ -156,6 +156,24 @@
             margin-bottom: 15px;
         }
     }
+
+    &.strong-height {
+        height: 30px;
+    }
+
+    @media (max-width: 991px) {
+        &.strong-height {
+            height: auto;
+            max-height: 55px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        &.strong-height {
+            height: auto;
+            max-height: unset;
+        }
+    }
 }
 
 .product-list-item {

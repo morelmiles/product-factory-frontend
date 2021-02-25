@@ -180,3 +180,12 @@ export const ACTIVE_MARKET = gql`
     }
   }
 `;
+
+export const LEAVE_TASK = gql`
+  mutation LeaveTask($taskId: Int!, $userId: Int!) {
+    leaveTask(taskId: $taskId, userId: $userId) {
+      success,
+      message
+    }
+  }
+`;

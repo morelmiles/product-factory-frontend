@@ -7,7 +7,7 @@ import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
 import {GET_TASK_BY_ID} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
-import {DELETE_TASK} from '../../../../graphql/mutations';
+import {DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {CustomAvatar, EditIcon, DynamicHtml, Spinner} from '../../../../components';
 // import AddTask from '../../../../components/Products/AddTask';
@@ -16,6 +16,7 @@ import DeleteModal from '../../../../components/Products/DeleteModal';
 import moment from 'moment';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";
+import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
 
 interface CommentListProps {
@@ -180,6 +181,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const {taskId, productSlug} = router.query;
 
   const [deleteModal, showDeleteModal] = useState(false);
+  const [leaveTaskModal, showLeaveTaskModal] = useState(false);
   const [task, setTask] = useState<any>({});
   const [userId, setUserId] = useState<string | null>(null);
   // const [tasks, setTasks] = useState([]);
@@ -221,6 +223,27 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     }
   });
 
+  const [leaveTask] = useMutation(LEAVE_TASK, {
+    variables: {
+      taskId,
+      userId: user.id
+    },
+    onCompleted(data) {
+      const {leaveTask} = data;
+      const responseMessage = leaveTask.message;
+      if (leaveTask.success) {
+        message.success(responseMessage).then();
+        fetchData().then();
+        showLeaveTaskModal(false);
+      } else {
+        message.error(responseMessage).then();
+      }
+    },
+    onError() {
+      message.error("Failed to leave a task!").then();
+    }
+  });
+
   // const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT, {
   //   variables: {productSlug: getBasePath().replace("/products/", "")}
   // });
@@ -230,36 +253,95 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   //   : null;
 
   const getCausedBy = () => {
-    // const status = TASK_TYPES[getProp(task, 'status')];
-    // switch (status) {
-    //   case "Claimed":
-    //     return "Proposed By";
-    //   case "Done":
-    //     return "Done By";
-    //   default:
-    //     return status;
-    // }
+    let status = TASK_TYPES[getProp(task, 'status')];
 
-    return 'None'
+    switch (status) {
+      case "Claimed":
+        return "Proposed By";
+      case "Done":
+        return "Done By";
+      default:
+        return status;
+    }
   }
 
-  // const fetchData = async () => {
-  //   const data: any = await refetch({
-  //     id: taskId
-  //   })
-  //
-  //   if (!data.errors) {
-  //     setTask(data.data.task);
-  //   }
-  // }
+  const fetchData = async () => {
+    const data: any = await refetch({
+      id: taskId
+    })
+
+    if (!data.errors) {
+      setTask(data.data.task);
+    }
+  }
 
   useEffect(() => {
     if (original) {
-      setTask(getProp(original, 'task', {}));
+      setTask(original.task);
     }
   }, [original]);
 
   if (loading) return <Spinner/>
+
+  const showAssignedUser = () => {
+    const assignee = getProp(task, 'assignedTo', null);
+    return (
+      <Row className="text-sm">
+        {assignee ? (
+          <div className="mb-10">
+            {assignee.id === user.id
+              ? (
+                <div className="flex-column">
+                  <strong className="my-auto">Assigned to you</strong>
+                </div>
+              )
+              : (<>
+                <strong className="my-auto">Assigned to: </strong>
+                  <div className="ml-12">
+                    {CustomAvatar(
+                      assignee,
+                      "fullName",
+                      "default",
+                      null,
+                      {margin: 'auto 8px auto 0'}
+                      )
+                    }
+                  </div>
+                  <div className="my-auto">
+                    <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
+                      <a className="text-grey-9">{getProp(assignee, 'fullName', '')}</a>
+                    </Link>
+                  </div>
+              </>)
+            }
+          </div>
+        ) : null}
+      </Row>
+    )
+  }
+
+  const showTaskEvents = () => {
+    const assignee = getProp(task, 'assignedTo', null);
+    return (
+      <Row className="text-sm">
+        {assignee ? (
+          <>
+            {assignee.id === user.id
+              ? (
+                <div className="flex-column ml-auto">
+                  <Button type="primary"
+                          onClick={() => showLeaveTaskModal(true)}>Leave the task</Button>
+                </div>
+              )
+              : null
+            }
+          </>
+        ) : null}
+      </Row>
+    )
+  }
+
+  console.log("task", task)
 
   return (
     <LeftPanelContainer>
@@ -283,26 +365,32 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             </div>
             <Row
               justify="space-between"
-              className="right-panel-headline"
+              className="right-panel-headline strong-height"
             >
-              <div className="section-title">
-                {getProp(task, 'title', '')}
-              </div>
-              {(userRole === "Manager" || userRole === "Admin") && (
-                <Col>
-                  <Button
-                    onClick={() => showDeleteModal(true)}
-                  >
-                    Delete
-                  </Button>
-                  <EditIcon
-                    className="ml-10"
-                    // onClick={() => setShowEditModal(true)}
-                    onClick={() => {
-                    }}
-                  />
-                </Col>
-              )}
+              <Col md={16}>
+                <div className="section-title">
+                  {getProp(task, 'title', '')}
+                </div>
+              </Col>
+              <Col md={8} className="text-right">
+                {(userRole === "Manager" || userRole === "Admin") ? (
+                  <Col>
+                    <Button
+                      onClick={() => showDeleteModal(true)}
+                    >
+                      Delete
+                    </Button>
+                    <EditIcon
+                      className="ml-10"
+                      // onClick={() => setShowEditModal(true)}
+                      onClick={() => {
+                      }}
+                    />
+                  </Col>
+                ) : showTaskEvents()}
+              </Col>
+
+
             </Row>
             <Row>
               {getProp(task, 'videoUrl', null) && (
@@ -315,97 +403,101 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   />
                 </Col>
               )}
-              <Col xs={24} md={10}>
+              <Col xs={24} md={14} className="pt-20">
                 <DynamicHtml
                   text={getProp(task, 'description', '')}
                 />
-                <Row className="text-sm mt-22">
-                  <strong className="my-auto">Created By: </strong>
-                  <div className="ml-12">
-                    {
-                      getProp(task, 'createdBy', null) !== null
-                        ? CustomAvatar(
-                        getProp(task, 'createdBy'),
-                        "fullName",
-                        "default",
-                        null,
-                        {margin: 'auto 8px auto 0'}
-                        )
-                        : null
-                    }
-                  </div>
-                  <div className="my-auto">
-                    <Link href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
-                      <a className="text-grey-9">{getProp(task, 'createdBy.fullName', '')}</a>
-                    </Link>
-                  </div>
-                </Row>
+                <div className="mt-22">
+                  {showAssignedUser()}
+                  <Row className="text-sm">
+                    <strong className="my-auto">Created By: </strong>
+                    <div className="ml-12">
+                      {
+                        getProp(task, 'createdBy', null) !== null
+                          ? CustomAvatar(
+                          getProp(task, 'createdBy'),
+                          "fullName",
+                          "default",
+                          null,
+                          {margin: 'auto 8px auto 0'}
+                          )
+                          : null
+                      }
+                    </div>
+                    <div className="my-auto">
+                      <Link href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
+                        <a className="text-grey-9">{getProp(task, 'createdBy.fullName', '')}</a>
+                      </Link>
+                    </div>
+                  </Row>
 
-                <Row className="text-sm mt-8">
-                  {
-                    (
-                      // TASK_TYPES[getProp(task, 'status')] === "Available" ||
-                      // TASK_TYPES[getProp(task, 'status')] === "Draft" ||
-                      // TASK_TYPES[getProp(task, 'status')] === "Pending"
-                      false
-                    ) ? (
-                      <strong className="my-auto">
-                        Status: {TASK_TYPES[getProp(task, 'status')]}
-                      </strong>
-                    ) : (
-                      <>
+                  <Row className="text-sm mt-8">
+                    {
+                      (
+                        TASK_TYPES[getProp(task, 'status')] === "Available" ||
+                        TASK_TYPES[getProp(task, 'status')] === "Draft" ||
+                        TASK_TYPES[getProp(task, 'status')] === "Pending"
+                      ) ? (
                         <strong className="my-auto">
-                          Status: {getCausedBy()}
+                          Status: {TASK_TYPES[getProp(task, 'status')]}
                         </strong>
-                        <div className='ml-5'>
-                          {
-                            getProp(task, 'createdBy', null) !== null
-                              ? (
-                                <Row>
-                                  {
-                                    CustomAvatar(
-                                      getProp(task, 'createdBy'),
-                                      "fullName"
-                                    )
-                                  }
-                                  <div className="my-auto">
+                      ) : (
+                        <>
+                          <strong className="my-auto">
+                            Status: {getCausedBy()}
+                          </strong>
+                          <div className='ml-5'>
+                            {
+                              getProp(task, 'createdBy', null) !== null
+                                ? (
+                                  <Row>
                                     {
-                                      getProp(
+                                      CustomAvatar(
                                         getProp(task, 'createdBy'),
-                                        'fullName',
-                                        ''
+                                        "fullName"
                                       )
                                     }
-                                  </div>
-                                </Row>
-                              ) : null
-                          }
-                        </div>
-                      </>
+                                    <div className="my-auto">
+                                      {
+                                        getProp(
+                                          getProp(task, 'createdBy'),
+                                          'fullName',
+                                          ''
+                                        )
+                                      }
+                                    </div>
+                                  </Row>
+                                ) : null
+                            }
+                          </div>
+                        </>
+                      )
+                    }
+                  </Row>
+                  {
+                    getProp(task, 'priority', null) &&
+                      <Row style={{marginTop: 10}} className="text-sm mt-8">
+                          <strong className="my-auto">
+                              Priority:
+                          </strong>
+                          <Priorities task={task} submit={refetch}/>
+                      </Row>
+                  }
+                  {
+                    getProp(task, 'capability.id', null) && (
+                      <Row
+                        className="text-sm mt-8"
+                      >
+                        <strong className="my-auto">
+                          Related Capability:
+                        </strong>
+                        <Link href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
+                          <a className="ml-5">{getProp(task, 'capability.name', '')}</a>
+                        </Link>
+                      </Row>
                     )
                   }
-                </Row>
-                {
-                  getProp(task, 'priority', null) &&
-                    <Row style={{marginTop: 10}}>
-                        <Typography.Text strong style={{marginRight: 20}}>Priority: </Typography.Text>
-                        <Priorities task={task} submit={refetch}/>
-                    </Row>
-                }
-                {
-                  getProp(task, 'capability.id', null) && (
-                    <Row
-                      className="text-sm mt-8"
-                    >
-                      <strong className="my-auto">
-                        Related Capability:
-                      </strong>
-                      <Link href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
-                        <a className="ml-5">{getProp(task, 'capability.name', '')}</a>
-                      </Link>
-                    </Row>
-                  )
-                }
+                </div>
               </Col>
             </Row>
             {/*<TaskTable*/}
@@ -427,6 +519,17 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                 closeModal={() => showDeleteModal(false)}
                 submit={deleteTask}
                 title='Delete task'
+              />
+            )}
+            {leaveTaskModal && (
+              <CustomModal
+                modal={leaveTaskModal}
+                productSlug={''}
+                closeModal={() => showLeaveTaskModal(false)}
+                submit={leaveTask}
+                title="Leave the task"
+                message="Are you really want to leave the task?"
+                submitText="Yes, leave"
               />
             )}
             {/*{showEditModal && <AddTask*/}

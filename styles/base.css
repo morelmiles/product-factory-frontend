@@ -143,13 +143,22 @@ p:last-child {
     color: #000000;
 }
 .text-grey-9 {
+    transition: color 0.3s;
     color: var(--grey-9);
+}
+.text-grey-9.link:hover,
+.text-grey-9.link:active {
+    color: #40a9ff;
 }
 .text-grey {
     color: var(--grey-7);
 }
 .font-bold {
     font-weight: 600;
+}
+
+.ant-col.text-right > div {
+    text-align: right;
 }
 
 .show-ellipse {
