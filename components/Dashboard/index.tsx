@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Row, Col, Radio, Select, Layout} from 'antd';
 import {useRouter} from 'next/router'
-import {TASK_TYPES} from '../../graphql/types';
+import {TASK_LIST_TYPES} from '../../graphql/types';
 import {RadioChangeEvent} from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
@@ -98,7 +98,7 @@ const Dashboard: React.FunctionComponent = () => {
                       style={{minWidth: 120}}
                       onChange={(value: any) => changeSearchTerm("product-tag", value)}
                     >
-                      {tagsData?.data ? tagsData.data.tags.map((tag: any) =>
+                      {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>
                         <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
                     </Select>
                   </div>
@@ -127,7 +127,7 @@ const Dashboard: React.FunctionComponent = () => {
                       style={{minWidth: 120}}
                       onChange={(value: any) => changeSearchTerm("task-tag", value)}
                     >
-                      {tagsData?.data ? tagsData.data.tags.map((tag: any) =>
+                      {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>
                         <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
                     </Select>
                   </div>
@@ -151,7 +151,7 @@ const Dashboard: React.FunctionComponent = () => {
                       mode="multiple"
                       onChange={(value: any) => changeSearchTerm("status", value)}
                     >
-                      {TASK_TYPES.map((option: { id: number, name: string }) => (
+                      {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (
                         <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
                       ))}
                     </Select>
@@ -167,6 +167,7 @@ const Dashboard: React.FunctionComponent = () => {
           <ProductTab setProductNum={setProductNum}/>
         ) : (
           <TaskTab setTaskNum={setTaskNum}
+                   showInitiativeName={true}
                    showProductName={true}
                    sortedBy={taskSortType}
                    statuses={taskStatus}

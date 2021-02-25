@@ -6,14 +6,21 @@ import TaskTable from '../TaskTable'
 
 
 type Props = {
-  setTaskNum: (value: number) => void;
-  showProductName?: boolean;
+  setTaskNum: (value: number) => void,
+  showInitiativeName?: boolean,
+  showProductName?: boolean,
   sortedBy: string,
   statuses: string[],
   tags: string[],
 };
 
-const TaskTab: React.FunctionComponent<Props> = ({ setTaskNum, sortedBy, statuses, showProductName= false, tags }) => {
+const TaskTab: React.FunctionComponent<Props> = ({
+                                                   setTaskNum,
+                                                   sortedBy,
+                                                   statuses,
+                                                   showInitiativeName= false,
+                                                   showProductName = false,
+                                                   tags }) => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const { data, error, loading, refetch } = useQuery(GET_TASKS, {
@@ -37,7 +44,12 @@ const TaskTab: React.FunctionComponent<Props> = ({ setTaskNum, sortedBy, statuse
   if(!data || !data.tasks) return <h3 className="text-center">No tasks</h3>
 
   return (
-    <TaskTable submit={() => refetch()} tasks={data.tasks} statusList={data.statusList} showProductName={showProductName} hideTitle={true} />
+    <TaskTable submit={() => refetch()}
+               tasks={data.tasks}
+               statusList={data.statusList}
+               showInitiativeName={showInitiativeName}
+               showProductName={showProductName}
+               hideTitle={true} />
   );
 };
 
