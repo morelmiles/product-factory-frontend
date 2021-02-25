@@ -298,7 +298,8 @@ export const GET_INITIATIVES = gql`
   }
 `;
 
-export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
+export const GET_INITIATIVE_BY_ID = gql`
+query GetInitiative($id: Int!, $userId: Int!) {
   initiative(id: $id) {
     id
     name
@@ -320,6 +321,8 @@ export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
       title
       description
       status
+      priority
+      canEdit(userId: $userId)
       taskclaimSet {
         id
         task {
@@ -334,11 +337,9 @@ export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
         }
         kind
       }
-      producttaskSet {
-        product {
-          name
-          slug
-        }
+      product {
+        name
+        slug
       }
     }
   }
@@ -349,6 +350,7 @@ export const GET_TASK_BY_ID = gql`
     task(id: $id) {
       id
       canEdit(userId: $userId)
+      priority
       detailUrl
       repository
       title

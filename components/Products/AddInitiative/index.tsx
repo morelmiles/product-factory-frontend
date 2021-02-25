@@ -24,7 +24,7 @@ type Props = {
     initiative?: any;
 };
 
-const AddInitiative: React.SFC<Props> = ({
+const AddInitiative: React.FunctionComponent<Props> = ({
   modal,
   productSlug,
   closeModal,
