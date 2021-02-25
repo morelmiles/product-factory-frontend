@@ -24,14 +24,12 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
   let {initiativeId, productSlug} = router.query;
   productSlug = String(productSlug);
 
-  const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
-    variables: {id: initiativeId}
-  });
   const {data: product, error: productError, loading: productLoading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
     variables: {slug: productSlug}
   });
 
   const [initiative, setInitiative] = useState({});
+  const [userId, setUserId] = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
   const [deleteInitiative] = useMutation(DELETE_INITIATIVE, {
@@ -46,6 +44,14 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
       message.error("Failed to delete item!").then();
     }
   });
+
+  const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
+    variables: {id: initiativeId, userId: userId == null ? 0 : userId }
+  });
+
+  useEffect(() => {
+    setUserId(localStorage.getItem('userId'));
+  }, []);
 
   const fetchData = async () => {
     const data: any = await refetch({
@@ -124,7 +130,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
             <TaskTable
               tasks={getProp(original.initiative, 'taskSet', [])}
               productSlug={productSlug}
-              submit={() => {}}
+              submit={fetchData}
             />
             {deleteModal && (
               <DeleteModal

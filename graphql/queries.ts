@@ -293,7 +293,7 @@ export const GET_INITIATIVES = gql`
 `;
 
 export const GET_INITIATIVE_BY_ID = gql`
-query GetInitiative($id: Int!) {
+query GetInitiative($id: Int!, $userId: Int!) {
   initiative(id: $id) {
     id
     name
@@ -315,6 +315,8 @@ query GetInitiative($id: Int!) {
       title
       description
       status
+      priority
+      canEdit(userId: $userId)
       taskclaimSet {
         id
         task {
