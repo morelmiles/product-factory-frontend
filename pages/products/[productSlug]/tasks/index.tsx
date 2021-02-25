@@ -7,7 +7,7 @@ import {TaskTable} from '../../../../components';
 import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
-import {TASK_TYPES} from "../../../../graphql/types";
+import {TASK_LIST_TYPES} from "../../../../graphql/types";
 
 const {Option} = Select;
 
@@ -81,7 +81,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
                 style={{minWidth: 120}}
                 onChange={(value: any[]) => setTags(value)}
               >
-                {tagsData?.data ? tagsData.data.tags.map(tag =>
+                {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>
                   <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
               </Select>
             </div>
@@ -105,7 +105,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
                 mode="multiple"
                 onChange={(value: any[]) => setStatuses(value)}
               >
-                {TASK_TYPES.map((option: { id: number, name: string }) => (
+                {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (
                   <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
                 ))}
               </Select>

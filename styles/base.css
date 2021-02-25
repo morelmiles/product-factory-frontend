@@ -157,6 +157,10 @@ p:last-child {
     font-weight: 600;
 }
 
+.ant-col.text-right > div {
+    text-align: right;
+}
+
 .show-ellipse {
     overflow: hidden;
     display: -webkit-box;

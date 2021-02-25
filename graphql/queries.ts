@@ -349,6 +349,12 @@ export const GET_TASK_BY_ID = gql`
       description
       shortDescription
       status
+      assignedTo {
+        id
+        fullName,
+        photo,
+        slug
+      }
       attachment {
         id
         name
