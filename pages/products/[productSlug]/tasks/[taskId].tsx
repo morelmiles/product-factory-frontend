@@ -179,9 +179,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const {taskId, productSlug} = router.query;
 
   const [deleteModal, showDeleteModal] = useState(false);
-  // const [task, setTask] = useState({});
-  const [task] = useState({});
-  // const [tasks, setTasks] = useState([]);
+  const [task, setTask] = useState({});
   // const [showEditModal, setShowEditModal] = useState(false);
 
   // const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
@@ -225,7 +223,9 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   //   : null;
 
   const getCausedBy = () => {
-    const status = TASK_TYPES[getProp(task, 'status')];
+    let status = TASK_TYPES[getProp(task, 'status')];
+    if (status && status.hasOwnProperty("name")) status = status.name;
+
     switch (status) {
       case "Claimed":
         return "Proposed By";
@@ -236,26 +236,25 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     }
   }
 
-  // const fetchData = async () => {
-  //   const data: any = await refetch({
-  //     id: taskId
-  //   })
-  //
-  //   if (!data.errors) {
-  //     setTask(data.data.task);
-  //   }
-  // }
+  const fetchData = async () => {
+    const data: any = await refetch({
+      id: taskId
+    })
 
-  // useEffect(() => {
-  //   if (original) {
-  //     setTask(original.task);
-  //   }
-  //   if (tasksData) {
-  //     setTasks(tasksData.tasks);
-  //   }
-  // }, [original]);
+    if (!data.errors) {
+      setTask(data.data.task);
+    }
+  }
+
+  useEffect(() => {
+    if (original) {
+      setTask(original.task);
+    }
+  }, [original]);
 
   if (loading) return <Spinner/>
+
+  console.log("task", task)
 
   return (
     <LeftPanelContainer>
@@ -352,30 +351,30 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                         <strong className="my-auto">
                           Status: {getCausedBy()}
                         </strong>
-                        <div className='ml-5'>
-                          {
-                            getProp(task, 'createdBy', null) !== null
-                              ? (
-                                <Row>
-                                  {
-                                    CustomAvatar(
-                                      getProp(task, 'createdBy'),
-                                      "fullName"
-                                    )
-                                  }
-                                  <div className="my-auto">
-                                    {
-                                      getProp(
-                                        getProp(task, 'createdBy'),
-                                        'fullName',
-                                        ''
-                                      )
-                                    }
-                                  </div>
-                                </Row>
-                              ) : null
-                          }
-                        </div>
+                        {/*<div className='ml-5'>*/}
+                        {/*  {*/}
+                        {/*    getProp(task, 'createdBy', null) !== null*/}
+                        {/*      ? (*/}
+                        {/*        <Row>*/}
+                        {/*          {*/}
+                        {/*            CustomAvatar(*/}
+                        {/*              getProp(task, 'createdBy'),*/}
+                        {/*              "fullName"*/}
+                        {/*            )*/}
+                        {/*          }*/}
+                        {/*          <div className="my-auto">*/}
+                        {/*            {*/}
+                        {/*              getProp(*/}
+                        {/*                getProp(task, 'createdBy'),*/}
+                        {/*                'fullName',*/}
+                        {/*                ''*/}
+                        {/*              )*/}
+                        {/*            }*/}
+                        {/*          </div>*/}
+                        {/*        </Row>*/}
+                        {/*      ) : null*/}
+                        {/*  }*/}
+                        {/*</div>*/}
                       </>
                     )
                   }

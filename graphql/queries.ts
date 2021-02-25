@@ -374,14 +374,10 @@ export const GET_TASK_BY_ID = gql`
         }
         kind
       }
-      #capability {
-      #  id
-      #  name
-      #  breadcrumb {
-      #    id
-      #    name
-      #  }
-      #}
+      capability {
+        id
+        name
+      }
       initiative {
         id
         name
