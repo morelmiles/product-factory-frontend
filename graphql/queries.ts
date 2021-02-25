@@ -198,6 +198,12 @@ export const GET_TASKS = gql`
         name
         slug
       }
+      assignedTo {
+        id,
+        fullName,
+        photo,
+        slug
+      }
     }
   }
 `;
@@ -423,6 +429,12 @@ export const GET_TASKS_BY_PRODUCT = gql`
       initiative {
         name
         id
+      }
+      assignedTo {
+        id,
+        fullName,
+        photo,
+        slug
       }
     }
   }

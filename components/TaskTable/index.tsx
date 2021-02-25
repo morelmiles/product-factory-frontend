@@ -16,6 +16,7 @@ type Props = {
   hideTitle?: boolean;
   showPendingTasks?: boolean;
   showInitiativeName?: boolean;
+  showProductName?: boolean;
   submit: Function;
 };
 
@@ -27,6 +28,7 @@ const TaskTable: React.FunctionComponent<Props> = (
     hideTitle = false,
     showPendingTasks = false,
     showInitiativeName = false,
+    showProductName = false,
     submit
   }
 ) => {
@@ -64,6 +66,7 @@ const TaskTable: React.FunctionComponent<Props> = (
               ? getProp(task, 'taskClaimSet', null)[0]
               : null;
 
+            const productName = getProp(task, 'product.name', '');
             const productSlug = getProp(task, 'product.slug', '');
             const initiativeName = getProp(task, 'initiative.name', '');
             const initiativeId = getProp(task, 'initiative.id', '');
@@ -74,14 +77,27 @@ const TaskTable: React.FunctionComponent<Props> = (
                 <Row justify="space-between">
                   <Col span={16}>
                     <Row>
+                      {
+                        showProductName && (
+                          <>
+                            <Link href={`/products/${productSlug}`}>
+                                <a className="text-grey-9">{productName}</a>
+                            </Link>&nbsp;/&nbsp;
+                          </>
+                        )
+
+                      }
                       <Link
                         href={`/products/${productSlug}/tasks/${task.id}`}
                       >
-                        <a className="text-grey-9">
-                          <Row align="middle">
-                            {task.title}
-                          </Row>
-                        </a>
+                        <strong>
+                          <a className="text-grey-9">
+                            <Row align="middle">
+                              {task.title}
+                            </Row>
+                          </a>
+                        </strong>
+
                       </Link>
                     </Row>
                     <Row>
@@ -107,12 +123,12 @@ const TaskTable: React.FunctionComponent<Props> = (
                     </Row>
                   </Col>
 
-                  <Col span={4} className="my-auto ml-auto" style={{textAlign: "center"}}>
+                  <Col span={4} className="ml-auto" style={{textAlign: "center"}}>
                     <Priorities task={task} submit={() => submit()}/>
                   </Col>
 
                   <Col span={4}
-                       className="my-auto ml-auto"
+                       className="ml-auto"
                        style={{textAlign: "right"}}
                   >
                     {
