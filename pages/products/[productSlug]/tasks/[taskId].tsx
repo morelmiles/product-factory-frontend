@@ -232,7 +232,6 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
       const {leaveTask} = data;
       const responseMessage = leaveTask.message;
       if (leaveTask.success) {
-        console.log("success leave")
         message.success(responseMessage).then();
         fetchData().then();
         showLeaveTaskModal(false);
@@ -432,70 +431,73 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                     </div>
                   </Row>
 
-                <Row className="text-sm mt-8">
-                  {
-                    (
-                      TASK_TYPES[getProp(task, 'status')] === "Available" ||
-                      TASK_TYPES[getProp(task, 'status')] === "Draft" ||
-                      TASK_TYPES[getProp(task, 'status')] === "Pending"
-                    ) ? (
-                      <strong className="my-auto">
-                        Status: {TASK_TYPES[getProp(task, 'status')]}
-                      </strong>
-                    ) : (
-                      <>
+                  <Row className="text-sm mt-8">
+                    {
+                      (
+                        TASK_TYPES[getProp(task, 'status')] === "Available" ||
+                        TASK_TYPES[getProp(task, 'status')] === "Draft" ||
+                        TASK_TYPES[getProp(task, 'status')] === "Pending"
+                      ) ? (
                         <strong className="my-auto">
-                          Status: {getCausedBy()}
+                          Status: {TASK_TYPES[getProp(task, 'status')]}
                         </strong>
-                        <div className='ml-5'>
-                          {
-                            getProp(task, 'createdBy', null) !== null
-                              ? (
-                                <Row>
-                                  {
-                                    CustomAvatar(
-                                      getProp(task, 'createdBy'),
-                                      "fullName"
-                                    )
-                                  }
-                                  <div className="my-auto">
+                      ) : (
+                        <>
+                          <strong className="my-auto">
+                            Status: {getCausedBy()}
+                          </strong>
+                          <div className='ml-5'>
+                            {
+                              getProp(task, 'createdBy', null) !== null
+                                ? (
+                                  <Row>
                                     {
-                                      getProp(
+                                      CustomAvatar(
                                         getProp(task, 'createdBy'),
-                                        'fullName',
-                                        ''
+                                        "fullName"
                                       )
                                     }
-                                  </div>
-                                </Row>
-                              ) : null
-                          }
-                        </div>
-                      </>
+                                    <div className="my-auto">
+                                      {
+                                        getProp(
+                                          getProp(task, 'createdBy'),
+                                          'fullName',
+                                          ''
+                                        )
+                                      }
+                                    </div>
+                                  </Row>
+                                ) : null
+                            }
+                          </div>
+                        </>
+                      )
+                    }
+                  </Row>
+                  {
+                    getProp(task, 'priority', null) &&
+                      <Row style={{marginTop: 10}} className="text-sm mt-8">
+                          <strong className="my-auto">
+                              Priority:
+                          </strong>
+                          <Priorities task={task} submit={refetch}/>
+                      </Row>
+                  }
+                  {
+                    getProp(task, 'capability.id', null) && (
+                      <Row
+                        className="text-sm mt-8"
+                      >
+                        <strong className="my-auto">
+                          Related Capability:
+                        </strong>
+                        <Link href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
+                          <a className="ml-5">{getProp(task, 'capability.name', '')}</a>
+                        </Link>
+                      </Row>
                     )
                   }
-                </Row>
-                {
-                  getProp(task, 'priority', null) &&
-                    <Row style={{marginTop: 10}}>
-                        <Typography.Text strong style={{marginRight: 20}}>Priority: </Typography.Text>
-                        <Priorities task={task} submit={refetch}/>
-                    </Row>
-                }
-                {
-                  getProp(task, 'capability.id', null) && (
-                    <Row
-                      className="text-sm mt-8"
-                    >
-                      <strong className="my-auto">
-                        Related Capability:
-                      </strong>
-                      <Link href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
-                        <a className="ml-5">{getProp(task, 'capability.name', '')}</a>
-                      </Link>
-                    </Row>
-                  )
-                }
+                </div>
               </Col>
             </Row>
             {/*<TaskTable*/}
