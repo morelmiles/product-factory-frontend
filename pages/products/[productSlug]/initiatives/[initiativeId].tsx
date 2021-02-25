@@ -4,8 +4,6 @@ import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {Row, Col, message, Button} from 'antd';
 import {useQuery, useMutation} from '@apollo/react-hooks';
-// import ReactPlayer from 'react-player';
-// import parse from 'html-react-parser';
 import {GET_INITIATIVE_BY_ID, GET_PRODUCT_INFO_BY_ID} from '../../../../graphql/queries';
 import {DELETE_INITIATIVE} from '../../../../graphql/mutations';
 import DeleteModal from '../../../../components/Products/DeleteModal';
@@ -126,6 +124,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
             <TaskTable
               tasks={getProp(original.initiative, 'taskSet', [])}
               productSlug={productSlug}
+              submit={() => {}}
             />
             {deleteModal && (
               <DeleteModal
@@ -158,7 +157,6 @@ const mapStateToProps = (state: any) => ({
   userRole: state.work.userRole,
 });
 
-// const mapDispatchToProps = (dispatch: any) => ({});
 const mapDispatchToProps = () => ({});
 
 const InitiativeDetailContainer = connect(

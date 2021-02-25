@@ -192,7 +192,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
 
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
-  }, [])
+  }, []);
 
   const getBasePath = () => {
     //fix it

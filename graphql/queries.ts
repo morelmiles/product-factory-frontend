@@ -292,7 +292,8 @@ export const GET_INITIATIVES = gql`
   }
 `;
 
-export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
+export const GET_INITIATIVE_BY_ID = gql`
+query GetInitiative($id: Int!) {
   initiative(id: $id) {
     id
     name
@@ -328,11 +329,9 @@ export const GET_INITIATIVE_BY_ID = gql`query GetInitiative($id: Int!) {
         }
         kind
       }
-      producttaskSet {
-        product {
-          name
-          slug
-        }
+      product {
+        name
+        slug
       }
     }
   }
