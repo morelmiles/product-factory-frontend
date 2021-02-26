@@ -189,3 +189,12 @@ export const LEAVE_TASK = gql`
     }
   }
 `;
+
+export const CLAIM_TASK = gql`
+  mutation ClaimTask($taskId: Int!, $userId: Int!) {
+    claimTask(taskId: $taskId, userId: $userId) {
+      success,
+      message
+    }
+  }
+`;

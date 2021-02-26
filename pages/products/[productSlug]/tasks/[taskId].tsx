@@ -7,7 +7,7 @@ import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
 import {GET_TASK_BY_ID} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
-import {DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
+import {CLAIM_TASK, DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {CustomAvatar, EditIcon, DynamicHtml} from '../../../../components';
 // import AddTask from '../../../../components/Products/AddTask';
@@ -245,13 +245,34 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     }
   });
 
-  // const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT, {
-  //   variables: {productSlug: getBasePath().replace("/products/", "")}
-  // });
+  const [claimTask] = useMutation(CLAIM_TASK, {
+    variables: {
+      taskId,
+      userId: user.id
+    },
+    onCompleted(data) {
+      const {claimTask} = data;
+      const responseMessage = claimTask.message;
+      if (claimTask.success) {
+        message.success(responseMessage).then();
+        fetchData().then();
+      } else {
+        message.error(responseMessage).then();
+      }
+    },
+    onError() {
+      message.error("Failed to claim a task!").then();
+    }
+  });
 
-  // const taskclaimSet = getProp(data, 'task.taskclaimSet', null)
-  //   ? getProp(data, 'task.taskclaimSet', null)[0]
-  //   : null;
+  const claimTaskEvent = () => {
+    if (user.id === undefined) {
+      message.error("You cannot claim the task, please authenticate to the system").then()
+      return
+    }
+
+    claimTask().then();
+  }
 
   const getCausedBy = () => {
     let status = TASK_TYPES[getProp(task, 'status')];
@@ -324,7 +345,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const showTaskEvents = () => {
     const assignee = getProp(task, 'assignedTo', null);
     const taskStatus = TASK_TYPES[getProp(task, 'status')];
-    console.log("taskStatus", taskStatus)
+
     return (
       <Row className="text-sm">
         {assignee && taskStatus !== "Done" ? (
@@ -340,11 +361,17 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             }
           </>
         ) : null}
+        {taskStatus === "Available" && (
+          <>
+            <div className="flex-column ml-auto">
+              <Button type="primary"
+                      onClick={() => claimTaskEvent()}>Claim the task</Button>
+            </div>
+          </>
+        )}
       </Row>
     )
   }
-
-  console.log("task", task)
 
   return (
     <LeftPanelContainer>

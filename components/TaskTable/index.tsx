@@ -76,7 +76,7 @@ const TaskTable: React.FunctionComponent<Props> = (
               <Col key={index} span={24}>
                 <Divider/>
                 <Row justify="space-between">
-                  <Col span={16}>
+                  <Col span={14}>
                     <Row>
                       {
                         showProductName && (
@@ -124,7 +124,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                     </Row>
                   </Col>
 
-                  <Col span={2} className="ml-auto" style={{textAlign: "center"}}>
+                  <Col span={4} className="ml-auto" style={{textAlign: "center"}}>
                     <Priorities task={task} submit={() => submit()}/>
                   </Col>
 
