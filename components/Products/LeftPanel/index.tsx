@@ -59,7 +59,7 @@ const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
   //   }
   // }, [data]);
 
-  if (loading) return <Loading/>
+  if (loading) return null;
 
   return (
     <>
