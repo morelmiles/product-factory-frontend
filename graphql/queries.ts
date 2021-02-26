@@ -714,6 +714,12 @@ export const GET_CAPABILITIES_BY_PRODUCT_AS_LIST = gql`
   }
 `;
 
+export const GET_CAPABILITY_PARENT_CRUMBS = gql`
+  query GetCapabilityParentCrumbs($nodeId: Int!) {
+    capabilityParentCrumbs (nodeId: $nodeId)
+  }
+`;
+
 export const GET_TAGS = gql`
   query GetTags {
     tags {
