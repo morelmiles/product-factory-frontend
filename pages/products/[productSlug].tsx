@@ -9,13 +9,14 @@ import {GET_CAPABILITIES_BY_PRODUCT, GET_PRODUCT_BY_ID} from '../../graphql/quer
 import {DELETE_CAPABILITY} from '../../graphql/mutations';
 import {TagType} from '../../graphql/types';
 import AddOrEditCapability from '../../components/Products/AddOrEditCapability';
-import {DynamicHtml, Spinner} from '../../components';
+import {DynamicHtml} from '../../components';
 import {getProp} from '../../utilities/filters';
 import {TreeNode} from '../../utilities/constants';
 import {setWorkState} from '../../lib/actions';
 import {WorkState} from '../../lib/reducers/work.reducer';
 import LeftPanelContainer from '../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
+import Loading from "../../components/Loading";
 
 
 const {Search} = Input;
@@ -210,7 +211,7 @@ const Summary: React.FunctionComponent = () => {
 
   const isAdminOrManager = getProp(original, 'isAdminOrManager', false);
 
-  if (loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <LeftPanelContainer>

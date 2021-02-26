@@ -8,8 +8,8 @@ import { getProp } from '../../utilities/filters';
 import { TagType } from '../../graphql/types';
 import CheckCircle from "../../public/assets/icons/check-circle.svg";
 import parse from 'html-react-parser';
-import { Spinner } from '../Spinner';
 import { useRouter } from 'next/router';
+import Loading from "../Loading";
 var pluralize = require('pluralize');
 
 type Props = {
@@ -42,7 +42,7 @@ const ProductTab: React.FunctionComponent<Props> = ({ setProductNum }) => {
     router.push(link).then();
   }
 
-  if(loading) return <Spinner/>
+  if (loading) return <Loading/>;
 
   return (
         <Row gutter={[16, 16]} className="card product-list">

@@ -10,9 +10,9 @@ import { getProp } from 'utilities/filters';
 import { randomKeys } from 'utilities/utils';
 import AddCapability from 'pages/Products/AddCapability';
 import PaperClipIcon from 'assets/icons/paper-clip.svg';
-import { Spinner } from 'components';
+import Loading from "../../Loading";
 
-var pluralize = require('pluralize');
+let pluralize = require('pluralize');
 
 type Params = {
   productSlug?: any;
@@ -170,7 +170,7 @@ const CapabilityList: React.SFC<Params> = ({ match, userRole }) => {
     (async () => { await fetchData(); })();
   }, []);
 
-  if(loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <>

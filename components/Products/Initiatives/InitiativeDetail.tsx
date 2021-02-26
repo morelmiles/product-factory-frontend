@@ -1,20 +1,18 @@
-
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps, matchPath } from 'react-router';
-import { withRouter, Link } from 'react-router-dom';
-import { Row, Col, Avatar, message, Button } from 'antd';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import ReactPlayer from 'react-player';
-import parse from 'html-react-parser';
-import { GET_INITIATIVE_BY_ID } from 'graphql/queries';
-import { DELETE_INITIATIVE } from 'graphql/mutations';
+import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import {RouteComponentProps, matchPath} from 'react-router';
+import {withRouter, Link} from 'react-router-dom';
+import {Row, Col, message, Button} from 'antd';
+import {useQuery, useMutation} from '@apollo/react-hooks';
+import {GET_INITIATIVE_BY_ID} from 'graphql/queries';
+import {DELETE_INITIATIVE} from 'graphql/mutations';
 import DeleteModal from 'pages/Products/DeleteModal';
 import AddInitiative from 'pages/Products/AddInitiative';
-import { TaskTable, DynamicHtml, Spinner } from 'components';
+import {TaskTable, DynamicHtml} from 'components';
 import EditIcon from 'components/EditIcon';
-import { getProp } from 'utilities/filters';
-import { getInitialName, randomKeys } from 'utilities/utils';
+import {getProp} from 'utilities/filters';
+import {randomKeys} from 'utilities/utils';
+import Loading from "../../Loading";
 
 type Params = {
   productSlug?: any;
@@ -23,14 +21,14 @@ type Params = {
   currentProduct: any;
 } & RouteComponentProps;
 
-const InitiativeDetail: React.SFC<Params> = ({ match, history, userRole, currentProduct }) => {
+const InitiativeDetail: React.SFC<Params> = ({match, history, userRole, currentProduct}) => {
   const params: any = matchPath(match.url, {
     path: "/products/:productSlug/initiatives/:initiativeId",
     exact: false,
     strict: false
   });
-  const { data: original, error, loading, refetch } = useQuery(GET_INITIATIVE_BY_ID, {
-    variables: { id: params.params.initiativeId }
+  const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
+    variables: {id: params.params.initiativeId}
   });
   const [initiative, setInitiative] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
@@ -40,12 +38,11 @@ const InitiativeDetail: React.SFC<Params> = ({ match, history, userRole, current
       id: params.params.initiativeId
     },
     onCompleted() {
-      message.success("Item is successfully deleted!");
+      message.success("Item is successfully deleted!").then();
       history.push(`/products/${params.params.productSlug}/initiatives`);
     },
     onError(err) {
-      // console.log("Delete item error: ", err);
-      message.error("Failed to delete item!");
+      message.error("Failed to delete item!").then();
     }
   });
 
@@ -65,7 +62,7 @@ const InitiativeDetail: React.SFC<Params> = ({ match, history, userRole, current
     }
   }, [original]);
 
-  if(loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <>
@@ -144,12 +141,12 @@ const InitiativeDetail: React.SFC<Params> = ({ match, history, userRole, current
             )}
             {
               showEditModal && <AddInitiative
-                modal={showEditModal}
-                productSlug={params.params.productSlug}
-                modalType={true}
-                closeModal={setShowEditModal}
-                submit={fetchData}
-                initiative={initiative}
+                  modal={showEditModal}
+                  productSlug={params.params.productSlug}
+                  modalType={true}
+                  closeModal={setShowEditModal}
+                  submit={fetchData}
+                  initiative={initiative}
               />
             }
           </React.Fragment>
@@ -165,8 +162,7 @@ const mapStateToProps = (state: any) => ({
   currentProduct: state.work.currentProduct,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-});
+const mapDispatchToProps = () => ({});
 
 const InitiativeDetailContainer = connect(
   mapStateToProps,

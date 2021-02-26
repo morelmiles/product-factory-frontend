@@ -8,11 +8,12 @@ import {GET_INITIATIVE_BY_ID, GET_PRODUCT_INFO_BY_ID} from '../../../../graphql/
 import {DELETE_INITIATIVE} from '../../../../graphql/mutations';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import AddInitiative from '../../../../components/Products/AddInitiative';
-import {TaskTable, DynamicHtml, Spinner} from '../../../../components';
+import {TaskTable, DynamicHtml} from '../../../../components';
 import EditIcon from '../../../../components/EditIcon';
 import {getProp} from '../../../../utilities/filters';
 import {randomKeys} from '../../../../utilities/utils';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
+import Loading from "../../../../components/Loading";
 
 
 type Params = {
@@ -69,7 +70,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
     }
   }, [original]);
 
-  if (loading || productLoading) return <Spinner/>
+  if (loading || productLoading) return <Loading/>
 
   return (
     <LeftPanelContainer>

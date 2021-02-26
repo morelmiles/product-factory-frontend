@@ -9,11 +9,12 @@ import {GET_CAPABILITY_BY_ID} from '../../../../graphql/queries';
 import {DELETE_CAPABILITY} from '../../../../graphql/mutations';
 import {TagType} from '../../../../graphql/types';
 import {getProp} from '../../../../utilities/filters';
-import {TaskTable, DynamicHtml, Spinner, ContainerFlex, Header} from '../../../../components';
+import {TaskTable, DynamicHtml, ContainerFlex, Header} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import AddOrEditCapability from '../../../../components/Products/AddOrEditCapability';
 import EditIcon from '../../../../components/EditIcon';
 import Attachments from "../../../../components/Attachments";
+import Loading from "../../../../components/Loading";
 
 
 const {Content} = Layout;
@@ -66,7 +67,7 @@ const CapabilityDetail: React.FunctionComponent = () => {
     }
   }, [data]);
 
-  if (loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <ContainerFlex>

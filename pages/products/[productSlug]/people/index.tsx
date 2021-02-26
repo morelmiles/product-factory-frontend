@@ -1,34 +1,31 @@
 import React, {useState} from 'react';
 import {Col, Divider, Radio, Row, Space, Typography} from 'antd';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_PRODUCT_PERSONS } from '../../../../graphql/queries';
-import { getProp } from '../../../../utilities/filters';
-import { randomKeys } from '../../../../utilities/utils';
-import {CustomAvatar, Spinner} from '../../../../components';
+import {useQuery} from '@apollo/react-hooks';
+import {GET_PRODUCT_PERSONS} from '../../../../graphql/queries';
+import {getProp} from '../../../../utilities/filters';
+import {randomKeys} from '../../../../utilities/utils';
+import {CustomAvatar} from '../../../../components';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {RadioChangeEvent} from "antd/es";
 import {Social} from "../../../../components/Profile/ProfileTop";
 import Link from "next/link";
+import Loading from "../../../../components/Loading";
+import {useRouter} from "next/router";
 
-type Params = {
-  productSlug?: any
-}
 
-const PeopleList: React.FunctionComponent<Params> = ({ productSlug }) => {
+const PeopleList: React.FunctionComponent = () => {
+  const router = useRouter();
+  const {productSlug} = router.query;
+
   const [mode, setMode] = useState('contributors');
-//   const params: any = matchPath(match.url, {
-//     path: "/products/:productSlug/people",
-//     exact: false,
-//     strict: false
-//   });
-  const { data, error, loading } = useQuery(GET_PRODUCT_PERSONS, {
-    variables: { productSlug }
+  const {data, error, loading} = useQuery(GET_PRODUCT_PERSONS, {
+    variables: {productSlug}
   });
 
-  if(loading) return <Spinner/>
+  if (loading) return <Loading/>;
 
   return (
-    <LeftPanelContainer productSlug={productSlug}>
+    <LeftPanelContainer>
       {
         !error && (
           <>
@@ -37,7 +34,7 @@ const PeopleList: React.FunctionComponent<Params> = ({ productSlug }) => {
                 <React.Fragment key={randomKeys()}>
                   {CustomAvatar(role.person, "fullName", 64, role)}
                   {
-                    idx !== data.productRoles.length - 1 ? <Divider /> : null
+                    idx !== data.productRoles.length - 1 ? <Divider/> : null
                   }
                 </React.Fragment>
               ))
@@ -82,7 +79,7 @@ const PeopleList: React.FunctionComponent<Params> = ({ productSlug }) => {
                                   <Link href={`/people/${getProp(item, 'person.slug', '')}`}>
                                     {getProp(item, 'person.fullName', '')}
                                   </Link>
-                                  </Typography.Text>
+                                </Typography.Text>
                               </Row>
                               <Row>
                                 <Typography.Text
@@ -91,13 +88,13 @@ const PeopleList: React.FunctionComponent<Params> = ({ productSlug }) => {
                               </Row>
                               <Row style={{fontSize: 16, color: '#8C8C8C'}}>
                                 <Space size={8}>
-                                    {
-                                        socials.map((social: any, index: number) => (
-                                            <a key={index} style={{color: '#999'}} href={social.url}>
-                                                <Social name={social.name}/>
-                                            </a>
-                                        ))
-                                    }
+                                  {
+                                    socials.map((social: any, index: number) => (
+                                      <a key={index} style={{color: '#999'}} href={social.url}>
+                                        <Social name={social.name}/>
+                                      </a>
+                                    ))
+                                  }
                                 </Space>
                               </Row>
                             </Col>
@@ -114,11 +111,6 @@ const PeopleList: React.FunctionComponent<Params> = ({ productSlug }) => {
       ) : null}
     </LeftPanelContainer>
   );
-};
-
-PeopleList.getInitialProps = async ({ query }) => {
-    const { productSlug } = query;
-    return { productSlug }
 }
 
 export default PeopleList;

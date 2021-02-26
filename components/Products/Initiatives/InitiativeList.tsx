@@ -1,14 +1,13 @@
-
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { Row, Col, Card, Tag, Button } from 'antd';
-import { useQuery } from '@apollo/react-hooks';
-import ReactPlayer from 'react-player';
-import { DynamicHtml, Spinner } from '../../../components';
-import { GET_INITIATIVES } from '../../../graphql/queries';
-import { randomKeys } from '../../../utilities/utils';
+import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
+import {Row, Col, Card, Button} from 'antd';
+import {useQuery} from '@apollo/react-hooks';
+import {DynamicHtml} from '../../../components';
+import {GET_INITIATIVES} from '../../../graphql/queries';
+import {randomKeys} from '../../../utilities/utils';
 import AddInitiative from '../../../components/AddInitiative';
-import { getProp } from '../../../utilities/filters';
+import {getProp} from '../../../utilities/filters';
+import Loading from "../../Loading";
 
 type Params = {
   productSlug?: any
@@ -16,7 +15,7 @@ type Params = {
   match: any;
 };
 
-const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole }) => {
+const InitiativeList: React.FunctionComponent<Params> = ({history, location, match, userRole}) => {
   const params: any = matchPath(match.url, {
     path: "/products/:productSlug/initiatives",
     exact: false,
@@ -24,8 +23,8 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
   });
   const [showEditModal, setShowEditModal] = useState(false);
   const [initiatives, setInitiatives] = useState([]);
-  const { data, error, loading, refetch } = useQuery(GET_INITIATIVES, {
-    variables: { productSlug: params.params.productSlug }
+  const {data, error, loading, refetch} = useQuery(GET_INITIATIVES, {
+    variables: {productSlug: params.params.productSlug}
   });
 
   const goToDetails = (id: number) => {
@@ -33,7 +32,7 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
   }
 
   const fetchData = async () => {
-    const { data: newData } = await refetch({
+    const {data: newData} = await refetch({
       productSlug: params.params.productSlug
     });
 
@@ -47,7 +46,7 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
   }, [data]);
 
 
-  if(loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <>
@@ -60,9 +59,9 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
             >
               <Col>
                 <div className="page-title text-center">
-                  { initiatives
-                      ? `Explore ${initiatives.length} initiatives`
-                      : 'No initiatives'
+                  {initiatives
+                    ? `Explore ${initiatives.length} initiatives`
+                    : 'No initiatives'
                   }
                 </div>
               </Col>
@@ -77,10 +76,10 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
               )}
             </Row>
             <Row gutter={[16, 16]}>
-            {
-              initiatives && initiatives.map((initiative: any, idx: number) => (
-                <Col key={randomKeys()} xs={24} sm={12} md={8}>
-                  {/* <Card
+              {
+                initiatives && initiatives.map((initiative: any) => (
+                  <Col key={randomKeys()} xs={24} sm={12} md={8}>
+                    {/* <Card
                     cover={
                       <ReactPlayer
                         width="100%"
@@ -89,33 +88,33 @@ const InitiativeList: React.SFC<Params> = ({ history, location, match, userRole 
                       />
                     }
                   > */}
-                  <Card>
-                    <div
-                      className='pointer'
-                      onClick={() => goToDetails(initiative.id)}
-                    >
-                      <div>
-                      <h4 className='mt-5'>{initiative.name}</h4>
-                        <DynamicHtml
-                          text={getProp(initiative, 'description', '')}
-                        />
+                    <Card>
+                      <div
+                        className='pointer'
+                        onClick={() => goToDetails(initiative.id)}
+                      >
+                        <div>
+                          <h4 className='mt-5'>{initiative.name}</h4>
+                          <DynamicHtml
+                            text={getProp(initiative, 'description', '')}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                </Col>
-              ))
-            }
-            {
-              showEditModal && <AddInitiative
-                modal={showEditModal}
-                productSlug={params.params.productSlug}
-                modalType={false}
-                closeModal={setShowEditModal}
-                submit={fetchData}
-              />
-            }
+                    </Card>
+                  </Col>
+                ))
+              }
+              {
+                showEditModal && <AddInitiative
+                    modal={showEditModal}
+                    productSlug={params.params.productSlug}
+                    modalType={false}
+                    closeModal={setShowEditModal}
+                    submit={fetchData}
+                />
+              }
             </Row>
-          </React.Fragment >
+          </React.Fragment>
         )
       }
     </>
@@ -127,8 +126,7 @@ const mapStateToProps = (state: any) => ({
   userRole: state.work.userRole
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-});
+const mapDispatchToProps = () => ({});
 
 const InitiativeListContainer = connect(
   mapStateToProps,

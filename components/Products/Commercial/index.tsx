@@ -8,13 +8,13 @@ import { PARTNER_TYPES } from 'graphql/types';
 import { getProp } from 'utilities/filters';
 import { randomKeys } from 'utilities/utils';
 import CustomAvatar from 'components/CustomAvatar';
-import { Spinner } from 'components';
+import Loading from "../../Loading";
 
 type Params = {
   productSlug?: any
 } & RouteComponentProps;
 
-const Commercial: React.SFC<Params> = ({ match }) => {
+const Commercial: React.FunctionComponent<Params> = ({ match }) => {
   const params: any = matchPath(match.url, {
     path: "/products/:productSlug/partners",
     exact: false,
@@ -26,7 +26,7 @@ const Commercial: React.SFC<Params> = ({ match }) => {
     }
   });
 
-  if(loading) return <Spinner/>
+  if(loading) return <Loading/>
 
   return (
     <>

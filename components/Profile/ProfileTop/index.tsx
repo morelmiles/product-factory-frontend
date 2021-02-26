@@ -7,6 +7,7 @@ import {getProp} from '../../../utilities/filters'
 import {formatDate} from '../../../utilities/utils'
 import {BehanceSquareOutlined, DribbbleSquareOutlined, InstagramFilled, LinkedinFilled} from "@ant-design/icons"
 import {useRouter} from "next/router"
+import Loading from "../../Loading";
 
 
 type SocialProps = {
@@ -47,11 +48,12 @@ const ProfileTop: React.FunctionComponent = () => {
     });
     const socials = getProp(socialsData, 'personSocials', []);
 
+    if (loading || socialsDataLoading) return <Loading/>;
 
     return (
         <>
             {
-                loading && socialsDataLoading ? null : !error && !socialsDataError && (
+                !error && !socialsDataError && (
                     <>
                         <Row>
                             <Col>
