@@ -7,7 +7,7 @@ import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
 import {GET_TASK_BY_ID} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
-import {DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
+import {CLAIM_TASK, DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {CustomAvatar, EditIcon, DynamicHtml} from '../../../../components';
 // import AddTask from '../../../../components/Products/AddTask';
@@ -245,13 +245,34 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     }
   });
 
-  // const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT, {
-  //   variables: {productSlug: getBasePath().replace("/products/", "")}
-  // });
+  const [claimTask] = useMutation(CLAIM_TASK, {
+    variables: {
+      taskId,
+      userId: user.id
+    },
+    onCompleted(data) {
+      const {claimTask} = data;
+      const responseMessage = claimTask.message;
+      if (claimTask.success) {
+        message.success(responseMessage).then();
+        fetchData().then();
+      } else {
+        message.error(responseMessage).then();
+      }
+    },
+    onError() {
+      message.error("Failed to claim a task!").then();
+    }
+  });
 
-  // const taskclaimSet = getProp(data, 'task.taskclaimSet', null)
-  //   ? getProp(data, 'task.taskclaimSet', null)[0]
-  //   : null;
+  const claimTaskEvent = () => {
+    if (user.id === undefined) {
+      message.error("You cannot claim the task, please authenticate to the system").then()
+      return
+    }
+
+    claimTask().then();
+  }
 
   const getCausedBy = () => {
     let status = TASK_TYPES[getProp(task, 'status')];
@@ -278,7 +299,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
 
   useEffect(() => {
     if (original) {
-      setTask(original.task);
+      setTask(getProp(original, 'task', {}));
     }
   }, [original]);
 
@@ -287,9 +308,9 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const showAssignedUser = () => {
     const assignee = getProp(task, 'assignedTo', null);
     return (
-      <Row className="text-sm">
+      <Row className="text-sm mb-10">
         {assignee ? (
-          <div className="mb-10">
+          <>
             {assignee.id === user.id
               ? (
                 <div className="flex-column">
@@ -315,7 +336,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   </div>
               </>)
             }
-          </div>
+          </>
         ) : null}
       </Row>
     )
@@ -323,9 +344,11 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
 
   const showTaskEvents = () => {
     const assignee = getProp(task, 'assignedTo', null);
+    const taskStatus = TASK_TYPES[getProp(task, 'status')];
+
     return (
       <Row className="text-sm">
-        {assignee ? (
+        {assignee && taskStatus !== "Done" ? (
           <>
             {assignee.id === user.id
               ? (
@@ -338,11 +361,17 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             }
           </>
         ) : null}
+        {taskStatus === "Available" && (
+          <>
+            <div className="flex-column ml-auto">
+              <Button type="primary"
+                      onClick={() => claimTaskEvent()}>Claim the task</Button>
+            </div>
+          </>
+        )}
       </Row>
     )
   }
-
-  console.log("task", task)
 
   return (
     <LeftPanelContainer>
@@ -478,10 +507,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   {
                     getProp(task, 'priority', null) &&
                       <Row style={{marginTop: 10}} className="text-sm mt-8">
-                          <strong className="my-auto">
-                              Priority:
-                          </strong>
-                          <Priorities task={task} submit={refetch}/>
+                          <strong className="my-auto">Priority:&nbsp;</strong>
+                          <Priorities task={task} submit={() => refetch()} />
                       </Row>
                   }
                   {
