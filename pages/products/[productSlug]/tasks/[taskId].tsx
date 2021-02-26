@@ -277,7 +277,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
 
   useEffect(() => {
     if (original) {
-      setTask(original.task);
+      setTask(getProp(original, 'task', {}));
     }
   }, [original]);
 
@@ -286,9 +286,9 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const showAssignedUser = () => {
     const assignee = getProp(task, 'assignedTo', null);
     return (
-      <Row className="text-sm">
+      <Row className="text-sm mb-10">
         {assignee ? (
-          <div className="mb-10">
+          <>
             {assignee.id === user.id
               ? (
                 <div className="flex-column">
@@ -314,7 +314,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   </div>
               </>)
             }
-          </div>
+          </>
         ) : null}
       </Row>
     )
@@ -322,9 +322,11 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
 
   const showTaskEvents = () => {
     const assignee = getProp(task, 'assignedTo', null);
+    const taskStatus = TASK_TYPES[getProp(task, 'status')];
+    console.log("taskStatus", taskStatus)
     return (
       <Row className="text-sm">
-        {assignee ? (
+        {assignee && taskStatus !== "Done" ? (
           <>
             {assignee.id === user.id
               ? (
@@ -477,10 +479,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   {
                     getProp(task, 'priority', null) &&
                       <Row style={{marginTop: 10}} className="text-sm mt-8">
-                          <strong className="my-auto">
-                              Priority:
-                          </strong>
-                          <Priorities task={task} submit={refetch}/>
+                          <strong className="my-auto">Priority:&nbsp;</strong>
+                          <Priorities task={task} submit={() => refetch()} />
                       </Row>
                   }
                   {
