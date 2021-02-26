@@ -102,7 +102,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                       </Link>
                     </Row>
                     <Row>
-                      <Typography.Text type="secondary" style={{marginBottom: 5}}>{task.description}</Typography.Text>
+                      <Typography.Text type="secondary" style={{marginBottom: 5}}>{task.shortDescription}</Typography.Text>
                     </Row>
                     <Row align="middle">
                       {getProp(task, 'tag', []).map((tag: any, taskIndex: number) =>
