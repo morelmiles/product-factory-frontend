@@ -8,6 +8,8 @@ import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
 import {TASK_LIST_TYPES} from "../../../../graphql/types";
+import {getProp} from "../../../../utilities/filters";
+import Loading from "../../../../components/Loading";
 
 const {Option} = Select;
 
@@ -52,6 +54,8 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     await refetch(productsVariable);
   }
 
+  if (loading) return <Loading/>;
+
   return (
     <LeftPanelContainer>
       <div>
@@ -81,7 +85,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
                 style={{minWidth: 120}}
                 onChange={(value: any[]) => setTags(value)}
               >
-                {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>
+                {tagsData?.data ? tagsData.data.tags.map((tag: { id: string, name: string }) =>
                   <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
               </Select>
             </div>
@@ -115,18 +119,16 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
       </div>
       <div>
         {
-          loading ? (
-            <Spin size="large"/>
-          ) : !error ? (
+          !error ?
             <TaskTable submit={() => refetch(productsVariable)}
-                       tasks={data.tasksByProduct}
-                       statusList={data.statusList}
+                       tasks={getProp(data, 'tasksByProduct', [])}
+                       statusList={getProp(data, 'statusList', [])}
                        showInitiativeName={true}
                        hideTitle={true}
-                       showPendingTasks={userRole === "Manager" || userRole === "Admin"}/>
-          ) : (
-            <h3 className="text-center mt-30">No tasks</h3>
-          )
+                       showPendingTasks={userRole === "Manager" || userRole === "Admin"}
+            /> : (
+              <h3 className="text-center mt-30">No tasks</h3>
+            )
         }
       </div>
     </LeftPanelContainer>

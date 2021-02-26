@@ -21,7 +21,7 @@ const CapabilityList: React.FunctionComponent<Params> = ({userRole}) => {
   const router = useRouter();
   const {productSlug} = router.query;
 
-  const {data, error, loading, refetch} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
+  const {data, error, loading} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
     variables: {productSlug}
   });
   const [dataSource, setDataSource] = useState<any>([]);
