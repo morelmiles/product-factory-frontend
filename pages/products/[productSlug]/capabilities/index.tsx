@@ -9,8 +9,8 @@ import {GET_CAPABILITIES_BY_PRODUCT_AS_LIST} from '../../../../graphql/queries';
 import {getProp} from '../../../../utilities/filters';
 import {randomKeys} from '../../../../utilities/utils';
 import AddCapability from '../../../../components/Products/AddOrEditCapability';
-import {Spinner} from '../../../../components';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
+import Loading from "../../../../components/Loading";
 
 
 type Params = {
@@ -144,7 +144,7 @@ const CapabilityList: React.FunctionComponent<Params> = ({userRole}) => {
     }
   }, [data]);
 
-  if (loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <LeftPanelContainer>

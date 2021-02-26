@@ -8,7 +8,8 @@ import {getProp} from '../../../utilities/filters';
 import {getInitialName} from '../../../utilities/utils';
 import {WorkState} from '../../../lib/reducers/work.reducer';
 import {setWorkState} from '../../../lib/actions';
-import {Spinner} from '../../Spinner';
+import Loading from "../../Loading";
+
 
 type Props = {
   productSlug: any;
@@ -58,7 +59,7 @@ const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
   //   }
   // }, [data]);
 
-  if (loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <>

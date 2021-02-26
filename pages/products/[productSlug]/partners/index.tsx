@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { RouteComponentProps, matchPath } from 'react-router';
 import { Row, Divider } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_PARTNERS } from '../../../../graphql/queries';
@@ -8,24 +6,25 @@ import { PARTNER_TYPES } from '../../../../graphql/types';
 import { getProp } from '../../../../utilities/filters';
 import { randomKeys } from '../../../../utilities/utils';
 import CustomAvatar from '../../../../components/CustomAvatar';
-import { Spinner } from '../../../../components';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
+import Loading from "../../../../components/Loading";
+import {useRouter} from "next/router";
 
-type Params = {
-  productSlug?: any
-};
 
-const Commercial: React.FunctionComponent<Params> = ({ productSlug }) => {
+const Commercial: React.FunctionComponent = () => {
+  const router = useRouter();
+  const {productSlug} = router.query;
+
   const { data, error, loading } = useQuery(GET_PARTNERS, {
     variables: {
       productSlug
     }
   });
 
-  if(loading) return <Spinner/>
+  if(loading) return <Loading/>
 
   return (
-    <LeftPanelContainer productSlug={productSlug}>
+    <LeftPanelContainer>
       {
         !error && (
           <>
@@ -58,8 +57,4 @@ const Commercial: React.FunctionComponent<Params> = ({ productSlug }) => {
   );
 };
 
-Commercial.getInitialProps = async ({ query }) => {
-    const { productSlug } = query;
-    return { productSlug }
-}
 export default Commercial;

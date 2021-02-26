@@ -8,6 +8,7 @@ import {getProp} from '../../../utilities/filters';
 import {formatDate} from '../../../utilities/utils';
 import {useRouter} from "next/router";
 import Link from 'next/link';
+import Loading from "../../Loading";
 
 
 const Portfolio: React.FunctionComponent = () => {
@@ -22,8 +23,7 @@ const Portfolio: React.FunctionComponent = () => {
     variables: {personSlug}
   })
 
-  // if (reviewLoading) return <Spinner/>
-  if (reviewLoading) return null;
+  if (reviewLoading) return <Loading/>
 
   return (
     <>

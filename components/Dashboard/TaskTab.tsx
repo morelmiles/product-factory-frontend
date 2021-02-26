@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_TASKS } from '../../graphql/queries';
-import { Spinner } from '../Spinner';
+import {useQuery} from '@apollo/react-hooks';
+import {GET_TASKS} from '../../graphql/queries';
 import TaskTable from '../TaskTable'
+import Loading from "../Loading";
 
 
 type Props = {
@@ -14,16 +14,19 @@ type Props = {
   tags: string[],
 };
 
-const TaskTab: React.FunctionComponent<Props> = ({
-                                                   setTaskNum,
-                                                   sortedBy,
-                                                   statuses,
-                                                   showInitiativeName= false,
-                                                   showProductName = false,
-                                                   tags }) => {
+const TaskTab: React.FunctionComponent<Props> = (
+  {
+    setTaskNum,
+    sortedBy,
+    statuses,
+    showInitiativeName = false,
+    showProductName = false,
+    tags
+   }
+) => {
   const [userId, setUserId] = useState<string | null>(null);
 
-  const { data, error, loading, refetch } = useQuery(GET_TASKS, {
+  const {data, error, loading, refetch} = useQuery(GET_TASKS, {
     variables: {
       userId: userId == null ? 0 : userId,
       input: {sortedBy, statuses, tags}
@@ -40,8 +43,8 @@ const TaskTab: React.FunctionComponent<Props> = ({
     setUserId(localStorage.getItem('userId'));
   }, []);
 
-  if(loading) return <Spinner/>
-  if(!data || !data.tasks) return <h3 className="text-center">No tasks</h3>
+  if (loading) return <Loading/>
+  if (!data || !data.tasks) return <h3 className="text-center">No tasks</h3>
 
   return (
     <TaskTable submit={() => refetch()}
@@ -49,7 +52,7 @@ const TaskTab: React.FunctionComponent<Props> = ({
                statusList={data.statusList}
                showInitiativeName={showInitiativeName}
                showProductName={showProductName}
-               hideTitle={true} />
+               hideTitle={true}/>
   );
 };
 

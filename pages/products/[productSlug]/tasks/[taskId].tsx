@@ -9,7 +9,7 @@ import {GET_TASK_BY_ID} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
 import {DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
-import {CustomAvatar, EditIcon, DynamicHtml, Spinner} from '../../../../components';
+import {CustomAvatar, EditIcon, DynamicHtml} from '../../../../components';
 // import AddTask from '../../../../components/Products/AddTask';
 import {apiDomain} from "../../../../utilities/constants"
 import DeleteModal from '../../../../components/Products/DeleteModal';
@@ -18,6 +18,7 @@ import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";
 import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
+import Loading from "../../../../components/Loading";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -281,7 +282,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     }
   }, [original]);
 
-  if (loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   const showAssignedUser = () => {
     const assignee = getProp(task, 'assignedTo', null);
@@ -556,7 +557,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = () => ({});
-// const mapDispatchToProps = (dispatch: any) => ({});
 
 const TaskContainer = connect(
   mapStateToProps,

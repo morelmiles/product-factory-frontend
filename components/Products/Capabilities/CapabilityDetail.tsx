@@ -1,20 +1,19 @@
-
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps, matchPath } from 'react-router';
-import { Link, withRouter } from "react-router-dom";
-import { Row, Col, Tag, Button, message } from 'antd';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import {RouteComponentProps, matchPath} from 'react-router';
+import {Link, withRouter} from "react-router-dom";
+import {Row, Col, Tag, Button, message} from 'antd';
+import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player';
-import parse from 'html-react-parser';
-import { GET_CAPABILITY_BY_ID } from 'graphql/queries';
-import { DELETE_CAPABILITY } from 'graphql/mutations';
-import { TagType } from 'graphql/types';
-import { getProp } from 'utilities/filters';
-import { TaskTable, Attachment, DynamicHtml, Spinner } from 'components';
+import {GET_CAPABILITY_BY_ID} from 'graphql/queries';
+import {DELETE_CAPABILITY} from 'graphql/mutations';
+import {TagType} from 'graphql/types';
+import {getProp} from 'utilities/filters';
+import {TaskTable, Attachment, DynamicHtml} from 'components';
 import DeleteModal from 'pages/Products/DeleteModal';
 import AddCapability from 'pages/Products/AddCapability';
 import EditIcon from 'components/EditIcon';
+import Loading from "../../Loading";
 
 
 type Params = {
@@ -24,26 +23,26 @@ type Params = {
   match: any;
 } & RouteComponentProps;
 
-const CapabilityDetail: React.SFC<Params> = ({ match, history, userRole }) => {
+const CapabilityDetail: React.FunctionComponent<Params> = ({match, history, userRole}) => {
   const params: any = match.url.includes("/products")
     ? matchPath(match.url, {
-        path: "/products/:productSlug/capabilities/:capabilityId",
-        exact: false,
-        strict: false
-      })
+      path: "/products/:productSlug/capabilities/:capabilityId",
+      exact: false,
+      strict: false
+    })
     : matchPath(match.url, {
-        path: "/capabilities/:capabilityId",
-        exact: false,
-        strict: false
-      })
-  
+      path: "/capabilities/:capabilityId",
+      exact: false,
+      strict: false
+    })
+
   const [capability, setCapability] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const { data: original, error, loading, refetch } = useQuery(
+  const {data: original, error, loading, refetch} = useQuery(
     GET_CAPABILITY_BY_ID,
     {
-      variables: { id: params.params.capabilityId }
+      variables: {id: params.params.capabilityId}
     }
   );
 
@@ -54,12 +53,11 @@ const CapabilityDetail: React.SFC<Params> = ({ match, history, userRole }) => {
       id: params.params.capabilityId
     },
     onCompleted() {
-      message.success("Item is successfully deleted!");
+      message.success("Item is successfully deleted!").then();
       history.push(`/products/${params.params.productSlug}/capabilities`);
     },
-    onError(err) {
-      // console.log("Delete item error: ", err);
-      message.error("Failed to delete item!");
+    onError() {
+      message.error("Failed to delete item!").then();
     }
   });
 
@@ -85,7 +83,7 @@ const CapabilityDetail: React.SFC<Params> = ({ match, history, userRole }) => {
     }
   }, [original]);
 
-  if(loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <>
@@ -178,12 +176,12 @@ const CapabilityDetail: React.SFC<Params> = ({ match, history, userRole }) => {
             )}
             {
               showEditModal && <AddCapability
-                modal={showEditModal}
-                productSlug={params.params.productSlug}
-                modalType={true}
-                closeModal={setShowEditModal}
-                submit={fetchData}
-                capability={capability}
+                  modal={showEditModal}
+                  productSlug={params.params.productSlug}
+                  modalType={true}
+                  closeModal={setShowEditModal}
+                  submit={fetchData}
+                  capability={capability}
               />
             }
           </>
@@ -198,8 +196,7 @@ const mapStateToProps = (state: any) => ({
   userRole: state.work.userRole
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-});
+const mapDispatchToProps = () => ({});
 
 const CapabilityDetailContainer = connect(
   mapStateToProps,

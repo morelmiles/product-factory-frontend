@@ -3,12 +3,13 @@ import {connect} from 'react-redux';
 import {Row, Col, Card, Button} from 'antd';
 import {useRouter} from 'next/router'
 import {useQuery} from '@apollo/react-hooks';
-import {DynamicHtml, Spinner} from '../../../../components';
+import {DynamicHtml} from '../../../../components';
 import {GET_INITIATIVES} from '../../../../graphql/queries';
 import {randomKeys} from '../../../../utilities/utils';
 import AddInitiative from '../../../../components/Products/AddInitiative';
 import {getProp} from '../../../../utilities/filters';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
+import Loading from "../../../../components/Loading";
 
 type Params = {
   userRole?: string;
@@ -28,7 +29,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
     router.push(`/products/${productSlug}/initiatives/${id}`).then();
   }
 
-  if (loading) return <Spinner/>
+  if (loading) return <Loading/>
 
   return (
     <LeftPanelContainer>

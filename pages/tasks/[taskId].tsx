@@ -9,7 +9,7 @@ import { GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT } from '../../graphql/queries';
 import { TASK_TYPES } from '../../graphql/types';
 import { DELETE_TASK } from '../../graphql/mutations';
 import { getProp } from '../../utilities/filters';
-import { CustomAvatar, EditIcon, DynamicHtml, TaskTable, Spinner, ContainerFlex } from '../../components';
+import { CustomAvatar, EditIcon, DynamicHtml, TaskTable, ContainerFlex } from '../../components';
 import HeaderMenu from '../../components/Header';
 import AddTask from '../../components/Products/AddTask';
 import { apiDomain } from "../../utilities/constants"
@@ -21,6 +21,7 @@ import DownloadIcon from '../../public/assets/icons/download.svg';
 import moment from 'moment';
 import LeftPanelContainer from '../../components/HOC/withLeftPanel';
 import { Layout } from 'antd';
+import Loading from "../../components/Loading";
 const { Content } = Layout;
 
 interface CommentListProps {
@@ -257,7 +258,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
     }
   }, [original]);
 
-  if(loading) return <Spinner/>
+  if(loading) return <Loading/>
 
   return (
     <ContainerFlex>
