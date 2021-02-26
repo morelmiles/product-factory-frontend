@@ -417,6 +417,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       canEdit(userId: $userId)
       title
       description
+      shortDescription
       detailUrl
       updatedAt
       product {
