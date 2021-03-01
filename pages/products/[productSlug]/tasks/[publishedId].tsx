@@ -5,7 +5,7 @@ import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
-import {GET_TASK_BY_ID} from '../../../../graphql/queries';
+import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
@@ -19,6 +19,7 @@ import Attachments from "../../../../components/Attachments";
 import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
 import Loading from "../../../../components/Loading";
+import parse from "html-react-parser";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -192,6 +193,9 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     variables: {publishedId, productSlug, userId: userId == null ? 0 : userId}
   });
 
+  let {data: product} = useQuery(GET_PRODUCT_INFO_BY_ID, {variables: {slug: productSlug}});
+  product = product?.product || {};
+
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
   }, []);
@@ -279,12 +283,12 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     claimTask().then();
   }
 
-  const getCausedBy = () => {
+  const getCausedBy = (assignedTo: any) => {
     let status = TASK_TYPES[getProp(task, 'status')];
 
     switch (status) {
       case "Claimed":
-        return "Proposed By";
+        return assignedTo ? status : "Proposed By";
       case "Done":
         return "Done By";
       default:
@@ -345,6 +349,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     )
   }
 
+  const assignedTo = getProp(task, 'assignedTo');
+
   const showTaskEvents = () => {
     const assignee = getProp(task, 'assignedTo', null);
     const taskStatus = TASK_TYPES[getProp(task, 'status')];
@@ -376,6 +382,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     )
   }
 
+  console.log("task", task)
+
   return (
     <LeftPanelContainer>
       {
@@ -385,11 +393,15 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
               {getBasePath() !== "" && (
                 <>
                   <Link href={getBasePath()}>
-                    <a className="text-grey">{getProp(currentProduct, 'name', '')}</a>
+                    <a className="text-grey">{getProp(product, 'name', '')}</a>
                   </Link>
                   <span> / </span>
                   <Link href={`${getBasePath()}/tasks`}>
                     <a className="text-grey">Tasks</a>
+                  </Link>
+                  <span> / </span>
+                  <Link href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
+                    <a className="text-grey">{getProp(task, 'initiative.name', '')}</a>
                   </Link>
                   <span> / </span>
                 </>
@@ -436,10 +448,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   />
                 </Col>
               )}
-              <Col xs={24} md={14} className="pt-20">
-                <DynamicHtml
-                  text={getProp(task, 'description', '')}
-                />
+              <Col xs={24} md={18} className="pt-20">
+                {parse(getProp(task, 'description', ''))}
                 <div className="mt-22">
                   {showAssignedUser()}
                   <Row className="text-sm">
@@ -477,11 +487,11 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                       ) : (
                         <>
                           <strong className="my-auto">
-                            Status: {getCausedBy()}
+                            Status: {getCausedBy(assignedTo)}
                           </strong>
                           <div className='ml-5'>
                             {
-                              getProp(task, 'createdBy', null) !== null
+                              getProp(task, 'createdBy', null) !== null && !assignedTo
                                 ? (
                                   <Row>
                                     {

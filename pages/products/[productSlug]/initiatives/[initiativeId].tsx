@@ -81,7 +81,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
               {
                 <>
                   <Link href={`/products/${productSlug}`}>
-                    <a className="text-grey">{getProp(product, 'name', '')}</a>
+                    <a className="text-grey">{getProp(original.initiative, 'product.name', '')}</a>
                   </Link>
                   <span> / </span>
                   <Link href={`/products/${productSlug}/initiatives`}>
