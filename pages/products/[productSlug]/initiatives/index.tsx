@@ -10,6 +10,10 @@ import AddInitiative from '../../../../components/Products/AddInitiative';
 import {getProp} from '../../../../utilities/filters';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Loading from "../../../../components/Loading";
+import Link from "next/link";
+// @ts-ignore
+import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
+import {pluralize} from "apollo/lib/utils";
 
 type Params = {
   userRole?: string;
@@ -30,6 +34,11 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
   }
 
   if (loading) return <Loading/>
+
+  const getAvailableTaskText = (availableTasks: number) => {
+    if (availableTasks === 0) return "";
+    return `${pluralize(availableTasks, "available task")}`;
+  }
 
   return (
     <LeftPanelContainer>
@@ -78,6 +87,18 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
                       >
                         <div>
                           <h4 className='mt-5'>{initiative.name}</h4>
+                          <Link href={`/products/${productSlug}/tasks`}>
+                            <div>
+                              <img
+                                src={CheckCircle}
+                                className="check-circle-icon"
+                                alt="status"
+                              />
+                              <span>
+                                {getAvailableTaskText(initiative.availableTaskCount)}
+                              </span>
+                            </div>
+                          </Link>
                           <DynamicHtml
                             text={getProp(initiative, 'description', '')}
                           />

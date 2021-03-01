@@ -294,6 +294,7 @@ export const GET_INITIATIVES = gql`
         id
         status
       }
+      availableTaskCount
     }
   }
 `;
