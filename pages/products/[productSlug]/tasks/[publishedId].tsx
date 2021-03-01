@@ -57,7 +57,7 @@ const AddCommentForm: React.FunctionComponent<AddCommentFormProps> = ({taskId, r
       if (response.status == 201) {
         setSubmittingComment(false)
         setComment('')
-        onAdded()
+        onAdded();
       }
     })
   }
@@ -179,18 +179,17 @@ type Params = {
 
 const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct}) => {
   const router = useRouter();
-  const {taskId, productSlug} = router.query;
+  const {publishedId, productSlug} = router.query;
 
   const [deleteModal, showDeleteModal] = useState(false);
   const [leaveTaskModal, showLeaveTaskModal] = useState(false);
   const [task, setTask] = useState<any>({});
   const [userId, setUserId] = useState<string | null>(null);
-  // const [tasks, setTasks] = useState([]);
+  const [taskId, setTaskId] = useState(0);
   // const [showEditModal, setShowEditModal] = useState(false);
 
-  // const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
   const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
-    variables: {id: taskId, userId: userId == null ? 0 : userId}
+    variables: {publishedId, productSlug, userId: userId == null ? 0 : userId}
   });
 
   let {data: product} = useQuery(GET_PRODUCT_INFO_BY_ID, {variables: {slug: productSlug}});
@@ -199,6 +198,12 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
   }, []);
+
+  useEffect(() => {
+    if (!error) {
+      setTaskId(getProp(original, 'task.id', 0));
+    }
+  }, [original]);
 
   const getBasePath = () => {
     //fix it
@@ -291,9 +296,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   }
 
   const fetchData = async () => {
-    const data: any = await refetch({
-      id: taskId
-    })
+    const data: any = await refetch()
 
     if (!data.errors) {
       setTask(data.data.task);
@@ -545,7 +548,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             {/*/>*/}
 
             <Divider/>
-            <CommentList taskId={taskId} user={user}/>
+            <CommentList taskId={publishedId} user={user}/>
 
             <Attachments data={getProp(original, 'task.attachment', [])}/>
 
