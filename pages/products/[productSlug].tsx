@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import Link from 'next/link';
 import {useMutation, useQuery} from '@apollo/react-hooks';
-import {Button, Col, Divider, Input, message, Row, Tag} from 'antd';
+import {Button, Col, Divider, Input, message, Row, Tag, Typography} from 'antd';
 import ReactPlayer from 'react-player';
 import SortableTree, {getVisibleNodeCount} from 'react-sortable-tree';
-import {GET_CAPABILITIES_BY_PRODUCT, GET_PRODUCT_BY_ID} from '../../graphql/queries';
+import {GET_CAPABILITIES_BY_PRODUCT, GET_PRODUCT_BY_ID, GET_TASKS_BY_PRODUCT} from '../../graphql/queries';
 import {DELETE_CAPABILITY} from '../../graphql/mutations';
 import {TagType} from '../../graphql/types';
 import AddOrEditCapability from '../../components/Products/AddOrEditCapability';
@@ -36,6 +36,7 @@ const Summary: React.FunctionComponent = () => {
   const [modalType, setModalType] = useState<string>('');
   const [hideParent, setHideParent] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [availableTasksAmount, setAvailableTasksAmount] = useState(0);
 
 
   useEffect(() => {
@@ -45,6 +46,21 @@ const Summary: React.FunctionComponent = () => {
   const {data: original, error, loading} = useQuery(GET_PRODUCT_BY_ID, {
     variables: {slug: productSlug, userId: userId == null ? 0 : userId}
   });
+
+  let {data: tasks, error: tasksError, loading: tasksLoading} = useQuery(GET_TASKS_BY_PRODUCT, {
+    variables: {
+      productSlug,
+      userId: userId == null ? 0 : userId,
+      input: {statuses: [2]} // 2 - Available
+    }
+  });
+
+  useEffect(() => {
+    if (!tasksError) {
+      setAvailableTasksAmount(getProp(tasks, 'tasksByProduct', 0).length)
+    }
+  }, [tasks]);
+
 
   // const [updateCapability, {error: updateError}] = useMutation(UPDATE_CAPABILITY, {
   //   onCompleted() {
@@ -211,27 +227,18 @@ const Summary: React.FunctionComponent = () => {
 
   const isAdminOrManager = getProp(original, 'isAdminOrManager', false);
 
-  if (loading || capabilitiesLoading) return <Loading/>
+  if (loading || capabilitiesLoading || tasksLoading) return <Loading/>
 
   return (
     <LeftPanelContainer>
       {
         !error && (
           <div>
-            <Row justify="end" className="right-panel-headline mb-15">
-              <Col>
-                <Button
-                  onClick={
-                    () => {
-                      setModalType('add-root');
-                      setHideParent(false);
-                      setShowAddOrEditModal(true)
-                    }
-                  }
-                >
-                  Add new capability
-                </Button>
-              </Col>
+            <Row>
+              <Typography.Text strong style={{
+                fontSize: '1.5rem',
+                marginBottom: 12
+              }}>About {getProp(data, 'product.name', '')}</Typography.Text>
             </Row>
             <Row>
               {getProp(data, 'product.videoUrl', null) !== null && (
@@ -260,9 +267,10 @@ const Summary: React.FunctionComponent = () => {
             <div className='mt-15'>
               <Row justify="space-between" className='mb-10'>
                 <Col>
-                  <div className="section-title">Featured Available Work:</div>
+                  <Link href={`/products/${productSlug}/tasks#available`}>
+                    <Typography.Link strong style={{fontSize: '1.1rem'}}>{availableTasksAmount} Available Tasks</Typography.Link>
+                  </Link>
                 </Col>
-                {/* <Col>See all available work</Col> */}
               </Row>
               <Row
 
@@ -290,14 +298,9 @@ const Summary: React.FunctionComponent = () => {
             </div>
             <Divider/>
             <div className='mt-15'>
-              <Row justify="space-between">
+              <Row justify="end">
                 <Col>
                   <div className="section-title mb-15">Product Map</div>
-                </Col>
-              </Row>
-              <Row justify="space-between">
-                <Col>
-                  <div className="section-title">{getProp(data, "product.name", '')}</div>
                 </Col>
                 <Col>
                   <div>

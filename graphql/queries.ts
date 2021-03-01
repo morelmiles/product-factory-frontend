@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 export const GET_PRODUCTS = gql`
   query GetProducts {
@@ -493,7 +493,7 @@ export const GET_USERS = gql`
       fullName
     }
   }
-`
+`;
 
 export const GET_PROFILES = gql`
   query GetProfiles {
@@ -727,8 +727,8 @@ export const GET_CAPABILITY_PARENT_CRUMBS = gql`
 export const GET_TAGS = gql`
   query GetTags {
     tags {
-      id,
-      name,
+      id
+      name
       createdAt
     }
   }

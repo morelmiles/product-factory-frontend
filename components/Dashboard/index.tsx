@@ -5,18 +5,13 @@ import {TASK_LIST_TYPES} from '../../graphql/types';
 import {RadioChangeEvent} from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
-// import { ContainerFlex } from '../index';
 import classnames from 'classnames';
 import {useQuery} from "@apollo/react-hooks";
 import {GET_TAGS} from "../../graphql/queries";
 
+
 const {Option} = Select;
 const {Content} = Layout;
-
-// type Props = {
-//   onClick?: () => void;
-//   userLogInAction: any;
-// };
 
 const Dashboard: React.FunctionComponent = () => {
   const router = useRouter();

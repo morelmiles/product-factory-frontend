@@ -23,17 +23,17 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (data && data.products) {
-      setProductNum(data.products.length);
+    if (!error) {
+      setProductNum(getProp(data, 'products', []).length);
     }
   }, [data]);
   const getAvailableTaskText = (availableTasks: number) => {
-    if (availableTasks === 0) return "";
+    if (availableTasks === 0) return '';
     return `${availableTasks} available ${pluralize("task", availableTasks)}`;
   }
 
   const getAvailableInitiativeText = (initiatives: number) => {
-    if (initiatives === 0) return "";
+    if (initiatives === 0) return '';
     return `${initiatives} available ${pluralize("initiative", initiatives)}`;
   }
 
