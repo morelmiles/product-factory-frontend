@@ -442,10 +442,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   />
                 </Col>
               )}
-              <Col xs={24} md={14} className="pt-20">
-                <DynamicHtml
-                  text={getProp(task, 'description', '')}
-                />
+              <Col xs={24} md={18} className="pt-20">
+                {getProp(task, 'description', '')}
                 <div className="mt-22">
                   {showAssignedUser()}
                   <Row className="text-sm">
