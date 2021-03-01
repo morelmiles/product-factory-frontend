@@ -88,7 +88,7 @@ const TaskTable: React.FunctionComponent<Props> = (
 
                       }
                       <Link
-                        href={`/products/${productSlug}/tasks/${task.id}`}
+                        href={`/products/${productSlug}/tasks/${task.publishedId}`}
                       >
                         <strong>
                           <a className="text-grey-9">
