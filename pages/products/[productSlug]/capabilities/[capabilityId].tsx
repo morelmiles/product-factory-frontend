@@ -18,16 +18,18 @@ import Loading from "../../../../components/Loading";
 import {DownOutlined} from "@ant-design/icons";
 
 
-interface IParentsCrumbsProps {
-  productSlug: string
-  crumbs: [{
+interface ICrumb {
+  id: number
+  name: string
+  siblings: [{
     id: number
     name: string
-    siblings: [{
-      id: number
-      name: string
-    }]
   }]
+}
+
+interface IParentsCrumbsProps {
+  productSlug: string
+  crumbs: ICrumb[]
   capabilityName: string
 }
 
@@ -74,7 +76,7 @@ const CapabilityDetail: React.FunctionComponent = () => {
   const [isAdminOrManager, setIsAdminOrManager] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [formattedCrumbs, setFormattedCrumbs] = useState([]);
+  const [formattedCrumbs, setFormattedCrumbs] = useState<Array<ICrumb>>([]);
 
   const {data, error, loading, refetch} = useQuery(GET_CAPABILITY_BY_ID, {
     variables: {nodeId: capabilityId, slug: productSlug, userId: userId == null ? 0 : userId}

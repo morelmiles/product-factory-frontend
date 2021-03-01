@@ -71,7 +71,7 @@ const Summary: React.FunctionComponent = () => {
       title: getProp(node, 'data.name'),
       children: node.children ? formatData(getProp(node, 'children', [])) : []
     }))
-  };
+  }
 
   // const updatedTreeData = (data: TreeNode[], index: number, children: TreeNode[]): TreeNode[] => {
   //   return data.map((node: TreeNode) => {
@@ -122,7 +122,7 @@ const Summary: React.FunctionComponent = () => {
     loading: capabilitiesLoading,
     refetch
   } = useQuery(GET_CAPABILITIES_BY_PRODUCT, {
-    variables: {productSlug}
+    variables: {productSlug, userId: userId == null ? 0 : userId}
   });
 
   const convertDataAndSetTree = (capabilities: any) => {
@@ -211,12 +211,11 @@ const Summary: React.FunctionComponent = () => {
 
   const isAdminOrManager = getProp(original, 'isAdminOrManager', false);
 
-  if (loading) return <Loading/>
+  if (loading || capabilitiesLoading) return <Loading/>
 
   return (
     <LeftPanelContainer>
       {
-        // !error && !updateError && (
         !error && (
           <div>
             <Row justify="end" className="right-panel-headline mb-15">

@@ -1,180 +1,258 @@
 import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {Row, Col, Button, Table} from 'antd';
-import {PaperClipOutlined} from "@ant-design/icons";
-import {useQuery} from '@apollo/react-hooks';
-import {GET_CAPABILITIES_BY_PRODUCT_AS_LIST} from '../../../../graphql/queries';
+import {Row, Col, message, Input, Button} from 'antd';
+import {useMutation, useQuery} from '@apollo/react-hooks';
+import {GET_CAPABILITIES_BY_PRODUCT} from '../../../../graphql/queries';
 import {getProp} from '../../../../utilities/filters';
-import {randomKeys} from '../../../../utilities/utils';
 import AddCapability from '../../../../components/Products/AddOrEditCapability';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Loading from "../../../../components/Loading";
+import {DELETE_CAPABILITY} from "../../../../graphql/mutations";
+import SortableTree, {getVisibleNodeCount} from "react-sortable-tree";
+import {TreeNode} from "../../../../utilities/constants";
+import AddOrEditCapability from "../../../../components/Products/AddOrEditCapability";
 
 
-type Params = {
-  userRole?: string;
-};
+const {Search} = Input;
 
-const CapabilityList: React.FunctionComponent<Params> = ({userRole}) => {
+const Capabilities: React.FunctionComponent = () => {
   const router = useRouter();
   const {productSlug} = router.query;
 
-  const {data, error, loading} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
-    variables: {productSlug}
+  const [treeData, setTreeData] = useState<any>([]);
+  const [searchString, setSearchString] = useState('');
+  const [searchFocusIndex, setSearchFocusIndex] = useState(0);
+  const [searchFoundCount, setSearchFoundCount] = useState<any>(null);
+
+  const [showAddCapabilityModal, setShowAddOrEditModal] = useState(false);
+  const [capability, setCapability] = useState<any>(null);
+  const [modalType, setModalType] = useState<string>('');
+  const [hideParent, setHideParent] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem('userId'));
+  }, []);
+
+  const {
+    data: capabilities,
+    error: capabilitiesError,
+    loading: capabilitiesLoading,
+    refetch
+  } = useQuery(GET_CAPABILITIES_BY_PRODUCT, {
+    variables: {productSlug, userId: userId == null ? 0 : userId}
   });
-  const [dataSource, setDataSource] = useState<any>([]);
-  const [showEditModal, setShowEditModal] = useState(false);
+  console.log(capabilities);
 
-  const getBasePath = () => {
-    return `/products/${productSlug}`;
-  }
-  const columns = [
-    {
-      title: 'Capability',
-      dataIndex: 'capability',
-      key: 'capability',
-      render: (capability: any) => (
-        <Link href={capability.url}>{capability.name}</Link>
-      )
-    },
-    {
-      title: 'Tasks Todo',
-      dataIndex: 'todo_tasks',
-      key: 'todo_tasks',
-      render: (todo_tasks: any) => (
-        <>
-          {todo_tasks
-            ? todo_tasks.map((task: any) => (
-              <Link
-                key={randomKeys()}
-                href={getBasePath() + `/tasks/${task.id}`}
-              >
-                <a className="mt-5">#{task.id}</a>
-              </Link>
-            ))
-            : null
-          }
-        </>
-      )
-    },
-    {
-      title: 'Tasks Done',
-      dataIndex: 'done_tasks',
-      key: 'done_tasks',
-      render: (done_tasks: any) => (
-        <>
-          {done_tasks
-            ? done_tasks.map((task: any) => (
-              <Link
-                key={randomKeys()}
-                href={getBasePath() + `/tasks/${task.id}`}
-              >
-                <a className="mr-5">#{task.id}</a>
-              </Link>
-            ))
-            : null
-          }
-        </>
-      )
-    },
-    {
-      title: 'Capability attachments',
-      dataIndex: 'attachments',
-      key: 'attachments',
-      render: (attachments: number) => (
-        <>
-          {
-            attachments > 0
-              ? (
-                <span>
-                    <PaperClipOutlined />
-                  {attachments}
-                  </span>
-              )
-              : null
-          }
-        </>
-      )
-    },
-    {
-      title: 'Test Coverage',
-      dataIndex: 'test_coverage',
-      key: 'test_coverage',
+  const convertDataAndSetTree = (capabilities: any) => {
+    try {
+      let capabilitiesStr: string = getProp(capabilities, 'capabilities', '');
+      capabilitiesStr = capabilitiesStr.replaceAll("'", '"');
+      capabilitiesStr = capabilitiesStr.replaceAll('\\\\"', "'");
+
+      if (capabilitiesStr.length > 0) {
+        let capabilitiesData = JSON.parse(capabilitiesStr);
+        setTreeData(formatData(capabilitiesData[0].children));
+      }
+    } catch {
     }
-  ];
-
-  const fetchData = (capabilities: any) => {
-    const source: any[] = getProp(capabilities, 'capabilitiesAsList', []).map((item: any, idx: number) => {
-      const done_tasks: any[] = [];
-      const todo_tasks: any[] = [];
-
-      getProp(item, 'taskSet', []).forEach((child: any) => {
-        switch (child.status) {
-          case 0:
-            todo_tasks.push(child);
-            break;
-          case 3:
-            done_tasks.push(child);
-            break;
-          default:
-            break;
-        }
-      });
-
-      return {
-        key: idx,
-        capability: {
-          name: item.name,
-          url: `/products/${productSlug}/capabilities/${item.id}`
-        },
-        done_tasks: done_tasks,
-        todo_tasks: todo_tasks,
-        attachments: item.attachment ? item.attachment.length : 0,
-        test_coverage: 0
-      };
-    });
-    setDataSource(source);
   }
 
   useEffect(() => {
-    if (!error)  {
-      fetchData(data);
+    if (!capabilitiesError && !capabilitiesLoading) {
+      convertDataAndSetTree(capabilities);
     }
-  }, [data]);
+  }, [capabilities]);
 
-  if (loading) return <Loading/>
+
+  const formatData = (data: any) => {
+    return data.map((node: any) => ({
+      id: getProp(node, 'id'),
+      title: getProp(node, 'data.name'),
+      children: node.children ? formatData(getProp(node, 'children', [])) : []
+    }))
+  }
+
+  const [deleteCapability] = useMutation(DELETE_CAPABILITY, {
+    onCompleted() {
+      message.success('Item is successfully deleted!').then();
+      refetch().then();
+    },
+    onError() {
+      message.error('Failed to delete item!').then();
+    }
+  });
+
+  const removeNode = (node: any) => {
+    try {
+      deleteCapability({
+        variables: {
+          nodeId: node.id
+        }
+      }).then();
+    } catch {
+    }
+  }
+
+  const customSearchMethod = (data: any) => {
+    const {node, searchQuery} = data;
+    return searchQuery &&
+      node.title.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
+  }
+
+  const selectPrevMatch = (): void => {
+    const index: number =
+      searchFocusIndex !== null
+        ? (searchFoundCount + searchFocusIndex - 1) % searchFoundCount
+        : searchFoundCount - 1;
+    setSearchFocusIndex(index);
+  }
+
+  const selectNextMatch = (): void => {
+    const index: number = searchFocusIndex !== null ? (searchFocusIndex + 1) % searchFoundCount : 0;
+    setSearchFocusIndex(index);
+  }
+
+  const onTreeSearch = (matches: any) => {
+    setSearchFocusIndex(matches.length > 0 ? searchFocusIndex % matches.length : 0);
+    setSearchFoundCount(matches.length);
+  }
+
+  const editNode = (type: string, node: any) => {
+    setCapability({
+      ...node,
+      name: node.title
+    });
+    setModalType(type);
+    setShowAddOrEditModal(true);
+  }
+
+  const onSearch = (value: string) => setSearchString(value);
+
+  const count = getVisibleNodeCount({treeData});
+  const mapHeight = count * 62;
+
+  const isAdminOrManager = getProp(capabilities, 'isAdminOrManager', false);
+
+  if (capabilitiesLoading) return <Loading/>
 
   return (
     <LeftPanelContainer>
       {
-        !error && (
+        !capabilitiesError && (
           <>
-            <Row justify="space-between">
+            <Row justify="space-between" className="right-panel-headline mb-15" style={{marginBottom: 40}}>
               <Col>
-                <div className="page-title text-center mb-15">
-                  Explore capabilities {getProp(data, 'capabilitiesAsList.length', 0)}
+                <div>
+                  <Search placeholder="Search text" className='mr-10' onSearch={onSearch} style={{width: 200}}/>
+                  {
+                    searchFoundCount > 0 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => selectPrevMatch()}
+                        >
+                          &lt;
+                        </button>
+                        <button
+                          type="submit"
+                          onClick={() => selectNextMatch()}
+                        >
+                          &gt;
+                        </button>
+                      </>
+                    )
+                  }
                 </div>
+                <div>{searchFoundCount > 0 && `${searchFoundCount} items found!`}</div>
               </Col>
-              {(userRole === "Manager" || userRole === "Admin") && (
+
+              {
+                isAdminOrManager &&
                 <Col>
-                  <Button onClick={() => setShowEditModal(true)}>
-                    Add new capability
-                  </Button>
+                    <Button
+                        onClick={
+                          () => {
+                            setModalType('add-root');
+                            setHideParent(false);
+                            setShowAddOrEditModal(true)
+                          }
+                        }
+                    >
+                        Add new capability
+                    </Button>
                 </Col>
-              )}
+              }
             </Row>
+
+
+            <div style={{height: mapHeight}}>
+              <SortableTree
+                treeData={treeData}
+                onChange={(treeData: TreeNode[]) => setTreeData(treeData)}
+                canDrag={false}
+                generateNodeProps={({node}) => ({
+                  buttons: isAdminOrManager
+                    ? [
+                      <>
+                        <button
+                          className="mr-10"
+                          onClick={() => {
+                            setHideParent(true);
+                            editNode('add-child', node)
+                          }}
+                        >
+                          Add
+                        </button>
+                        <button
+                          className="mr-10"
+                          onClick={() => {
+                            setHideParent(true);
+                            editNode('edit', node);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => removeNode(node)}
+                        >
+                          Remove
+                        </button>
+                      </>
+                    ]
+                    : [],
+                  title: (
+                    <Row
+
+                      justify="space-between"
+                      style={{minWidth: 200}}
+                    >
+                      <Link href={`/products/${productSlug}/capabilities/${node.id}`}>
+                        {node.title}
+                      </Link>
+                      <div className='pl-25'>{node.subtitle}</div>
+                    </Row>
+                  ),
+                })}
+                searchMethod={customSearchMethod}
+                searchQuery={searchString}
+                searchFocusOffset={searchFocusIndex}
+                searchFinishCallback={onTreeSearch}
+              />
+            </div>
+
             {
-              showEditModal &&
-              <AddCapability
-                  modal={showEditModal}
-                  modalType={'add-root'}
-                  closeModal={setShowEditModal}
-                  submit={fetchData}
+              showAddCapabilityModal &&
+              <AddOrEditCapability
+                  modal={showAddCapabilityModal}
+                  modalType={modalType}
+                  capability={capability}
+                  closeModal={setShowAddOrEditModal}
+                  submit={refetch}
+                  hideParentOptions={hideParent}
               />
             }
-            <Table dataSource={dataSource} columns={columns}/>
           </>
         )
       }
@@ -182,16 +260,5 @@ const CapabilityList: React.FunctionComponent<Params> = ({userRole}) => {
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  user: state.user,
-  userRole: state.work.userRole
-});
 
-const mapDispatchToProps = () => ({});
-
-const CapabilityListContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CapabilityList);
-
-export default CapabilityListContainer;
+export default Capabilities;

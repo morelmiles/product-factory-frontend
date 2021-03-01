@@ -685,8 +685,9 @@ export const GET_REVIEW_BY_ID = gql`
 `;
 
 export const GET_CAPABILITIES_BY_PRODUCT = gql`
-  query GetCapabilities($productSlug: String!) {
+  query GetCapabilities($productSlug: String!, $userId: Int!) {
     capabilities(productSlug: $productSlug)
+    isAdminOrManager(slug: $productSlug, userId: $userId)
   }
 `;
 

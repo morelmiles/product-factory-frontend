@@ -26,7 +26,7 @@ const links: LinkType[] = [
   {url: '/', type: 'summary', name: 'Summary'},
   {url: '/initiatives', type: 'initiatives', name: 'Initiatives'},
   {url: '/tasks', type: 'tasks', name: 'Tasks'},
-  {url: '/capabilities', type: 'capabilities', name: 'Capabilities'},
+  {url: '/capabilities', type: 'capabilities', name: 'Product Map'},
   {url: '/people', type: 'people', name: 'People'},
   {url: '/partners', type: 'partners', name: 'Commercial Partners'}
 ]
