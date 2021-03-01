@@ -63,42 +63,38 @@ const PeopleList: React.FunctionComponent = () => {
                 return (
                   <div key={`person-${index}`} className="product-list-item">
                     <Row>
-                      <Col xs={24} lg={18}>
-                        <Row>
-                          <Row>
-                            <Col>
-                              {CustomAvatar(item.person, 'fullName', 64)}
-                            </Col>
-                            <Col>
-                              <Row>
-                                <Typography.Text
-                                  strong
-                                  className="black-color"
-                                  style={{fontSize: 14}}
-                                >
-                                  <Link href={`/people/${getProp(item, 'person.slug', '')}`}>
-                                    {getProp(item, 'person.fullName', '')}
-                                  </Link>
-                                </Typography.Text>
-                              </Row>
-                              <Row>
-                                <Typography.Text
-                                  style={{fontSize: 14, padding: "2px 0"}}
-                                >{getProp(item, 'person.headline', '')}</Typography.Text>
-                              </Row>
-                              <Row style={{fontSize: 16, color: '#8C8C8C'}}>
-                                <Space size={8}>
-                                  {
-                                    socials.map((social: any, index: number) => (
-                                      <a key={index} style={{color: '#999'}} href={social.url}>
-                                        <Social name={social.name}/>
-                                      </a>
-                                    ))
-                                  }
-                                </Space>
-                              </Row>
-                            </Col>
-                          </Row>
+                      <Col xs={24}>
+                        <Row wrap={false}>
+                          {CustomAvatar(item.person, 'fullName', 64)}
+                          <div style={{paddingLeft: 10}}>
+                            <Row>
+                              <Typography.Text
+                                strong
+                                className="black-color"
+                                style={{fontSize: 14}}
+                              >
+                                <Link href={`/people/${getProp(item, 'person.slug', '')}`}>
+                                  {getProp(item, 'person.fullName', '')}
+                                </Link>
+                              </Typography.Text>
+                            </Row>
+                            <Row>
+                              <Typography.Text
+                                style={{fontSize: 14, padding: "2px 0"}}
+                              >{getProp(item, 'person.headline', '')}</Typography.Text>
+                            </Row>
+                            <Row style={{fontSize: 16, color: '#8C8C8C'}}>
+                              <Space size={8}>
+                                {
+                                  socials.map((social: any, index: number) => (
+                                    <a key={index} style={{color: '#999'}} href={social.url}>
+                                      <Social name={social.name}/>
+                                    </a>
+                                  ))
+                                }
+                              </Space>
+                            </Row>
+                          </div>
                         </Row>
                       </Col>
                     </Row>
