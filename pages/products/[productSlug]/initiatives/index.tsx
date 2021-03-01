@@ -1,19 +1,19 @@
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Card, Button} from 'antd';
+import {Row, Col, Card, Button, Tag, Select} from 'antd';
 import {useRouter} from 'next/router'
 import {useQuery} from '@apollo/react-hooks';
 import {DynamicHtml} from '../../../../components';
-import {GET_INITIATIVES} from '../../../../graphql/queries';
+import {GET_INITIATIVES, GET_TAGS} from '../../../../graphql/queries';
 import {randomKeys} from '../../../../utilities/utils';
 import AddInitiative from '../../../../components/Products/AddInitiative';
 import {getProp} from '../../../../utilities/filters';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Loading from "../../../../components/Loading";
-import Link from "next/link";
 // @ts-ignore
 import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
 import {pluralize} from "apollo/lib/utils";
+import {TagType} from "../../../../graphql/types";
 
 type Params = {
   userRole?: string;
@@ -21,22 +21,25 @@ type Params = {
 
 const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
   const router = useRouter();
+  const [tags, setTags] = useState([]);
   let {productSlug} = router.query;
   productSlug = String(productSlug);
+  const initialQueryVariables = {productSlug, tags};
 
   const [showEditModal, setShowEditModal] = useState(false);
   const {data, error, loading, refetch} = useQuery(GET_INITIATIVES, {
-    variables: {productSlug}
+    variables: initialQueryVariables
   });
 
   const goToDetails = (id: number) => {
     router.push(`/products/${productSlug}/initiatives/${id}`).then();
   }
 
+  const tagsData = useQuery(GET_TAGS);
+
   if (loading) return <Loading/>
 
   const getAvailableTaskText = (availableTasks: number) => {
-    if (availableTasks === 0) return "";
     return `${pluralize(availableTasks, "available task")}`;
   }
 
@@ -51,25 +54,43 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
             >
               <Col>
                 <div className="page-title text-center">
-                  {data.initiatives
+                  {data?.initiatives
                     ? `Explore ${data?.initiatives?.length} initiatives`
                     : 'No initiatives'
                   }
                 </div>
               </Col>
-              {(userRole === "Manager" || userRole === "Admin") && (
-                <Col>
-                  <Button
-                    onClick={() => setShowEditModal(!showEditModal)}
-                  >
-                    Add new initiative
-                  </Button>
-                </Col>
-              )}
+              <Col>
+                <Row className="">
+                  <div>
+                    <Select
+                      defaultValue={tags}
+                      mode="multiple"
+                      placeholder="Filter by tags..."
+                      style={{minWidth: 150}}
+                      onChange={(value: any[]) => setTags(value)}
+                    >
+                      {tagsData?.data ? tagsData.data.tags.map((tag: { id: string, name: string }) =>
+                        <Select.Option key={tag.id} value={tag.id}>{tag.name}</Select.Option>) : []
+                      }
+                    </Select>
+                  </div>
+                  {(userRole === "Manager" || userRole === "Admin") && (
+                    <Col>
+                      <Button
+                        className="ml-10"
+                        onClick={() => setShowEditModal(!showEditModal)}
+                      >
+                        Add new initiative
+                      </Button>
+                    </Col>
+                  )}
+                </Row>
+              </Col>
             </Row>
             <Row gutter={[16, 16]}>
               {
-                data.initiatives && data.initiatives.map((initiative: any) => (
+                data?.initiatives && data.initiatives.map((initiative: any) => (
                   <Col key={randomKeys()} xs={24} sm={12} md={8}>
                     {/* <Card
                     cover={
@@ -87,18 +108,21 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
                       >
                         <div>
                           <h4 className='mt-5'>{initiative.name}</h4>
-                          <Link href={`/products/${productSlug}/tasks`}>
-                            <div>
-                              <img
-                                src={CheckCircle}
-                                className="check-circle-icon"
-                                alt="status"
-                              />
-                              <span>
-                                {getAvailableTaskText(initiative.availableTaskCount)}
-                              </span>
-                            </div>
-                          </Link>
+                          {
+                            getProp(initiative, 'taskTags', []).map((tag: TagType, idx: number) => (
+                              <Tag key={`tag-${idx}`}>{tag.name}</Tag>
+                            ))
+                          }
+                          <div>
+                            <img
+                              src={CheckCircle}
+                              className="check-circle-icon"
+                              alt="status"
+                            />
+                            <span>
+                              {getAvailableTaskText(initiative.availableTaskCount)}
+                            </span>
+                          </div>
                           <DynamicHtml
                             text={getProp(initiative, 'description', '')}
                           />

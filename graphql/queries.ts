@@ -282,14 +282,18 @@ export const GET_CAPABILITY_BY_ID = gql`
 
 
 export const GET_INITIATIVES = gql`
-  query GetInitiatives($productSlug: String) {
-    initiatives(productSlug: $productSlug) {
+  query GetInitiatives($productSlug: String, $tags: [String]) {
+    initiatives(productSlug: $productSlug, tags: $tags) {
       id
       name
       product {
         id
         name
         website
+      }
+      taskTags {
+        id
+        name
       }
       taskSet {
         id
@@ -320,6 +324,7 @@ query GetInitiative($id: Int!, $userId: Int!) {
     }
     taskSet {
       id
+      publishedId
       title
       description
       status

@@ -19,6 +19,7 @@ import Attachments from "../../../../components/Attachments";
 import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
 import Loading from "../../../../components/Loading";
+import parse from "html-react-parser";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -448,7 +449,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                 </Col>
               )}
               <Col xs={24} md={18} className="pt-20">
-                {getProp(task, 'description', '')}
+                {parse(getProp(task, 'description', ''))}
                 <div className="mt-22">
                   {showAssignedUser()}
                   <Row className="text-sm">
