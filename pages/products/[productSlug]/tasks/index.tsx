@@ -124,7 +124,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
           !error ?
             <TaskTable submit={() => refetch(productsVariable)}
                        tasks={getProp(data, 'tasksByProduct', [])}
-                       statusList={getProp(data, 'statusList', [])}
                        showInitiativeName={true}
                        hideTitle={true}
                        showPendingTasks={userRole === "Manager" || userRole === "Admin"}

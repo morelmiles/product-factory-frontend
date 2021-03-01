@@ -134,13 +134,13 @@ const TaskTable: React.FunctionComponent<Props> = (
                   >
                     {
                       (
-                        statusList[getProp(task, 'status')] !== "Claimed"
+                        taskStatus !== "Claimed"
                       ) ? (
                         <>
-                          {statusList[getProp(task, 'status')] === "Done" && (
+                          {taskStatus === "Done" && (
                             <CheckCircleFilled style={{color: '#389E0D', marginRight: 8}}/>
                           )}
-                          <span>{statusList[getProp(task, 'status')]}</span>
+                          <span>{taskStatus}</span>
                         </>
                       ) : taskClaimSet ? (
                         <>
@@ -158,7 +158,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                           </Row>
                         </>
                       ) : (
-                        <span>{statusList[getProp(task, 'status')]}</span>
+                        <span>{taskStatus}</span>
                       )}
                       {assignee ? (
                         <div className="mt-10">
