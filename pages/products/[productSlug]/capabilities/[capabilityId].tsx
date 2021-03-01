@@ -42,7 +42,7 @@ const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = ({productSlu
 
       {crumbs.map(crumb => (
         <Breadcrumb.Item key={crumb.id}>
-          <Dropdown overlay={
+          <Dropdown trigger={['click']} overlay={
             <Menu>
               {crumb.siblings.map(sibling => (
                 <Menu.Item key={sibling.id}>
@@ -53,7 +53,7 @@ const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = ({productSlu
               ))}
             </Menu>
           }>
-            <a className="ant-dropdown-link" href={`/products/${productSlug}/capabilities/${crumb.id}`}>
+            <a href={`/products/${productSlug}/capabilities/${crumb.id}`}>
               {crumb.name} <DownOutlined/>
             </a>
           </Dropdown>
