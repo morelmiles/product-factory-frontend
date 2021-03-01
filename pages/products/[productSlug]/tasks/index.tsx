@@ -82,6 +82,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
               <Select
                 defaultValue={tags}
                 mode="multiple"
+                placeholder="Select tags"
                 style={{minWidth: 120}}
                 onChange={(value: any[]) => setTags(value)}
               >
@@ -107,6 +108,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
                 value={statuses}
                 style={{minWidth: 120}}
                 mode="multiple"
+                placeholder="Select statuses"
                 onChange={(value: any[]) => setStatuses(value)}
               >
                 {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (
@@ -122,7 +124,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
           !error ?
             <TaskTable submit={() => refetch(productsVariable)}
                        tasks={getProp(data, 'tasksByProduct', [])}
-                       statusList={getProp(data, 'statusList', [])}
                        showInitiativeName={true}
                        hideTitle={true}
                        showPendingTasks={userRole === "Manager" || userRole === "Admin"}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
-import {GET_TASK_BY_ID} from '../../../../graphql/queries';
+import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
@@ -19,6 +19,7 @@ import Attachments from "../../../../components/Attachments";
 import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
 import Loading from "../../../../components/Loading";
+import parse from "html-react-parser";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -57,7 +58,7 @@ const AddCommentForm: React.FunctionComponent<AddCommentFormProps> = ({taskId, r
       if (response.status == 201) {
         setSubmittingComment(false)
         setComment('')
-        onAdded()
+        onAdded();
       }
     })
   }
@@ -179,23 +180,31 @@ type Params = {
 
 const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct}) => {
   const router = useRouter();
-  const {taskId, productSlug} = router.query;
+  const {publishedId, productSlug} = router.query;
 
   const [deleteModal, showDeleteModal] = useState(false);
   const [leaveTaskModal, showLeaveTaskModal] = useState(false);
   const [task, setTask] = useState<any>({});
   const [userId, setUserId] = useState<string | null>(null);
-  // const [tasks, setTasks] = useState([]);
+  const [taskId, setTaskId] = useState(0);
   // const [showEditModal, setShowEditModal] = useState(false);
 
-  // const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
   const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
-    variables: {id: taskId, userId: userId == null ? 0 : userId}
+    variables: {publishedId, productSlug, userId: userId == null ? 0 : userId}
   });
+
+  let {data: product} = useQuery(GET_PRODUCT_INFO_BY_ID, {variables: {slug: productSlug}});
+  product = product?.product || {};
 
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
   }, []);
+
+  useEffect(() => {
+    if (!error) {
+      setTaskId(getProp(original, 'task.id', 0));
+    }
+  }, [original]);
 
   const getBasePath = () => {
     //fix it
@@ -274,12 +283,12 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     claimTask().then();
   }
 
-  const getCausedBy = () => {
+  const getCausedBy = (assignedTo: any) => {
     let status = TASK_TYPES[getProp(task, 'status')];
 
     switch (status) {
       case "Claimed":
-        return "Proposed By";
+        return assignedTo ? status : "Proposed By";
       case "Done":
         return "Done By";
       default:
@@ -288,9 +297,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   }
 
   const fetchData = async () => {
-    const data: any = await refetch({
-      id: taskId
-    })
+    const data: any = await refetch()
 
     if (!data.errors) {
       setTask(data.data.task);
@@ -342,6 +349,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     )
   }
 
+  const assignedTo = getProp(task, 'assignedTo');
+
   const showTaskEvents = () => {
     const assignee = getProp(task, 'assignedTo', null);
     const taskStatus = TASK_TYPES[getProp(task, 'status')];
@@ -373,6 +382,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     )
   }
 
+  console.log("task", task)
+
   return (
     <LeftPanelContainer>
       {
@@ -382,11 +393,15 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
               {getBasePath() !== "" && (
                 <>
                   <Link href={getBasePath()}>
-                    <a className="text-grey">{getProp(currentProduct, 'name', '')}</a>
+                    <a className="text-grey">{getProp(product, 'name', '')}</a>
                   </Link>
                   <span> / </span>
                   <Link href={`${getBasePath()}/tasks`}>
                     <a className="text-grey">Tasks</a>
+                  </Link>
+                  <span> / </span>
+                  <Link href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
+                    <a className="text-grey">{getProp(task, 'initiative.name', '')}</a>
                   </Link>
                   <span> / </span>
                 </>
@@ -433,10 +448,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   />
                 </Col>
               )}
-              <Col xs={24} md={14} className="pt-20">
-                <DynamicHtml
-                  text={getProp(task, 'description', '')}
-                />
+              <Col xs={24} md={18} className="pt-20">
+                {parse(getProp(task, 'description', ''))}
                 <div className="mt-22">
                   {showAssignedUser()}
                   <Row className="text-sm">
@@ -474,11 +487,11 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                       ) : (
                         <>
                           <strong className="my-auto">
-                            Status: {getCausedBy()}
+                            Status: {getCausedBy(assignedTo)}
                           </strong>
                           <div className='ml-5'>
                             {
-                              getProp(task, 'createdBy', null) !== null
+                              getProp(task, 'createdBy', null) !== null && !assignedTo
                                 ? (
                                   <Row>
                                     {
@@ -536,7 +549,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             {/*/>*/}
 
             <Divider/>
-            <CommentList taskId={taskId} user={user}/>
+            <CommentList taskId={publishedId} user={user}/>
 
             <Attachments data={getProp(original, 'task.attachment', [])}/>
 

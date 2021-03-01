@@ -156,6 +156,7 @@ export const GET_TASKS = gql`
   query GetTasks($userId: Int!, $input: TaskListInput) {
     tasks (input: $input) {
       id
+      publishedId
       canEdit(userId: $userId)
       priority
       detailUrl
@@ -281,8 +282,8 @@ export const GET_CAPABILITY_BY_ID = gql`
 
 
 export const GET_INITIATIVES = gql`
-  query GetInitiatives($productSlug: String) {
-    initiatives(productSlug: $productSlug) {
+  query GetInitiatives($productSlug: String, $tags: [String]) {
+    initiatives(productSlug: $productSlug, tags: $tags) {
       id
       name
       product {
@@ -290,10 +291,15 @@ export const GET_INITIATIVES = gql`
         name
         website
       }
+      taskTags {
+        id
+        name
+      }
       taskSet {
         id
         status
       }
+      availableTaskCount
     }
   }
 `;
@@ -318,6 +324,7 @@ query GetInitiative($id: Int!, $userId: Int!) {
     }
     taskSet {
       id
+      publishedId
       title
       description
       status
@@ -346,9 +353,10 @@ query GetInitiative($id: Int!, $userId: Int!) {
 }`;
 
 export const GET_TASK_BY_ID = gql`
-  query GetTask($id: Int!, $userId: Int) {
-    task(id: $id) {
+  query GetTask($productSlug: String!, $publishedId: Int!, $userId: Int) {
+    task(productSlug: $productSlug, publishedId: $publishedId) {
       id
+      publishedId
       canEdit(userId: $userId)
       priority
       detailUrl
@@ -414,6 +422,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
   query GetTasksByProduct($productSlug: String, $reviewId: Int, $userId: Int, $input: TaskListInput) {
     tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
       id
+      publishedId
       canEdit(userId: $userId)
       title
       description

@@ -126,6 +126,7 @@ const Dashboard: React.FunctionComponent = () => {
                       mode="multiple"
                       style={{minWidth: 120}}
                       onChange={(value: any) => changeSearchTerm("task-tag", value)}
+                      placeholder="Select tags"
                     >
                       {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>
                         <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
@@ -149,6 +150,7 @@ const Dashboard: React.FunctionComponent = () => {
                       value={taskStatus}
                       style={{minWidth: 120}}
                       mode="multiple"
+                      placeholder="Select statuses"
                       onChange={(value: any) => changeSearchTerm("status", value)}
                     >
                       {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (
