@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import Link from "next/link";
 import {useRouter} from 'next/router'
-import {Row, Col, Tag, Button, message, Layout, Space} from 'antd';
+import {Row, Col, Tag, Button, message, Layout, Space, Breadcrumb, Dropdown, Menu} from 'antd';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player';
-import {GET_CAPABILITY_BY_ID} from '../../../../graphql/queries';
+import {GET_CAPABILITY_BY_ID, GET_CAPABILITY_PARENT_CRUMBS} from '../../../../graphql/queries';
 import {DELETE_CAPABILITY} from '../../../../graphql/mutations';
 import {TagType} from '../../../../graphql/types';
 import {getProp} from '../../../../utilities/filters';
@@ -15,9 +15,55 @@ import AddOrEditCapability from '../../../../components/Products/AddOrEditCapabi
 import EditIcon from '../../../../components/EditIcon';
 import Attachments from "../../../../components/Attachments";
 import Loading from "../../../../components/Loading";
+import {DownOutlined} from "@ant-design/icons";
 
+
+interface IParentsCrumbsProps {
+  productSlug: string
+  crumbs: [{
+    id: number
+    name: string
+    siblings: [{
+      id: number
+      name: string
+    }]
+  }]
+  capabilityName: string
+}
 
 const {Content} = Layout;
+
+const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = ({productSlug, crumbs, capabilityName}) => {
+  return (
+    <Breadcrumb>
+      <Breadcrumb.Item>
+        <Link href={`/products/${productSlug}/capabilities`}>Capabilities</Link>
+      </Breadcrumb.Item>
+
+      {crumbs.map(crumb => (
+        <Breadcrumb.Item key={crumb.id}>
+          <Dropdown trigger={['click']} overlay={
+            <Menu>
+              {crumb.siblings.map(sibling => (
+                <Menu.Item key={sibling.id}>
+                  <a href={`/products/${productSlug}/capabilities/${sibling.id}`}>
+                    {sibling.name}
+                  </a>
+                </Menu.Item>
+              ))}
+            </Menu>
+          }>
+            <a href={`/products/${productSlug}/capabilities/${crumb.id}`}>
+              {crumb.name} <DownOutlined/>
+            </a>
+          </Dropdown>
+        </Breadcrumb.Item>
+      ))}
+
+      <Breadcrumb.Item>{capabilityName}</Breadcrumb.Item>
+    </Breadcrumb>
+  )
+}
 
 const CapabilityDetail: React.FunctionComponent = () => {
   const router = useRouter();
@@ -28,10 +74,21 @@ const CapabilityDetail: React.FunctionComponent = () => {
   const [isAdminOrManager, setIsAdminOrManager] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [formattedCrumbs, setFormattedCrumbs] = useState([]);
 
   const {data, error, loading, refetch} = useQuery(GET_CAPABILITY_BY_ID, {
     variables: {nodeId: capabilityId, slug: productSlug, userId: userId == null ? 0 : userId}
   });
+
+  const {data: crumbs, error: crumbsError, loading: crumbsLoading} = useQuery(GET_CAPABILITY_PARENT_CRUMBS, {
+    variables: {nodeId: capabilityId}
+  });
+
+  useEffect(() => {
+    if (!crumbsError && crumbs) {
+      setFormattedCrumbs(JSON.parse(crumbs.capabilityParentCrumbs));
+    }
+  }, [crumbs])
 
   const [deleteModal, showDeleteModal] = useState(false);
 
@@ -49,13 +106,6 @@ const CapabilityDetail: React.FunctionComponent = () => {
     }
   });
 
-  const getBasePath = () => {
-    if (router.asPath.includes("/products")) {
-      return `/products/${productSlug}/capabilities`;
-    }
-    return "/capabilities";
-  }
-
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
   }, []);
@@ -67,7 +117,7 @@ const CapabilityDetail: React.FunctionComponent = () => {
     }
   }, [data]);
 
-  if (loading) return <Loading/>
+  if (loading || crumbsLoading) return <Loading/>
 
   return (
     <ContainerFlex>
@@ -75,15 +125,13 @@ const CapabilityDetail: React.FunctionComponent = () => {
         <Header/>
         <Content className="container product-page" style={{marginTop: 20, marginBottom: 80}}>
           {
-            !error && (
+            !error && !crumbsError && (
               <>
-                <div className="text-grey">
-                  <Link href={getBasePath()}>
-                    Capabilities
-                  </Link>
-                  <span> / </span>
-                  {getProp(capability, 'name', '')}
-                </div>
+                <ParentsCrumbs
+                  productSlug={productSlug}
+                  crumbs={formattedCrumbs}
+                  capabilityName={getProp(capability, 'name', '')}
+                />
                 <Row
                   justify="space-between"
                   className="right-panel-headline mb-15"

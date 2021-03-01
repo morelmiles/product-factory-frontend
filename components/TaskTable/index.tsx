@@ -70,12 +70,13 @@ const TaskTable: React.FunctionComponent<Props> = (
             const productSlug = getProp(task, 'product.slug', '');
             const initiativeName = getProp(task, 'initiative.name', '');
             const initiativeId = getProp(task, 'initiative.id', '');
+            const assignee = getProp(task, 'assignedTo', null);
 
             return (
               <Col key={index} span={24}>
                 <Divider/>
                 <Row justify="space-between">
-                  <Col span={16}>
+                  <Col span={14}>
                     <Row>
                       {
                         showProductName && (
@@ -127,7 +128,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                     <Priorities task={task} submit={() => submit()}/>
                   </Col>
 
-                  <Col span={4}
+                  <Col span={6}
                        className="ml-auto"
                        style={{textAlign: "right"}}
                   >
@@ -159,6 +160,26 @@ const TaskTable: React.FunctionComponent<Props> = (
                       ) : (
                         <span>{statusList[getProp(task, 'status')]}</span>
                       )}
+                      {assignee ? (
+                        <div className="mt-10">
+                          <div className="d-flex-end" style={{fontSize: 13}}>
+
+                            <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
+                              <>
+                                {CustomAvatar(
+                                  assignee,
+                                  "fullName",
+                                  28,
+                                  null,
+                                  {margin: 'auto 8px auto 0', fontSize: 13}
+                                  )
+                                }
+                                <a className="text-grey-9">{getProp(assignee, 'fullName', '')}</a>
+                              </>
+                            </Link>
+                          </div>
+                        </div>
+                      ) : null}
                   </Col>
                 </Row>
               </Col>
