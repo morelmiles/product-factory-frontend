@@ -42,25 +42,34 @@ const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = ({productSlu
         <Link href={`/products/${productSlug}/capabilities`}>Capabilities</Link>
       </Breadcrumb.Item>
 
-      {crumbs.map(crumb => (
-        <Breadcrumb.Item key={crumb.id}>
-          <Dropdown trigger={['click']} overlay={
-            <Menu>
-              {crumb.siblings.map(sibling => (
-                <Menu.Item key={sibling.id}>
-                  <a href={`/products/${productSlug}/capabilities/${sibling.id}`}>
-                    {sibling.name}
-                  </a>
-                </Menu.Item>
-              ))}
-            </Menu>
-          }>
-            <a href={`/products/${productSlug}/capabilities/${crumb.id}`}>
-              {crumb.name} <DownOutlined/>
-            </a>
-          </Dropdown>
-        </Breadcrumb.Item>
-      ))}
+      {
+        crumbs.map(crumb => (
+          <>
+            <Link href={`/products/${productSlug}/capabilities/${crumb.id}`}>{crumb.name}</Link>
+
+            <Breadcrumb.Item key={crumb.id}>
+
+              <Dropdown trigger={['click']} overlay={
+                <Menu>
+                  {
+                    crumb.siblings.map(sibling => (
+                      <Menu.Item key={sibling.id}>
+                        <Link href={`/products/${productSlug}/capabilities/${sibling.id}`}>
+                          {sibling.name}
+                        </Link>
+                      </Menu.Item>
+                    ))
+                  }
+                </Menu>
+              }>
+                <a href={`/products/${productSlug}/capabilities/${crumb.id}`}>
+                  <DownOutlined style={{marginLeft: 5}}/>
+                </a>
+              </Dropdown>
+            </Breadcrumb.Item>
+          </>
+        ))
+      }
 
       <Breadcrumb.Item>{capabilityName}</Breadcrumb.Item>
     </Breadcrumb>

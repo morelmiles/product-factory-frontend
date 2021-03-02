@@ -241,17 +241,8 @@ const Summary: React.FunctionComponent = () => {
               }}>About {getProp(data, 'product.name', '')}</Typography.Text>
             </Row>
             <Row>
-              {getProp(data, 'product.videoUrl', null) !== null && (
-                <Col className="product-video">
-                  <ReactPlayer
-                    width="100%"
-                    height="200px"
-                    url={getProp(data, 'product.videoUrl')}
-                  />
-                </Col>
-              )}
-              <Col xs={24} md={10} className="product-info-panel">
-                <div className="description">
+              <Col xs={24} md={13}>
+                <div className="description" style={{paddingRight: 40}}>
                   <DynamicHtml
                     text={getProp(data, 'product.fullDescription', '')}
                   />
@@ -262,13 +253,25 @@ const Summary: React.FunctionComponent = () => {
                   ))
                 }
               </Col>
+              {
+                getProp(data, 'product.videoUrl', null) !== null && (
+                  <Col span={11} className="product-video">
+                    <ReactPlayer
+                      width="100%"
+                      height="200px"
+                      url={getProp(data, 'product.videoUrl')}
+                    />
+                  </Col>
+                )
+              }
             </Row>
             <Divider/>
             <div className='mt-15'>
               <Row justify="space-between" className='mb-10'>
                 <Col>
                   <Link href={`/products/${productSlug}/tasks#available`}>
-                    <Typography.Link strong style={{fontSize: '1.1rem'}}>{availableTasksAmount} Available Tasks</Typography.Link>
+                    <Typography.Link strong style={{fontSize: '1.1rem'}}>{availableTasksAmount} Available
+                      Tasks</Typography.Link>
                   </Link>
                 </Col>
               </Row>
@@ -298,7 +301,7 @@ const Summary: React.FunctionComponent = () => {
             </div>
             <Divider/>
             <div className='mt-15'>
-              <Row justify="end">
+              <Row justify="space-between">
                 <Col>
                   <div className="section-title mb-15">Product Map</div>
                 </Col>
