@@ -7,7 +7,7 @@ import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
 import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
-import {CLAIM_TASK, DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
+import {CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {CustomAvatar, EditIcon, DynamicHtml} from '../../../../components';
 // import AddTask from '../../../../components/Products/AddTask';
@@ -184,6 +184,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
 
   const [deleteModal, showDeleteModal] = useState(false);
   const [leaveTaskModal, showLeaveTaskModal] = useState(false);
+  const [reviewTaskModal, showReviewTaskModal] = useState(false);
   const [task, setTask] = useState<any>({});
   const [userId, setUserId] = useState<string | null>(null);
   const [taskId, setTaskId] = useState(0);
@@ -251,6 +252,27 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
     },
     onError() {
       message.error("Failed to leave a task!").then();
+    }
+  });
+
+  const [submitTask] = useMutation(IN_REVIEW_TASK, {
+    variables: {
+      taskId,
+      userId: user.id
+    },
+    onCompleted(data) {
+      const {inReviewTask} = data;
+      const responseMessage = inReviewTask.message;
+      if (inReviewTask.success) {
+        message.success(responseMessage).then();
+        fetchData().then();
+        showReviewTaskModal(false);
+      } else {
+        message.error(responseMessage).then();
+      }
+    },
+    onError() {
+      message.error("Failed to submit the task in review!").then();
     }
   });
 
@@ -354,6 +376,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const showTaskEvents = () => {
     const assignee = getProp(task, 'assignedTo', null);
     const taskStatus = TASK_TYPES[getProp(task, 'status')];
+    const inReview = getProp(task, 'inReview', false);
 
     return (
       <Row className="text-sm">
@@ -362,6 +385,11 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             {assignee.id === user.id
               ? (
                 <div className="flex-column ml-auto">
+                  {inReview ? <div className="mb-10">The task is submitted for review</div>:(
+                    <Button type="primary"
+                          className="mb-10"
+                          onClick={() => showReviewTaskModal(true)}>Submit for review</Button>
+                  )}
                   <Button type="primary"
                           onClick={() => showLeaveTaskModal(true)}>Leave the task</Button>
                 </div>
@@ -569,8 +597,19 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                 closeModal={() => showLeaveTaskModal(false)}
                 submit={leaveTask}
                 title="Leave the task"
-                message="Are you really want to leave the task?"
+                message="Do you really want to leave the task?"
                 submitText="Yes, leave"
+              />
+            )}
+            {reviewTaskModal && (
+              <CustomModal
+                modal={reviewTaskModal}
+                productSlug={''}
+                closeModal={() => showReviewTaskModal(false)}
+                submit={submitTask}
+                title="Submit for review"
+                message="Do you really want to submit the task for review?"
+                submitText="Yes, submit"
               />
             )}
             {/*{showEditModal && <AddTask*/}

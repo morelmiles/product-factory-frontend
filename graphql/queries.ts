@@ -171,15 +171,15 @@ export const GET_TASKS = gql`
         id
         name
       }
-      taskclaimSet {
-        person {
-          id
-          fullName
-          emailAddress
-          slug
-        }
-        kind
-      }
+      #taskclaimSet {
+      #  person {
+      #    id
+      #    fullName
+      #    emailAddress
+      #    slug
+      #  }
+      #  kind
+      #}
       tag {
         id
         name
@@ -364,6 +364,7 @@ export const GET_TASK_BY_ID = gql`
       description
       shortDescription
       status
+      inReview
       assignedTo {
         id
         fullName,
