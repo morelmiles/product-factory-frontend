@@ -25,9 +25,15 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const {userRole} = props;
   const [tags, setTags] = useState([]);
   const [sortedBy, setSortedBy] = useState("priority");
-  const [statuses, setStatuses] = useState([]);
+  const [statuses, setStatuses] = useState<Array<number>>([]);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (location.hash === '#available') {
+      setStatuses([2]);
+    }
+  }, []);
 
   const productsVariable = {
     productSlug,
