@@ -468,6 +468,14 @@ export const GET_TASKS_BY_PRODUCT = gql`
         name
         slug
       }
+      tag {
+        id
+        name
+      }
+      stack {
+        id
+        name
+      }
       createdAt
       status
       blocked

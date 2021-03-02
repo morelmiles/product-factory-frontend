@@ -363,6 +363,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   }
 
   const assignedTo = getProp(task, 'assignedTo');
+  const stacks = getProp(task, 'stack', []);
+  const tags = getProp(task, 'tag', []);
 
   const showTaskEvents = () => {
     const assignee = getProp(task, 'assignedTo', null);
@@ -544,18 +546,24 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                         <Priorities task={task} submit={() => refetch()}/>
                     </Row>
                   }
-                  <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
-                      <strong className="my-auto">Stacks:&nbsp;</strong>
-                      {getProp(task, 'stack', []).map((tag: any, taskIndex: number) =>
-                        <CheckableTag key={`tag-${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
-                      )}
-                  </Row>
-                  <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
-                      <strong className="my-auto">Tags:&nbsp;</strong>
-                      {getProp(task, 'tag', []).map((tag: any, taskIndex: number) =>
-                        <Tag key={`stack-${taskIndex}`} checked={true}>{tag.name}</Tag>
-                      )}
-                  </Row>
+                  {stacks.length > 0 && (
+                    <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
+                        <strong className="my-auto">Stacks:&nbsp;</strong>
+                        {stacks.map((tag: any, taskIndex: number) =>
+                          <CheckableTag key={`tag-${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
+                        )}
+                    </Row>
+                  )}
+
+                  {tags.length > 0 && (
+                      <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
+                        <strong className="my-auto">Tags:&nbsp;</strong>
+                        {tags.map((tag: any, taskIndex: number) =>
+                          <Tag key={`stack-${taskIndex}`}>{tag.name}</Tag>
+                        )}
+                    </Row>
+                  )}
+
                   {
                     getProp(task, 'capability.id', null) && (
                       <Row
