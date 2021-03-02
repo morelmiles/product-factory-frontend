@@ -7,7 +7,7 @@ import {TaskTable} from '../../../../components';
 import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
-import {TASK_LIST_TYPES} from "../../../../graphql/types";
+import {TASK_LIST_TYPES, TASK_TYPES} from "../../../../graphql/types";
 import {getProp} from "../../../../utilities/filters";
 import Loading from "../../../../components/Loading";
 
@@ -124,6 +124,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
           !error ?
             <TaskTable submit={() => refetch(productsVariable)}
                        tasks={getProp(data, 'tasksByProduct', [])}
+                       statusList={TASK_TYPES}
                        showInitiativeName={true}
                        hideTitle={true}
                        showPendingTasks={userRole === "Manager" || userRole === "Admin"}
