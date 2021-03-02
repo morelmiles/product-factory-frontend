@@ -411,6 +411,29 @@ export const GET_TASK_BY_ID = gql`
         id
         title
         status
+        publishedId
+        dependOn {
+          id
+        }
+        product {
+          name
+          slug
+        }
+        initiative {
+          name
+          id
+        }
+        assignedTo {
+          id
+          fullName
+          slug
+        }
+        taskclaimSet {
+          person {
+            slug
+            fullName
+          }
+        }
       }
     }
     statusList

@@ -9,7 +9,7 @@ import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID} from '../../../../graphql/querie
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
-import {CustomAvatar, EditIcon, DynamicHtml} from '../../../../components';
+import {CustomAvatar, EditIcon, DynamicHtml, TaskTable} from '../../../../components';
 // import AddTask from '../../../../components/Products/AddTask';
 import {apiDomain} from "../../../../utilities/constants"
 import DeleteModal from '../../../../components/Products/DeleteModal';
@@ -207,16 +207,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   }, [original]);
 
   const getBasePath = () => {
-    //fix it
-    // if (match.url.includes("/products")) {
-    //   const params: any = matchPath(match.url, {
-    //     path: "/products/:productSlug/tasks/:taskId",
-    //     exact: false,
-    //     strict: false
-    //   });
-
     return `/products/${productSlug}`;
-    // }
   }
 
   const [deleteTask] = useMutation(DELETE_TASK, {
@@ -228,7 +219,6 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
       router.push(getBasePath() === "" ? "/" : `${getBasePath()}/tasks`).then();
     },
     onError() {
-      // console.log("Delete item error: ", err);
       message.error("Failed to delete item!").then();
     }
   });
@@ -326,21 +316,21 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
               )
               : (<>
                 <strong className="my-auto">Assigned to: </strong>
-                  <div className="ml-12">
-                    {CustomAvatar(
-                      assignee,
-                      "fullName",
-                      "default",
-                      null,
-                      {margin: 'auto 8px auto 0'}
-                      )
-                    }
-                  </div>
-                  <div className="my-auto">
-                    <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
-                      <a className="text-grey-9">{getProp(assignee, 'fullName', '')}</a>
-                    </Link>
-                  </div>
+                <div className="ml-12">
+                  {CustomAvatar(
+                    assignee,
+                    "fullName",
+                    "default",
+                    null,
+                    {margin: 'auto 8px auto 0'}
+                  )
+                  }
+                </div>
+                <div className="my-auto">
+                  <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
+                    <a className="text-grey-9">{getProp(assignee, 'fullName', '')}</a>
+                  </Link>
+                </div>
               </>)
             }
           </>
@@ -400,7 +390,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                     <a className="text-grey">Tasks</a>
                   </Link>
                   <span> / </span>
-                  <Link href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
+                  <Link
+                    href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
                     <a className="text-grey">{getProp(task, 'initiative.name', '')}</a>
                   </Link>
                   <span> / </span>
@@ -519,10 +510,10 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   </Row>
                   {
                     getProp(task, 'priority', null) &&
-                      <Row style={{marginTop: 10}} className="text-sm mt-8">
-                          <strong className="my-auto">Priority:&nbsp;</strong>
-                          <Priorities task={task} submit={() => refetch()} />
-                      </Row>
+                    <Row style={{marginTop: 10}} className="text-sm mt-8">
+                        <strong className="my-auto">Priority:&nbsp;</strong>
+                        <Priorities task={task} submit={() => refetch()}/>
+                    </Row>
                   }
                   {
                     getProp(task, 'capability.id', null) && (
@@ -541,14 +532,16 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                 </div>
               </Col>
             </Row>
-            {/*<TaskTable*/}
-            {/*  title={'Dependant Tasks'}*/}
-            {/*  tasks={getProp(task, 'dependOn', [])}*/}
-            {/*  productSlug={getBasePath().replace("/products/", "")}*/}
-            {/*  statusList={getProp(original, 'statusList', [])}*/}
-            {/*/>*/}
 
-            <Divider/>
+            <TaskTable
+              title={'Dependant Tasks'}
+              tasks={getProp(task, 'dependOn', [])}
+              productSlug={String(productSlug)}
+              statusList={getProp(original, 'statusList', [])}
+              submit={() => {}}
+            />
+
+            <Divider style={{marginTop: 50}}/>
             <CommentList taskId={publishedId} user={user}/>
 
             <Attachments data={getProp(original, 'task.attachment', [])}/>
