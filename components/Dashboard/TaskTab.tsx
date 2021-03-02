@@ -3,6 +3,7 @@ import {useQuery} from '@apollo/react-hooks';
 import {GET_TASKS} from '../../graphql/queries';
 import TaskTable from '../TaskTable'
 import Loading from "../Loading";
+import {TASK_TYPES} from "../../graphql/types";
 
 
 type Props = {
@@ -24,7 +25,7 @@ const TaskTab: React.FunctionComponent<Props> = (
     tags
    }
 ) => {
-  const [userId, setUserId] = useState<string | null>(null);
+  const userId = localStorage.getItem('userId');
 
   const {data, error, loading, refetch} = useQuery(GET_TASKS, {
     variables: {
@@ -38,10 +39,10 @@ const TaskTab: React.FunctionComponent<Props> = (
       setTaskNum(data.tasks.length);
     }
   });
-
-  useEffect(() => {
-    setUserId(localStorage.getItem('userId'));
-  }, []);
+  //
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem('userId'));
+  // }, []);
 
   if (loading) return <Loading/>
   if (!data || !data.tasks) return <h3 className="text-center">No tasks</h3>
@@ -49,7 +50,7 @@ const TaskTab: React.FunctionComponent<Props> = (
   return (
     <TaskTable submit={() => refetch()}
                tasks={data.tasks}
-               statusList={data.statusList}
+               statusList={TASK_TYPES}
                showInitiativeName={showInitiativeName}
                showProductName={showProductName}
                hideTitle={true}/>

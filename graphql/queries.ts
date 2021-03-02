@@ -160,7 +160,6 @@ export const GET_TASKS = gql`
       canEdit(userId: $userId)
       priority
       detailUrl
-      description
       shortDescription
       title
       status
