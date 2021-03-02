@@ -198,3 +198,12 @@ export const CLAIM_TASK = gql`
     }
   }
 `;
+
+export const IN_REVIEW_TASK = gql`
+  mutation InReviewTask($taskId: Int!, $userId: Int!) {
+    inReviewTask(taskId: $taskId, userId: $userId) {
+      success,
+      message
+    }
+  }
+`;

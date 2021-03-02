@@ -171,16 +171,20 @@ export const GET_TASKS = gql`
         id
         name
       }
-      taskclaimSet {
-        person {
-          id
-          fullName
-          emailAddress
-          slug
-        }
-        kind
-      }
+      #taskclaimSet {
+      #  person {
+      #    id
+      #    fullName
+      #    emailAddress
+      #    slug
+      #  }
+      #  kind
+      #}
       tag {
+        id
+        name
+      }
+      stack {
         id
         name
       }
@@ -281,8 +285,8 @@ export const GET_CAPABILITY_BY_ID = gql`
 
 
 export const GET_INITIATIVES = gql`
-  query GetInitiatives($productSlug: String, $tags: [String]) {
-    initiatives(productSlug: $productSlug, tags: $tags) {
+  query GetInitiatives($productSlug: String, $stacks: [String]) {
+    initiatives(productSlug: $productSlug, stacks: $stacks) {
       id
       name
       product {
@@ -297,6 +301,10 @@ export const GET_INITIATIVES = gql`
       taskSet {
         id
         status
+      }
+      taskStacks {
+        id
+        name
       }
       availableTaskCount
     }
@@ -364,6 +372,7 @@ export const GET_TASK_BY_ID = gql`
       description
       shortDescription
       status
+      inReview
       assignedTo {
         id
         fullName,
@@ -407,6 +416,10 @@ export const GET_TASK_BY_ID = gql`
         id
         name
       }
+      stack {
+        id
+        name
+      }
       dependOn {
         id
         title
@@ -447,7 +460,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       publishedId
       canEdit(userId: $userId)
       title
-      description
+      # description
       shortDescription
       detailUrl
       updatedAt
@@ -758,6 +771,15 @@ export const GET_TAGS = gql`
       id
       name
       createdAt
+    }
+  }
+`;
+
+export const GET_STACKS = gql`
+  query GetStacks {
+    stacks {
+      id
+      name
     }
   }
 `;

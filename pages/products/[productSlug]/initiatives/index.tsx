@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Card, Button, Tag, Select} from 'antd';
+import {Row, Col, Card, Button, Select} from 'antd';
 import {useRouter} from 'next/router'
 import {useQuery} from '@apollo/react-hooks';
 import {DynamicHtml} from '../../../../components';
-import {GET_INITIATIVES, GET_TAGS} from '../../../../graphql/queries';
+import {GET_INITIATIVES, GET_STACKS} from '../../../../graphql/queries';
 import {randomKeys} from '../../../../utilities/utils';
 import AddInitiative from '../../../../components/Products/AddInitiative';
 import {getProp} from '../../../../utilities/filters';
@@ -14,6 +14,7 @@ import Loading from "../../../../components/Loading";
 import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
 import {pluralize} from "apollo/lib/utils";
 import {TagType} from "../../../../graphql/types";
+import CheckableTag from "antd/lib/tag/CheckableTag";
 
 type Params = {
   userRole?: string;
@@ -21,10 +22,10 @@ type Params = {
 
 const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
   const router = useRouter();
-  const [tags, setTags] = useState([]);
+  const [stacks, setStacks] = useState([]);
   let {productSlug} = router.query;
   productSlug = String(productSlug);
-  const initialQueryVariables = {productSlug, tags};
+  const initialQueryVariables = {productSlug, stacks};
 
   const [showEditModal, setShowEditModal] = useState(false);
   const {data, error, loading, refetch} = useQuery(GET_INITIATIVES, {
@@ -35,9 +36,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
     router.push(`/products/${productSlug}/initiatives/${id}`).then();
   }
 
-  const tagsData = useQuery(GET_TAGS);
-
-  if (loading) return <Loading/>
+  const stacksData = useQuery(GET_STACKS);
 
   const getAvailableTaskText = (availableTasks: number) => {
     return `${pluralize(availableTasks, "available task")}`;
@@ -64,13 +63,13 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
                 <Row className="">
                   <div>
                     <Select
-                      defaultValue={tags}
+                      defaultValue={stacks}
                       mode="multiple"
-                      placeholder="Filter by tags..."
+                      placeholder="Filter by stacks..."
                       style={{minWidth: 150}}
-                      onChange={(value: any[]) => setTags(value)}
+                      onChange={(value: any[]) => setStacks(value)}
                     >
-                      {tagsData?.data ? tagsData.data.tags.map((tag: { id: string, name: string }) =>
+                      {stacksData?.data ? stacksData.data.stacks.map((tag: { id: string, name: string }) =>
                         <Select.Option key={tag.id} value={tag.id}>{tag.name}</Select.Option>) : []
                       }
                     </Select>
@@ -88,9 +87,10 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
                 </Row>
               </Col>
             </Row>
-            <Row gutter={[16, 16]}>
+            {loading ? <Loading/> : (
+              <Row gutter={[16, 16]}>
               {
-                data?.initiatives && data.initiatives.map((initiative: any) => (
+                data?.initiatives && data.initiatives.length > 0 ? data.initiatives.map((initiative: any) => (
                   <Col key={randomKeys()} xs={24} sm={12} md={8}>
                     {/* <Card
                     cover={
@@ -109,8 +109,8 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
                         <div>
                           <h4 className='mt-5'>{initiative.name}</h4>
                           {
-                            getProp(initiative, 'taskTags', []).map((tag: TagType, idx: number) => (
-                              <Tag key={`tag-${idx}`}>{tag.name}</Tag>
+                            getProp(initiative, 'taskStacks', []).map((tag: TagType, idx: number) => (
+                              <CheckableTag checked={true} key={`stack-${idx}`}>{tag.name}</CheckableTag>
                             ))
                           }
                           <div>
@@ -130,7 +130,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
                       </div>
                     </Card>
                   </Col>
-                ))
+                )) : <div/>
               }
               {
                 showEditModal &&
@@ -143,6 +143,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
                 />
               }
             </Row>
+            )}
           </React.Fragment>
         )
       }
