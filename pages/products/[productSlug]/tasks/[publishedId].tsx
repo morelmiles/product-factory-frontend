@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button, Typography} from 'antd';
+import {Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button, Typography, Tag} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -20,6 +20,7 @@ import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
 import Loading from "../../../../components/Loading";
 import parse from "html-react-parser";
+import CheckableTag from "antd/lib/tag/CheckableTag";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -552,6 +553,18 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                           <Priorities task={task} submit={() => refetch()} />
                       </Row>
                   }
+                  <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
+                      <strong className="my-auto">Stacks:&nbsp;</strong>
+                      {getProp(task, 'stack', []).map((tag: any, taskIndex: number) =>
+                        <CheckableTag key={`tag-${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
+                      )}
+                  </Row>
+                  <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
+                      <strong className="my-auto">Tags:&nbsp;</strong>
+                      {getProp(task, 'tag', []).map((tag: any, taskIndex: number) =>
+                        <Tag key={`stack-${taskIndex}`} checked={true}>{tag.name}</Tag>
+                      )}
+                  </Row>
                   {
                     getProp(task, 'capability.id', null) && (
                       <Row

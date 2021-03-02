@@ -6,6 +6,7 @@ import {getProp} from '../../utilities/filters';
 import {TASK_CLAIM_TYPES} from '../../graphql/types';
 import {CheckCircleFilled, ThunderboltFilled} from '@ant-design/icons';
 import Priorities from "../Priorities";
+import CheckableTag from "antd/lib/tag/CheckableTag";
 
 
 type Props = {
@@ -105,6 +106,9 @@ const TaskTable: React.FunctionComponent<Props> = (
                       <Typography.Text type="secondary" style={{marginBottom: 5}}>{task.shortDescription}</Typography.Text>
                     </Row>
                     <Row align="middle">
+                      {getProp(task, 'stack', []).map((tag: any, taskIndex: number) =>
+                        <CheckableTag key={`${index}-stack${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
+                      )}
                       {getProp(task, 'tag', []).map((tag: any, taskIndex: number) =>
                         <Tag key={`${index}-tag${taskIndex}`}>{tag.name}</Tag>
                       )}
