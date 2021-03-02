@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {Row, Col, message, Input, Button} from 'antd';
+import {Row, Col, message, Input, Button, Typography} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {GET_CAPABILITIES_BY_PRODUCT} from '../../../../graphql/queries';
 import {getProp} from '../../../../utilities/filters';
@@ -143,6 +143,9 @@ const Capabilities: React.FunctionComponent = () => {
         !capabilitiesError && (
           <>
             <Row justify="space-between" className="right-panel-headline mb-15" style={{marginBottom: 40}}>
+              <Col>
+                <Typography.Text strong style={{fontSize: '1.4rem'}}>Product Map</Typography.Text>
+              </Col>
               <Col>
                 <div>
                   <Search placeholder="Search text" className='mr-10' onSearch={onSearch} style={{width: 200}}/>
