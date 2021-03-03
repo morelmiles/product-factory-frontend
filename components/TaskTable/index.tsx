@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import {Row, Tag, Divider, Col, Typography} from 'antd';
+import {Row, Tag, Divider, Col, Typography, Empty} from 'antd';
 import {CustomAvatar} from '../CustomAvatar';
 import {getProp} from '../../utilities/filters';
 import {TASK_CLAIM_TYPES} from '../../graphql/types';
@@ -192,7 +192,7 @@ const TaskTable: React.FunctionComponent<Props> = (
         }
       </Row>
     </>
-  ) : null
+  ) : <Empty description={"The task list is empty"} />
 };
 
 export default TaskTable;

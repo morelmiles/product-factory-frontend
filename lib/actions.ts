@@ -15,6 +15,20 @@ export const saveTags = (data: any): types.BaseAction => {
   }
 }
 
+export const saveUsers = (data: any): types.BaseAction => {
+  return {
+    type: types.SAVE_USERS,
+    payload: data
+  }
+}
+
+export const saveStacks = (data: any): types.BaseAction => {
+  return {
+    type: types.SAVE_STACKS,
+    payload: data
+  }
+}
+
 export const setCurrentProject = (data: any): types.BaseAction => {
   return {
     type: types.SET_CURRENT_PROJECT,

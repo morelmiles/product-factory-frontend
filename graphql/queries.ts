@@ -312,24 +312,26 @@ export const GET_INITIATIVES = gql`
 `;
 
 export const GET_INITIATIVE_BY_ID = gql`
-query GetInitiative($id: Int!, $userId: Int!) {
-  initiative(id: $id) {
-    id
-    name
-    description
-    status
-    product {
+query GetInitiative($id: Int!, $userId: Int!, $input: TaskListInput!) {
+  initiative(id: $id, input: $input) {
+    initiative {
       id
       name
-      website
-      shortDescription
-      fullDescription
-      tag {
+      description
+      status
+      product {
         id
         name
+        website
+        shortDescription
+        fullDescription
+        tag {
+          id
+          name
+        }
       }
     }
-    taskSet {
+    tasks {
       id
       publishedId
       title

@@ -51,3 +51,5 @@ const makeStore = () => {
 };
 
 export const wrapper = createWrapper(makeStore);
+
+export const AppDispatch = typeof makeStore().dispatch;
