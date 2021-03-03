@@ -1,5 +1,15 @@
 import gql from 'graphql-tag';
 
+
+export const CREATE_PERSON = gql`
+  mutation CreatePerson($firstName: String!, $lastName: String!, $emailAddress: String!, $password: String!, $password2: String!) {
+    createPerson(personInput: {firstName: $firstName, lastName: $lastName, emailAddress: $emailAddress, password: $password, password2: $password2}) {
+      status
+      message
+    }
+  }
+`;
+
 export const CREATE_PRODUCT = gql`
   mutation CreateProduct($productInfo: ProductInput!, $userId: Int!) {
     createProduct(productInfo: $productInfo, userId: $userId) {
