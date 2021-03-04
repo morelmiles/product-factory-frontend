@@ -14,8 +14,6 @@ import {FilterOutlined} from "@ant-design/icons";
 import FilterModal from "../../../../components/FilterModal";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 
-const {Option} = Select;
-
 type Props = {
   onClick?: () => void;
   userRole: string;

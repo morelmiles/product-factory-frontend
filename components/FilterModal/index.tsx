@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, Button, Select, FormInstance, Form} from 'antd';
-import {TASK_LIST_TYPES, TASK_PRIORITIES} from "../../graphql/types";
+import {TASK_LIST_TYPES, TASK_LIST_TYPES_FOR_GUEST, TASK_PRIORITIES} from "../../graphql/types";
 import {useQuery} from "@apollo/react-hooks";
 import {GET_STACKS, GET_TAGS, GET_USERS} from "../../graphql/queries";
 import {connect} from "react-redux";
 import {WorkState} from "../../lib/reducers/work.reducer";
 import {saveTags, saveStacks, saveUsers} from "../../lib/actions";
+import {getUserRole, hasManagerRoots} from "../../utilities/utils";
 
 const { Option } = Select;
 
 type Props = {
+  user: any,
   modal?: boolean;
   closeModal: any;
   submit: Function,
@@ -19,6 +21,7 @@ type Props = {
   saveTags: Function,
   saveStacks: Function,
   saveUsers: Function,
+  productSlug?: string,
   initialForm: any
 };
 
@@ -31,6 +34,7 @@ const tailLayout = {
 };
 
 const FilterModal: React.SFC<Props> = ({
+  user,
   modal,
   closeModal,
   submit,
@@ -38,12 +42,14 @@ const FilterModal: React.SFC<Props> = ({
   users,
   stacks,
   saveTags,
+  productSlug,
   saveStacks,
   saveUsers,
   initialForm
 }) => {
   const [form] = Form.useForm()
   const handleCancel = () => closeModal(!modal);
+  const [userHasManagerRoots, setUserRoot] = useState(true);
 
   const {data: tagsData} = useQuery(GET_TAGS);
   const {data: stacksData} = useQuery(GET_STACKS);
@@ -60,6 +66,15 @@ const FilterModal: React.SFC<Props> = ({
   useEffect(() => {
     if (usersData && usersData.people) saveUsers({allUsers: usersData.people})
   }, [usersData]);
+
+  useEffect(() => {
+    if (user.isLoggedIn) {
+      setUserRoot(productSlug ?
+        hasManagerRoots(getUserRole(user.roles, productSlug ? productSlug : "")) : true)
+    } else {
+      setUserRoot(false)
+    }
+  }, [user])
 
   const onFinish = (values: any) => submit(values);
 
@@ -173,7 +188,7 @@ const FilterModal: React.SFC<Props> = ({
               filterOption={filterOption}
               allowClear
             >
-              {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (
+              {(userHasManagerRoots ? TASK_LIST_TYPES : TASK_LIST_TYPES_FOR_GUEST).map((option: { id: number, name: string }) => (
                 <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
               ))}
             </Select>
@@ -186,6 +201,7 @@ const FilterModal: React.SFC<Props> = ({
 
 const mapStateToProps = (state: any) => ({
   tags: state.work.allTags,
+  user: state.user,
   users: state.work.allUsers,
   stacks: state.work.allStacks,
 });

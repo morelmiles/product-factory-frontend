@@ -154,7 +154,7 @@ export const GET_PRODUCT_BY_ID = gql`
 
 export const GET_TASKS = gql`
   query GetTasks($userId: Int!, $input: TaskListInput) {
-    tasks (input: $input) {
+    tasks (input: $input, userId: $userId) {
       id
       publishedId
       canEdit(userId: $userId)
@@ -313,7 +313,7 @@ export const GET_INITIATIVES = gql`
 
 export const GET_INITIATIVE_BY_ID = gql`
 query GetInitiative($id: Int!, $userId: Int!, $input: TaskListInput!) {
-  initiative(id: $id, input: $input) {
+  initiative(id: $id, input: $input, userId: $userId) {
     initiative {
       id
       name
@@ -457,7 +457,7 @@ export const GET_TASK_BY_ID = gql`
 
 export const GET_TASKS_BY_PRODUCT = gql`
   query GetTasksByProduct($productSlug: String, $reviewId: Int, $userId: Int, $input: TaskListInput) {
-    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
+    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input, userId: $userId) {
       id
       publishedId
       canEdit(userId: $userId)

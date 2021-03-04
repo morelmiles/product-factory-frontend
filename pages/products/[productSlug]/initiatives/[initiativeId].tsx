@@ -121,19 +121,28 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
               <div className="page-title">
                 {getProp(original.initiative, 'initiative.name', '')}
               </div>
-              {userHasManagerRoots && (
+
                 <Col>
-                  <Button
-                    onClick={() => showDeleteModal(true)}
-                  >
-                    Delete
-                  </Button>
-                  <EditIcon
-                    className='ml-10'
-                    onClick={() => setShowEditModal(true)}
-                  />
+                  <Button type="primary"
+                          className={userHasManagerRoots ? "mr-10" : ""}
+                          onClick={() => setFilterModal(!filterModal)}
+                          icon={<FilterOutlined />}>Filter</Button>
+
+                  {userHasManagerRoots && (
+                    <>
+                      <Button
+                        onClick={() => showDeleteModal(true)}
+                      >
+                        Delete
+                      </Button>
+                      <EditIcon
+                        className='ml-10'
+                        onClick={() => setShowEditModal(true)}
+                      />
+                    </>
+                  )}
+
                 </Col>
-              )}
             </Row>
             <Row>
               {/* <Col>
@@ -150,13 +159,8 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
                 />
               </Col>
             </Row>
-            <div className="text-right">
-              <Button type="primary"
-                    onClick={() => setFilterModal(!filterModal)}
-                    icon={<FilterOutlined />}>Filter</Button>
-            </div>
             <TaskTable
-              tasks={getProp(original.initiative, 'taskSet', [])}
+              tasks={getProp(original.initiative, 'tasks', [])}
               statusList={TASK_TYPES}
               productSlug={productSlug}
               submit={fetchData}

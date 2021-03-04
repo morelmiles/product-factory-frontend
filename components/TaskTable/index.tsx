@@ -39,14 +39,6 @@ const TaskTable: React.FunctionComponent<Props> = (
       <Row className="task-tab">
         {
           tasks.map((task: any, index: number) => {
-            if (
-              !showPendingTasks &&
-              statusList[getProp(task, 'status', null)] === "Draft" ||
-              statusList[getProp(task, 'status', null)] === "Pending"
-            ) {
-              return null;
-            }
-
             const status = getProp(task, 'status');
             let taskStatus = statusList[status];
             if (status === "Done") {
