@@ -20,58 +20,62 @@ interface IProps {
 const Attachments: React.FunctionComponent<IProps> = ({data, style}) => {
   return (
     <>
-      <List
-        style={style}
-        header={<Typography.Text strong>Attachments</Typography.Text>}
-        bordered
-        dataSource={data}
-        renderItem={(attachment: IAttachment) => (
-          <List.Item>
-            {
-              attachment.fileType == 'link' &&
-              <Row>
-                  <Col>
-                      <LinkOutlined style={{marginRight: 10}}/>
-                      <a href={attachment.path} target="_blank">{attachment.name}</a>
-                  </Col>
-              </Row>
-            }
-            {
-              attachment.fileType == 'video' &&
-              <>
+      {
+        data.length > 0 &&
+        <List
+            style={style}
+            header={<Typography.Text strong>Attachments</Typography.Text>}
+            bordered
+            dataSource={data}
+            renderItem={(attachment: IAttachment) => (
+              <List.Item>
+                {
+                  attachment.fileType == 'link' &&
                   <Row>
                       <Col>
-                          <VideoCameraOutlined style={{marginRight: 10}}/>
-                          <Typography.Text>{attachment.name}</Typography.Text>
+                          <LinkOutlined style={{marginRight: 10}}/>
+                          <a href={attachment.path} target="_blank">{attachment.name}</a>
                       </Col>
                   </Row>
-                  <Row>
-                      <ReactPlayer
-                          width="100%"
-                          height="160px"
-                          url={attachment.path}
-                      />
+                }
+                {
+                  attachment.fileType == 'video' &&
+                  <>
+                      <Row>
+                          <Col>
+                              <VideoCameraOutlined style={{marginRight: 10}}/>
+                              <Typography.Text>{attachment.name}</Typography.Text>
+                          </Col>
+                      </Row>
+                      <Row>
+                          <ReactPlayer
+                              width="100%"
+                              height="160px"
+                              url={attachment.path}
+                          />
+                      </Row>
+                  </>
+                }
+                {
+                  attachment.fileType == 'file' &&
+                  <Row style={{width: '100%'}} justify="space-between">
+                      <Col>
+                          <FileOutlined style={{marginRight: 10}}/>
+                          <Typography.Text>{attachment.name}</Typography.Text>
+                      </Col>
+                      <Col>
+                          <a href={attachment.path} download={attachment.name} target="_blank">
+                              <DownloadOutlined/>
+                          </a>
+                      </Col>
                   </Row>
-              </>
-            }
-            {
-              attachment.fileType == 'file' &&
-              <Row style={{width: '100%'}} justify="space-between">
-                  <Col>
-                      <FileOutlined style={{marginRight: 10}}/>
-                      <Typography.Text>{attachment.name}</Typography.Text>
-                  </Col>
-                  <Col>
-                      <a href={attachment.path} download={attachment.name} target="_blank">
-                          <DownloadOutlined/>
-                      </a>
-                  </Col>
-              </Row>
-            }
-          </List.Item>
-        )}
-      >
-      </List>
+                }
+              </List.Item>
+            )}
+        >
+        </List>
+      }
+
 
       {/*<Add*/}
       {/*  modal={showEditModal}*/}

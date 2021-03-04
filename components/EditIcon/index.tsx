@@ -8,7 +8,7 @@ type Props = {
   className?: string;
 }
 
-const EditIcon: React.SFC<Props> = ({ style, onClick, className }) => {
+const EditIcon: React.FunctionComponent<Props> = ({ style, onClick, className }) => {
   const iconStyle = { ...style, cursor: 'pointer' };
   return (
     <span
