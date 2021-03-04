@@ -14,6 +14,7 @@ import {getProp} from '../../../../utilities/filters';
 import {randomKeys} from '../../../../utilities/utils';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Loading from "../../../../components/Loading";
+import {TASK_TYPES} from "../../../../graphql/types";
 
 
 type Params = {
@@ -130,6 +131,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
             </Row>
             <TaskTable
               tasks={getProp(original.initiative, 'taskSet', [])}
+              statusList={TASK_TYPES}
               productSlug={productSlug}
               submit={fetchData}
             />
