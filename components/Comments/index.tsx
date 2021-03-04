@@ -71,7 +71,7 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({taskId}) => {
     }
   }, data);
 
-  console.log('comm', comments);
+  // console.log('comm', comments);
 
   return (
     <>

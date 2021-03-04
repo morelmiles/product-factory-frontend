@@ -7,7 +7,6 @@ const SignIn: React.FunctionComponent = () => {
   const [form] = Form.useForm();
 
   const onFinish = async (values: any) => {
-    console.log(values);
       // if (data.status) {
       //   message.success(data.message);
       // } else {

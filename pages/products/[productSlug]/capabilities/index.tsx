@@ -43,7 +43,6 @@ const Capabilities: React.FunctionComponent = () => {
   } = useQuery(GET_CAPABILITIES_BY_PRODUCT, {
     variables: {productSlug, userId: userId == null ? 0 : userId}
   });
-  console.log(capabilities);
 
   const convertDataAndSetTree = (capabilities: any) => {
     try {

@@ -428,7 +428,6 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
     )
   }
 
-  console.log("task", task)
 
   return (
     <LeftPanelContainer>
