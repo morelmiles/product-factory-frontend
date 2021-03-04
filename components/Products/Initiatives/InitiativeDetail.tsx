@@ -11,17 +11,17 @@ import AddInitiative from 'pages/Products/AddInitiative';
 import {TaskTable, DynamicHtml} from 'components';
 import EditIcon from 'components/EditIcon';
 import {getProp} from 'utilities/filters';
-import {randomKeys} from 'utilities/utils';
+import {getUserRole, hasManagerRoots, randomKeys} from 'utilities/utils';
 import Loading from "../../Loading";
 
 type Params = {
   productSlug?: any;
   initiativeId?: any;
-  userRole?: string;
+  user: any;
   currentProduct: any;
 } & RouteComponentProps;
 
-const InitiativeDetail: React.SFC<Params> = ({match, history, userRole, currentProduct}) => {
+const InitiativeDetail: React.SFC<Params> = ({match, history, user, currentProduct}) => {
   const params: any = matchPath(match.url, {
     path: "/products/:productSlug/initiatives/:initiativeId",
     exact: false,
@@ -30,6 +30,7 @@ const InitiativeDetail: React.SFC<Params> = ({match, history, userRole, currentP
   const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
     variables: {id: params.params.initiativeId}
   });
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, params.params.productSlug));
   const [initiative, setInitiative] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
@@ -97,7 +98,7 @@ const InitiativeDetail: React.SFC<Params> = ({match, history, userRole, currentP
               <div className="page-title">
                 {getProp(initiative, 'name', '')}
               </div>
-              {(userRole === "Manager" || userRole === "Admin") && (
+              {userHasManagerRoots && (
                 <Col>
                   <Button
                     onClick={() => showDeleteModal(true)}
@@ -158,7 +159,6 @@ const InitiativeDetail: React.SFC<Params> = ({match, history, userRole, currentP
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
-  userRole: state.work.userRole,
   currentProduct: state.work.currentProduct,
 });
 

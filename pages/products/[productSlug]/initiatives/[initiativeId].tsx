@@ -11,20 +11,22 @@ import AddInitiative from '../../../../components/Products/AddInitiative';
 import {TaskTable, DynamicHtml} from '../../../../components';
 import EditIcon from '../../../../components/EditIcon';
 import {getProp} from '../../../../utilities/filters';
-import {randomKeys} from '../../../../utilities/utils';
+import {getUserRole, hasManagerRoots, randomKeys} from '../../../../utilities/utils';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Loading from "../../../../components/Loading";
 import {TASK_TYPES} from "../../../../graphql/types";
 
 
 type Params = {
-  userRole?: string;
+  user: any;
 };
 
-const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
+const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   let {initiativeId, productSlug} = router.query;
   productSlug = String(productSlug);
+
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   const {data: product, error: productError, loading: productLoading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
     variables: {slug: productSlug}
@@ -100,7 +102,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
               <div className="page-title">
                 {getProp(original.initiative, 'name', '')}
               </div>
-              {(userRole === "Manager" || userRole === "Admin") && (
+              {userHasManagerRoots && (
                 <Col>
                   <Button
                     onClick={() => showDeleteModal(true)}

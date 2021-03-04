@@ -1,8 +1,10 @@
 import { BaseAction, USER_LOGGED_IN } from '../types';
 
 export type UserState = {
-  isLoggedIn: boolean;
-  fullName: string;
+  isLoggedIn: boolean,
+  fullName: string,
+  id: string,
+  roles: {product: string, role: string}[],
 };
 
 // const userId = window.localStorage.getItem("userId");
@@ -11,7 +13,9 @@ export type UserState = {
 export const userReducer = (
   state: any = {
     isLoggedIn: false,//userId ? true : false,
-    fullName: ''
+    fullName: "",
+    id: null,
+    roles: []
   },
   action: BaseAction
 ) => {

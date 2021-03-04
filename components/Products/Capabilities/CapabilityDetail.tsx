@@ -14,16 +14,17 @@ import DeleteModal from 'pages/Products/DeleteModal';
 import AddCapability from 'pages/Products/AddCapability';
 import EditIcon from 'components/EditIcon';
 import Loading from "../../Loading";
+import {getUserRole, hasManagerRoots} from "../../../utilities/utils";
 
 
 type Params = {
   productSlug?: any;
   capabilityId?: any;
-  userRole?: string;
+  user: any;
   match: any;
 } & RouteComponentProps;
 
-const CapabilityDetail: React.FunctionComponent<Params> = ({match, history, userRole}) => {
+const CapabilityDetail: React.FunctionComponent<Params> = ({match, history, user}) => {
   const params: any = match.url.includes("/products")
     ? matchPath(match.url, {
       path: "/products/:productSlug/capabilities/:capabilityId",
@@ -47,6 +48,8 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({match, history, user
   );
 
   const [deleteModal, showDeleteModal] = useState(false);
+
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, params.params.productSlug));
 
   const [deleteCapability] = useMutation(DELETE_CAPABILITY, {
     variables: {
@@ -117,7 +120,7 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({match, history, user
                   {getProp(capability, 'name', '')}
                 </div>
               </Col>
-              {(userRole === "Manager" || userRole === "Admin") && (
+              {userHasManagerRoots && (
                 <Col>
                   <Button
                     onClick={() => showDeleteModal(true)}
@@ -193,7 +196,6 @@ const CapabilityDetail: React.FunctionComponent<Params> = ({match, history, user
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
-  userRole: state.work.userRole
 });
 
 const mapDispatchToProps = () => ({});

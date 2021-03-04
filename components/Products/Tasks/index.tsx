@@ -6,6 +6,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { GET_TASKS_BY_PRODUCT } from 'graphql/queries';
 import { TaskTable } from 'components';
 import AddTask from 'pages/Products/AddTask';
+import {getUserRole, hasManagerRoots} from "../../../utilities/utils";
 
 const { Option } = Select;
 
@@ -17,7 +18,7 @@ type Props = {
 } & RouteComponentProps;
 
 const TasksPage: React.SFC<Props> = (props: Props) => {
-  const { match, currentProduct, repositories, userRole } = props;
+  const { match, currentProduct, repositories, user } = props;
   const [tagType, setTagType] = useState("all");
   const [sortType, setSortType] = useState("initiatives");
   const [taskType, setTaskType] = useState("all");
@@ -32,6 +33,8 @@ const TasksPage: React.SFC<Props> = (props: Props) => {
   const { data, error, loading, refetch } = useQuery(GET_TASKS_BY_PRODUCT, {
     variables: { productSlug: params.params.productSlug }
   });
+
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, params.params.productSlug));
 
   const closeTaskModal = (flag: boolean) => {
     setShowAddTaskModal(flag);
@@ -55,7 +58,7 @@ const TasksPage: React.SFC<Props> = (props: Props) => {
     <>
       <div>
         <Row>
-          {(userRole === "Manager" || userRole === "Admin") && (
+          {userHasManagerRoots && (
             <Col>
               <Button
                 className="text-right add-task-btn mb-15"
@@ -123,7 +126,7 @@ const TasksPage: React.SFC<Props> = (props: Props) => {
               tasks={tasks}
               productSlug={params.params.productSlug}
               statusList={data.statusList}
-              showPendingTasks={userRole === "Manager" || userRole === "Admin"}
+              showPendingTasks={userHasManagerRoots}
             />
           ) : (
             <h3 className="text-center mt-30">No tasks</h3>

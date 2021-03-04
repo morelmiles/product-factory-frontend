@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Row, Col, Input, Select, message, Button } from 'antd';
 import { useMutation, useQuery } from '@apollo/react-hooks';
-// import RichTextEditor from 'react-rte';
-import { GET_INITIATIVES } from '../../../graphql/queries';
+import {GET_INITIATIVES, GET_TASKS_BY_PRODUCT} from '../../../graphql/queries';
 import { CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK } from '../../../graphql/mutations';
 import { TASK_TYPES } from '../../../graphql/types';
 import { addRepository } from '../../../lib/actions';
@@ -11,9 +10,15 @@ import { WorkState } from '../../../lib/reducers/work.reducer';
 import AddInitiative from '../AddInitiative';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { RICHTEXT_EDITOR_WIDTH } from '../../../utilities/constants';
+import dynamic from "next/dynamic";
 
 const { Option } = Select;
 const { TextArea } = Input;
+
+const RichTextEditor = dynamic(
+  () => import('../../TextEditor'),
+  { ssr: false }
+);
 
 const filterRepositoryId = (arr: Array<any>, url: string) => {
   const filteredArr = arr.filter((item: any) => item.repository === url);
@@ -37,8 +42,8 @@ type Props = {
 
 const AddTask: React.FunctionComponent<Props> = ({
   modal,
-  // productSlug,
-  // closeModal,
+  productSlug,
+  closeModal,
   currentProduct,
   repositories,
   addRepository,
@@ -49,11 +54,7 @@ const AddTask: React.FunctionComponent<Props> = ({
   tasks
 }) => {
   const [title, setTitle] = useState(modalType? task.title : '');
-  // const [description, setDescription] = useState(
-  //   modalType
-  //     ? RichTextEditor.createValueFromString(task.description, 'html')
-  //     : RichTextEditor.createEmptyValue()
-  // );
+  const [description, setDescription] = useState('');
   const [shortDescription, setShortDescription] = useState(
     modalType ? task.shortDescription : ''
   );
@@ -71,7 +72,6 @@ const AddTask: React.FunctionComponent<Props> = ({
   );
   const [initiatives, setInitiatives] = useState(
     currentProduct && currentProduct.initiativeSet ? currentProduct.initiativeSet : []
-
   )
   const [editRepository, toggleRepository] = useState(false);
   const [editInitiative, toggleInitiative] = useState(false);
@@ -117,7 +117,21 @@ const AddTask: React.FunctionComponent<Props> = ({
 
   const handleCancel = () => {
     closeModal(!modal);
+    clearData();
   };
+
+  const clearData = () => {
+    setTitle("");
+    setStatus(2);
+    setDescription("");
+    setShortDescription("");
+    setCapability(0);
+    setInitiative(0);
+    setRepository(null);
+    setRepositoryUrl("");
+    setTags([]);
+    setDependOns([]);
+  }
 
   const addNewTask = async () => {
     const input = {
@@ -131,7 +145,8 @@ const AddTask: React.FunctionComponent<Props> = ({
       repository: repository === 0 ? null : parseInt(repository),
       tags,
       dependOns,
-      detailUrl
+      detailUrl,
+      userId: localStorage.getItem('userId'),
     };
 
     try {
@@ -205,7 +220,7 @@ const AddTask: React.FunctionComponent<Props> = ({
   return (
     <>
       <Modal
-        title="Add Task"
+        title={`${modalType ? "Edit" : "Add"} Task`}
         visible={modal}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -234,10 +249,10 @@ const AddTask: React.FunctionComponent<Props> = ({
           className="rich-editor mb-15"
         >
           <label>Description:</label>
-          {/* <RichTextEditor
-            value={description}
-            onChange={onDescriptionChange}
-          /> */}
+          <RichTextEditor
+            initialValue={modalType ? task.description : ''}
+            setValue={onDescriptionChange}
+          />
         </Row>
         {modalType && (
           <Row className='mb-15'>
@@ -377,7 +392,7 @@ const AddTask: React.FunctionComponent<Props> = ({
           </>
         )}
         <Row className='mb-15'>
-          <label>status*: </label>
+          <label>Status*: </label>
           <Select
             defaultValue={status}
             onChange={setStatus}

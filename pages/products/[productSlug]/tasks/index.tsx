@@ -10,19 +10,21 @@ import {useRouter} from "next/router";
 import {TASK_LIST_TYPES, TASK_TYPES} from "../../../../graphql/types";
 import {getProp} from "../../../../utilities/filters";
 import Loading from "../../../../components/Loading";
+import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 
 const {Option} = Select;
 
 type Props = {
   onClick?: () => void;
   userRole: string;
+  user: {roles: any[]},
   productSlug: string;
 };
 
 const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter()
   const {productSlug} = router.query
-  const {userRole} = props;
+  const {user} = props;
   const [tags, setTags] = useState([]);
   const [sortedBy, setSortedBy] = useState("priority");
   const [statuses, setStatuses] = useState<Array<number>>([]);
@@ -62,11 +64,13 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
 
   if (loading) return <Loading/>;
 
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
+
   return (
     <LeftPanelContainer>
       <div>
         <Row>
-          {(userRole === "Manager" || userRole === "Admin") && (
+          {userHasManagerRoots && (
             <Col>
               <Button
                 className="text-right add-task-btn mb-15"
@@ -77,8 +81,9 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
               <AddTask
                 modal={showAddTaskModal}
                 closeModal={closeTaskModal}
-                tasks={data?.tasks}
+                tasks={data?.tasksByProduct}
                 submit={fetchTasks}
+                productSlug={productSlug}
               />
             </Col>
           )}
@@ -133,7 +138,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
                        statusList={TASK_TYPES}
                        showInitiativeName={true}
                        hideTitle={true}
-                       showPendingTasks={userRole === "Manager" || userRole === "Admin"}
+                       showPendingTasks={userHasManagerRoots}
             /> : (
               <h3 className="text-center mt-30">No tasks</h3>
             )
@@ -145,7 +150,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
-  userRole: state.work.userRole
 });
 
 const mapDispatchToProps = (dispatch: any) => ({});

@@ -5,7 +5,7 @@ import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
-import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID} from '../../../../graphql/queries';
+import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT_SHORT} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
@@ -21,6 +21,8 @@ import Priorities from "../../../../components/Priorities";
 import Loading from "../../../../components/Loading";
 import parse from "html-react-parser";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
+import AddTaskContainer from "../../../../components/Products/AddTask";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -174,12 +176,11 @@ const CommentList: React.FunctionComponent<CommentListProps> = ({taskId, user}) 
 
 
 type Params = {
-  userRole?: string;
   user?: any;
   currentProduct: any;
 };
 
-const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct}) => {
+const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
   const router = useRouter();
   const {publishedId, productSlug} = router.query;
 
@@ -189,11 +190,23 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   const [task, setTask] = useState<any>({});
   const [userId, setUserId] = useState<string | null>(null);
   const [taskId, setTaskId] = useState(0);
-  // const [showEditModal, setShowEditModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [tasks, setTasks] = useState([]);
 
   const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
     variables: {publishedId, productSlug, userId: userId == null ? 0 : userId}
   });
+
+
+  const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT_SHORT, {
+    variables: {
+      productSlug, input: {},
+      userId: user.id
+    }
+  });
+
+  const userRole = getUserRole(user.roles, productSlug);
+  const userHasManagerRoots = hasManagerRoots(userRole);
 
   let {data: product} = useQuery(GET_PRODUCT_INFO_BY_ID, {variables: {slug: productSlug}});
   product = product?.product || {};
@@ -201,6 +214,12 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
   }, []);
+
+  useEffect(() => {
+    if (tasksData && tasksData.tasksByProduct) {
+      setTasks(tasksData.tasksByProduct)
+    }
+  }, [tasksData])
 
   useEffect(() => {
     if (!error) {
@@ -391,7 +410,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             }
           </>
         ) : null}
-        {taskStatus === "Available" && (
+        {(taskStatus === "Available" && userRole === "Contributor") && (
           <>
             <div className="flex-column ml-auto">
               <Button type="primary"
@@ -440,7 +459,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                 </div>
               </Col>
               <Col md={8} className="text-right">
-                {(userRole === "Manager" || userRole === "Admin") ? (
+                {userHasManagerRoots ? (
                   <Col>
                     <Button
                       onClick={() => showDeleteModal(true)}
@@ -449,9 +468,7 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                     </Button>
                     <EditIcon
                       className="ml-10"
-                      // onClick={() => setShowEditModal(true)}
-                      onClick={() => {
-                      }}
+                      onClick={() => setShowEditModal(true)}
                     />
                   </Col>
                 ) : showTaskEvents()}
@@ -626,16 +643,16 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                 submitText="Yes, submit"
               />
             )}
-            {/*{showEditModal && <AddTask*/}
-            {/*    modal={showEditModal}*/}
-            {/*    productSlug={getBasePath().replace("/products/", "")}*/}
-            {/*    modalType={true}*/}
-            {/*    closeModal={setShowEditModal}*/}
-            {/*    task={task}*/}
-            {/*    submit={fetchData}*/}
-            {/*    tasks={tasks}*/}
-            {/*/>*/}
-            {/*}*/}
+            {showEditModal && <AddTaskContainer
+                modal={showEditModal}
+                productSlug={productSlug}
+                modalType={true}
+                closeModal={setShowEditModal}
+                task={task}
+                submit={fetchData}
+                tasks={tasks}
+            />
+            }
           </>
         )
       }
@@ -645,7 +662,6 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
-  userRole: state.work.userRole,
   currentProduct: state.work.currentProduct || {}
 });
 

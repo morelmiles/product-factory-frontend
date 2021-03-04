@@ -495,6 +495,17 @@ export const GET_TASKS_BY_PRODUCT = gql`
   }
 `;
 
+export const GET_TASKS_BY_PRODUCT_SHORT = gql`
+  query GetTasksByProduct($productSlug: String, $reviewId: Int, $userId: Int, $input: TaskListInput) {
+    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
+      id
+      publishedId      
+      title
+      canEdit(userId: $userId)
+    }
+  }
+`;
+
 export const GET_PRODUCT_PERSONS = gql`
   query GetProductPerson($productSlug: String) {
     productPersons(productSlug: $productSlug) {
@@ -788,6 +799,22 @@ export const GET_STACKS = gql`
     stacks {
       id
       name
+    }
+  }
+`;
+
+export const GET_PERSON = gql`
+  query GetPerson($id: Int!) {
+    person (id: $id) {
+      id,
+      fullName
+      productpersonSet {
+        right
+        product {
+          name
+          slug
+        }
+      }
     }
   }
 `;
