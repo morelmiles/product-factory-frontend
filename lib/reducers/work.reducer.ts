@@ -13,12 +13,16 @@ export const workReducer = (
     userRole: '',
     currentProduct: null,
     repositories: [],
-    allTags: []
+    allTags: [],
+    allStacks: [],
+    allUsers: [],
   },
   action: types.BaseAction
 ) => {
   switch (action.type) {
     case types.SAVE_TAGS:
+    case types.SAVE_USERS:
+    case types.SAVE_STACKS:
     case types.SET_CURRENT_PROJECT:
     case types.SET_USER_ROLE:
     case types.SET_WORK_STATE:

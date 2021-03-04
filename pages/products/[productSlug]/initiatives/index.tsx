@@ -5,7 +5,7 @@ import {useRouter} from 'next/router'
 import {useQuery} from '@apollo/react-hooks';
 import {DynamicHtml} from '../../../../components';
 import {GET_INITIATIVES, GET_STACKS} from '../../../../graphql/queries';
-import {randomKeys} from '../../../../utilities/utils';
+import {getUserRole, hasManagerRoots, randomKeys} from '../../../../utilities/utils';
 import AddInitiative from '../../../../components/Products/AddInitiative';
 import {getProp} from '../../../../utilities/filters';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
@@ -17,15 +17,16 @@ import {TagType} from "../../../../graphql/types";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 
 type Params = {
-  userRole?: string;
+  user: any
 };
 
-const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
+const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const [stacks, setStacks] = useState([]);
   let {productSlug} = router.query;
   productSlug = String(productSlug);
   const initialQueryVariables = {productSlug, stacks};
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   const [showEditModal, setShowEditModal] = useState(false);
   const {data, error, loading, refetch} = useQuery(GET_INITIATIVES, {
@@ -74,7 +75,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({userRole}) => {
                       }
                     </Select>
                   </div>
-                  {(userRole === "Manager" || userRole === "Admin") && (
+                  {userHasManagerRoots && (
                     <Col>
                       <Button
                         className="ml-10"

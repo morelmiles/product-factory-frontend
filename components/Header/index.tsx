@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Layout, Menu, Input, Button, message} from 'antd';
 import {userLogInAction} from '../../lib/actions';
@@ -8,6 +8,9 @@ import {apiDomain} from '../../utilities/constants';
 import Logo from '../../public/assets/logo.svg';
 import {useRouter} from 'next/router'
 import Link from 'antd/lib/typography/Link';
+import {useQuery} from "@apollo/react-hooks";
+import {GET_PERSON} from "../../graphql/queries";
+import {USER_ROLES} from "../../graphql/types";
 
 const {Header} = Layout;
 const {Search} = Input;
@@ -19,6 +22,7 @@ type Props = {
 
 const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction}) => {
   const router = useRouter();
+  const [userId, setUserId] = useState<string | null>(null);
 
   const onSearch = (e: any) => {
     // console.log("search submitted: ", e);
@@ -34,11 +38,32 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     }
   }
 
+  const {data: personData} = useQuery(GET_PERSON, {variables: {id: userId}})
+
   useEffect(() => {
+    let userId = localStorage.getItem("userId")
     if (localStorage.getItem("userId")) {
-      userLogInAction({isLoggedIn: true, id: localStorage.getItem("userId")});
+      userLogInAction({isLoggedIn: true, id: userId});
+      setUserId(userId)
     }
   }, []);
+
+  useEffect(() => {
+    if (personData && personData.person) {
+      const {person} = personData;
+      userLogInAction({
+        isLoggedIn: true,
+        fullName: person.fullName,
+        id: person.id,
+        roles: person.productpersonSet.map((role: any) => {
+          return {
+            product: role.product.slug,
+            role: USER_ROLES[role.right]
+          }
+        })
+      })
+    }
+  }, [personData])
 
   const logout = () => {
     fetch(`${apiDomain}/github/logout`)

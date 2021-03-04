@@ -22,6 +22,7 @@ import moment from 'moment';
 import LeftPanelContainer from '../../components/HOC/withLeftPanel';
 import { Layout } from 'antd';
 import Loading from "../../components/Loading";
+import {getUserRole, hasManagerRoots} from "../../utilities/utils";
 const { Content } = Layout;
 
 interface CommentListProps {
@@ -190,6 +191,8 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
     variables: { id: taskId }
   });
 
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
+
   // console.log('currentProduct',currentProduct);
   const getBasePath = () => {
       //TODO: fix it
@@ -296,7 +299,7 @@ const Task: React.FunctionComponent<Params> = ({ productSlug, taskId, userRole, 
               <div className="section-title">
                 {getProp(task, 'title', '')}
               </div>
-              {(userRole === "Manager" || userRole === "Admin") && (
+              {userHasManagerRoots && (
                 <Col>
                   <Button
                     onClick={() => showDeleteModal(true)}

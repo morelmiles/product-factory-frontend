@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import {Row, Tag, Divider, Col, Typography} from 'antd';
+import {Row, Tag, Divider, Col, Typography, Empty} from 'antd';
 import {CustomAvatar} from '../CustomAvatar';
 import {getProp} from '../../utilities/filters';
 import {TASK_CLAIM_TYPES} from '../../graphql/types';
@@ -15,6 +15,7 @@ type Props = {
   statusList?: Array<string>;
   title?: string;
   hideTitle?: boolean;
+  hideEmptyList?: boolean;
   showPendingTasks?: boolean;
   showInitiativeName?: boolean;
   showProductName?: boolean;
@@ -30,6 +31,7 @@ const TaskTable: React.FunctionComponent<Props> = (
     showPendingTasks = false,
     showInitiativeName = false,
     showProductName = false,
+    hideEmptyList = false,
     submit
   }
 ) => {
@@ -39,14 +41,6 @@ const TaskTable: React.FunctionComponent<Props> = (
       <Row className="task-tab">
         {
           tasks.map((task: any, index: number) => {
-            if (
-              !showPendingTasks &&
-              statusList[getProp(task, 'status', null)] === "Draft" ||
-              statusList[getProp(task, 'status', null)] === "Pending"
-            ) {
-              return null;
-            }
-
             const status = getProp(task, 'status');
             let taskStatus = statusList[status];
             if (status === "Done") {
@@ -192,7 +186,7 @@ const TaskTable: React.FunctionComponent<Props> = (
         }
       </Row>
     </>
-  ) : null
+  ) : !hideEmptyList && <Empty description={"The task list is empty"} />
 };
 
 export default TaskTable;

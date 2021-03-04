@@ -7,7 +7,7 @@ import { Row, Col, Button, Table } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_CAPABILITIES } from 'graphql/queries';
 import { getProp } from 'utilities/filters';
-import { randomKeys } from 'utilities/utils';
+import {getUserRole, hasManagerRoots, randomKeys} from 'utilities/utils';
 import AddCapability from 'pages/Products/AddCapability';
 import PaperClipIcon from 'assets/icons/paper-clip.svg';
 import Loading from "../../Loading";
@@ -16,10 +16,10 @@ let pluralize = require('pluralize');
 
 type Params = {
   productSlug?: any;
-  userRole?: string;
+  user: any;
 } & RouteComponentProps;
 
-const CapabilityList: React.SFC<Params> = ({ match, userRole }) => {
+const CapabilityList: React.SFC<Params> = ({ match, user }) => {
   const params: any = match.url.includes("/products")
     ? matchPath(match.url, {
         path: "/products/:productSlug/capabilities",
@@ -31,6 +31,8 @@ const CapabilityList: React.SFC<Params> = ({ match, userRole }) => {
         exact: false,
         strict: false
       })
+
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, params.params.productSlug));
 
   const { data, error, loading, refetch } = useQuery(GET_CAPABILITIES, {
     variables: { productSlug: params.params.productSlug }
@@ -183,7 +185,7 @@ const CapabilityList: React.SFC<Params> = ({ match, userRole }) => {
                   {`Explore ${pluralize("capability", data.capabilities.length, true)}`}
                 </div>
               </Col>
-              {(userRole === "Manager" || userRole === "Admin") && (
+              {userHasManagerRoots && (
                 <Col>
                   <Button onClick={() => setShowEditModal(true)}>
                     Add new capability
@@ -210,7 +212,6 @@ const CapabilityList: React.SFC<Params> = ({ match, userRole }) => {
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
-  userRole: state.work.userRole
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

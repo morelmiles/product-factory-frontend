@@ -4,18 +4,19 @@ import {Row, Col, Card, Button} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
 import {DynamicHtml} from '../../../components';
 import {GET_INITIATIVES} from '../../../graphql/queries';
-import {randomKeys} from '../../../utilities/utils';
+import {getUserRole, hasManagerRoots, randomKeys} from '../../../utilities/utils';
 import AddInitiative from '../../../components/AddInitiative';
 import {getProp} from '../../../utilities/filters';
 import Loading from "../../Loading";
 
 type Params = {
-  productSlug?: any
-  userRole?: string;
-  match: any;
+  productSlug?: any,
+  userRole?: string,
+  match: any,
+  user: any,
 };
 
-const InitiativeList: React.FunctionComponent<Params> = ({history, location, match, userRole}) => {
+const InitiativeList: React.FunctionComponent<Params> = ({history, location, match, user}) => {
   const params: any = matchPath(match.url, {
     path: "/products/:productSlug/initiatives",
     exact: false,
@@ -26,6 +27,8 @@ const InitiativeList: React.FunctionComponent<Params> = ({history, location, mat
   const {data, error, loading, refetch} = useQuery(GET_INITIATIVES, {
     variables: {productSlug: params.params.productSlug}
   });
+
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, params.params.productSlug));
 
   const goToDetails = (id: number) => {
     history.push(`${match.url}/${id}`);
@@ -65,7 +68,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({history, location, mat
                   }
                 </div>
               </Col>
-              {(userRole === "Manager" || userRole === "Admin") && (
+              {userHasManagerRoots && (
                 <Col>
                   <Button
                     onClick={() => setShowEditModal(!showEditModal)}
