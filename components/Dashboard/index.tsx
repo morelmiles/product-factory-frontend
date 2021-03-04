@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Row, Col, Radio, Select, Layout} from 'antd';
+import {Row, Col, Radio, Select, Layout, Button} from 'antd';
 import {useRouter} from 'next/router'
 import {TASK_LIST_TYPES} from '../../graphql/types';
 import {RadioChangeEvent} from 'antd/lib/radio';
@@ -8,6 +8,9 @@ import TaskTab from './TaskTab';
 import classnames from 'classnames';
 import {useQuery} from "@apollo/react-hooks";
 import {GET_TAGS} from "../../graphql/queries";
+import {FilterOutlined} from '@ant-design/icons';
+import CustomModal from "../Products/CustomModal";
+import FilterModal from "../FilterModal";
 
 
 const {Option} = Select;
@@ -17,6 +20,7 @@ const Dashboard: React.FunctionComponent = () => {
   const router = useRouter();
   let searchParams: any = new URLSearchParams(router.asPath.split('?')[1]);
   const [mode, setMode] = useState('products');
+  // const [mode, setMode] = useState('tasks');
   const [productTags, setProductTags] = useState([]);
   const [taskTags, setTaskTags] = useState([]);
   const [productSortType, setProductSortType] = useState("initiatives");
@@ -114,45 +118,46 @@ const Dashboard: React.FunctionComponent = () => {
                 </>
               ) : (
                 <>
-                  <div>
-                    <label className='mr-15'>Tags: </label>
-                    <Select
-                      value={taskTags}
-                      mode="multiple"
-                      style={{minWidth: 120}}
-                      onChange={(value: any) => changeSearchTerm("task-tag", value)}
-                      placeholder="Select tags"
-                    >
-                      {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>
-                        <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
-                    </Select>
-                  </div>
-                  <div className='ml-15'>
-                    <label className='mr-15'>Sorted by: </label>
-                    <Select
-                      value={taskSortType}
-                      style={{minWidth: 120}}
-                      onChange={(value: any) => changeSearchTerm("task-sorted", value)}
-                    >
-                      <Option value="title">Name</Option>
-                      <Option value="priority">Priority</Option>
-                      <Option value="status">Status</Option>
-                    </Select>
-                  </div>
-                  <div className='ml-15'>
-                    <label className='mr-15'>Status: </label>
-                    <Select
-                      value={taskStatus}
-                      style={{minWidth: 120}}
-                      mode="multiple"
-                      placeholder="Select statuses"
-                      onChange={(value: any) => changeSearchTerm("status", value)}
-                    >
-                      {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (
-                        <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
-                      ))}
-                    </Select>
-                  </div>
+
+                  {/*<div>*/}
+                  {/*  <label className='mr-15'>Tags: </label>*/}
+                  {/*  <Select*/}
+                  {/*    value={taskTags}*/}
+                  {/*    mode="multiple"*/}
+                  {/*    style={{minWidth: 120}}*/}
+                  {/*    onChange={(value: any) => changeSearchTerm("task-tag", value)}*/}
+                  {/*    placeholder="Select tags"*/}
+                  {/*  >*/}
+                  {/*    {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>*/}
+                  {/*      <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}*/}
+                  {/*  </Select>*/}
+                  {/*</div>*/}
+                  {/*<div className='ml-15'>*/}
+                  {/*  <label className='mr-15'>Sorted by: </label>*/}
+                  {/*  <Select*/}
+                  {/*    value={taskSortType}*/}
+                  {/*    style={{minWidth: 120}}*/}
+                  {/*    onChange={(value: any) => changeSearchTerm("task-sorted", value)}*/}
+                  {/*  >*/}
+                  {/*    <Option value="title">Name</Option>*/}
+                  {/*    <Option value="priority">Priority</Option>*/}
+                  {/*    <Option value="status">Status</Option>*/}
+                  {/*  </Select>*/}
+                  {/*</div>*/}
+                  {/*<div className='ml-15'>*/}
+                  {/*  <label className='mr-15'>Status: </label>*/}
+                  {/*  <Select*/}
+                  {/*    value={taskStatus}*/}
+                  {/*    style={{minWidth: 120}}*/}
+                  {/*    mode="multiple"*/}
+                  {/*    placeholder="Select statuses"*/}
+                  {/*    onChange={(value: any) => changeSearchTerm("status", value)}*/}
+                  {/*  >*/}
+                  {/*    {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (*/}
+                  {/*      <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>*/}
+                  {/*    ))}*/}
+                  {/*  </Select>*/}
+                  {/*</div>*/}
                 </>
               )}
             </div>

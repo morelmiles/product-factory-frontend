@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Select, Spin, Button} from 'antd';
+import {Row, Col, Button} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
-import {GET_TAGS, GET_TASKS_BY_PRODUCT} from '../../../../graphql/queries';
+import {GET_TASKS_BY_PRODUCT} from '../../../../graphql/queries';
 import {TaskTable} from '../../../../components';
 import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
@@ -10,24 +10,36 @@ import {useRouter} from "next/router";
 import {TASK_LIST_TYPES, TASK_TYPES} from "../../../../graphql/types";
 import {getProp} from "../../../../utilities/filters";
 import Loading from "../../../../components/Loading";
-
-const {Option} = Select;
+import {FilterOutlined} from "@ant-design/icons";
+import FilterModal from "../../../../components/FilterModal";
+import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 
 type Props = {
   onClick?: () => void;
   userRole: string;
+  user: {roles: any[]},
   productSlug: string;
 };
 
 const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter()
   const {productSlug} = router.query
-  const {userRole} = props;
+  const {user} = props;
   const [tags, setTags] = useState([]);
   const [sortedBy, setSortedBy] = useState("priority");
   const [statuses, setStatuses] = useState<Array<number>>([]);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [filterModal, setFilterModal] = useState(false);
+  const [inputData, setInputData] = useState({
+    sortedBy: "priority",
+    statuses,
+    tags: [],
+    priority: [],
+    stacks: [],
+    assignee: [],
+    taskCreator: [],
+  });
 
   useEffect(() => {
     if (location.hash === '#available') {
@@ -38,7 +50,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const productsVariable = {
     productSlug,
     userId: userId == null ? 0 : userId,
-    input: {sortedBy, statuses, tags}
+    input: inputData
   };
 
   let {data, error, loading, refetch} = useQuery(GET_TASKS_BY_PRODUCT, {
@@ -50,7 +62,11 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     refetch(productsVariable);
   };
 
-  const tagsData = useQuery(GET_TAGS);
+  const applyFilter = (values: any) => {
+    values = Object.assign(values, {});
+    setInputData(values);
+    setFilterModal(false);
+  }
 
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
@@ -62,11 +78,13 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
 
   if (loading) return <Loading/>;
 
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
+
   return (
     <LeftPanelContainer>
       <div>
         <Row>
-          {(userRole === "Manager" || userRole === "Admin") && (
+          {userHasManagerRoots && (
             <Col>
               <Button
                 className="text-right add-task-btn mb-15"
@@ -77,51 +95,16 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
               <AddTask
                 modal={showAddTaskModal}
                 closeModal={closeTaskModal}
-                tasks={data?.tasks}
+                tasks={data?.tasksByProduct}
                 submit={fetchTasks}
+                productSlug={productSlug}
               />
             </Col>
           )}
           <Col className="tag-section ml-auto">
-            <div>
-              <label className='mr-15'>Tags: </label><br/>
-              <Select
-                defaultValue={tags}
-                mode="multiple"
-                placeholder="Select tags"
-                style={{minWidth: 120}}
-                onChange={(value: any[]) => setTags(value)}
-              >
-                {tagsData?.data ? tagsData.data.tags.map((tag: { id: string, name: string }) =>
-                  <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
-              </Select>
-            </div>
-            <div className='ml-15'>
-              <label className='mr-15'>Sorted by: </label><br/>
-              <Select
-                defaultValue={sortedBy}
-                style={{width: 150}}
-                onChange={(value: string) => setSortedBy(value)}
-              >
-                <Option value="title">Name</Option>
-                <Option value="priority">Priority</Option>
-                <Option value="status">Status</Option>
-              </Select>
-            </div>
-            <div className='ml-15'>
-              <label className='mr-15'>Status: </label>
-              <Select
-                value={statuses}
-                style={{minWidth: 120}}
-                mode="multiple"
-                placeholder="Select statuses"
-                onChange={(value: any[]) => setStatuses(value)}
-              >
-                {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (
-                  <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
-                ))}
-              </Select>
-            </div>
+            <Button type="primary"
+              onClick={() => setFilterModal(!filterModal)}
+              icon={<FilterOutlined />}>Filter</Button>
           </Col>
         </Row>
       </div>
@@ -133,19 +116,26 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
                        statusList={TASK_TYPES}
                        showInitiativeName={true}
                        hideTitle={true}
-                       showPendingTasks={userRole === "Manager" || userRole === "Admin"}
+                       showPendingTasks={userHasManagerRoots}
             /> : (
               <h3 className="text-center mt-30">No tasks</h3>
             )
         }
       </div>
+
+      <FilterModal
+        modal={filterModal}
+        initialForm={inputData}
+        closeModal={() => setFilterModal(false)}
+        submit={applyFilter}
+      />
+
     </LeftPanelContainer>
   )
 };
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
-  userRole: state.work.userRole
 });
 
 const mapDispatchToProps = (dispatch: any) => ({});

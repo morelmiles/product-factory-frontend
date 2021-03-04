@@ -154,7 +154,7 @@ export const GET_PRODUCT_BY_ID = gql`
 
 export const GET_TASKS = gql`
   query GetTasks($userId: Int!, $input: TaskListInput) {
-    tasks (input: $input) {
+    tasks (input: $input, userId: $userId) {
       id
       publishedId
       canEdit(userId: $userId)
@@ -312,24 +312,26 @@ export const GET_INITIATIVES = gql`
 `;
 
 export const GET_INITIATIVE_BY_ID = gql`
-query GetInitiative($id: Int!, $userId: Int!) {
-  initiative(id: $id) {
-    id
-    name
-    description
-    status
-    product {
+query GetInitiative($id: Int!, $userId: Int!, $input: TaskListInput!) {
+  initiative(id: $id, input: $input, userId: $userId) {
+    initiative {
       id
       name
-      website
-      shortDescription
-      fullDescription
-      tag {
+      description
+      status
+      product {
         id
         name
+        website
+        shortDescription
+        fullDescription
+        tag {
+          id
+          name
+        }
       }
     }
-    taskSet {
+    tasks {
       id
       publishedId
       title
@@ -455,7 +457,7 @@ export const GET_TASK_BY_ID = gql`
 
 export const GET_TASKS_BY_PRODUCT = gql`
   query GetTasksByProduct($productSlug: String, $reviewId: Int, $userId: Int, $input: TaskListInput) {
-    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
+    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input, userId: $userId) {
       id
       publishedId
       canEdit(userId: $userId)
@@ -491,6 +493,17 @@ export const GET_TASKS_BY_PRODUCT = gql`
         photo,
         slug
       }
+    }
+  }
+`;
+
+export const GET_TASKS_BY_PRODUCT_SHORT = gql`
+  query GetTasksByProduct($productSlug: String, $reviewId: Int, $userId: Int, $input: TaskListInput) {
+    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
+      id
+      publishedId      
+      title
+      canEdit(userId: $userId)
     }
   }
 `;
@@ -788,6 +801,22 @@ export const GET_STACKS = gql`
     stacks {
       id
       name
+    }
+  }
+`;
+
+export const GET_PERSON = gql`
+  query GetPerson($id: Int!) {
+    person (id: $id) {
+      id,
+      fullName
+      productpersonSet {
+        right
+        product {
+          name
+          slug
+        }
+      }
     }
   }
 `;

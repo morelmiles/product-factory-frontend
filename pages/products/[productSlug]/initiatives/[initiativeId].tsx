@@ -11,20 +11,24 @@ import AddInitiative from '../../../../components/Products/AddInitiative';
 import {TaskTable, DynamicHtml} from '../../../../components';
 import EditIcon from '../../../../components/EditIcon';
 import {getProp} from '../../../../utilities/filters';
-import {randomKeys} from '../../../../utilities/utils';
+import {getUserRole, hasManagerRoots, randomKeys} from '../../../../utilities/utils';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Loading from "../../../../components/Loading";
 import {TASK_TYPES} from "../../../../graphql/types";
+import FilterModal from "../../../../components/FilterModal";
+import {FilterOutlined} from "@ant-design/icons";
 
 
 type Params = {
-  userRole?: string;
+  user: any;
 };
 
-const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
+const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   let {initiativeId, productSlug} = router.query;
   productSlug = String(productSlug);
+
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   const {data: product, error: productError, loading: productLoading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
     variables: {slug: productSlug}
@@ -34,6 +38,17 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
+  const [filterModal, setFilterModal] = useState(false);
+  const [inputData, setInputData] = useState({
+    sortedBy: "priority",
+    statuses: [],
+    tags: [],
+    priority: [],
+    stacks: [],
+    assignee: [],
+    taskCreator: [],
+  });
+
   const [deleteInitiative] = useMutation(DELETE_INITIATIVE, {
     variables: {
       id: initiativeId
@@ -48,7 +63,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
   });
 
   const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
-    variables: {id: initiativeId, userId: userId == null ? 0 : userId }
+    variables: {id: initiativeId, userId: userId == null ? 0 : userId, input: inputData }
   });
 
   useEffect(() => {
@@ -71,6 +86,12 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
     }
   }, [original]);
 
+  const applyFilter = (values: any) => {
+    values = Object.assign(values, {});
+    setInputData(values);
+    setFilterModal(false);
+  };
+
   if (loading || productLoading) return <Loading/>
 
   return (
@@ -91,28 +112,37 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
                   <span> / </span>
                 </>
               }
-              <span>{getProp(original.initiative, 'name', '')}</span>
+              <span>{getProp(original.initiative, 'initiative.name', '')}</span>
             </div>
             <Row
               justify="space-between"
               className="right-panel-headline mb-15"
             >
               <div className="page-title">
-                {getProp(original.initiative, 'name', '')}
+                {getProp(original.initiative, 'initiative.name', '')}
               </div>
-              {(userRole === "Manager" || userRole === "Admin") && (
+
                 <Col>
-                  <Button
-                    onClick={() => showDeleteModal(true)}
-                  >
-                    Delete
-                  </Button>
-                  <EditIcon
-                    className='ml-10'
-                    onClick={() => setShowEditModal(true)}
-                  />
+                  <Button type="primary"
+                          className={userHasManagerRoots ? "mr-10" : ""}
+                          onClick={() => setFilterModal(!filterModal)}
+                          icon={<FilterOutlined />}>Filter</Button>
+
+                  {userHasManagerRoots && (
+                    <>
+                      <Button
+                        onClick={() => showDeleteModal(true)}
+                      >
+                        Delete
+                      </Button>
+                      <EditIcon
+                        className='ml-10'
+                        onClick={() => setShowEditModal(true)}
+                      />
+                    </>
+                  )}
+
                 </Col>
-              )}
             </Row>
             <Row>
               {/* <Col>
@@ -130,7 +160,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
               </Col>
             </Row>
             <TaskTable
-              tasks={getProp(original.initiative, 'taskSet', [])}
+              tasks={getProp(original.initiative, 'tasks', [])}
               statusList={TASK_TYPES}
               productSlug={productSlug}
               submit={fetchData}
@@ -154,6 +184,12 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({userRole}) => {
                   initiative={initiative}
               />
             }
+            <FilterModal
+              modal={filterModal}
+              initialForm={inputData}
+              closeModal={() => setFilterModal(false)}
+              submit={applyFilter}
+            />
           </React.Fragment>
         )
       }
