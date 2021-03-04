@@ -603,6 +603,7 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
               title={'Dependant Tasks'}
               tasks={getProp(task, 'dependOn', [])}
               productSlug={String(productSlug)}
+              hideEmptyList={true}
               statusList={getProp(original, 'statusList', [])}
               submit={() => {}}
             />

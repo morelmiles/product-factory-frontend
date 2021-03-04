@@ -15,6 +15,7 @@ type Props = {
   statusList?: Array<string>;
   title?: string;
   hideTitle?: boolean;
+  hideEmptyList?: boolean;
   showPendingTasks?: boolean;
   showInitiativeName?: boolean;
   showProductName?: boolean;
@@ -30,6 +31,7 @@ const TaskTable: React.FunctionComponent<Props> = (
     showPendingTasks = false,
     showInitiativeName = false,
     showProductName = false,
+    hideEmptyList = false,
     submit
   }
 ) => {
@@ -184,7 +186,7 @@ const TaskTable: React.FunctionComponent<Props> = (
         }
       </Row>
     </>
-  ) : <Empty description={"The task list is empty"} />
+  ) : !hideEmptyList && <Empty description={"The task list is empty"} />
 };
 
 export default TaskTable;

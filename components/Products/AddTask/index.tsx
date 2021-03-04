@@ -54,7 +54,7 @@ const AddTask: React.FunctionComponent<Props> = ({
   tasks
 }) => {
   const [title, setTitle] = useState(modalType? task.title : '');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(modalType ? task.description : '');
   const [shortDescription, setShortDescription] = useState(
     modalType ? task.shortDescription : ''
   );
@@ -103,7 +103,7 @@ const AddTask: React.FunctionComponent<Props> = ({
       return;
     }
     if (!description) {
-      message.error("Title is required. Please fill out description");
+      message.error("Description is required. Please fill out description");
       return;
     }
 
