@@ -18,6 +18,7 @@ export const PARTNER_TYPES = ["", "Creator", "Service Provider", "Supporter"];
 export const USER_TYPES = ["", "Admin", "Contributor", "Watcher"];
 export const TASK_CLAIM_TYPES = ["Claimed", "Not Ready", "Ready", "Done"];
 export const TASK_TYPES = ["Draft", "Pending", "Available", "Claimed", "Done"];
+export const TASK_PRIORITIES = ["High", "Medium", "Low"];
 export const TASK_LIST_TYPES = [
   {id: 0, name: "Draft"},
   {id: 1, name: "Pending"},
