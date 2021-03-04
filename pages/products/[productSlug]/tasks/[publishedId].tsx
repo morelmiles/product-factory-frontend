@@ -153,20 +153,24 @@ const CommentList: React.FunctionComponent<CommentListProps> = ({taskId, user}) 
 
   return (
     <>
-      <List
-        className="comment-list"
-        header="Comments"
-        itemLayout="horizontal"
-        dataSource={comments}
-        renderItem={(item: any) => {
-          return (
-            <li>
-              <RenderedComment comment={item}/>
-            </li>
-          )
-        }
-        }
-      />
+      {
+        comments.length > 0 &&
+        <List
+            className="comment-list"
+            header="Comments"
+            itemLayout="horizontal"
+            dataSource={comments}
+            renderItem={(item: any) => {
+              return (
+                <li>
+                  <RenderedComment comment={item}/>
+                </li>
+              )
+            }
+            }
+        />
+      }
+
       {user && user.isLoggedIn ? <AddCommentForm taskId={taskId} user={user} onAdded={fetchComments}/> : <></>}
     </>
   )
@@ -378,10 +382,10 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             {assignee.id === user.id
               ? (
                 <div className="flex-column ml-auto">
-                  {inReview ? <div className="mb-10">The task is submitted for review</div>:(
+                  {inReview ? <div className="mb-10">The task is submitted for review</div> : (
                     <Button type="primary"
-                          className="mb-10"
-                          onClick={() => showReviewTaskModal(true)}>Submit for review</Button>
+                            className="mb-10"
+                            onClick={() => showReviewTaskModal(true)}>Submit for review</Button>
                   )}
                   <Button type="primary"
                           onClick={() => showLeaveTaskModal(true)}>Leave the task</Button>
@@ -548,19 +552,19 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
                   }
                   {stacks.length > 0 && (
                     <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
-                        <strong className="my-auto">Stacks:&nbsp;</strong>
-                        {stacks.map((tag: any, taskIndex: number) =>
-                          <CheckableTag key={`tag-${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
-                        )}
+                      <strong className="my-auto">Stacks:&nbsp;</strong>
+                      {stacks.map((tag: any, taskIndex: number) =>
+                        <CheckableTag key={`tag-${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
+                      )}
                     </Row>
                   )}
 
                   {tags.length > 0 && (
-                      <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
-                        <strong className="my-auto">Tags:&nbsp;</strong>
-                        {tags.map((tag: any, taskIndex: number) =>
-                          <Tag key={`stack-${taskIndex}`}>{tag.name}</Tag>
-                        )}
+                    <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
+                      <strong className="my-auto">Tags:&nbsp;</strong>
+                      {tags.map((tag: any, taskIndex: number) =>
+                        <Tag key={`stack-${taskIndex}`}>{tag.name}</Tag>
+                      )}
                     </Row>
                   )}
 
@@ -587,7 +591,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
               tasks={getProp(task, 'dependOn', [])}
               productSlug={String(productSlug)}
               statusList={getProp(original, 'statusList', [])}
-              submit={() => {}}
+              submit={() => {
+              }}
             />
 
             <Divider style={{marginTop: 50}}/>
