@@ -791,3 +791,9 @@ export const GET_STACKS = gql`
     }
   }
 `;
+
+export const  GET_COMMENTS = gql`
+  query GetComments($taskId: Int!) {
+    comments(taskId: $taskId)
+  }
+`;

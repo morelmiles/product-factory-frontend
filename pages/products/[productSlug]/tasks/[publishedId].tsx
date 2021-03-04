@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button, Typography, Tag} from 'antd';
+import {Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button, Typography, Tag, Avatar} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -21,6 +21,7 @@ import Priorities from "../../../../components/Priorities";
 import Loading from "../../../../components/Loading";
 import parse from "html-react-parser";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import Comments from "../../../../components/Comments";
 
 interface CommentListProps {
   taskId: string | string[] | undefined,
@@ -112,6 +113,7 @@ const CommentList: React.FunctionComponent<CommentListProps> = ({taskId, user}) 
       </Row>
     )
   }
+
   const RenderedComment = function ({comment}: any) {
     let renderedChildComments = [];
 
@@ -596,7 +598,8 @@ const Task: React.FunctionComponent<Params> = ({userRole, user, currentProduct})
             />
 
             <Divider style={{marginTop: 50}}/>
-            <CommentList taskId={publishedId} user={user}/>
+            {/*<CommentList taskId={publishedId} user={user}/>*/}
+            <Comments taskId={getProp(task, 'id', 0)}/>
 
             <Attachments data={getProp(original, 'task.attachment', [])}/>
 
