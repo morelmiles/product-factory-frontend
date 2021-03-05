@@ -52,11 +52,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
   };
 
   const handleOk = () => {
-    if (modalType) {
-      onUpdate();
-    } else {
-      onCreate();
-    }
+    modalType ? onUpdate() : onCreate();
 
     closeModal();
   }
@@ -78,7 +74,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
       });
       
       if (res.data && res.data.updateInitiative) {
-        message.success('Initiative is udpated successfully!');
+        message.success('Initiative is updated successfully!');
         submit();
       }
     } catch (e) {
