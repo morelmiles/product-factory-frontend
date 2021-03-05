@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Row, Col, Input, Select, message, Button } from 'antd';
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import {GET_INITIATIVES, GET_TASKS_BY_PRODUCT} from '../../../graphql/queries';
+import {GET_INITIATIVES, GET_STACKS, GET_TAGS} from '../../../graphql/queries';
 import { CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK } from '../../../graphql/mutations';
 import { TASK_TYPES } from '../../../graphql/types';
-import { addRepository } from '../../../lib/actions';
+import {addRepository} from '../../../lib/actions';
 import { WorkState } from '../../../lib/reducers/work.reducer';
 import AddInitiative from '../AddInitiative';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
@@ -32,12 +32,12 @@ type Props = {
   currentProduct?: any;
   repositories?: Array<any>;
   addRepository?: any;
-  allTags?: any;
   tags?: any;
   modalType?: boolean;
   task?: any;
   submit?: any;
   tasks?: Array<any>;
+  stacks: Array<any>;
 };
 
 const AddTask: React.FunctionComponent<Props> = ({
@@ -47,14 +47,16 @@ const AddTask: React.FunctionComponent<Props> = ({
   currentProduct,
   repositories,
   addRepository,
-  allTags,
   modalType,
   task,
   submit,
-  tasks
+  tasks,
 }) => {
   const [title, setTitle] = useState(modalType? task.title : '');
   const [description, setDescription] = useState(modalType ? task.description : '');
+  const [allTags, setAllTags] = useState([]);
+  const [skip, setSkip] = React.useState(false);
+  const [allStacks, setAllStacks] = useState([]);
   const [shortDescription, setShortDescription] = useState(
     modalType ? task.shortDescription : ''
   );
@@ -81,16 +83,40 @@ const AddTask: React.FunctionComponent<Props> = ({
   const [tags, setTags] = useState(
     modalType && task.tag ? task.tag.map((tag: any) => tag.id) : []
   );
+  const [stacks, setStacks] = useState(
+    modalType && task.stack ? task.stack.map((stack: any) => stack.id) : []
+  );
   const [dependOns, setDependOns] = useState(
     modalType && task.dependOn ? task.dependOn.map((tag: any) => tag.id) : []
   );
 
-  const { data: originalIniaitves, refetch: fetchIniatives } = useQuery(GET_INITIATIVES, {
+  const { data: originalInitiatives, loading: initiativeLoading, refetch: fetchInitiatives } = useQuery(GET_INITIATIVES, {
     variables: { productSlug }
   });
+
+  const {data: tagsData} = useQuery(GET_TAGS);
+  const {data: stacksData} = useQuery(GET_STACKS);
   const [createTask] = useMutation(CREATE_TASK);
   const [updateTask] = useMutation(UPDATE_TASK);
   const [createCodeRepository] = useMutation(CREATE_CODE_REPOSITORY);
+
+  useEffect(() => {
+    if (tagsData && tagsData.tags) setAllTags(tagsData.tags)
+  }, [tagsData]);
+
+  useEffect(() => {
+    if (stacksData && stacksData.stacks) setAllStacks(stacksData.stacks)
+  }, [stacksData]);
+
+  useEffect(() => {
+    if (!initiativeLoading && !!originalInitiatives && !skip) {
+      setSkip(true)
+    }
+  }, [originalInitiatives, initiativeLoading]);
+
+  useEffect(() => {
+    if (!skip) fetchInitiatives({productSlug})
+  }, [skip]);
 
   // TextEditor configuration
   const onDescriptionChange = (value: any) => {
@@ -104,11 +130,6 @@ const AddTask: React.FunctionComponent<Props> = ({
     }
     if (!description) {
       message.error("Description is required. Please fill out description");
-      return;
-    }
-
-    if (capability === 0 && initiative === 0) {
-      message.error("Task should have capability or initiative. Or both of them");
       return;
     }
 
@@ -130,6 +151,7 @@ const AddTask: React.FunctionComponent<Props> = ({
     setRepository(null);
     setRepositoryUrl("");
     setTags([]);
+    setStacks([]);
     setDependOns([]);
   }
 
@@ -144,6 +166,7 @@ const AddTask: React.FunctionComponent<Props> = ({
       capability: capability === 0 ? null : parseInt(capability),
       repository: repository === 0 ? null : parseInt(repository),
       tags,
+      stacks,
       dependOns,
       detailUrl,
       userId: localStorage.getItem('userId'),
@@ -204,7 +227,7 @@ const AddTask: React.FunctionComponent<Props> = ({
   }
 
   const updateIniatives = async () => {
-    const { data: newData } = await fetchIniatives({
+    const { data: newData } = await fetchInitiatives({
       productSlug: productSlug
     });
 
@@ -212,10 +235,10 @@ const AddTask: React.FunctionComponent<Props> = ({
   }
 
   useEffect(() => {
-    if (originalIniaitves) {
-      setInitiatives(originalIniaitves.initiatives);
+    if (originalInitiatives) {
+      setInitiatives(originalInitiatives.initiatives);
     }
-  }, [originalIniaitves]);
+  }, [originalInitiatives]);
 
   return (
     <>
@@ -417,6 +440,21 @@ const AddTask: React.FunctionComponent<Props> = ({
             ))}
           </Select>
         </Row>
+        <Row className='mb-15'>
+          <label>Stacks:</label>
+          <Select
+            mode="multiple"
+            defaultValue={stacks}
+            onChange={setStacks}
+          >
+            <Option value={0}>Select stacks</Option>
+            {allStacks && allStacks.map((option: any, idx: number) => (
+              <Option key={`cap${idx}`} value={option.id}>
+                {option.name}
+              </Option>
+            ))}
+          </Select>
+        </Row>
         <Row>
           <label>Depend on tasks:</label>
           <Select
@@ -444,16 +482,13 @@ const mapStateToProps = (state: any) => ({
   repositories: state.work.repositories,
   userRole: state.work.userRole,
   allTags: state.work.allTags,
-  tags: state.work.tags
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  addRepository: (data: WorkState) => dispatch(addRepository(data))
+  addRepository: (data: WorkState) => dispatch(addRepository(data)),
 });
 
-const AddTaskContainer = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(AddTask);
-
-export default AddTaskContainer;

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Row, Col, Card, Button, Select} from 'antd';
 import {useRouter} from 'next/router'
@@ -23,6 +23,7 @@ type Params = {
 const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const [stacks, setStacks] = useState([]);
+  const [skip, setSkip] = React.useState(false);
   let {productSlug} = router.query;
   productSlug = String(productSlug);
   const initialQueryVariables = {productSlug, stacks};
@@ -32,6 +33,16 @@ const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
   const {data, error, loading, refetch} = useQuery(GET_INITIATIVES, {
     variables: initialQueryVariables
   });
+
+  useEffect(() => {
+    if (!loading && !!data && !skip) {
+      setSkip(true)
+    }
+  }, [data, loading]);
+
+  useEffect(() => {
+    if (!skip) refetch(initialQueryVariables)
+  }, [skip]);
 
   const goToDetails = (id: number) => {
     router.push(`/products/${productSlug}/initiatives/${id}`).then();
