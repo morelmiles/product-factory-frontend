@@ -34,7 +34,8 @@ const AddProduct: React.FunctionComponent = ({ }) => {
 
   const addNewProduct = async() => {
     if (!name || !shortDescription || !website) {
-      message.error("Please fill the forms");
+      message.error("Please fill the form fields");
+      return
     }
     try {
       const res = await createProduct({
@@ -50,10 +51,10 @@ const AddProduct: React.FunctionComponent = ({ }) => {
           userId: userId == null ? 0 : userId
         }
       });
-      if (res.data && res.data.createProduct && res.data.createProduct.product) {
+      if (res.data && res.data.createProduct && res.data.createProduct.status) {
         message.success('Product is created successfully!');
         router.push("/");
-      } else if (res.data.createProduct.error) {
+      } else if (!res.data.createProduct.status) {
         message.error(res.data.createProduct.error);
       }
     } catch (err) {

@@ -108,7 +108,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                       )}
 
                       {
-                        showInitiativeName &&
+                        (initiativeName && showInitiativeName) &&
 
                         <Link href={`/products/${productSlug}/initiatives/${initiativeId}`}>
                           <span className="text-grey-9 pointer link">

@@ -7,8 +7,7 @@ import {TaskTable} from '../../../../components';
 import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
-import {TASK_LIST_TYPES, TASK_TYPES} from "../../../../graphql/types";
-import {getProp} from "../../../../utilities/filters";
+import {TASK_TYPES} from "../../../../graphql/types";
 import Loading from "../../../../components/Loading";
 import {FilterOutlined} from "@ant-design/icons";
 import FilterModal from "../../../../components/FilterModal";
@@ -17,7 +16,7 @@ import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 type Props = {
   onClick?: () => void;
   userRole: string;
-  user: {roles: any[]},
+  user: {roles: any[], id: string},
   productSlug: string;
 };
 
@@ -25,12 +24,11 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter()
   const {productSlug} = router.query
   const {user} = props;
-  const [tags, setTags] = useState([]);
-  const [sortedBy, setSortedBy] = useState("priority");
   const [statuses, setStatuses] = useState<Array<number>>([]);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [filterModal, setFilterModal] = useState(false);
+  const [tasks, setTasks] = useState<any>([]);
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
     statuses,
@@ -72,6 +70,12 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     setUserId(localStorage.getItem('userId'));
   }, []);
 
+  useEffect(() => {
+    if (data && data.tasksByProduct) {
+      setTasks(data.tasksByProduct);
+    }
+  }, [data]);
+
   const fetchTasks = async () => {
     await refetch(productsVariable);
   }
@@ -95,7 +99,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
               <AddTask
                 modal={showAddTaskModal}
                 closeModal={closeTaskModal}
-                tasks={data?.tasksByProduct}
+                tasks={tasks}
                 submit={fetchTasks}
                 productSlug={productSlug}
               />
@@ -112,7 +116,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
         {
           !error ?
             <TaskTable submit={() => refetch(productsVariable)}
-                       tasks={getProp(data, 'tasksByProduct', [])}
+                       tasks={tasks}
                        statusList={TASK_TYPES}
                        showInitiativeName={true}
                        hideTitle={true}

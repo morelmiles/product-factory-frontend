@@ -70,19 +70,15 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
     setUserId(localStorage.getItem('userId'));
   }, []);
 
-  const fetchData = async () => {
-    const data: any = await refetch({
+  const fetchData = () => {
+    refetch({
       id: initiativeId
     });
-
-    if (!data.errors) {
-      setInitiative(data.data.initiative);
-    }
   }
 
   useEffect(() => {
-    if (original) {
-      setInitiative(original.initiative);
+    if (original && original.initiative) {
+      setInitiative(original.initiative.initiative);
     }
   }, [original]);
 
@@ -103,7 +99,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
               {
                 <>
                   <Link href={`/products/${productSlug}`}>
-                    <a className="text-grey">{getProp(original.initiative, 'product.name', '')}</a>
+                    <a className="text-grey">{getProp(initiative, 'product.name', '')}</a>
                   </Link>
                   <span> / </span>
                   <Link href={`/products/${productSlug}/initiatives`}>
@@ -112,14 +108,14 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
                   <span> / </span>
                 </>
               }
-              <span>{getProp(original.initiative, 'initiative.name', '')}</span>
+              <span>{getProp(initiative, 'name', '')}</span>
             </div>
             <Row
               justify="space-between"
               className="right-panel-headline mb-15"
             >
               <div className="page-title">
-                {getProp(original.initiative, 'initiative.name', '')}
+                {getProp(initiative, 'name', '')}
               </div>
 
                 <Col>
@@ -155,12 +151,12 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
               <Col span={10}>
                 <DynamicHtml
                   className='mb-10'
-                  text={getProp(original.initiative, 'description', '')}
+                  text={getProp(initiative, 'description', '')}
                 />
               </Col>
             </Row>
             <TaskTable
-              tasks={getProp(original.initiative, 'tasks', [])}
+              tasks={getProp(initiative, 'tasks', [])}
               statusList={TASK_TYPES}
               productSlug={productSlug}
               submit={fetchData}
@@ -170,8 +166,11 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
                 modal={deleteModal}
                 productSlug={productSlug}
                 closeModal={() => showDeleteModal(false)}
-                submit={deleteInitiative}
-                title="Delete iniatiative"
+                submit={() => {
+                  showDeleteModal(false);
+                  deleteInitiative().then()
+                }}
+                title="Delete initiative"
               />
             )}
             {
