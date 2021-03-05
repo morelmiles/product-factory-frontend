@@ -219,7 +219,7 @@ export const IN_REVIEW_TASK = gql`
 `;
 
 export const CREATE_COMMENT = gql`
-  mutation CreateComment($personId: Int!, $text: String!, $taskId: Int, $parentId: String) {
+  mutation CreateComment($personId: Int!, $text: String!, $taskId: Int, $parentId: Int) {
     createComment(commentInput: {personId: $personId, text: $text, taskId: $taskId, parentId: $parentId}) {
       status
     }

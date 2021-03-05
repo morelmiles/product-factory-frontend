@@ -1,52 +1,158 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Button, Comment, Form, Input} from "antd";
-import {apiDomain} from "../../utilities/constants";
-import {useQuery} from "@apollo/react-hooks";
-import {GET_COMMENTS} from "../../graphql/queries";
+import {Button, Comment, Form, Input, Mentions, message, Modal} from "antd";
+import {GET_COMMENTS, GET_USERS} from "../../graphql/queries";
 import {getProp} from "../../utilities/filters";
+import CustomAvatar2 from "../CustomAvatar2";
+import {useMutation, useQuery} from "@apollo/react-hooks";
+import {CREATE_COMMENT} from "../../graphql/mutations";
 
+
+const {Option} = Mentions;
+
+
+interface IUser {
+  slug: string
+}
 
 interface ICommentContainerProps {
-  children?: any,
-  personId: number,
-  text: string
+  comments: IComment[]
+  submit: Function
+  allUsers: IUser[]
 }
 
 interface ICommentsProps {
   taskId: number
 }
 
-const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({children, personId, text}) => (
-  <Comment
-    actions={[<span key="comment-nested-reply-to" onClick={() => {}}>Reply to</span>]}
-    author={<a>John Smith {personId}</a>}
-    avatar={
-      <Avatar
-        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="John Smith"
-      />
-    }
-    content={
-      <p>{text}</p>
-    }
-  >
-    {children}
-  </Comment>
-);
+interface IAddCommentProps {
+  taskId: number
+  submit: Function
+  allUsers: IUser[]
+}
 
-const AddComment: React.FunctionComponent = () => {
-  const [comment, setComment] = useState('');
-  const [submittingComment, setSubmittingComment] = useState(false);
+interface IComment {
+  id: number
+  data: {
+    person: string
+    text: string
+  }
+  children: IComment[]
+}
+
+
+const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, allUsers}) => {
+  const [createComment] = useMutation(CREATE_COMMENT, {
+      onCompleted(res) {
+        if (getProp(res, 'createComment.status', false)) {
+          submit();
+          setIsModalVisible(false);
+          setCommentText('');
+          message.success('Comment was sent').then();
+        } else {
+          message.error("Failed to send comment").then();
+        }
+      },
+      onError() {
+        message.error("Failed to send comment").then();
+      }
+    }
+  );
+
+  const addComment = () => {
+    createComment({
+      variables: {
+        personId: localStorage.getItem('userId'), text: commentText, parentId: currentCommentId
+      }
+    }).then();
+  }
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setCommentText('');
+  }
+
+  const [commentText, setCommentText] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [currentCommentId, setCurrentCommentId] = useState<number>(0);
+
+  const openSendSubCommentModal = (commentId: number) => {
+    setIsModalVisible(true);
+    setCurrentCommentId(commentId);
+  }
 
   return (
     <>
-      <Form.Item className='mb-20'>
-        {/*<Input.TextArea rows={2} onChange={handleCommentChanged} value={comment}/>*/}
-        <Input.TextArea rows={2} value={comment}/>
+      {
+        comments.map((comment: IComment) => (
+          <Comment
+            actions={[<span key="comment-nested-reply-to" onClick={() => {
+              openSendSubCommentModal(comment.id)
+            }}>Reply to</span>]}
+            author={<a>{comment.data.person}</a>}
+            avatar={
+              <CustomAvatar2 fullname={comment.data.person}/>
+            }
+            content={
+              <p>{comment.data.text}</p>
+            }
+          >
+            <CommentContainer comments={getProp(comment, 'children', [])} submit={submit} allUsers={allUsers}/>
+          </Comment>
+        ))
+      }
+
+      <Modal title="Reply to comment" visible={isModalVisible} onOk={addComment} onCancel={closeModal}>
+        <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
+          {
+            allUsers.map(user => (
+              <Option value={user.slug}>{user.slug}</Option>
+            ))
+          }
+        </Mentions>
+      </Modal>
+    </>
+  )
+};
+
+const AddComment: React.FunctionComponent<IAddCommentProps> = ({taskId, submit, allUsers}) => {
+  const [createComment] = useMutation(CREATE_COMMENT, {
+      onCompleted(res) {
+        if (getProp(res, 'createComment.status', false)) {
+          submit();
+          setCommentText('');
+          message.success('Comment was sent').then();
+        } else {
+          message.error("Failed to send comment").then();
+        }
+      },
+      onError() {
+        message.error("Failed to send comment").then();
+      }
+    }
+  );
+  const [commentText, setCommentText] = useState('');
+
+  const addComment = () => {
+    createComment({
+      variables: {
+        personId: localStorage.getItem('userId'), text: commentText, taskId
+      }
+    }).then();
+  }
+
+  return (
+    <>
+      <Form.Item>
+        <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
+          {
+            allUsers.map(user => (
+              <Option value={user.slug}>{user.slug}</Option>
+            ))
+          }
+        </Mentions>
       </Form.Item>
       <Form.Item>
-        <Button htmlType="submit" loading={submittingComment} onClick={() => {
-        }} type="primary">
+        <Button onClick={addComment} type="primary">
           Add Comment
         </Button>
       </Form.Item>
@@ -55,42 +161,27 @@ const AddComment: React.FunctionComponent = () => {
 }
 
 const Comments: React.FunctionComponent<ICommentsProps> = ({taskId}) => {
-  const {data, error} = useQuery(GET_COMMENTS, {
+  const {data, error, loading, refetch} = useQuery(GET_COMMENTS, {
     variables: {taskId}
   });
+  const {data: users} = useQuery(GET_USERS);
 
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    if (!error) {
-      // setComments(JSON.parse(getProp(data, 'comments', {})))
+    if (!error && !loading) {
       let fetchComments = getProp(data, 'comments', '[]');
       fetchComments = JSON.parse(fetchComments);
-      fetchComments = getProp(fetchComments[0], 'children', [])
       setComments(fetchComments)
     }
-  }, data);
+  }, [data]);
 
-  // console.log('comm', comments);
+  const allUsers = getProp(users, 'people', []);
 
   return (
     <>
-      {/*{*/}
-      {/*  comments.map((comment: any) => (*/}
-      {/*    <>*/}
-      {/*      <p>{comment.data.text}</p>*/}
-      {/*    </>*/}
-      {/*  ))*/}
-      {/*}*/}
-
-      {/*<CommentContainer>*/}
-      {/*  <CommentContainer>*/}
-      {/*    <CommentContainer/>*/}
-      {/*    <CommentContainer/>*/}
-      {/*  </CommentContainer>*/}
-      {/*</CommentContainer>*/}
-
-      <AddComment/>
+      <CommentContainer comments={comments} submit={refetch} allUsers={allUsers}/>
+      <AddComment taskId={taskId} submit={refetch} allUsers={allUsers}/>
     </>
   )
 };

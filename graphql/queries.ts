@@ -553,6 +553,7 @@ export const GET_USERS = gql`
       id
       emailAddress
       fullName
+      slug
     }
   }
 `;

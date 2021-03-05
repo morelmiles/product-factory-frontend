@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Divider, message, Comment, List, Tooltip, Form, Input, Button, Typography, Tag, Avatar} from 'antd';
+import {Row, Col, Divider, message, Button, Tag} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -9,11 +9,8 @@ import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT_SHORT} from
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
-import {CustomAvatar, EditIcon, DynamicHtml, TaskTable} from '../../../../components';
-// import AddTask from '../../../../components/Products/AddTask';
-import {apiDomain} from "../../../../utilities/constants"
+import {CustomAvatar, EditIcon, TaskTable} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
-import moment from 'moment';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";
 import CustomModal from "../../../../components/Products/CustomModal";
@@ -24,161 +21,6 @@ import CheckableTag from "antd/lib/tag/CheckableTag";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import AddTaskContainer from "../../../../components/Products/AddTask";
 import Comments from "../../../../components/Comments";
-
-interface CommentListProps {
-  taskId: string | string[] | undefined,
-  user: any,
-}
-
-interface AddCommentFormProps {
-  taskId: string | string[] | undefined,
-  user: any,
-  onAdded: () => void,
-  replyToID?: number,
-}
-
-const AddCommentForm: React.FunctionComponent<AddCommentFormProps> = ({taskId, replyToID = 0, onAdded}) => {
-  const [comment, setComment] = useState('');
-  const [submittingComment, setSubmittingComment] = useState(false);
-
-  function handleCommentChanged(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setComment(event.target.value)
-  }
-
-  function submitComment() {
-    setSubmittingComment(true);
-    fetch(`${apiDomain}/comments/api/create/`, {
-      method: 'POST',
-      body: JSON.stringify({
-        content_type: 'work.task',
-        object_pk: taskId,
-        text: comment,
-        reply_to: replyToID
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(function (response) {
-      if (response.status == 201) {
-        setSubmittingComment(false)
-        setComment('')
-        onAdded();
-      }
-    })
-  }
-
-  return (
-    <>
-      <Form.Item className='mb-20'>
-        <Input.TextArea rows={2} onChange={handleCommentChanged} value={comment}/>
-      </Form.Item>
-      <Form.Item>
-        <Button htmlType="submit" loading={submittingComment} onClick={submitComment} type="primary">
-          Add Comment
-        </Button>
-      </Form.Item>
-    </>
-  )
-}
-
-const CommentList: React.FunctionComponent<CommentListProps> = ({taskId, user}) => {
-  const [comments, setComments] = useState([]);
-  const [shownSubCommentID, setShownSubCommentID] = useState(0);
-
-  const fetchComments = function () {
-    fetch(`${apiDomain}/comments/api/list/?content_type=work.task&object_pk=${taskId}`)
-      .then((response) => response.json())
-      .then((commentsResponse) => {
-        setComments(commentsResponse)
-      })
-  }
-
-  const handleReplyToClicked = function (comment: any) {
-    setShownSubCommentID(comment.id)
-  }
-
-  const handleSubCommentAdded = function () {
-    setShownSubCommentID(0)
-    fetchComments()
-  }
-
-  const SubCommentForm = function ({comment}: any) {
-    if (shownSubCommentID != comment.id) {
-      return null
-    }
-
-    return (
-      <Row>
-        <Col span={22} style={{marginLeft: "48px"}}>
-          <AddCommentForm taskId={taskId} user={user} onAdded={handleSubCommentAdded} replyToID={comment.id}/>
-        </Col>
-      </Row>
-    )
-  }
-
-  const RenderedComment = function ({comment}: any) {
-    let renderedChildComments = [];
-
-    if (comment.children) {
-      renderedChildComments = comment.children.map((childComment: any) => (
-        <>
-          <RenderedComment comment={childComment}/>
-        </>
-      ))
-    }
-
-    return (
-      <>
-        <Row>
-          <Col span={24}>
-            <Comment
-              author={comment.user_name}
-              actions={[<span key="comment-nested-reply-to"
-                              onClick={() => handleReplyToClicked(comment)}>Reply to</span>]}
-              avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              content={<pre>{comment.text}</pre>}
-              datetime={
-                <Tooltip title={moment(comment.created).format('YYYY-MM-DD HH:mm:ss')}>
-                  <span>{moment(comment.created).fromNow()}</span>
-                </Tooltip>
-              }>
-              {renderedChildComments}
-            </Comment>
-          </Col>
-        </Row>
-        <SubCommentForm comment={comment}/>
-      </>
-    )
-  }
-
-  useEffect(() => {
-    fetchComments()
-  }, []);
-
-  return (
-    <>
-      {
-        comments.length > 0 &&
-        <List
-            className="comment-list"
-            header="Comments"
-            itemLayout="horizontal"
-            dataSource={comments}
-            renderItem={(item: any) => {
-              return (
-                <li>
-                  <RenderedComment comment={item}/>
-                </li>
-              )
-            }
-            }
-        />
-      }
-
-      {user && user.isLoggedIn ? <AddCommentForm taskId={taskId} user={user} onAdded={fetchComments}/> : <></>}
-    </>
-  )
-}
 
 
 type Params = {
@@ -615,7 +457,6 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
             />
 
             <Divider style={{marginTop: 50}}/>
-            {/*<CommentList taskId={publishedId} user={user}/>*/}
             <Comments taskId={getProp(task, 'id', 0)}/>
 
             <Attachments data={getProp(original, 'task.attachment', [])}/>
@@ -653,7 +494,7 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
             )}
             {showEditModal && <AddTaskContainer
                 modal={showEditModal}
-                productSlug={productSlug}
+                productSlug={String(productSlug)}
                 modalType={true}
                 closeModal={setShowEditModal}
                 task={task}
