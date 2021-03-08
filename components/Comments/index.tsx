@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Button, Comment, Form, Input, Mentions, message, Modal} from "antd";
+import {Button, Comment, Form, Mentions, message, Modal} from "antd";
 import {GET_COMMENTS, GET_USERS} from "../../graphql/queries";
 import {getProp} from "../../utilities/filters";
 import CustomAvatar2 from "../CustomAvatar2";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {CREATE_COMMENT} from "../../graphql/mutations";
+import Link from "next/link";
 
 
 const {Option} = Mentions;
@@ -33,10 +34,17 @@ interface IAddCommentProps {
 interface IComment {
   id: number
   data: {
-    person: string
+    person: {
+      fullname: string
+      slug: string
+    }
     text: string
   }
   children: IComment[]
+}
+
+interface ICommentsText {
+  text: string
 }
 
 
@@ -80,20 +88,39 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
     setCurrentCommentId(commentId);
   }
 
+  const CommentsText: React.FunctionComponent<ICommentsText> = ({text}) => {
+    return (
+      <>
+        {
+          text.split(' ').map((textItem, index) => {
+            if (textItem[0] === '@') {
+              return <Link key={index} href={`/people/${textItem.substring(1)}`}>{textItem + ' '}</Link>;
+            } else {
+              return <span key={index}>{textItem + ' '}</span>;
+            }
+          })
+        }
+      </>
+    )
+  }
+
+  // @ts-ignore
+  // @ts-ignore
   return (
     <>
       {
-        comments.map((comment: IComment) => (
+        comments.map((comment: IComment, index) => (
           <Comment
+            key={index}
             actions={[<span key="comment-nested-reply-to" onClick={() => {
               openSendSubCommentModal(comment.id)
             }}>Reply to</span>]}
-            author={<a>{comment.data.person}</a>}
+            author={<Link href={`/people/${comment.data.person.slug}`}>{comment.data.person.fullname}</Link>}
             avatar={
-              <CustomAvatar2 fullname={comment.data.person}/>
+              <CustomAvatar2 person={comment.data.person}/>
             }
             content={
-              <p>{comment.data.text}</p>
+              <CommentsText text={comment.data.text}/>
             }
           >
             <CommentContainer comments={getProp(comment, 'children', [])} submit={submit} allUsers={allUsers}/>
@@ -104,8 +131,8 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
       <Modal title="Reply to comment" visible={isModalVisible} onOk={addComment} onCancel={closeModal}>
         <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
           {
-            allUsers.map(user => (
-              <Option value={user.slug}>{user.slug}</Option>
+            allUsers.map((user) => (
+              <Option key={user.slug} value={user.slug}>{user.slug}</Option>
             ))
           }
         </Mentions>
@@ -145,8 +172,8 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({taskId, submit, 
       <Form.Item>
         <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
           {
-            allUsers.map(user => (
-              <Option value={user.slug}>{user.slug}</Option>
+            allUsers.map((user) => (
+              <Option key={user.slug} value={user.slug}>{user.slug}</Option>
             ))
           }
         </Mentions>
@@ -174,6 +201,7 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({taskId}) => {
       fetchComments = JSON.parse(fetchComments);
       setComments(fetchComments)
     }
+
   }, [data]);
 
   const allUsers = getProp(users, 'people', []);

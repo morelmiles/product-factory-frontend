@@ -12,11 +12,20 @@ import {DELETE_CAPABILITY} from "../../../../graphql/mutations";
 import SortableTree, {getVisibleNodeCount} from "react-sortable-tree";
 import {TreeNode} from "../../../../utilities/constants";
 import AddOrEditCapability from "../../../../components/Products/AddOrEditCapability";
+import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
+import {WorkState} from "../../../../lib/reducers/work.reducer";
+import {saveStacks, saveTags, saveUsers} from "../../../../lib/actions";
+import {connect} from "react-redux";
 
 
 const {Search} = Input;
 
-const Capabilities: React.FunctionComponent = () => {
+
+interface ICapabilitiesProps {
+  user: any
+}
+
+const Capabilities: React.FunctionComponent<ICapabilitiesProps> = ({user}) => {
   const router = useRouter();
   const {productSlug} = router.query;
 
@@ -30,6 +39,17 @@ const Capabilities: React.FunctionComponent = () => {
   const [modalType, setModalType] = useState<string>('');
   const [hideParent, setHideParent] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState("Visitor");
+
+  useEffect(() => {
+    if (user.isLoggedIn) {
+      let userRole = getUserRole(user.roles, productSlug ? productSlug : '');
+      setUserRole(userRole);
+    }
+
+    console.log(user);
+    console.log(userRole);
+  }, [user]);
 
   useEffect(() => {
     setUserId(localStorage.getItem('userId'));
@@ -141,7 +161,7 @@ const Capabilities: React.FunctionComponent = () => {
       {
         !capabilitiesError && (
           <>
-            <Row justify="space-between" className="right-panel-headline mb-15" style={{marginBottom: 40}}>
+            <Row justify="space-between" style={{marginBottom: 40}}>
               <Col>
                 <Typography.Text strong style={{fontSize: '1.4rem'}}>Product Map</Typography.Text>
               </Col>
@@ -169,25 +189,26 @@ const Capabilities: React.FunctionComponent = () => {
                 </div>
                 <div>{searchFoundCount > 0 && `${searchFoundCount} items found!`}</div>
               </Col>
-
-              {
-                isAdminOrManager &&
-                <Col>
-                    <Button
-                        onClick={
-                          () => {
-                            setModalType('add-root');
-                            setHideParent(false);
-                            setShowAddOrEditModal(true)
-                          }
-                        }
-                    >
-                        Add new capability
-                    </Button>
-                </Col>
-              }
             </Row>
 
+            {
+              isAdminOrManager &&
+              <Row justify="end">
+                  <Col>
+                      <Button
+                          onClick={
+                            () => {
+                              setModalType('add-root');
+                              setHideParent(false);
+                              setShowAddOrEditModal(true)
+                            }
+                          }
+                      >
+                          Add new capability
+                      </Button>
+                  </Col>
+              </Row>
+            }
 
             <div style={{height: mapHeight}}>
               <SortableTree
@@ -262,5 +283,13 @@ const Capabilities: React.FunctionComponent = () => {
   );
 };
 
+const mapStateToProps = (state: any) => ({
+  user: state.user
+});
 
-export default Capabilities;
+const mapDispatchToProps = () => ({});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Capabilities);
