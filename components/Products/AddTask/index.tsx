@@ -1,23 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { Modal, Row, Col, Input, Select, message, Button } from 'antd';
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import {GET_INITIATIVES, GET_STACKS, GET_TAGS} from '../../../graphql/queries';
-import { CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK } from '../../../graphql/mutations';
-import { TASK_TYPES } from '../../../graphql/types';
+import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
+import {Modal, Row, Col, Input, Select, message, Button} from 'antd';
+import {useMutation, useQuery} from '@apollo/react-hooks';
+import {GET_INITIATIVES, GET_STACKS, GET_TAGS, GET_USERS} from '../../../graphql/queries';
+import {CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK} from '../../../graphql/mutations';
+import {TASK_TYPES} from '../../../graphql/types';
 import {addRepository} from '../../../lib/actions';
-import { WorkState } from '../../../lib/reducers/work.reducer';
+import {WorkState} from '../../../lib/reducers/work.reducer';
 import AddInitiative from '../AddInitiative';
-import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { RICHTEXT_EDITOR_WIDTH } from '../../../utilities/constants';
+import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
+import {RICHTEXT_EDITOR_WIDTH} from '../../../utilities/constants';
 import dynamic from "next/dynamic";
+import {getProp} from "../../../utilities/filters";
 
-const { Option } = Select;
-const { TextArea } = Input;
+
+const {Option} = Select;
+const {TextArea} = Input;
+
+interface IUser {
+  fullName: string
+  slug: string
+}
 
 const RichTextEditor = dynamic(
   () => import('../../TextEditor'),
-  { ssr: false }
+  {ssr: false}
 );
 
 const filterRepositoryId = (arr: Array<any>, url: string) => {
@@ -37,22 +44,24 @@ type Props = {
   task?: any;
   submit?: any;
   tasks?: Array<any>;
-  stacks: Array<any>;
+  stacks?: Array<any>;
+  user: any;
 };
 
 const AddTask: React.FunctionComponent<Props> = ({
-  modal,
-  productSlug,
-  closeModal,
-  currentProduct,
-  repositories,
-  addRepository,
-  modalType,
-  task,
-  submit,
-  tasks,
-}) => {
-  const [title, setTitle] = useState(modalType? task.title : '');
+                                                   modal,
+                                                   productSlug,
+                                                   closeModal,
+                                                   currentProduct,
+                                                   repositories,
+                                                   addRepository,
+                                                   modalType,
+                                                   task,
+                                                   submit,
+                                                   tasks,
+                                                   user
+                                                 }) => {
+  const [title, setTitle] = useState(modalType ? task.title : '');
   const [description, setDescription] = useState(modalType ? task.description : '');
   const [allTags, setAllTags] = useState([]);
   const [skip, setSkip] = React.useState(false);
@@ -60,7 +69,7 @@ const AddTask: React.FunctionComponent<Props> = ({
   const [shortDescription, setShortDescription] = useState(
     modalType ? task.shortDescription : ''
   );
-  const [status, setStatus] = useState(modalType? task.status : 2);
+  const [status, setStatus] = useState(modalType ? task.status : 2);
   const [capability, setCapability] = useState(
     modalType && task.capability ? task.capability.id : 0
   );
@@ -90,8 +99,8 @@ const AddTask: React.FunctionComponent<Props> = ({
     modalType && task.dependOn ? task.dependOn.map((tag: any) => tag.id) : []
   );
 
-  const { data: originalInitiatives, loading: initiativeLoading, refetch: fetchInitiatives } = useQuery(GET_INITIATIVES, {
-    variables: { productSlug }
+  const {data: originalInitiatives, loading: initiativeLoading, refetch: fetchInitiatives} = useQuery(GET_INITIATIVES, {
+    variables: {productSlug}
   });
 
   const {data: tagsData} = useQuery(GET_TAGS);
@@ -99,6 +108,18 @@ const AddTask: React.FunctionComponent<Props> = ({
   const [createTask] = useMutation(CREATE_TASK);
   const [updateTask] = useMutation(UPDATE_TASK);
   const [createCodeRepository] = useMutation(CREATE_CODE_REPOSITORY);
+  const [allUsers, setAllUsers] = useState([]);
+  const [reviewSelectValue, setReviewSelectValue] = useState('');
+
+  const {data: users} = useQuery(GET_USERS);
+
+  useEffect(() => {
+    setAllUsers(getProp(users, 'people', []));
+  }, [users]);
+
+  useEffect(() => {
+    setReviewSelectValue(user.slug);
+  }, [user]);
 
   useEffect(() => {
     if (tagsData && tagsData.tags) setAllTags(tagsData.tags)
@@ -170,17 +191,18 @@ const AddTask: React.FunctionComponent<Props> = ({
       dependOns,
       detailUrl,
       userId: localStorage.getItem('userId'),
+      reviewer: reviewSelectValue
     };
 
     try {
       const res = modalType
         ? await updateTask({
-            variables: { input, id: parseInt(task.id) }
-          })
+          variables: {input, id: parseInt(task.id)}
+        })
         : await createTask({
-            variables: { input }
-          })
-      
+          variables: {input}
+        })
+
       if (!res.errors) {
         submit();
         const messageType = modalType ? 'updated' : 'created';
@@ -208,9 +230,9 @@ const AddTask: React.FunctionComponent<Props> = ({
 
     try {
       const res = await createCodeRepository({
-        variables: { input }
+        variables: {input}
       });
-      
+
       if (
         res.data &&
         res.data.createCodeRepository &&
@@ -227,11 +249,15 @@ const AddTask: React.FunctionComponent<Props> = ({
   }
 
   const updateIniatives = async () => {
-    const { data: newData } = await fetchInitiatives({
+    const {data: newData} = await fetchInitiatives({
       productSlug: productSlug
     });
 
     setInitiatives(newData.initiatives);
+  }
+
+  const reviewSelectChange = (val: any) => {
+    setReviewSelectValue(val);
   }
 
   useEffect(() => {
@@ -271,7 +297,7 @@ const AddTask: React.FunctionComponent<Props> = ({
         <Row
           className="rich-editor mb-15"
         >
-          <label>Description:</label>
+          <label>Description*:</label>
           <RichTextEditor
             initialValue={modalType ? task.description : ''}
             setValue={onDescriptionChange}
@@ -326,7 +352,7 @@ const AddTask: React.FunctionComponent<Props> = ({
               {editInitiative && (
                 <AddInitiative
                   modal={editInitiative}
-                  productSlug={productSlug}
+                  productSlug={String(productSlug)}
                   modalType={false}
                   closeModal={toggleInitiative}
                   submit={updateIniatives}
@@ -415,7 +441,7 @@ const AddTask: React.FunctionComponent<Props> = ({
           </>
         )}
         <Row className='mb-15'>
-          <label>Status*: </label>
+          <label>Status: </label>
           <Select
             defaultValue={status}
             onChange={setStatus}
@@ -469,6 +495,21 @@ const AddTask: React.FunctionComponent<Props> = ({
                 {option.title}
               </Option>
             ))}
+          </Select>
+        </Row>
+        <Row style={{marginTop: 20}}>
+          <label>Reviewer*:</label>
+
+          <Select
+            placeholder="Select a reviewer"
+            value={reviewSelectValue}
+            onChange={val => reviewSelectChange(val)}
+          >
+            {
+              allUsers.map((user: IUser) => (
+                <Option value={user.slug}>{user.fullName}</Option>
+              ))
+            }
           </Select>
         </Row>
       </Modal>

@@ -101,7 +101,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
                 closeModal={closeTaskModal}
                 tasks={tasks}
                 submit={fetchTasks}
-                productSlug={productSlug}
+                productSlug={String(productSlug)}
               />
             </Col>
           )}

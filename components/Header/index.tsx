@@ -51,9 +51,11 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   useEffect(() => {
     if (personData && personData.person) {
       const {person} = personData;
+      console.log('sfsdf', person);
       userLogInAction({
         isLoggedIn: true,
         fullName: person.fullName,
+        slug: person.slug,
         id: person.id,
         roles: person.productpersonSet.map((role: any) => {
           return {

@@ -811,8 +811,9 @@ export const  GET_COMMENTS = gql`
 export const GET_PERSON = gql`
   query GetPerson($id: Int!) {
     person (id: $id) {
-      id,
+      id
       fullName
+      slug
       productpersonSet {
         right
         product {
