@@ -38,7 +38,7 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
-const FilterModal: React.SFC<Props> = ({
+const FilterModal: React.FunctionComponent<Props> = ({
   user,
   modal,
   closeModal,

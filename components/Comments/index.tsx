@@ -43,6 +43,10 @@ interface IComment {
   children: IComment[]
 }
 
+interface ICommentsText {
+  text: string
+}
+
 
 const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, allUsers}) => {
   const [createComment] = useMutation(CREATE_COMMENT, {
@@ -84,11 +88,30 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
     setCurrentCommentId(commentId);
   }
 
+  const CommentsText: React.FunctionComponent<ICommentsText> = ({text}) => {
+    return (
+      <>
+        {
+          text.split(' ').map((textItem, index) => {
+            if (textItem[0] === '@') {
+              return <Link key={index} href={`/people/${textItem.substring(1)}`}>{textItem + ' '}</Link>;
+            } else {
+              return <span key={index}>{textItem + ' '}</span>;
+            }
+          })
+        }
+      </>
+    )
+  }
+
+  // @ts-ignore
+  // @ts-ignore
   return (
     <>
       {
-        comments.map((comment: IComment) => (
+        comments.map((comment: IComment, index) => (
           <Comment
+            key={index}
             actions={[<span key="comment-nested-reply-to" onClick={() => {
               openSendSubCommentModal(comment.id)
             }}>Reply to</span>]}
@@ -97,7 +120,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
               <CustomAvatar2 person={comment.data.person}/>
             }
             content={
-              <p>{comment.data.text}</p>
+              <CommentsText text={comment.data.text}/>
             }
           >
             <CommentContainer comments={getProp(comment, 'children', [])} submit={submit} allUsers={allUsers}/>
@@ -108,8 +131,8 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
       <Modal title="Reply to comment" visible={isModalVisible} onOk={addComment} onCancel={closeModal}>
         <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
           {
-            allUsers.map(user => (
-              <Option value={user.slug}>{user.slug}</Option>
+            allUsers.map((user) => (
+              <Option key={user.slug} value={user.slug}>{user.slug}</Option>
             ))
           }
         </Mentions>
@@ -149,8 +172,8 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({taskId, submit, 
       <Form.Item>
         <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
           {
-            allUsers.map(user => (
-              <Option value={user.slug}>{user.slug}</Option>
+            allUsers.map((user) => (
+              <Option key={user.slug} value={user.slug}>{user.slug}</Option>
             ))
           }
         </Mentions>
@@ -177,7 +200,6 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({taskId}) => {
       let fetchComments = getProp(data, 'comments', '[]');
       fetchComments = JSON.parse(fetchComments);
       setComments(fetchComments)
-      console.log(fetchComments)
     }
 
   }, [data]);
