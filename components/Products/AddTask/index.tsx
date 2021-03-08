@@ -260,7 +260,7 @@ const AddTask: React.FunctionComponent<Props> = ({
           />
         </Row>
         <Row className='mb-15'>
-          <label>Short Description:</label>
+          <label>Short Description*:</label>
           <TextArea
             placeholder="Short Description"
             value={shortDescription}
@@ -271,7 +271,7 @@ const AddTask: React.FunctionComponent<Props> = ({
         <Row
           className="rich-editor mb-15"
         >
-          <label>Description:</label>
+          <label>Description*:</label>
           <RichTextEditor
             initialValue={modalType ? task.description : ''}
             setValue={onDescriptionChange}

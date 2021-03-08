@@ -270,6 +270,7 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
     )
   }
 
+  const initiativeName = getProp(task, 'initiative.name', undefined);
 
   return (
     <LeftPanelContainer>
@@ -287,11 +288,15 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
                     <a className="text-grey">Tasks</a>
                   </Link>
                   <span> / </span>
-                  <Link
-                    href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
-                    <a className="text-grey">{getProp(task, 'initiative.name', '')}</a>
-                  </Link>
-                  <span> / </span>
+                  {initiativeName && (
+                    <>
+                      <Link
+                        href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
+                        <a className="text-grey">{initiativeName}</a>
+                      </Link>
+                      <span> / </span>
+                    </>
+                  )}
                 </>
               )}
               <span>{getProp(original, 'task.title', '')}</span>
