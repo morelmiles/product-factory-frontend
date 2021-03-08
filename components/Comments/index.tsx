@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Button, Comment, Form, Input, Mentions, message, Modal} from "antd";
+import {Button, Comment, Form, Mentions, message, Modal} from "antd";
 import {GET_COMMENTS, GET_USERS} from "../../graphql/queries";
 import {getProp} from "../../utilities/filters";
 import CustomAvatar2 from "../CustomAvatar2";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {CREATE_COMMENT} from "../../graphql/mutations";
+import Link from "next/link";
 
 
 const {Option} = Mentions;
@@ -33,7 +34,10 @@ interface IAddCommentProps {
 interface IComment {
   id: number
   data: {
-    person: string
+    person: {
+      fullname: string
+      slug: string
+    }
     text: string
   }
   children: IComment[]
@@ -88,9 +92,9 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
             actions={[<span key="comment-nested-reply-to" onClick={() => {
               openSendSubCommentModal(comment.id)
             }}>Reply to</span>]}
-            author={<a>{comment.data.person}</a>}
+            author={<Link href={`/people/${comment.data.person.slug}`}>{comment.data.person.fullname}</Link>}
             avatar={
-              <CustomAvatar2 fullname={comment.data.person}/>
+              <CustomAvatar2 person={comment.data.person}/>
             }
             content={
               <p>{comment.data.text}</p>
@@ -173,7 +177,9 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({taskId}) => {
       let fetchComments = getProp(data, 'comments', '[]');
       fetchComments = JSON.parse(fetchComments);
       setComments(fetchComments)
+      console.log(fetchComments)
     }
+
   }, [data]);
 
   const allUsers = getProp(users, 'people', []);
