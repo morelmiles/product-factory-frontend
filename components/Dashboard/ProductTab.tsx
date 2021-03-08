@@ -49,7 +49,7 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
   return (
     <Row gutter={[16, 16]} className="card product-list">
       {
-        data.products.map((product: any, idx: number) => {
+        data && data.products.map((product: any, idx: number) => {
           const availableTasks = getProp(product, 'availableTasks', []).length;
           const initiatives = getProp(product, 'initiativeSet', []).length;
           return (

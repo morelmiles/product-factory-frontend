@@ -35,7 +35,8 @@ const AddInitiative: React.FunctionComponent<Props> = ({
   const [name, setName] = useState(
     modalType ? getProp(initiative, 'name', '') : ''
   );
-  const [description, setDescription] = useState('')
+  const [description, setDescription] = useState(
+    modalType ? getProp(initiative, 'description', '') : "");
   const [status, setStatus] = useState(
     modalType ? getProp(initiative, 'status', 1) : 1
   )
@@ -137,7 +138,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
               >
                 <label>Description:</label>
                 <RichTextEditor
-                  initialValue={modalType ? getProp(initiative, 'description', '') : null}
+                  initialValue={modalType ? getProp(initiative, 'description', '') : ""}
                   setValue={onDescriptionChange}
                 />
               </Row>
