@@ -22,11 +22,7 @@ export const GET_PRODUCTS = gql`
         fileType
         path
       }
-      availableTasks {
-        id
-        title
-        description
-      }
+      availableTaskNum
       totalTaskNum
     }
   }
