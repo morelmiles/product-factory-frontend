@@ -52,7 +52,8 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   };
 
   let {data, error, loading, refetch} = useQuery(GET_TASKS_BY_PRODUCT, {
-    variables: productsVariable
+    variables: productsVariable,
+    fetchPolicy: "no-cache"
   });
 
   const closeTaskModal = (flag: boolean) => {

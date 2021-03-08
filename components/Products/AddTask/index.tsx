@@ -286,7 +286,7 @@ const AddTask: React.FunctionComponent<Props> = ({
           />
         </Row>
         <Row className='mb-15'>
-          <label>Short Description:</label>
+          <label>Short Description*:</label>
           <TextArea
             placeholder="Short Description"
             value={shortDescription}
