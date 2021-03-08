@@ -361,6 +361,10 @@ export const GET_TASK_BY_ID = gql`
   query GetTask($productSlug: String!, $publishedId: Int!, $userId: Int) {
     task(productSlug: $productSlug, publishedId: $publishedId) {
       id
+      reviewer {
+        slug
+        fullName
+      }
       publishedId
       canEdit(userId: $userId)
       priority

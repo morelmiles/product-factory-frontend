@@ -25,7 +25,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   const [userId, setUserId] = useState<string | null>(null);
 
   const onSearch = (e: any) => {
-    // console.log("search submitted: ", e);
   }
   const getSelectedItem = () => {
     switch (router.asPath) {
@@ -51,7 +50,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   useEffect(() => {
     if (personData && personData.person) {
       const {person} = personData;
-      console.log('sfsdf', person);
       userLogInAction({
         isLoggedIn: true,
         fullName: person.fullName,

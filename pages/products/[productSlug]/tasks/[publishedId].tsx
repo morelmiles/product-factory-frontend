@@ -415,6 +415,15 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
                         <Priorities task={task} submit={() => refetch()}/>
                     </Row>
                   }
+                  {
+                    getProp(task, 'reviewer.slug', null) &&
+                    <Row style={{marginTop: 10}} className="text-sm mt-8">
+                        <strong className="my-auto">Reviewer:&nbsp;</strong>
+                        <Link href={`/people/${getProp(task, 'reviewer.slug', '')}`}>
+                          {getProp(task, 'reviewer.fullName', '')}
+                        </Link>
+                    </Row>
+                  }
                   {stacks.length > 0 && (
                     <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
                       <strong className="my-auto">Stacks:&nbsp;</strong>

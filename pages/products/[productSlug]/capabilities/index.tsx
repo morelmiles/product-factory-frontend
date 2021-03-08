@@ -46,9 +46,6 @@ const Capabilities: React.FunctionComponent<ICapabilitiesProps> = ({user}) => {
       let userRole = getUserRole(user.roles, productSlug ? productSlug : '');
       setUserRole(userRole);
     }
-
-    console.log(user);
-    console.log(userRole);
   }, [user]);
 
   useEffect(() => {

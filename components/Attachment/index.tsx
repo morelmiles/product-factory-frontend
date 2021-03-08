@@ -53,7 +53,6 @@ const Attachment: React.FunctionComponent<Props> = ({
       }
     },
     onError(err) {
-      // console.log("Delete item error: ", err);
       message.error("Failed to delete item!");
     }
   });

@@ -34,7 +34,6 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
       .then(response => response.json())
       .then(res => {
         if (res.status) {
-          // console.log(res);
           message.success(`${res.user.fullName} is logged in successfully!`).then();
           userLogInAction({ isLoggedIn: res.status });
           localStorage.setItem('userId', res.user.id);
