@@ -39,6 +39,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
   const [filterModal, setFilterModal] = useState(false);
+  const [tasks, setTasks] = useState([]);
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
     statuses: [],
@@ -79,6 +80,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   useEffect(() => {
     if (original && original.initiative) {
       setInitiative(original.initiative.initiative);
+      setTasks(original.initiative.tasks);
     }
   }, [original]);
 
@@ -156,7 +158,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
               </Col>
             </Row>
             <TaskTable
-              tasks={getProp(initiative, 'tasks', [])}
+              tasks={tasks}
               statusList={TASK_TYPES}
               productSlug={productSlug}
               submit={fetchData}
