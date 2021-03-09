@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Divider, message, Button, Tag} from 'antd';
+import {Row, Col, Divider, message, Button, Tag, Collapse, List} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -21,6 +21,9 @@ import CheckableTag from "antd/lib/tag/CheckableTag";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import AddTaskContainer from "../../../../components/Products/AddTask";
 import Comments from "../../../../components/Comments";
+
+
+const {Panel} = Collapse;
 
 
 type Params = {
@@ -459,6 +462,41 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
                 </div>
               </Col>
             </Row>
+
+            {
+              getProp(task, 'dependOn', []).length > 0 &&
+              <Collapse style={{marginTop: 50}}>
+                  <Panel header="Blocked by" key="1">
+                      <List
+                          bordered
+                          dataSource={getProp(task, 'dependOn', [])}
+                          renderItem={(item: any) => (
+                            <List.Item>
+                              <Link
+                                href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                            </List.Item>
+                          )}
+                      />
+                  </Panel>
+              </Collapse>
+            }
+            {
+              getProp(task, 'relatives', []).length > 0 &&
+              <Collapse style={{marginTop: 50}}>
+                  <Panel header="Relative tasks" key="1">
+                      <List
+                          bordered
+                          dataSource={getProp(task, 'relatives', [])}
+                          renderItem={(item: any) => (
+                            <List.Item>
+                              <Link
+                                href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                            </List.Item>
+                          )}
+                      />
+                  </Panel>
+              </Collapse>
+            }
 
             <TaskTable
               title={'Dependant Tasks'}

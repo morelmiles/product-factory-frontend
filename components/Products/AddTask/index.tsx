@@ -95,7 +95,7 @@ const AddTask: React.FunctionComponent<Props> = ({
   const [stacks, setStacks] = useState(
     modalType && task.stack ? task.stack.map((stack: any) => stack.id) : []
   );
-  const [dependOns, setDependOns] = useState(
+  const [dependOn, setdependOn] = useState(
     modalType && task.dependOn ? task.dependOn.map((tag: any) => tag.id) : []
   );
 
@@ -173,7 +173,7 @@ const AddTask: React.FunctionComponent<Props> = ({
     setRepositoryUrl("");
     setTags([]);
     setStacks([]);
-    setDependOns([]);
+    setdependOn([]);
   }
 
   const addNewTask = async () => {
@@ -188,7 +188,7 @@ const AddTask: React.FunctionComponent<Props> = ({
       repository: repository === 0 ? null : parseInt(repository),
       tags,
       stacks,
-      dependOns,
+      dependOn,
       detailUrl,
       userId: localStorage.getItem('userId'),
       reviewer: reviewSelectValue
@@ -485,8 +485,8 @@ const AddTask: React.FunctionComponent<Props> = ({
           <label>Depend on tasks:</label>
           <Select
             mode="multiple"
-            defaultValue={dependOns}
-            onChange={setDependOns}
+            defaultValue={dependOn}
+            onChange={setdependOn}
           >
             <Option value={0}>Select depend on tasks</Option>
             {tasks &&
