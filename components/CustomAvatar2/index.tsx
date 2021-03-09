@@ -25,7 +25,8 @@ const CustomAvatar2: React.FunctionComponent<ICustomAvatar2Props> = ({person, si
           lineHeight: `${size}px`,
           color: 'white',
           fontSize: size >= 100 ? '3rem' : '1rem',
-          userSelect: 'none'
+          userSelect: 'none',
+          cursor: 'pointer'
         }}
       >
         {person.fullname && getInitialName(person.fullname)}

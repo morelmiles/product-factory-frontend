@@ -7,6 +7,7 @@ import {TASK_CLAIM_TYPES} from '../../graphql/types';
 import {CheckCircleFilled, ThunderboltFilled} from '@ant-design/icons';
 import Priorities from "../Priorities";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import CustomAvatar2 from "../CustomAvatar2";
 
 
 type Props = {
@@ -77,7 +78,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                         showProductName && (
                           <>
                             <Link href={`/products/${productSlug}`}>
-                                <a className="text-grey-9">{productName}</a>
+                              <a className="text-grey-9">{productName}</a>
                             </Link>&nbsp;/&nbsp;
                           </>
                         )
@@ -97,7 +98,8 @@ const TaskTable: React.FunctionComponent<Props> = (
                       </Link>
                     </Row>
                     <Row>
-                      <Typography.Text type="secondary" style={{marginBottom: 5}}>{task.shortDescription}</Typography.Text>
+                      <Typography.Text type="secondary"
+                                       style={{marginBottom: 5}}>{task.shortDescription}</Typography.Text>
                     </Row>
                     <Row align="middle">
                       {getProp(task, 'stack', []).map((tag: any, taskIndex: number) =>
@@ -158,26 +160,19 @@ const TaskTable: React.FunctionComponent<Props> = (
                       ) : (
                         <span>{taskStatus}</span>
                       )}
-                      {assignee ? (
-                        <div className="mt-10">
-                          <div className="d-flex-end" style={{fontSize: 13}}>
+                    {assignee ? (
+                      <div className="mt-10">
+                        <div className="d-flex-end" style={{fontSize: 13}}>
 
-                            <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
-                              <>
-                                {CustomAvatar(
-                                  assignee,
-                                  "fullName",
-                                  28,
-                                  null,
-                                  {margin: 'auto 8px auto 0', fontSize: 13}
-                                  )
-                                }
-                                <a className="text-grey-9">{getProp(assignee, 'fullName', '')}</a>
-                              </>
-                            </Link>
-                          </div>
+                          <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
+                            <CustomAvatar2 person={{fullname: assignee.fullName, slug: assignee.slug}} size={35}/>
+                          </Link>
+                          <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
+                            {getProp(assignee, 'fullName', '')}
+                          </Link>
                         </div>
-                      ) : null}
+                      </div>
+                    ) : null}
                   </Col>
                 </Row>
               </Col>
@@ -186,7 +181,7 @@ const TaskTable: React.FunctionComponent<Props> = (
         }
       </Row>
     </>
-  ) : !hideEmptyList && <Empty description={"The task list is empty"} />
+  ) : !hideEmptyList && <Empty description={"The task list is empty"}/>
 };
 
 export default TaskTable;
