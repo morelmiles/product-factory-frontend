@@ -146,7 +146,9 @@ const TaskTable: React.FunctionComponent<Props> = (
                         <>
                           <div>{taskStatus}</div>
                           <Row>
-                            {CustomAvatar(taskClaimSet.person, "fullName")}
+                            <CustomAvatar2
+                              person={{fullname: taskClaimSet.person.fullName, slug: taskClaimSet.person.slug}}
+                              size={35}/>
                             <div className="my-auto">
                               <Link
                                 href={`/people/${getProp(taskClaimSet, 'person.slug', '')}`}
