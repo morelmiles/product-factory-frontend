@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Divider, message, Button, Tag, Collapse, List} from 'antd';
+import {Row, Col, message, Button, Tag, Collapse, List} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -9,7 +9,7 @@ import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT_SHORT} from
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
-import {CustomAvatar, EditIcon, TaskTable} from '../../../../components';
+import {CustomAvatar, EditIcon} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";
@@ -373,7 +373,8 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                       (
                         TASK_TYPES[getProp(task, 'status')] === "Available" ||
                         TASK_TYPES[getProp(task, 'status')] === "Draft" ||
-                        TASK_TYPES[getProp(task, 'status')] === "Pending"
+                        TASK_TYPES[getProp(task, 'status')] === "Pending" ||
+                        TASK_TYPES[getProp(task, 'status')] === "Blocked"
                       ) ? (
                         <strong className="my-auto">
                           Status: {TASK_TYPES[getProp(task, 'status')]}
