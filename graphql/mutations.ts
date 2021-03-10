@@ -225,3 +225,11 @@ export const CREATE_COMMENT = gql`
     }
   }
 `;
+
+export const UPDATE_CAPABILITY_TREE = gql`
+  mutation UpdateCapabilityTree ($productSlug: String!, $tree: JSONString!) {
+    updateCapabilityTree(productSlug: $productSlug, tree: $tree) {
+      status
+    }
+  }
+`;
