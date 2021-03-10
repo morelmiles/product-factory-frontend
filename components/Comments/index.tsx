@@ -104,8 +104,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
     )
   }
 
-  // @ts-ignore
-  // @ts-ignore
+
   return (
     <>
       {

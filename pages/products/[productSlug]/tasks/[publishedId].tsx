@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Divider, message, Button, Tag, Collapse, List, Space} from 'antd';
+import {Row, Col, Divider, message, Button, Tag, Collapse, List} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -182,7 +182,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   const fetchData = async () => {
     const data: any = await refetch()
 
-    if (!data.errors) {
+    if (data && !data.errors) {
       setTask(data.data.task);
     }
   }
@@ -463,44 +463,43 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
               </Col>
             </Row>
 
-            <Space direction="vertical" size={20}>
-              {
-                getProp(task, 'dependOn', []).length > 0 &&
-                <Collapse style={{marginTop: 50}}>
-                    <Panel header="Blocked by" key="1">
-                        <List
-                            bordered
-                            dataSource={getProp(task, 'dependOn', [])}
-                            renderItem={(item: any) => (
-                              <List.Item>
-                                <Link
-                                  href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
-                              </List.Item>
-                            )}
-                        />
-                    </Panel>
-                </Collapse>
-              }
-              {
-                getProp(task, 'relatives', []).length > 0 &&
-                <Collapse style={{marginTop: 50}}>
-                    <Panel header="Relative tasks" key="1">
-                        <List
-                            bordered
-                            dataSource={getProp(task, 'relatives', [])}
-                            renderItem={(item: any) => (
-                              <List.Item>
-                                <Link
-                                  href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
-                              </List.Item>
-                            )}
-                        />
-                    </Panel>
-                </Collapse>
-              }
+            {
+              getProp(task, 'dependOn', []).length > 0 &&
+              <Collapse style={{marginTop: 30}}>
+                  <Panel header="Blocked by" key="1">
+                      <List
+                          bordered
+                          dataSource={getProp(task, 'dependOn', [])}
+                          renderItem={(item: any) => (
+                            <List.Item>
+                              <Link
+                                href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                            </List.Item>
+                          )}
+                      />
+                  </Panel>
+              </Collapse>
+            }
+            {
+              getProp(task, 'relatives', []).length > 0 &&
+              <Collapse style={{marginTop: 30}}>
+                  <Panel header="Relative tasks" key="1">
+                      <List
+                          bordered
+                          dataSource={getProp(task, 'relatives', [])}
+                          renderItem={(item: any) => (
+                            <List.Item>
+                              <Link
+                                href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                            </List.Item>
+                          )}
+                      />
+                  </Panel>
+              </Collapse>
+            }
 
-              <Comments taskId={getProp(task, 'id', 0)}/>
-            </Space>
+            <div style={{marginTop: 30}}/>
+            <Comments taskId={getProp(task, 'id', 0)}/>
 
             <Attachments data={getProp(original, 'task.attachment', [])}/>
 
