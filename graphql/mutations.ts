@@ -225,3 +225,13 @@ export const CREATE_COMMENT = gql`
     }
   }
 `;
+
+
+export const LOGOUT = gql`
+  mutation Logout {
+    logout {
+      success
+      message
+    }
+  }
+`;

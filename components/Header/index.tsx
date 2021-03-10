@@ -3,14 +3,16 @@ import {connect} from 'react-redux';
 import {Layout, Menu, Input, Button, message} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
-import {apiDomain} from '../../utilities/constants';
+import {productionMode} from '../../utilities/constants';
 // @ts-ignore
 import Logo from '../../public/assets/logo.svg';
 import {useRouter} from 'next/router'
 import Link from 'antd/lib/typography/Link';
-import {useQuery} from "@apollo/react-hooks";
+import {useMutation, useQuery} from "@apollo/react-hooks";
 import {GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
+import LoginViaAM from "../LoginViaAM";
+import {LOGOUT} from "../../graphql/mutations";
 
 const {Header} = Layout;
 const {Search} = Input;
@@ -65,19 +67,23 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     }
   }, [personData])
 
-  const logout = () => {
-    fetch(`${apiDomain}/github/logout`)
-      .then(response => response.json())
-      .then(res => {
-        if (res.status) {
-          message.success(`You are logged out !`).then();
-          userLogInAction({isLoggedIn: false});
-          localStorage.removeItem('userId');
-          localStorage.removeItem('fullName');
-          router.push("/switch-test-user").then();
-        }
-      });
-  }
+  const [logout] = useMutation(LOGOUT, {
+    onCompleted(data) {
+      const {success, message: responseMessage} = data.logout;
+      if (success) {
+        message.success(responseMessage)
+        userLogInAction({isLoggedIn: false});
+        localStorage.removeItem('userId');
+        localStorage.removeItem('fullName');
+        router.push("/switch-test-user").then();
+      } else {
+        message.error(responseMessage)
+      }
+    },
+    onError(err) {
+      message.error("Failed to logout form the system").then();
+    }
+  });
 
   const selectedItem = getSelectedItem();
 
@@ -121,12 +127,18 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                 Sign out
               </Button>
             ) : (
-              <Button
-                className="signIn-btn"
-                onClick={() => router.push("/switch-test-user")}
-              >
-                Sign in
-              </Button>
+              <>{
+                productionMode
+                  ? <LoginViaAM />
+                  : (
+                    <Button
+                      className="signIn-btn"
+                      onClick={() => router.push("/switch-test-user")}
+                    >
+                      Sign in
+                    </Button>
+                  )
+              }</>
             )
           }
         </div>

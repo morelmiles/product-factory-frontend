@@ -828,3 +828,9 @@ export const GET_PERSON = gql`
     }
   }
 `;
+
+export const GET_AM_LOGIN_URL = gql`
+  query GetAMLink {
+    getAuthmachineLoginUrl 
+  }
+`;
