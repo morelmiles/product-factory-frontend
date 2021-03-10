@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Layout, Menu, Input, Button, message} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
-import {productionMode} from '../../utilities/constants';
+import {apiDomain, productionMode} from '../../utilities/constants';
 // @ts-ignore
 import Logo from '../../public/assets/logo.svg';
 import {useRouter} from 'next/router'
@@ -39,7 +39,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     }
   }
 
-  const {data: personData} = useQuery(GET_PERSON, {variables: {id: userId}})
+  const {data: personData} = useQuery(GET_PERSON)
 
   useEffect(() => {
     let userId = localStorage.getItem("userId")

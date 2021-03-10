@@ -235,3 +235,16 @@ export const LOGOUT = gql`
     }
   }
 `;
+
+export const FAKE_LOGIN = gql`
+  mutation FakeLogin ($personId: Int!) {
+    fakeLogin (personId: $personId) {
+      success
+      message
+      person {
+        id
+        fullName
+      }
+    }
+  }
+`;

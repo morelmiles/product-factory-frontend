@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 
-import { useQuery } from '@apollo/react-hooks';
+import {useMutation, useQuery} from '@apollo/react-hooks';
 import { GET_USERS } from '../../graphql/queries';
 import { Row, Col, Button, Select, message, Layout, Typography, Form } from "antd";
 
@@ -13,6 +13,7 @@ import { userLogInAction } from '../../lib/actions';
 import { UserState } from '../../lib/reducers/user.reducer';
 import ContainerFlex from "../../components/ContainerFlex";
 import LoginViaAM from "../../components/LoginViaAM";
+import {FAKE_LOGIN} from "../../graphql/mutations";
 
 const { Option } = Select;
 
@@ -26,26 +27,31 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
   const [form] = Form.useForm();
   const { data, error, loading } = useQuery(GET_USERS);
 
+  const [login] = useMutation(FAKE_LOGIN);
+
   const signIn = (userId: any) => {
     if (!userId || userId === 0) {
       message.warning("Please select user before clicking sign in button").then();
       return;
     }
 
-    fetch(`${apiDomain}/github/detect_user/?user_id=${userId}`)
-      .then(response => response.json())
-      .then(res => {
-        if (res.status) {
-          message.success(`${res.user.fullName} is logged in successfully!`).then();
-          userLogInAction({ isLoggedIn: res.status });
-          localStorage.setItem('userId', res.user.id);
-          localStorage.setItem('fullName', res.user.fullName);
-          router.push("/").then();
-        } else {
-          message.warning("User id is invalid!").then();
-          userLogInAction({ isLoggedIn: false });
-        }
-      });
+    login({
+      variables: {
+        personId: userId
+      }
+    }).then((data: any) => {
+      const {success, message: responseMessage, person} = data.data.fakeLogin;
+      if (success) {
+        message.success(responseMessage)
+        userLogInAction({ isLoggedIn: success });
+        localStorage.setItem('userId', person.id);
+        localStorage.setItem('fullName', person.fullName);
+        router.push("/").then();
+      } else {
+        message.warning(responseMessage).then();
+        userLogInAction({ isLoggedIn: false });
+      }
+    }).catch(err => message.error("Failed to logout form the system").then());
   }
 
   useEffect(() => {
