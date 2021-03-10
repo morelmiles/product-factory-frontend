@@ -48,19 +48,21 @@ type Props = {
   user: any;
 };
 
-const AddTask: React.FunctionComponent<Props> = ({
-                                                   modal,
-                                                   productSlug,
-                                                   closeModal,
-                                                   currentProduct,
-                                                   repositories,
-                                                   addRepository,
-                                                   modalType,
-                                                   task,
-                                                   submit,
-                                                   tasks,
-                                                   user
-                                                 }) => {
+const AddTask: React.FunctionComponent<Props> = (
+  {
+    modal,
+    productSlug,
+    closeModal,
+    currentProduct,
+    repositories,
+    addRepository,
+    modalType,
+    task,
+    submit,
+    tasks,
+    user
+  }
+) => {
   const [title, setTitle] = useState(modalType ? task.title : '');
   const [description, setDescription] = useState(modalType ? task.description : '');
   const [allTags, setAllTags] = useState([]);
@@ -109,17 +111,12 @@ const AddTask: React.FunctionComponent<Props> = ({
   const [updateTask] = useMutation(UPDATE_TASK);
   const [createCodeRepository] = useMutation(CREATE_CODE_REPOSITORY);
   const [allUsers, setAllUsers] = useState([]);
-  const [reviewSelectValue, setReviewSelectValue] = useState('');
-
+  const [reviewSelectValue, setReviewSelectValue] = useState(getProp(task, 'reviewer.slug', ''));
   const {data: users} = useQuery(GET_USERS);
 
   useEffect(() => {
     setAllUsers(getProp(users, 'people', []));
   }, [users]);
-
-  useEffect(() => {
-    setReviewSelectValue(user.slug);
-  }, [user]);
 
   useEffect(() => {
     if (tagsData && tagsData.tags) setAllTags(tagsData.tags)

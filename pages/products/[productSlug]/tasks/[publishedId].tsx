@@ -31,7 +31,7 @@ type Params = {
   currentProduct: any;
 };
 
-const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
+const Task: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const {publishedId, productSlug} = router.query;
 
