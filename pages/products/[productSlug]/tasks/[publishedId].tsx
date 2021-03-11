@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Divider, message, Button, Tag} from 'antd';
+import {Row, Col, message, Button, Tag, Collapse, List} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -9,7 +9,7 @@ import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT_SHORT} from
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
-import {CustomAvatar, EditIcon, TaskTable} from '../../../../components';
+import {CustomAvatar, EditIcon} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";
@@ -23,12 +23,15 @@ import AddTaskContainer from "../../../../components/Products/AddTask";
 import Comments from "../../../../components/Comments";
 
 
+const {Panel} = Collapse;
+
+
 type Params = {
   user?: any;
   currentProduct: any;
 };
 
-const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
+const Task: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const {publishedId, productSlug} = router.query;
 
@@ -179,7 +182,7 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
   const fetchData = async () => {
     const data: any = await refetch()
 
-    if (!data.errors) {
+    if (data && !data.errors) {
       setTask(data.data.task);
     }
   }
@@ -370,7 +373,8 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
                       (
                         TASK_TYPES[getProp(task, 'status')] === "Available" ||
                         TASK_TYPES[getProp(task, 'status')] === "Draft" ||
-                        TASK_TYPES[getProp(task, 'status')] === "Pending"
+                        TASK_TYPES[getProp(task, 'status')] === "Pending" ||
+                        TASK_TYPES[getProp(task, 'status')] === "Blocked"
                       ) ? (
                         <strong className="my-auto">
                           Status: {TASK_TYPES[getProp(task, 'status')]}
@@ -460,17 +464,42 @@ const Task: React.FunctionComponent<Params> = ({user, currentProduct}) => {
               </Col>
             </Row>
 
-            <TaskTable
-              title={'Dependant Tasks'}
-              tasks={getProp(task, 'dependOn', [])}
-              productSlug={String(productSlug)}
-              hideEmptyList={true}
-              statusList={getProp(original, 'statusList', [])}
-              submit={() => {
-              }}
-            />
+            {
+              getProp(task, 'dependOn', []).length > 0 &&
+              <Collapse style={{marginTop: 30}}>
+                  <Panel header="Blocked by" key="1">
+                      <List
+                          bordered
+                          dataSource={getProp(task, 'dependOn', [])}
+                          renderItem={(item: any) => (
+                            <List.Item>
+                              <Link
+                                href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                            </List.Item>
+                          )}
+                      />
+                  </Panel>
+              </Collapse>
+            }
+            {
+              getProp(task, 'relatives', []).length > 0 &&
+              <Collapse style={{marginTop: 30}}>
+                  <Panel header="Relative tasks" key="1">
+                      <List
+                          bordered
+                          dataSource={getProp(task, 'relatives', [])}
+                          renderItem={(item: any) => (
+                            <List.Item>
+                              <Link
+                                href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                            </List.Item>
+                          )}
+                      />
+                  </Panel>
+              </Collapse>
+            }
 
-            <Divider style={{marginTop: 50}}/>
+            <div style={{marginTop: 30}}/>
             <Comments taskId={getProp(task, 'id', 0)}/>
 
             <Attachments data={getProp(original, 'task.attachment', [])}/>

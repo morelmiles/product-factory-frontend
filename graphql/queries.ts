@@ -450,6 +450,13 @@ export const GET_TASK_BY_ID = gql`
           }
         }
       }
+      relatives {
+        title
+        publishedId
+        product {
+          slug
+        }
+      }
     }
     statusList
   }

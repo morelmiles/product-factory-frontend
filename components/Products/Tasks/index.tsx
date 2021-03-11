@@ -10,6 +10,7 @@ import {getUserRole, hasManagerRoots} from "../../../utilities/utils";
 
 const { Option } = Select;
 
+
 type Props = {
   onClick?: () => void;
   currentProduct: any;
@@ -17,7 +18,7 @@ type Props = {
   userRole: string;
 } & RouteComponentProps;
 
-const TasksPage: React.SFC<Props> = (props: Props) => {
+const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const { match, currentProduct, repositories, user } = props;
   const [tagType, setTagType] = useState("all");
   const [sortType, setSortType] = useState("initiatives");
