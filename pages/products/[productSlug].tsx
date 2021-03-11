@@ -92,7 +92,7 @@ const Summary: React.FunctionComponent = () => {
               </Col>
               {
                 getProp(data, 'product.videoUrl', null) !== null && (
-                  <Col span={11} className="product-video">
+                  <Col xs={24} md={11} span={11} className="product-video">
                     <ReactPlayer
                       width="100%"
                       height="200px"

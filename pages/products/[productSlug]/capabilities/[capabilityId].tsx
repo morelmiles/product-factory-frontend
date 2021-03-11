@@ -16,6 +16,7 @@ import EditIcon from '../../../../components/EditIcon';
 import Attachments from "../../../../components/Attachments";
 import Loading from "../../../../components/Loading";
 import {DownOutlined} from "@ant-design/icons";
+import CheckableTag from "antd/lib/tag/CheckableTag";
 
 
 interface ICrumb {
@@ -35,7 +36,9 @@ interface IParentsCrumbsProps {
 
 const {Content} = Layout;
 
-const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = ({productSlug, crumbs, capabilityName}) => {
+const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = (
+  {productSlug, crumbs, capabilityName}
+) => {
   return (
     <Breadcrumb>
       <Breadcrumb.Item>
@@ -130,6 +133,7 @@ const CapabilityDetail: React.FunctionComponent = () => {
 
   if (loading || crumbsLoading) return <Loading/>
 
+
   return (
     <ContainerFlex>
       <Layout>
@@ -169,34 +173,49 @@ const CapabilityDetail: React.FunctionComponent = () => {
                     </Col>
                   }
                 </Row>
-                <Row>
-                  <Space align="start" size={20}>
-                    {getProp(capability, 'product.videoUrl', null) && (
-                      <Col>
+                <Space align="start" size={20} direction="vertical">
+                  {getProp(capability, 'videoLink', null) && (
+                    <Row>
+                      <Col span={24}>
                         <ReactPlayer
                           width="100%"
                           height="170px"
                           className="mr-10"
-                          url={getProp(capability, 'product.videoUrl')}
+                          url={getProp(capability, 'videoLink')}
                         />
                       </Col>
-                    )}
-                    <Col xs={24} md={10}>
+                    </Row>
+                  )}
+                  <Row>
+                    <Col span={24}>
                       <DynamicHtml
                         className='mb-10'
-                        text={getProp(capability, 'product.shortDescription', '')}
+                        text={getProp(capability, 'description', '')}
                       />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={24}>
                       {
-                        getProp(capability, 'product.tag', []).map((tag: TagType, idx: number) => (
-                          <Tag key={`tag-${idx}`}>{tag.name}</Tag>
+                        getProp(capability, 'stacks', []).map((tag: TagType, index: number) => (
+                          <CheckableTag key={`tag-${index}`} checked={true}>{tag.name}</CheckableTag>
                         ))
                       }
-                      {getProp(capability, 'attachment', []).length > 0 && (
-                        <Attachments style={{marginTop: 20}} data={getProp(capability, 'attachment', [])}/>
-                      )}
                     </Col>
-                  </Space>
+                  </Row>
+                </Space>
+
+                <Row>
+                  <Col span={12}>
+                    {
+                      getProp(capability, 'attachments', []).length > 0 && (
+                        <Attachments style={{marginTop: 20, marginBottom: 50}}
+                                     data={getProp(capability, 'attachments', [])}/>
+                      )
+                    }
+                  </Col>
                 </Row>
+
                 <TaskTable
                   submit={() => refetch()}
                   tasks={getProp(capability, 'tasks', [])}
@@ -231,13 +250,5 @@ const CapabilityDetail: React.FunctionComponent = () => {
   );
 };
 
-const mapStateToProps = () => ({});
 
-const mapDispatchToProps = () => ({});
-
-const CapabilityDetailContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CapabilityDetail);
-
-export default CapabilityDetailContainer;
+export default CapabilityDetail;

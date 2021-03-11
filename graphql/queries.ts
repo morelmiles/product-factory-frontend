@@ -213,6 +213,12 @@ export const GET_CAPABILITIES = gql`
     capabilities(productSlug: $productSlug) {
       id
       name
+      description
+      stacks {
+        id
+        name
+      }
+      videoLink
       breadcrumb {
         id
         name
@@ -244,9 +250,13 @@ export const GET_CAPABILITY_BY_ID = gql`
   query GetCapability($nodeId: Int!, $slug: String!, $userId: Int!) {
     capability(nodeId: $nodeId) {
       id
-      path
-      depth
       name
+      description
+      stacks {
+        id
+        name
+      }
+      videoLink
       attachments {
         id
         name

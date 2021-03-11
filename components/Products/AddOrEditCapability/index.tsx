@@ -1,14 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Modal, Row, Input, message, Button, Select} from 'antd';
-import {useMutation} from '@apollo/react-hooks';
+import {useMutation, useQuery} from '@apollo/react-hooks';
 import {CREATE_CAPABILITY, UPDATE_CAPABILITY} from '../../../graphql/mutations';
 import Attachment from '../../../components/Attachment';
 import {getProp} from '../../../utilities/filters';
 import {useRouter} from "next/router";
+import {GET_STACKS} from "../../../graphql/queries";
 
 
 const {Option} = Select;
+
 
 type Props = {
   modal?: boolean;
@@ -27,20 +29,34 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
     capability,
     closeModal,
     modalType,
-    submit,
-    // userRole,
-    currentProduct,
-    hideParentOptions,
+    submit
   }
 ) => {
   const router = useRouter();
   const {productSlug} = router.query;
 
-  const [title, setTitle] = useState(
+  const {data: stacksData, error: stacksError} = useQuery(GET_STACKS);
+  const [allStacks, setAllStacks] = useState([])
+
+  useEffect(() => {
+    if (!stacksError) {
+      setAllStacks(getProp(stacksData, 'stacks', []));
+    }
+  }, [stacksData])
+
+  const [name, setName] = useState(
     modalType === 'edit' ? getProp(capability, 'name', '') : ''
   );
-  const [parent, setParent] = useState(
-    modalType === 'edit' ? getProp(capability, 'parent.id', '') : ''
+  const [description, setDescription] = useState(
+    modalType === 'edit' ? getProp(capability, 'description', '') : ''
+  );
+  const [stacks, setStacks] = useState(
+    modalType === 'edit' ? getProp(capability, 'stacks', []).map((stack: any) => (
+      stack.id
+    )) : []
+  );
+  const [videoLink, setVideoLink] = useState(
+    modalType === 'edit' ? getProp(capability, 'videoLink', '') : ''
   );
   const [attachments, setAttachments] = useState(
     modalType === 'edit' ? getProp(capability, 'attachment', []) : []
@@ -53,9 +69,11 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
   };
 
   const handleOk = () => {
-    if (title === '') {
-      message.error("Title can't be empty!").then();
-
+    if (name === '') {
+      message.error("Name can't be empty").then();
+      return;
+    } else if (description === '') {
+      message.error("Description can't be empty").then();
       return;
     }
 
@@ -70,10 +88,18 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
 
   const onUpdate = async () => {
     try {
+      let nodeTitle = name;
+      nodeTitle = nodeTitle.replaceAll("'", "\\'");
+      nodeTitle = nodeTitle.replaceAll('"', "\\'");
+
       const res = await updateCapability({
         variables: {
+          productSlug: null,
           nodeId: capability.id,
-          name: title,
+          name: nodeTitle,
+          description,
+          stacks,
+          videoLink,
           attachments: attachments.map((item: any) => item.id)
         }
       });
@@ -89,29 +115,21 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
 
   const onCreate = async () => {
     try {
-      let input = {};
-
-      let nodeTitle = title;
+      let nodeTitle = name;
       nodeTitle = nodeTitle.replaceAll("'", "\\'");
       nodeTitle = nodeTitle.replaceAll('"', "\\'");
 
-      if (modalType === 'add-root') {
-        input = {
+      const res = await createCapability({
+        variables: {
+          productSlug: modalType === 'add-root' ? productSlug : null,
+          nodeId: modalType === 'add-child' ? capability.id : null,
           name: nodeTitle,
-          productSlug: productSlug,
+          description,
+          stacks,
+          videoLink,
           attachments: attachments.map((item: any) => item.id)
-        };
-      } else if (modalType === 'add-child') {
-        input = {
-          name: nodeTitle,
-          nodeId: capability.id,
-          attachments: attachments.map((item: any) => item.id)
-        };
-      } else {
-        return;
-      }
-
-      const res = await createCapability({variables: input});
+        }
+      });
 
       if (res.data && res.data.createCapability && res.data.createCapability.status) {
         message.success('Capability is created successfully!');
@@ -142,29 +160,46 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
             <label>Name*:</label>
             <Input
               placeholder="Name"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
             />
           </Row>
-          {
-            !hideParentOptions && currentProduct && currentProduct.capabilitySet && (
-              <Row className="mt-15">
-                <label>Parent capability:</label>
-                <Select
-                  defaultValue={parent}
-                  onChange={setParent}
-                >
-                  <Option value={0}>Select parent</Option>
-                  {currentProduct.capabilitySet.map((option: any, idx: number) => (
-                    <Option key={`cap${idx}`} value={option.id}>
-                      {option.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Row>
-            )
-          }
+          <Row className="mb-15">
+            <label>Description*:</label>
+            <Input.TextArea
+              rows={2}
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+          </Row>
+          <Row className="mb-15">
+            <label>Stacks:</label>
+            <Select
+              placeholder="Stacks"
+              mode="multiple"
+              defaultValue={stacks}
+              onChange={setStacks}
+            >
+              <Option value={0}>Select stacks</Option>
+              {allStacks && allStacks.map((option: any, idx: number) => (
+                <Option key={`cap${idx}`} value={option.id}>
+                  {option.name}
+                </Option>
+              ))}
+            </Select>
+          </Row>
+          <Row className="mb-15">
+            <label>Video link:</label>
+            <Input
+              placeholder="Video link"
+              value={videoLink}
+              onChange={(e) => setVideoLink(e.target.value)}
+              required
+            />
+          </Row>
           {
             <Attachment
               attachments={attachments}

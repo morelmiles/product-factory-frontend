@@ -51,8 +51,14 @@ export const CREATE_CODE_REPOSITORY = gql`
 `;
 
 export const CREATE_CAPABILITY = gql`
-  mutation CreateCapability($name: String!, $nodeId: Int, $productSlug: String, $attachments: [Int]) {
-    createCapability(input: {name: $name, nodeId: $nodeId, productSlug: $productSlug, attachments: $attachments}) {
+  mutation CreateCapability(
+    $nodeId: Int, $productSlug: String, $name: String!, $description: String!,
+    $stacks: [Int], $videoLink: String, $attachments: [Int]
+  ) {
+    createCapability(input: {
+      nodeId: $nodeId, productSlug: $productSlug, name: $name, description: $description,
+      stacks: $stacks, videoLink: $videoLink attachments: $attachments
+    }) {
       status
       capability {
         id
@@ -63,8 +69,14 @@ export const CREATE_CAPABILITY = gql`
 `;
 
 export const UPDATE_CAPABILITY = gql`
-  mutation UpdateCapability($nodeId: Int!, $name: String, $attachments: [Int]) {
-    updateCapability(nodeId: $nodeId, input: {name: $name, nodeId: $nodeId, attachments: $attachments}) {
+  mutation UpdateCapability(
+    $nodeId: Int, $productSlug: String, $name: String!, $description: String!,
+    $stacks: [Int], $videoLink: String, $attachments: [Int]
+  ) {
+    updateCapability(input: {
+      nodeId: $nodeId, productSlug: $productSlug, name: $name, description: $description,
+      stacks: $stacks, videoLink: $videoLink attachments: $attachments
+    }) {
       status
       capability {
         id
@@ -143,7 +155,7 @@ export const DELETE_ATTACHMENT = gql`
   }
 `;
 
-export const  CHANGE_TASK_PRIORITY = gql`
+export const CHANGE_TASK_PRIORITY = gql`
   mutation ChangeTaskPriority($taskId: Int!, $priority: String!) {
     changeTaskPriority(taskId: $taskId, priority: $priority) {
       status

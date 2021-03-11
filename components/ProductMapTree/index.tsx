@@ -1,6 +1,6 @@
 import SortableTree, {getVisibleNodeCount} from "react-sortable-tree";
 import {TreeNode} from "../../utilities/constants";
-import {Button, Col, Input, message, Row, Typography} from "antd";
+import {Button, Col, Input, message, Row} from "antd";
 import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/react-hooks";
@@ -154,7 +154,7 @@ const ProductMapTree = () => {
 
   const count = getVisibleNodeCount({treeData});
   const mapHeight = count * 62;
-  console.log(treeData)
+
   return !capabilitiesError ? (
     <Row style={{width: '100%'}}>
       <Row justify="space-between" style={{width: '100%', marginBottom: 20}}>
