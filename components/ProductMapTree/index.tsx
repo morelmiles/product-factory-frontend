@@ -31,23 +31,16 @@ const ProductMapTree = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const convertDataAndSetTree = (capabilities: any) => {
-    try {
-      let capabilitiesStr: string = getProp(capabilities, 'capabilities', '');
-      capabilitiesStr = capabilitiesStr.replaceAll("'", '"');
-      capabilitiesStr = capabilitiesStr.replaceAll('\\\\"', "'");
-
-      if (capabilitiesStr.length > 0) {
-        let capabilitiesData = JSON.parse(capabilitiesStr);
-        setTreeData(formatData(capabilitiesData[0].children));
-      }
-    } catch {
-    }
+    let capabilitiesData = JSON.parse(getProp(capabilities, 'capabilities', ''));
+    setTreeData(formatData(capabilitiesData[0].children));
   }
 
   const formatData = (data: any) => {
     return data.map((node: any) => ({
       id: getProp(node, 'id'),
       title: getProp(node, 'data.name'),
+      description: getProp(node, 'data.description', ''),
+      videoLink: getProp(node, 'data.video_link', ''),
       children: node.children ? formatData(getProp(node, 'children', [])) : []
     }))
   }

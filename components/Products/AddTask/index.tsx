@@ -471,7 +471,6 @@ const AddTask: React.FunctionComponent<Props> = (
             defaultValue={stacks}
             onChange={setStacks}
           >
-            <Option value={0}>Select stacks</Option>
             {allStacks && allStacks.map((option: any, idx: number) => (
               <Option key={`cap${idx}`} value={option.id}>
                 {option.name}
