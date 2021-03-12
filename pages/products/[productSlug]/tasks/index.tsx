@@ -16,7 +16,7 @@ import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 type Props = {
   onClick?: () => void;
   userRole: string;
-  user: {roles: any[], id: string},
+  user: { roles: any[], id: string },
   productSlug: string;
 };
 
@@ -107,21 +107,24 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
             </Col>
           )}
           <Col className="tag-section ml-auto">
-            <Button type="primary"
+            <Button
+              type="primary"
               onClick={() => setFilterModal(!filterModal)}
-              icon={<FilterOutlined />}>Filter</Button>
+              icon={<FilterOutlined/>}
+            >Filter</Button>
           </Col>
         </Row>
       </div>
       <div>
         {
           !error ?
-            <TaskTable submit={() => refetch(productsVariable)}
-                       tasks={tasks}
-                       statusList={TASK_TYPES}
-                       showInitiativeName={true}
-                       hideTitle={true}
-                       showPendingTasks={userHasManagerRoots}
+            <TaskTable
+              submit={() => refetch(productsVariable)}
+              tasks={tasks}
+              statusList={TASK_TYPES}
+              showInitiativeName={true}
+              hideTitle={true}
+              showPendingTasks={userHasManagerRoots}
             /> : (
               <h3 className="text-center mt-30">No tasks</h3>
             )
@@ -143,7 +146,7 @@ const mapStateToProps = (state: any) => ({
   user: state.user,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({});
+const mapDispatchToProps = () => ({});
 
 const TasksPageContainer = connect(
   mapStateToProps,

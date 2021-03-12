@@ -9,7 +9,7 @@ import {addRepository} from '../../../lib/actions';
 import {WorkState} from '../../../lib/reducers/work.reducer';
 import AddInitiative from '../AddInitiative';
 import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
-import {RICHTEXT_EDITOR_WIDTH} from '../../../utilities/constants';
+import {RICH_TEXT_EDITOR_WIDTH} from '../../../utilities/constants';
 import dynamic from "next/dynamic";
 import {getProp} from "../../../utilities/filters";
 
@@ -271,7 +271,8 @@ const AddTask: React.FunctionComponent<Props> = (
         onOk={handleOk}
         onCancel={handleCancel}
         className="add-modal add-task-modal"
-        width={RICHTEXT_EDITOR_WIDTH}
+        width={RICH_TEXT_EDITOR_WIDTH}
+        maskClosable={false}
       >
         <Row className='mb-15'>
           <label>Title*:</label>

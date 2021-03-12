@@ -1,16 +1,12 @@
 import React, {useState} from 'react';
-import {Row, Col, Radio, Select, Layout, Button} from 'antd';
+import {Row, Col, Radio, Select, Layout} from 'antd';
 import {useRouter} from 'next/router'
-import {TASK_LIST_TYPES} from '../../graphql/types';
 import {RadioChangeEvent} from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
 import classnames from 'classnames';
 import {useQuery} from "@apollo/react-hooks";
 import {GET_TAGS} from "../../graphql/queries";
-import {FilterOutlined} from '@ant-design/icons';
-import CustomModal from "../Products/CustomModal";
-import FilterModal from "../FilterModal";
 
 
 const {Option} = Select;
@@ -20,7 +16,6 @@ const Dashboard: React.FunctionComponent = () => {
   const router = useRouter();
   let searchParams: any = new URLSearchParams(router.asPath.split('?')[1]);
   const [mode, setMode] = useState('products');
-  // const [mode, setMode] = useState('tasks');
   const [productTags, setProductTags] = useState([]);
   const [taskTags, setTaskTags] = useState([]);
   const [productSortType, setProductSortType] = useState("initiatives");
@@ -73,107 +68,59 @@ const Dashboard: React.FunctionComponent = () => {
             : `Explore ${taskNum} tasks across ${productNum} Open Products`
         }
       </div>
-      <div>
-        <Row align="middle" justify="space-between" className="mb-15">
-          <Col span={8} xs={24} md={8}>
-            <Radio.Group onChange={handleModeChange} value={mode} className="mb-8">
-              <Radio.Button value="products">Products</Radio.Button>
-              <Radio.Button value="tasks">Tasks</Radio.Button>
-            </Radio.Group>
-          </Col>
-          <Col
-            xs={24}
-            md={16}
-          >
-            <div
-              className={classnames("tag-section", {'mr-16': mode === "products"})}
-            >
-              {mode === "products" ? (
-                <>
-                  <div>
-                    <label className='mr-15'>Tags: </label>
+
+      <Row align="middle" justify="space-between" className="mb-15" style={{padding: 8}}>
+        <Col xs={24} sm={12} md={8} style={{marginTop: 42}}>
+          <Radio.Group onChange={handleModeChange} value={mode} className="mb-8">
+            <Radio.Button value="products">Products</Radio.Button>
+            <Radio.Button value="tasks">Tasks</Radio.Button>
+          </Radio.Group>
+        </Col>
+
+        <Col xs={24} sm={12} md={12} lg={8} style={{marginTop: 20}}>
+          {
+            mode === "products" &&
+            <Row gutter={10} justify="end">
+                <Col span={12}>
+                    <label>Tags: </label>
                     <Select
-                      defaultValue={productTags}
-                      style={{minWidth: 120}}
-                      onChange={(value: any) => changeSearchTerm("product-tag", value)}
+                        defaultValue={productTags}
+                        onChange={(value: any) => changeSearchTerm("product-tag", value)}
                     >
-                      {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>
+                      {tagsData?.data ? tagsData.data.tags.map((tag: { id: string, name: string }) =>
                         <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
                     </Select>
-                  </div>
-                  <div className='ml-15'>
-                    <label className='mr-15'>Sorted by: </label>
-                    <Select
-                      defaultValue={productSortType}
-                      style={{minWidth: 120}}
-                      onChange={(value: any) => changeSearchTerm("initiatives", value)}
-                    >
-                      <Option value="initiatives">Number of initiatives</Option>
-                      <Option value="1">1</Option>
-                      <Option value="2">2</Option>
-                      <Option value="3">3</Option>
-                      <Option value="4">4</Option>
-                    </Select>
-                  </div>
-                </>
-              ) : (
-                <>
+                </Col>
 
-                  {/*<div>*/}
-                  {/*  <label className='mr-15'>Tags: </label>*/}
-                  {/*  <Select*/}
-                  {/*    value={taskTags}*/}
-                  {/*    mode="multiple"*/}
-                  {/*    style={{minWidth: 120}}*/}
-                  {/*    onChange={(value: any) => changeSearchTerm("task-tag", value)}*/}
-                  {/*    placeholder="Select tags"*/}
-                  {/*  >*/}
-                  {/*    {tagsData?.data ? tagsData.data.tags.map((tag: {id: string, name: string}) =>*/}
-                  {/*      <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}*/}
-                  {/*  </Select>*/}
-                  {/*</div>*/}
-                  {/*<div className='ml-15'>*/}
-                  {/*  <label className='mr-15'>Sorted by: </label>*/}
-                  {/*  <Select*/}
-                  {/*    value={taskSortType}*/}
-                  {/*    style={{minWidth: 120}}*/}
-                  {/*    onChange={(value: any) => changeSearchTerm("task-sorted", value)}*/}
-                  {/*  >*/}
-                  {/*    <Option value="title">Name</Option>*/}
-                  {/*    <Option value="priority">Priority</Option>*/}
-                  {/*    <Option value="status">Status</Option>*/}
-                  {/*  </Select>*/}
-                  {/*</div>*/}
-                  {/*<div className='ml-15'>*/}
-                  {/*  <label className='mr-15'>Status: </label>*/}
-                  {/*  <Select*/}
-                  {/*    value={taskStatus}*/}
-                  {/*    style={{minWidth: 120}}*/}
-                  {/*    mode="multiple"*/}
-                  {/*    placeholder="Select statuses"*/}
-                  {/*    onChange={(value: any) => changeSearchTerm("status", value)}*/}
-                  {/*  >*/}
-                  {/*    {TASK_LIST_TYPES.map((option: { id: number, name: string }) => (*/}
-                  {/*      <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>*/}
-                  {/*    ))}*/}
-                  {/*  </Select>*/}
-                  {/*</div>*/}
-                </>
-              )}
-            </div>
-          </Col>
-        </Row>
-      </div>
+                <Col span={12}>
+                    <label>Sorted by: </label>
+                    <Select
+                        defaultValue={productSortType}
+                        onChange={(value: any) => changeSearchTerm("initiatives", value)}
+                    >
+                        <Option value="initiatives">Number of initiatives</Option>
+                        <Option value="1">1</Option>
+                        <Option value="2">2</Option>
+                        <Option value="3">3</Option>
+                        <Option value="4">4</Option>
+                    </Select>
+                </Col>
+            </Row>
+          }
+        </Col>
+      </Row>
       {
         mode === "products" ? (
           <ProductTab setProductNum={setProductNum}/>
         ) : (
-          <TaskTab setTaskNum={setTaskNum}
-                   showInitiativeName={true}
-                   showProductName={true}
-                   sortedBy={taskSortType}
-                   statuses={taskStatus}
-                   tags={taskTags} />
+          <TaskTab
+            setTaskNum={setTaskNum}
+            showInitiativeName={true}
+            showProductName={true}
+            sortedBy={taskSortType}
+            statuses={taskStatus}
+            tags={taskTags}
+          />
         )
       }
       <div style={{marginBottom: 50}}/>

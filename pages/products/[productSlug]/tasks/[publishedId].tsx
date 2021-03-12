@@ -21,6 +21,7 @@ import CheckableTag from "antd/lib/tag/CheckableTag";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import AddTaskContainer from "../../../../components/Products/AddTask";
 import Comments from "../../../../components/Comments";
+import CustomAvatar2 from "../../../../components/CustomAvatar2";
 
 
 const {Panel} = Collapse;
@@ -207,24 +208,24 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   <strong className="my-auto">Assigned to you</strong>
                 </div>
               )
-              : (<>
-                <strong className="my-auto">Assigned to: </strong>
-                <div className="ml-12">
-                  {CustomAvatar(
-                    assignee,
-                    "fullName",
-                    "default",
-                    null,
-                    {margin: 'auto 8px auto 0'}
-                  )
-                  }
-                </div>
-                <div className="my-auto">
-                  <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
-                    <a className="text-grey-9">{getProp(assignee, 'fullName', '')}</a>
-                  </Link>
-                </div>
-              </>)
+              : (
+                <Row style={{marginTop: 10}} className="text-sm mt-8">
+                  <strong className="my-auto">Assigned to: </strong>
+                  <Row align="middle" style={{marginLeft: 15}}>
+                    <Col>
+                      <CustomAvatar2 person={{
+                        fullname: getProp(assignee, 'fullName', ''),
+                        slug: getProp(assignee, 'slug', '')
+                      }}/>
+                    </Col>
+                    <Col>
+                      <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
+                        <a className="text-grey-9">{getProp(assignee, 'fullName', '')}</a>
+                      </Link>
+                    </Col>
+                  </Row>
+                </Row>
+              )
             }
           </>
         ) : null}
@@ -345,27 +346,23 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
               <Col xs={24} md={18} className="pt-20">
                 {parse(getProp(task, 'description', ''))}
                 <div className="mt-22">
-                  {showAssignedUser()}
-                  <Row className="text-sm">
+                  <Row style={{marginTop: 10}} className="text-sm mt-8">
+                    {showAssignedUser()}
                     <strong className="my-auto">Created By: </strong>
-                    <div className="ml-12">
-                      {
-                        getProp(task, 'createdBy', null) !== null
-                          ? CustomAvatar(
-                          getProp(task, 'createdBy'),
-                          "fullName",
-                          "default",
-                          null,
-                          {margin: 'auto 8px auto 0'}
-                          )
-                          : null
-                      }
-                    </div>
-                    <div className="my-auto">
-                      <Link href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
-                        <a className="text-grey-9">{getProp(task, 'createdBy.fullName', '')}</a>
-                      </Link>
-                    </div>
+
+                    <Row align="middle" style={{marginLeft: 15}}>
+                      <Col>
+                        <CustomAvatar2 person={{
+                          fullname: getProp(task, 'createdBy.fullName', ''),
+                          slug: getProp(task, 'createdBy.slug', '')
+                        }}/>
+                      </Col>
+                      <Col>
+                        <Link href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
+                          <a className="text-grey-9">{getProp(task, 'createdBy.fullName', '')}</a>
+                        </Link>
+                      </Col>
+                    </Row>
                   </Row>
 
                   <Row className="text-sm mt-8">
@@ -389,12 +386,12 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                               getProp(task, 'createdBy', null) !== null && !assignedTo
                                 ? (
                                   <Row>
-                                    {
-                                      CustomAvatar(
-                                        getProp(task, 'createdBy'),
-                                        "fullName"
-                                      )
-                                    }
+                                    <Col>
+                                      <CustomAvatar2 person={{
+                                        fullname: getProp(task, 'createdBy.fullName', ''),
+                                        slug: getProp(task, 'createdBy.slug', '')
+                                      }}/>
+                                    </Col>
                                     <div className="my-auto">
                                       {
                                         getProp(
@@ -422,10 +419,21 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   {
                     getProp(task, 'reviewer.slug', null) &&
                     <Row style={{marginTop: 10}} className="text-sm mt-8">
-                        <strong className="my-auto">Reviewer:&nbsp;</strong>
-                        <Link href={`/people/${getProp(task, 'reviewer.slug', '')}`}>
-                          {getProp(task, 'reviewer.fullName', '')}
-                        </Link>
+                        <strong className="my-auto">Reviewer:</strong>
+
+                        <Row align="middle" style={{marginLeft: 15}}>
+                            <Col>
+                                <CustomAvatar2 person={{
+                                  fullname: getProp(task, 'reviewer.fullName', ''),
+                                  slug: getProp(task, 'reviewer.slug', '')
+                                }}/>
+                            </Col>
+                            <Col>
+                                <Link href={`/people/${getProp(task, 'reviewer.slug', '')}`}>
+                                    <a className="text-grey-9">{getProp(task, 'reviewer.fullName', '')}</a>
+                                </Link>
+                            </Col>
+                        </Row>
                     </Row>
                   }
                   {stacks.length > 0 && (
@@ -484,7 +492,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
             {
               getProp(task, 'relatives', []).length > 0 &&
               <Collapse style={{marginTop: 30}}>
-                  <Panel header="Relative tasks" key="1">
+                  <Panel header="Dependant tasks" key="1">
                       <List
                           bordered
                           dataSource={getProp(task, 'relatives', [])}

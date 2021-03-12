@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { CREATE_INITIATIVE, UPDATE_INITIATIVE } from '../../../graphql/mutations';
 import { INITIATIVE_TYPES } from '../../../graphql/types';
 import { getProp } from '../../../utilities/filters';
-import { RICHTEXT_EDITOR_WIDTH } from '../../../utilities/constants';
+import { RICH_TEXT_EDITOR_WIDTH } from '../../../utilities/constants';
 import dynamic from 'next/dynamic';
 
 const RichTextEditor = dynamic(
@@ -119,7 +119,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
             { modalType ? "Edit" : "Add" }
           </Button>,
         ]}
-        width={RICHTEXT_EDITOR_WIDTH}
+        width={RICH_TEXT_EDITOR_WIDTH}
       >
         {
           modalType ? (

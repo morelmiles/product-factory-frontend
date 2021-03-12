@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Layout, Menu, Input, Button, message} from 'antd';
+import {Input, Button, message, Row, Col, Space, Drawer} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
 import {apiDomain, productionMode} from '../../utilities/constants';
@@ -13,9 +13,10 @@ import {GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
 import LoginViaAM from "../LoginViaAM";
 import {LOGOUT} from "../../graphql/mutations";
+import { MenuOutlined } from '@ant-design/icons';
 
-const {Header} = Layout;
 const {Search} = Input;
+
 
 type Props = {
   user?: any;
@@ -26,8 +27,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
 
-  const onSearch = (e: any) => {
+  const onSearch = () => {
   }
+
   const getSelectedItem = () => {
     switch (router.asPath) {
       case "/product/add":
@@ -86,65 +88,150 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     }
   });
 
-  const selectedItem = getSelectedItem();
+  // const selectedItem = getSelectedItem();
+
+  const [visible, setVisible] = useState(false);
+  const showDrawer = () => {
+    setVisible(true);
+  };
+  const onClose = () => {
+    setVisible(false);
+  };
 
   return (
-    <Header className="global-header">
-      <div className="inner-navbar">
-        <Menu className="header-menu" mode="horizontal" defaultSelectedKeys={[selectedItem]}>
-          <Menu.Item key="1">
-            <Link href="/" className={selectedItem === "1" ? "active" : ""}>
-              {'Work on Open Products'}
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <Link href="/product/add" className={selectedItem === "2" ? "active" : ""}>
-              {'Add Product'}
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="3">
-            <Link href="" className={selectedItem === "3" ? "active" : ""}>
-              {'Find Talent'}
-            </Link>
-          </Menu.Item>
-        </Menu>
-        <div className="logo-section">
+    <>
+      <Row
+        className="header-mobile"
+        align="middle" justify="space-between"
+        style={{height: 56, padding: '0 30px', borderBottom: '1px solid #d9d9d9'}}
+      >
+        <Col>
           <Link href="/">
             <img src={Logo} alt="logo"/>
           </Link>
-        </div>
-        <div className='login-container'>
-          <Search
-            placeholder="Search for open source product or initiative"
-            onSearch={onSearch}
-            className="nav-search"
-          />
-          {
-            user && user.isLoggedIn ? (
-              <Button
-                className="signIn-btn"
-                onClick={() => logout()}
-              >
-                Sign out
-              </Button>
-            ) : (
-              <>{
-                productionMode
-                  ? <LoginViaAM />
-                  : (
-                    <Button
-                      className="signIn-btn"
-                      onClick={() => router.push("/switch-test-user")}
-                    >
-                      Sign in
-                    </Button>
-                  )
-              }</>
-            )
-          }
-        </div>
-      </div>
-    </Header>
+        </Col>
+        <Col>
+          <Button onClick={showDrawer} icon={<MenuOutlined/>} size="large"/>
+        </Col>
+
+        <Drawer
+          title="Open United"
+          placement="left"
+          closable={false}
+          onClose={onClose}
+          visible={visible}
+        >
+          <Space direction="vertical">
+            {
+              user && user.isLoggedIn ? (
+                <Button
+                  style={{width: '100%'}}
+                  onClick={() => logout()}
+                >
+                  Sign out
+                </Button>
+              ) : (
+                <Button
+                  style={{width: '100%'}}
+                  onClick={() => router.push("/switch-test-user")}
+                >
+                  Sign in
+                </Button>
+              )
+            }
+
+            <Search
+              placeholder="Search for open source product or initiative"
+              onSearch={onSearch}
+            />
+          </Space>
+
+          <Space direction="vertical" style={{marginTop: 20}}>
+            <Link href="/">
+              <a style={{color: '#262626'}}>Work on Open Products</a>
+            </Link>
+            <Link href="/product/add">
+              <a style={{color: '#262626'}}>Add Product</a>
+            </Link>
+            <Link href="">
+              <a style={{color: '#262626'}}>Find Talent</a>
+            </Link>
+          </Space>
+
+          {/*<Button*/}
+          {/*  style={{position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', width: '80%'}}*/}
+          {/*  onClick={onClose}*/}
+          {/*>Close</Button>*/}
+        </Drawer>
+      </Row>
+
+
+      <Row align="middle" style={{height: 56, borderBottom: '1px solid #d9d9d9'}} className="header-desktop">
+        <Col span={10}>
+          <Row justify="center">
+            <Col style={{marginRight: 20}}>
+              <Link href="/">
+                <a style={{color: '#262626'}}>Work on Open Products</a>
+              </Link>
+            </Col>
+            <Col style={{marginRight: 20}}>
+              <Link href="/product/add">
+                <a style={{color: '#262626'}}>Add Product</a>
+              </Link>
+            </Col>
+            <Col style={{marginRight: 20}}>
+              <Link href="">
+                <a style={{color: '#262626'}}>Find Talent</a>
+              </Link>
+            </Col>
+          </Row>
+        </Col>
+
+        <Col span={4}>
+          <Row justify="center">
+            <Link href="/">
+              <img src={Logo} alt="logo"/>
+            </Link>
+          </Row>
+        </Col>
+
+        <Col span={10}>
+          <Row align="middle" justify="center">
+            <Col style={{marginRight: 10}}>
+              <Search
+                placeholder="Search for open source product or initiative"
+                onSearch={onSearch}
+              />
+            </Col>
+            <Col>
+              {
+                user && user.isLoggedIn ? (
+                  <Button
+                    className="signIn-btn"
+                    onClick={() => logout()}
+                  >
+                    Sign out
+                  </Button>
+                ) : (
+                  <>{
+                    productionMode
+                      ? <LoginViaAM />
+                      : (
+                        <Button
+                          className="signIn-btn"
+                          onClick={() => router.push("/switch-test-user")}
+                        >
+                          Sign in
+                        </Button>
+                      )
+                  }</>
+                )
+              }
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </>
   );
 };
 

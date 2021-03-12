@@ -26,7 +26,7 @@ const TaskTab: React.FunctionComponent<Props> = (
     showInitiativeName = false,
     showProductName = false,
     tags
-   }
+  }
 ) => {
   const userId = localStorage.getItem('userId');
   const [filterModal, setFilterModal] = useState(false);
@@ -63,18 +63,22 @@ const TaskTab: React.FunctionComponent<Props> = (
   if (!data || !data.tasks) return <h3 className="text-center">No tasks</h3>
 
   return (
-    <div style={{marginTop: "-47px"}}>
+    <div>
       <div className="text-right">
-        <Button type="primary"
-              onClick={() => setFilterModal(!filterModal)}
-              icon={<FilterOutlined />}>Filter</Button>
+        <Button
+          type="primary"
+          onClick={() => setFilterModal(!filterModal)}
+          icon={<FilterOutlined/>}
+        >Filter</Button>
       </div>
-      <TaskTable submit={() => refetch()}
-                 tasks={data.tasks}
-                 statusList={TASK_TYPES}
-                 showInitiativeName={showInitiativeName}
-                 showProductName={showProductName}
-                 hideTitle={true}/>
+      <TaskTable
+        submit={() => refetch()}
+        tasks={data.tasks}
+        statusList={TASK_TYPES}
+        showInitiativeName={showInitiativeName}
+        showProductName={showProductName}
+        hideTitle={true}
+      />
       <FilterModal
         modal={filterModal}
         initialForm={inputData}
@@ -82,7 +86,6 @@ const TaskTab: React.FunctionComponent<Props> = (
         submit={applyFilter}
       />
     </div>
-
   );
 };
 

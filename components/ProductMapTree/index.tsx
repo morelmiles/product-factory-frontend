@@ -1,6 +1,6 @@
 import SortableTree, {getVisibleNodeCount} from "react-sortable-tree";
 import {TreeNode} from "../../utilities/constants";
-import {Button, Col, Input, message, Row, Typography} from "antd";
+import {Button, Col, Input, message, Row} from "antd";
 import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/react-hooks";
@@ -154,38 +154,37 @@ const ProductMapTree = () => {
 
   const count = getVisibleNodeCount({treeData});
   const mapHeight = count * 62;
-  console.log(treeData)
+
   return !capabilitiesError ? (
     <Row style={{width: '100%'}}>
-      <Row justify="space-between" style={{width: '100%', marginBottom: 20}}>
-        <Col>
-          <div>
-            <Search placeholder="Search text" className='mr-10' onSearch={onSearch} style={{width: 200}}/>
-            {
-              searchFoundCount > 0 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => selectPrevMatch()}
-                  >
-                    &lt;
-                  </button>
-                  <button
-                    type="submit"
-                    onClick={() => selectNextMatch()}
-                  >
-                    &gt;
-                  </button>
-                </>
-              )
-            }
-          </div>
+      <Row justify="space-between" style={{width: '100%'}}>
+        <Col xs={24} sm={24} md={8} lg={6} style={{marginBottom: 20}}>
+          <Search placeholder="Search text" className='mr-10' onSearch={onSearch}/>
+          {
+            searchFoundCount > 0 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => selectPrevMatch()}
+                >
+                  &lt;
+                </button>
+                <button
+                  type="submit"
+                  onClick={() => selectNextMatch()}
+                >
+                  &gt;
+                </button>
+              </>
+            )
+          }
           <div>{searchFoundCount > 0 && `${searchFoundCount} items found!`}</div>
         </Col>
         {
           isAdminOrManager &&
-          <Col>
+          <Col xs={24} sm={24} md={8} lg={6} style={{marginBottom: 20}}>
               <Button
+                  style={{width: '100%'}}
                   onClick={
                     () => {
                       setModalType('add-root');
@@ -269,7 +268,7 @@ const ProductMapTree = () => {
         />
       }
     </Row>
-  ) : <p>klgtrgutri</p>
+  ) : null
 }
 
 export default ProductMapTree;

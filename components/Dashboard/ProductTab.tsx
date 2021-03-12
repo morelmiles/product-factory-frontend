@@ -27,6 +27,7 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
       setProductNum(getProp(data, 'products', []).length);
     }
   }, [data]);
+
   const getAvailableTaskText = (availableTasks: number) => {
     if (availableTasks === 0) return '';
     return `${availableTasks} available ${pluralize("task", availableTasks)}`;
@@ -47,13 +48,13 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
   if (loading) return <Loading/>;
 
   return (
-    <Row gutter={[16, 16]} className="card product-list">
+    <Row gutter={[16, 16]} className="card product-list" style={{margin: '0 auto'}}>
       {
         data && data.products.map((product: any, idx: number) => {
           const availableTasks = getProp(product, 'availableTaskNum', 0);
           const initiatives = getProp(product, 'initiativeSet', []).length;
           return (
-            <Col key={idx} xs={24} sm={8}>
+            <Col key={idx} xs={24} sm={12} md={12} lg={8}>
               <Card
                 cover={
                   <ReactPlayer

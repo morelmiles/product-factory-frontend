@@ -105,8 +105,6 @@ const AddProduct: React.FunctionComponent = () => {
                   <label>Full description:</label>
 
                   <RichTextEditor setValue={setFullDescription}/>
-
-
                 </Row>
                 <Row className='mb-15'>
                   <label>Website url *:</label>

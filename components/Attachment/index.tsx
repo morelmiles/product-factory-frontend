@@ -116,9 +116,6 @@ const Attachment: React.FunctionComponent<Props> = ({
               </Col>
               <Col>
                 <Row>
-                  {/* <Col className="attachment-item__text">
-                    {getProp(item, 'fileSize', '412kb')}
-                  </Col> */}
                   {editMode ? (
                     <Col>
                       <DeleteOutlined onClick={() => onDelete(item.id)} />

@@ -63,7 +63,7 @@ const Add: React.FunctionComponent<Props> = ({
     try {
       const res = await createAttachment({
         variables: {
-          input,
+          input
         }
       });
 
