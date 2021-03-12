@@ -492,7 +492,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
             {
               getProp(task, 'relatives', []).length > 0 &&
               <Collapse style={{marginTop: 30}}>
-                  <Panel header="Relative tasks" key="1">
+                  <Panel header="Dependant tasks" key="1">
                       <List
                           bordered
                           dataSource={getProp(task, 'relatives', [])}
