@@ -40,14 +40,14 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   }
 
   const {data: personData} = useQuery(GET_PERSON)
-
-  useEffect(() => {
-    let userId = localStorage.getItem("userId")
-    if (localStorage.getItem("userId")) {
-      userLogInAction({isLoggedIn: true, id: userId});
-      setUserId(userId)
-    }
-  }, []);
+  //
+  // useEffect(() => {
+  //   let userId = localStorage.getItem("userId")
+  //   if (localStorage.getItem("userId")) {
+  //     userLogInAction({isLoggedIn: true, id: userId});
+  //     setUserId(userId)
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (personData && personData.person) {
@@ -69,13 +69,14 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
   const [logout] = useMutation(LOGOUT, {
     onCompleted(data) {
-      const {success, message: responseMessage} = data.logout;
+      const {success, message: responseMessage, url} = data.logout;
       if (success) {
-        message.success(responseMessage)
-        userLogInAction({isLoggedIn: false});
         localStorage.removeItem('userId');
         localStorage.removeItem('fullName');
-        router.push("/switch-test-user").then();
+        window.location.replace(url);
+        // localStorage.removeItem('userId');
+        // localStorage.removeItem('fullName');
+        // router.push("/switch-test-user").then();
       } else {
         message.error(responseMessage)
       }

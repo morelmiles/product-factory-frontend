@@ -240,6 +240,7 @@ export const LOGOUT = gql`
     logout {
       success
       message
+      url
     }
   }
 `;
