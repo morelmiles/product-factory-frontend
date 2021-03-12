@@ -5,9 +5,11 @@ import {Button, Select, message} from "antd";
 
 type Props = {
   buttonTitle?: string,
+  fullWidth?: boolean
 };
 
-const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign In" }) => {
+const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign In",
+                                                      fullWidth =  false }) => {
   const [authMachineLoginUrl, setAuthMachineLoginUrl] = useState("");
 
   const {data: authMachineData} = useQuery(GET_AM_LOGIN_URL);
@@ -27,7 +29,9 @@ const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign In" })
   }
 
   return (
-    <Button className="ml-auto" onClick={() => loginViaAM()}>{buttonTitle}</Button>
+    <Button className="ml-auto"
+            style={{width: fullWidth ? "100%" : "auto"}}
+            onClick={() => loginViaAM()}>{buttonTitle}</Button>
   );
 };
 export default LoginViaAM;

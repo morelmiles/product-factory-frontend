@@ -126,17 +126,25 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
               user && user.isLoggedIn ? (
                 <Button
                   style={{width: '100%'}}
+                  className="signIn-btn"
                   onClick={() => logout()}
                 >
                   Sign out
                 </Button>
               ) : (
-                <Button
-                  style={{width: '100%'}}
-                  onClick={() => router.push("/switch-test-user")}
-                >
-                  Sign in
-                </Button>
+                <>{
+                  !productionMode
+                    ? <LoginViaAM fullWidth={true} />
+                    : (
+                      <Button
+                        style={{width: '100%'}}
+                        className="signIn-btn"
+                        onClick={() => router.push("/switch-test-user")}
+                      >
+                        Sign in
+                      </Button>
+                    )
+                }</>
               )
             }
 
