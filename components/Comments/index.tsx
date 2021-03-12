@@ -127,7 +127,9 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
         ))
       }
 
-      <Modal title="Reply to comment" visible={isModalVisible} onOk={addComment} onCancel={closeModal}>
+      <Modal
+        title="Reply to comment" visible={isModalVisible} onOk={addComment} onCancel={closeModal}
+        maskClosable={false}>
         <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
           {
             allUsers.map((user) => (

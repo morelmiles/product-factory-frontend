@@ -44,6 +44,7 @@ const CustomModal: React.SFC<Props> = ({
             {submitText}
           </Button>,
         ]}
+        maskClosable={false}
       >
         <h3>{message}</h3>
       </Modal>

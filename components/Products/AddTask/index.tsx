@@ -2,11 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Modal, Row, Col, Input, Select, message, Button} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
-import {GET_INITIATIVES, GET_STACKS, GET_TAGS, GET_USERS} from '../../../graphql/queries';
+import {
+  GET_CAPABILITIES_BY_PRODUCT_AS_LIST,
+  GET_INITIATIVES,
+  GET_STACKS,
+  GET_TAGS,
+  GET_USERS
+} from '../../../graphql/queries';
 import {CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK} from '../../../graphql/mutations';
 import {TASK_TYPES} from '../../../graphql/types';
-import {addRepository} from '../../../lib/actions';
-import {WorkState} from '../../../lib/reducers/work.reducer';
+// import {addRepository} from '../../../lib/actions';
+// import {WorkState} from '../../../lib/reducers/work.reducer';
 import AddInitiative from '../AddInitiative';
 import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
 import {RICH_TEXT_EDITOR_WIDTH} from '../../../utilities/constants';
@@ -45,7 +51,6 @@ type Props = {
   submit?: any;
   tasks?: Array<any>;
   stacks?: Array<any>;
-  user: any;
 };
 
 const AddTask: React.FunctionComponent<Props> = (
@@ -53,18 +58,17 @@ const AddTask: React.FunctionComponent<Props> = (
     modal,
     productSlug,
     closeModal,
-    currentProduct,
     repositories,
     addRepository,
     modalType,
     task,
     submit,
-    tasks,
-    user
+    tasks
   }
 ) => {
   const [title, setTitle] = useState(modalType ? task.title : '');
   const [description, setDescription] = useState(modalType ? task.description : '');
+  const [allCapabilities, setAllCapabilities] = useState([]);
   const [allTags, setAllTags] = useState([]);
   const [skip, setSkip] = React.useState(false);
   const [allStacks, setAllStacks] = useState([]);
@@ -83,9 +87,7 @@ const AddTask: React.FunctionComponent<Props> = (
       ? filterRepositoryId(repositories, task.repository)
       : null
   );
-  const [initiatives, setInitiatives] = useState(
-    currentProduct && currentProduct.initiativeSet ? currentProduct.initiativeSet : []
-  )
+  const [initiatives, setInitiatives] = useState([])
   const [editRepository, toggleRepository] = useState(false);
   const [editInitiative, toggleInitiative] = useState(false);
   const [repositoryUrl, setRepositoryUrl] = useState('');
@@ -104,7 +106,9 @@ const AddTask: React.FunctionComponent<Props> = (
   const {data: originalInitiatives, loading: initiativeLoading, refetch: fetchInitiatives} = useQuery(GET_INITIATIVES, {
     variables: {productSlug}
   });
-
+  const {data: capabilitiesData} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
+    variables: {productSlug}
+  });
   const {data: tagsData} = useQuery(GET_TAGS);
   const {data: stacksData} = useQuery(GET_STACKS);
   const [createTask] = useMutation(CREATE_TASK);
@@ -119,6 +123,12 @@ const AddTask: React.FunctionComponent<Props> = (
   useEffect(() => {
     setAllUsers(getProp(users, 'people', []));
   }, [users]);
+
+  useEffect(() => {
+    if (capabilitiesData && capabilitiesData.capabilitiesAsList) {
+      setAllCapabilities(capabilitiesData.capabilitiesAsList);
+    }
+  }, [capabilitiesData]);
 
   useEffect(() => {
     if (tagsData && tagsData.tags) setAllTags(tagsData.tags)
@@ -176,6 +186,7 @@ const AddTask: React.FunctionComponent<Props> = (
     setInitiative(0);
     setRepository(null);
     setRepositoryUrl("");
+    setCapability([]);
     setTags([]);
     setStacks([]);
     setDependOn([]);
@@ -314,21 +325,24 @@ const AddTask: React.FunctionComponent<Props> = (
             />
           </Row>
         )}
-        {currentProduct && currentProduct.capabilitySet && (
-          <Row className='mb-15'>
-            <label>Capability*:</label>
-            <Select
-              defaultValue={capability}
-              onChange={setCapability}
-            >
-              {currentProduct.capabilitySet.map((option: any, idx: number) => (
-                <Option key={`cap${idx}`} value={option.id}>
-                  {option.name}
-                </Option>
-              ))}
-            </Select>
-          </Row>
-        )}
+        {
+          allCapabilities.length > 0 && (
+            <Row className='mb-15'>
+              <label>Capability:</label>
+              <Select
+                placeholder='Select a capability'
+                onChange={setCapability}
+                filterOption={filterOption}
+              >
+                {allCapabilities.map((option: any, idx: number) => (
+                  <Option key={`cap${idx}`} value={option.id}>
+                    {option.name}
+                  </Option>
+                ))}
+              </Select>
+            </Row>
+          )
+        }
         {initiatives && (
           <>
             <Row justify="space-between" className='mb-5'>
@@ -508,7 +522,7 @@ const AddTask: React.FunctionComponent<Props> = (
           >
             {
               allUsers.map((user: IUser) => (
-                <Option value={user.slug}>{user.fullName}</Option>
+                <Option key={`user-${user.slug}`} value={user.slug}>{user.fullName}</Option>
               ))
             }
           </Select>
@@ -526,9 +540,10 @@ const mapStateToProps = (state: any) => ({
   allTags: state.work.allTags,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-  addRepository: (data: WorkState) => dispatch(addRepository(data)),
-});
+// const mapDispatchToProps = (dispatch: any) => ({
+//   addRepository: (data: WorkState) => dispatch(addRepository(data)),
+// });
+const mapDispatchToProps = () => ({});
 
 export default connect(
   mapStateToProps,

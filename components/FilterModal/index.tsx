@@ -114,6 +114,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
             Filter
           </Button>,
         ]}
+        maskClosable={false}
       >
         <Form {...layout}
               form={form}

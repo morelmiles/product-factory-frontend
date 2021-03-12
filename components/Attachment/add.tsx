@@ -90,6 +90,7 @@ const Add: React.FunctionComponent<Props> = ({
             Add
           </Button>,
         ]}
+        maskClosable={false}
       >
         <Row style={{marginBottom: '15px'}}>
           <label>Url:</label>

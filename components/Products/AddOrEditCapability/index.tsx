@@ -146,6 +146,7 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
             {modalType === 'edit' ? 'Edit' : 'Add'}
           </Button>
         ]}
+        maskClosable={false}
       >
         <>
           <Row className="mb-15">
