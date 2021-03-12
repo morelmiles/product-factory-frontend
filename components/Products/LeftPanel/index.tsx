@@ -32,7 +32,7 @@ let links: LinkType[] = [
 ]
 
 // TODO: isAdmin?
-if (true) {
+if (false) {
   links.push(
     {url: '/settings', type: 'settings', name: 'Settings'}
   )
