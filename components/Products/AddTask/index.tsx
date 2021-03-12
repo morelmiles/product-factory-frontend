@@ -97,7 +97,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const [stacks, setStacks] = useState(
     modalType && task.stack ? task.stack.map((stack: any) => stack.id) : []
   );
-  const [dependOn, setdependOn] = useState(
+  const [dependOn, setDependOn] = useState(
     modalType && task.dependOn ? task.dependOn.map((tag: any) => tag.id) : []
   );
 
@@ -113,6 +113,8 @@ const AddTask: React.FunctionComponent<Props> = (
   const [allUsers, setAllUsers] = useState([]);
   const [reviewSelectValue, setReviewSelectValue] = useState(getProp(task, 'reviewer.slug', ''));
   const {data: users} = useQuery(GET_USERS);
+
+  const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
   useEffect(() => {
     setAllUsers(getProp(users, 'people', []));
@@ -135,6 +137,12 @@ const AddTask: React.FunctionComponent<Props> = (
   useEffect(() => {
     if (!skip) fetchInitiatives({productSlug})
   }, [skip]);
+
+  useEffect(() => {
+    if (originalInitiatives) {
+      setInitiatives(originalInitiatives.initiatives);
+    }
+  }, [originalInitiatives]);
 
   // TextEditor configuration
   const onDescriptionChange = (value: any) => {
@@ -170,7 +178,7 @@ const AddTask: React.FunctionComponent<Props> = (
     setRepositoryUrl("");
     setTags([]);
     setStacks([]);
-    setdependOn([]);
+    setDependOn([]);
   }
 
   const addNewTask = async () => {
@@ -257,12 +265,6 @@ const AddTask: React.FunctionComponent<Props> = (
     setReviewSelectValue(val);
   }
 
-  useEffect(() => {
-    if (originalInitiatives) {
-      setInitiatives(originalInitiatives.initiatives);
-    }
-  }, [originalInitiatives]);
-
   return (
     <>
       <Modal
@@ -319,7 +321,6 @@ const AddTask: React.FunctionComponent<Props> = (
               defaultValue={capability}
               onChange={setCapability}
             >
-              <Option value={0}>Select capability</Option>
               {currentProduct.capabilitySet.map((option: any, idx: number) => (
                 <Option key={`cap${idx}`} value={option.id}>
                   {option.name}
@@ -359,10 +360,11 @@ const AddTask: React.FunctionComponent<Props> = (
             </Row>
             <Row className='mb-15'>
               <Select
-                defaultValue={initiative}
                 onChange={setInitiative}
+                placeholder="Select initiative"
+                filterOption={filterOption}
+                showSearch
               >
-                <Option value={0}>Select initiative</Option>
                 {initiatives.map((option: any, idx: number) => (
                   <Option key={`init${idx}`} value={option.id}>
                     {option.name}
@@ -425,10 +427,9 @@ const AddTask: React.FunctionComponent<Props> = (
               className='mb-15'
             >
               <Select
-                defaultValue={repository}
                 onChange={setRepository}
+                placeholder="Select repository"
               >
-                <Option value={0}>Select repository</Option>
                 {repositories.map((option: any, idx: number) => (
                   <Option key={`init${idx}`} value={option.id}>
                     {option.repository}
@@ -443,6 +444,7 @@ const AddTask: React.FunctionComponent<Props> = (
           <Select
             defaultValue={status}
             onChange={setStatus}
+            placeholder="Select status"
           >
             {TASK_TYPES.map((option: string, idx: number) => (
               <Option key={`status${idx}`} value={idx}>{option}</Option>
@@ -453,10 +455,10 @@ const AddTask: React.FunctionComponent<Props> = (
           <label>Tags:</label>
           <Select
             mode="multiple"
-            defaultValue={tags}
             onChange={setTags}
+            filterOption={filterOption}
+            placeholder="Select tags"
           >
-            <Option value={0}>Select tags</Option>
             {allTags && allTags.map((option: any, idx: number) => (
               <Option key={`cap${idx}`} value={option.id}>
                 {option.name}
@@ -468,8 +470,9 @@ const AddTask: React.FunctionComponent<Props> = (
           <label>Stacks:</label>
           <Select
             mode="multiple"
-            defaultValue={stacks}
             onChange={setStacks}
+            filterOption={filterOption}
+            placeholder="Select stacks"
           >
             {allStacks && allStacks.map((option: any, idx: number) => (
               <Option key={`cap${idx}`} value={option.id}>
@@ -482,10 +485,10 @@ const AddTask: React.FunctionComponent<Props> = (
           <label>Depend on tasks:</label>
           <Select
             mode="multiple"
-            defaultValue={dependOn}
-            onChange={setdependOn}
+            onChange={setDependOn}
+            filterOption={filterOption}
+            placeholder="Select depend on tasks"
           >
-            <Option value={0}>Select depend on tasks</Option>
             {tasks &&
             tasks.map((option: any, idx: number) => (
               <Option key={`cap${idx}`} value={option.id}>
@@ -498,9 +501,10 @@ const AddTask: React.FunctionComponent<Props> = (
           <label>Reviewer*:</label>
 
           <Select
-            placeholder="Select a reviewer"
-            value={reviewSelectValue}
             onChange={val => reviewSelectChange(val)}
+            placeholder="Select a reviewer"
+            showSearch
+            filterOption={filterOption}
           >
             {
               allUsers.map((user: IUser) => (
