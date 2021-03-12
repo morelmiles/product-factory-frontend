@@ -24,4 +24,4 @@ export type TreeNode = {
 }
 
 export const apiDomain = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://open-united-backend.herokuapp.com";
-export const RICHTEXT_EDITOR_WIDTH = 1000;
+export const RICH_TEXT_EDITOR_WIDTH = 1000;

@@ -34,7 +34,6 @@ const Portfolio: React.FunctionComponent = () => {
         ) : !reviewError && (
           <>
             {reviews && getProp(reviews, 'reviews', []).map((review: any, index: number) => {
-              // const reviewInitiative = getProp(review, 'initiative', null)
               return (
                 <div key={`review-${index}`} className="grey-border p-24 mb-24">
                   <Row>
@@ -69,8 +68,9 @@ const Portfolio: React.FunctionComponent = () => {
                         />
                       </p>
                     </Col>
-                    <Col span={7}>
+                    <Col xs={24} sm={24} md={7}>
                       <ReactPlayer
+                        className="portfolio-video"
                         width="100%"
                         height="160px"
                         url={getProp(review, 'product.videoUrl', '')}

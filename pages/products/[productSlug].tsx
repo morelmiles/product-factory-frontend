@@ -78,7 +78,7 @@ const Summary: React.FunctionComponent = () => {
               }}>About {getProp(data, 'product.name', '')}</Typography.Text>
             </Row>
             <Row>
-              <Col xs={24} md={13}>
+              <Col xs={24} sm={24} md={13}>
                 <div className="description" style={{paddingRight: 40}}>
                   <DynamicHtml
                     text={getProp(data, 'product.fullDescription', '')}
@@ -92,7 +92,7 @@ const Summary: React.FunctionComponent = () => {
               </Col>
               {
                 getProp(data, 'product.videoUrl', null) !== null && (
-                  <Col xs={24} md={11} span={11} className="product-video">
+                  <Col xs={24} sm={24} md={11} className="product-video">
                     <ReactPlayer
                       width="100%"
                       height="200px"

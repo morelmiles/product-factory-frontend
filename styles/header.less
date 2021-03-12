@@ -1,102 +1,19 @@
-.header {
-    background-color: #ffffff;
-}
-.global-header {
-    height: 50px;
-    background: #fff !important;
-    border-bottom: 1px solid var(--grey-5);
-}
-.inner-navbar {
-    height: 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1440px;
-    margin: 0 auto;
-    .ant-menu-horizontal {
-        border-bottom: none;
-        // height: 50px!important;
-        background: transparent;
-        line-height: 0;
-    }
+.header-desktop {
+  display: none !important;
 }
 
-.global-header a {
-    color: var(--grey-7) !important;
+@media screen and (min-width: 1000px) {
+  .header-mobile {
+    display: none !important;
+  }
+
+  .header-desktop {
+    display: flex !important;
+  }
 }
-.global-header a.active {
-    color: var(--grey-9) !important;
-    font-weight: 600;
-}
-.ant-menu-horizontal {
-    border-bottom: none;
-}
-.ant-menu-item {
-    color: var(--text-grey);
-    border-bottom: none !important;
-}
-.ant-menu-item-selected,
-.ant-menu-item-active {
-    color: #000 !important;
-    border-bottom: none !important;
-}
-.nav-search {
-    width: 360px;
-    margin-right: 14px;
-    vertical-align: middle;
-}
-.ant-input-search-icon {
-    color: var(--grey-7);
-}
-.header-menu {
-    display: block;
-}
-.logo-section {
-    position: absolute;
-    left: calc(50% - 86px);
-}
-.ant-layout {
-    .ant-layout-header {
-        height: 56px;
-    }
-    .login-container {
-        height: unset!important;
-        display: flex;
-        align-items: center;
-        .ant-input-group-wrapper {
-            width: auto;
-            vertical-align: middle;
-            width: 360px;
-        }
-    }
-}
-@media (max-width: 1199px) {
-    .nav-search {
-        display: none;
-    }
-}
-@media (max-width: 991px) {
-    .header-menu {
-        display: none;
-    }
-    .signIn-btn {
-        position: absolute;
-        top: 9px;
-        right: 15px;
-    }
-}
-@media (max-width: 767px) {
-    .global-header {
-        justify-content: center;
-    }
-}
-@media (max-width: 480px) {
-    .ant-layout .login-container .ant-input-wrapper.ant-input-group{
-        display: none;
-    }
-}
-@media (max-width: 359px) {
-    .signIn-btn {
-        display: none;
-    }
+
+@media screen and (max-width: 400px) {
+  .header-mobile {
+    padding: 0 10px !important;
+  }
 }

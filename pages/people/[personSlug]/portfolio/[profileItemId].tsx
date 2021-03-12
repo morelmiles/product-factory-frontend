@@ -133,7 +133,7 @@ const ProfileItem: React.FunctionComponent = () => {
               <h3 className="section-title">Portfolio item</h3>
               <div className="mb-15">
                 <Row>
-                  <Col span={17}>
+                  <Col xs={24} sm={24} md={17}>
                     <Row style={{marginBottom: 3}}>
                       <Typography.Text strong>Product: </Typography.Text>
                       <Link
@@ -166,14 +166,14 @@ const ProfileItem: React.FunctionComponent = () => {
                     {
                       attachment && attachment.length > 0 && (
                         <Row style={{marginTop: 20, marginBottom: 10}}>
-                          <Col span={20}>
+                          <Col xs={24} sm={24} md={20}>
                             <Attachments data={attachment}/>
                           </Col>
                         </Row>
                       )
                     }
                   </Col>
-                  <Col span={7}>
+                  <Col xs={24} sm={24} md={7}>
                     <ReactPlayer
                       width={"100%"}
                       height="160px"
