@@ -343,8 +343,14 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   />
                 </Col>
               )}
-              <Col xs={24} md={18} className="pt-20">
-                {parse(getProp(task, 'description', ''))}
+              <Col>
+                <Row>
+                  <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)'}}>
+                    {
+                      parse(getProp(task, 'description', ''))
+                    }
+                  </Col>
+                </Row>
                 <div className="mt-22">
                   <Row style={{marginTop: 10}} className="text-sm mt-8">
                     {showAssignedUser()}
