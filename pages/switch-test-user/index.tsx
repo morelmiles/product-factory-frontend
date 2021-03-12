@@ -25,7 +25,7 @@ type Props = {
 const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => {
   const router = useRouter();
   const [form] = Form.useForm();
-  const { data, error, loading } = useQuery(GET_USERS);
+  const { data, error, loading } = useQuery(GET_USERS, {variables: {showOnlyTestUsers: true}});
 
   const [login] = useMutation(FAKE_LOGIN);
 
@@ -42,7 +42,7 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
     }).then((data: any) => {
       const {success, message: responseMessage, person} = data.data.fakeLogin;
       if (success) {
-        message.success(responseMessage)
+        message.success(responseMessage);
         userLogInAction({ isLoggedIn: success });
         localStorage.setItem('userId', person.id);
         localStorage.setItem('fullName', person.fullName);

@@ -565,8 +565,8 @@ export const GET_PARTNERS = gql`
 `
 
 export const GET_USERS = gql`
-  query GetAllUser {
-    people {
+  query GetAllUser ($hideTestUsers: Boolean, $showOnlyTestUsers: Boolean) {
+    people (hideTestUsers: $hideTestUsers, showOnlyTestUsers: $showOnlyTestUsers) {
       id
       emailAddress
       fullName
