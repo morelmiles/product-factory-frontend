@@ -37,7 +37,9 @@ const ProductMapTree = () => {
       try {
         if (capabilitiesData !== "") {
           capabilitiesData = JSON.parse(capabilitiesData);
+          //@ts-ignore
           setTreeData(capabilitiesData.length > 0 && capabilitiesData[0].children
+            //@ts-ignore
             ? formatData(capabilitiesData[0].children) : [])
         } else {
           setTreeData([]);
@@ -163,8 +165,6 @@ const ProductMapTree = () => {
 
   const count = getVisibleNodeCount({treeData});
   const mapHeight = count * 62;
-
-  console.log("treeData", treeData)
 
   return !capabilitiesError ? (
     <Row style={{width: '100%'}}>

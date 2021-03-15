@@ -11,7 +11,7 @@ interface ITextEditorWrapProps {
 const TextEditorWrap: React.FunctionComponent<ITextEditorWrapProps> = ({setValue, initialValue, editorStyle}) => {
   const inputInitialValue = initialValue ? RichTextEditor.createValueFromString(initialValue, 'html') : RichTextEditor.createEmptyValue();
   const [content, setContent] = useState(inputInitialValue);
-  const onChange = (value: React.SetStateAction<EditorValue>) => {
+  const onChange = (value: EditorValue) => {
     setContent(value);
     setValue(value);
   }
@@ -20,7 +20,7 @@ const TextEditorWrap: React.FunctionComponent<ITextEditorWrapProps> = ({setValue
     <RichTextEditor
       editorStyle={editorStyle}
       value={content}
-      onChange={onChange}
+      onChange={(val: EditorValue) => onChange(val)}
     />
   )
 }

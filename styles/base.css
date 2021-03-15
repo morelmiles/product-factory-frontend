@@ -489,3 +489,18 @@ p:last-child {
         margin-top: -35px !important;
     }
 }
+
+.settings-desktop-menu {
+    display: none !important;
+}
+
+@media screen and (min-width: 576px) {
+    .settings-mobile-menu {
+        display: none !important;
+        margin-bottom: 70px !important;
+    }
+
+    .settings-desktop-menu {
+        display: inline !important;
+    }
+}

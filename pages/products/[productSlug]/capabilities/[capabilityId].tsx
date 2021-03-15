@@ -130,7 +130,6 @@ const CapabilityDetail: React.FunctionComponent = () => {
       setIsAdminOrManager(getProp(data, 'isAdminOrManager', false));
     }
   }, [data]);
-    console.log(getProp(capability, 'tasks', []));
 
   if (loading || crumbsLoading) return <Loading/>
 

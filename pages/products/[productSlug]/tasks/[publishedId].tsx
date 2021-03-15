@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, message, Button, Tag, Collapse, List} from 'antd';
+import {Row, Col, message, Button, Tag, Collapse, List, Modal} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -36,6 +36,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const {publishedId, productSlug} = router.query;
 
+  const [agreementModalVisible, setAgreementModalVisible] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
   const [leaveTaskModal, showLeaveTaskModal] = useState(false);
   const [reviewTaskModal, showReviewTaskModal] = useState(false);
@@ -96,6 +97,10 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     }
   });
 
+  const handleIAgree = () => {
+    setAgreementModalVisible(false);
+  }
+
   const [leaveTask] = useMutation(LEAVE_TASK, {
     variables: {
       taskId,
@@ -146,6 +151,13 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     onCompleted(data) {
       const {claimTask} = data;
       const responseMessage = claimTask.message;
+
+      if (claimTask.needArgeement) {
+
+      }
+
+      setAgreementModalVisible(true);
+
       if (claimTask.success) {
         message.success(responseMessage).then();
         fetchData().then();
@@ -541,30 +553,45 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                 submitText="Yes, leave"
               />
             )}
-            {reviewTaskModal && (
-              <CustomModal
-                modal={reviewTaskModal}
-                productSlug={''}
-                closeModal={() => showReviewTaskModal(false)}
-                submit={submitTask}
-                title="Submit for review"
-                message="Do you really want to submit the task for review?"
-                submitText="Yes, submit"
+            {
+              reviewTaskModal && (
+                <CustomModal
+                  modal={reviewTaskModal}
+                  productSlug={''}
+                  closeModal={() => showReviewTaskModal(false)}
+                  submit={submitTask}
+                  title="Submit for review"
+                  message="Do you really want to submit the task for review?"
+                  submitText="Yes, submit"
+                />
+              )}
+            {
+              showEditModal &&
+              <AddTaskContainer
+                  modal={showEditModal}
+                  productSlug={String(productSlug)}
+                  modalType={true}
+                  closeModal={setShowEditModal}
+                  task={task}
+                  submit={fetchData}
+                  tasks={tasks}
               />
-            )}
-            {showEditModal && <AddTaskContainer
-                modal={showEditModal}
-                productSlug={String(productSlug)}
-                modalType={true}
-                closeModal={setShowEditModal}
-                task={task}
-                submit={fetchData}
-                tasks={tasks}
-            />
             }
           </>
         )
       }
+
+      <Modal
+        okText="I Agree"
+        title="Basic Modal"
+        visible={agreementModalVisible}
+        onOk={handleIAgree}
+        onCancel={() => setAgreementModalVisible(false)}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
     </LeftPanelContainer>
   );
 };
