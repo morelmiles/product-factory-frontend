@@ -8,7 +8,6 @@ import {getProp} from '../../../utilities/filters';
 import {getInitialName} from '../../../utilities/utils';
 import {WorkState} from '../../../lib/reducers/work.reducer';
 import {setWorkState} from '../../../lib/actions';
-import Loading from "../../Loading";
 
 
 type Props = {
@@ -32,7 +31,7 @@ let links: LinkType[] = [
 ]
 
 // TODO: isAdmin?
-if (false) {
+if (true) {
   links.push(
     {url: '/settings', type: 'settings', name: 'Settings'}
   )
