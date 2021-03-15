@@ -31,8 +31,23 @@ const ProductMapTree = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const convertDataAndSetTree = (capabilities: any) => {
-    let capabilitiesData = JSON.parse(getProp(capabilities, 'capabilities', ''));
-    setTreeData(formatData(capabilitiesData[0].children));
+    let capabilitiesData = "";
+    if (capabilities && capabilities.capabilities) {
+      capabilitiesData = getProp(capabilities, 'capabilities', '');
+      try {
+        if (capabilitiesData !== "") {
+          capabilitiesData = JSON.parse(capabilitiesData);
+          setTreeData(capabilitiesData.length > 0 && capabilitiesData[0].children
+            ? formatData(capabilitiesData[0].children) : [])
+        } else {
+          setTreeData([]);
+        }
+      } catch (e) {
+        if (e instanceof SyntaxError) setTreeData([]);
+      }
+    } else {
+      setTreeData([]);
+    }
   }
 
   const formatData = (data: any) => {
@@ -149,31 +164,35 @@ const ProductMapTree = () => {
   const count = getVisibleNodeCount({treeData});
   const mapHeight = count * 62;
 
+  console.log("treeData", treeData)
+
   return !capabilitiesError ? (
     <Row style={{width: '100%'}}>
       <Row justify="space-between" style={{width: '100%'}}>
-        <Col xs={24} sm={24} md={8} lg={6} style={{marginBottom: 20}}>
-          <Search placeholder="Search text" className='mr-10' onSearch={onSearch}/>
-          {
-            searchFoundCount > 0 && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => selectPrevMatch()}
-                >
-                  &lt;
-                </button>
-                <button
-                  type="submit"
-                  onClick={() => selectNextMatch()}
-                >
-                  &gt;
-                </button>
-              </>
-            )
-          }
-          <div>{searchFoundCount > 0 && `${searchFoundCount} items found!`}</div>
-        </Col>
+        {treeData.length > 0 && (
+          <Col xs={24} sm={24} md={8} lg={6} style={{marginBottom: 20}}>
+            <Search placeholder="Search text" className='mr-10' onSearch={onSearch}/>
+            {
+              searchFoundCount > 0 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => selectPrevMatch()}
+                  >
+                    &lt;
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={() => selectNextMatch()}
+                  >
+                    &gt;
+                  </button>
+                </>
+              )
+            }
+            <div>{searchFoundCount > 0 && `${searchFoundCount} items found!`}</div>
+          </Col>
+        )}
         {
           isAdminOrManager &&
           <Col xs={24} sm={24} md={8} lg={6} style={{marginBottom: 20}}>
@@ -193,62 +212,64 @@ const ProductMapTree = () => {
         }
       </Row>
 
-      <Row style={{width: '100%'}}>
-        <div style={{height: mapHeight, width: '100%'}}>
-          <SortableTree
-            treeData={treeData}
-            onChange={(treeData: TreeNode[]) => setTreeData(treeData)}
-            canDrag={isAdminOrManager}
-            onMoveNode={treeChangeHandler}
-            searchMethod={customSearchMethod}
-            searchQuery={searchString}
-            searchFocusOffset={searchFocusIndex}
-            searchFinishCallback={onTreeSearch}
-            generateNodeProps={({node}) => ({
-              buttons: isAdminOrManager
-                ? [
-                  <>
-                    <button
-                      className="mr-10"
-                      onClick={() => {
-                        setHideParent(true);
-                        editNode('add-child', node)
-                      }}
-                    >
-                      Add
-                    </button>
-                    <button
-                      className="mr-10"
-                      onClick={() => {
-                        setHideParent(true);
-                        editNode('edit', node);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => removeNode(node)}
-                    >
-                      Remove
-                    </button>
-                  </>
-                ]
-                : [],
-              title: (
-                <Row
-                  justify="space-between"
-                  style={{minWidth: 200}}
-                >
-                  <Link href={`/products/${productSlug}/capabilities/${node.id}`}>
-                    {node.title}
-                  </Link>
-                  <div className='pl-25'>{node.subtitle}</div>
-                </Row>
-              ),
-            })}
-          />
-        </div>
-      </Row>
+      {treeData.length > 0 && (
+        <Row style={{width: '100%'}}>
+          <div style={{height: mapHeight, width: '100%'}}>
+            <SortableTree
+              treeData={treeData}
+              onChange={(treeData: TreeNode[]) => setTreeData(treeData)}
+              canDrag={isAdminOrManager}
+              onMoveNode={treeChangeHandler}
+              searchMethod={customSearchMethod}
+              searchQuery={searchString}
+              searchFocusOffset={searchFocusIndex}
+              searchFinishCallback={onTreeSearch}
+              generateNodeProps={({node}) => ({
+                buttons: isAdminOrManager
+                  ? [
+                    <>
+                      <button
+                        className="mr-10"
+                        onClick={() => {
+                          setHideParent(true);
+                          editNode('add-child', node)
+                        }}
+                      >
+                        Add
+                      </button>
+                      <button
+                        className="mr-10"
+                        onClick={() => {
+                          setHideParent(true);
+                          editNode('edit', node);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => removeNode(node)}
+                      >
+                        Remove
+                      </button>
+                    </>
+                  ]
+                  : [],
+                title: (
+                  <Row
+                    justify="space-between"
+                    style={{minWidth: 200}}
+                  >
+                    <Link href={`/products/${productSlug}/capabilities/${node.id}`}>
+                      {node.title}
+                    </Link>
+                    <div className='pl-25'>{node.subtitle}</div>
+                  </Row>
+                ),
+              })}
+            />
+          </div>
+        </Row>
+      )}
 
       {
         showAddCapabilityModal &&
