@@ -64,7 +64,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   });
 
   const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
-    variables: {id: initiativeId, userId: userId == null ? 0 : userId, input: inputData }
+    variables: {id: initiativeId, input: inputData }
   });
 
   useEffect(() => {

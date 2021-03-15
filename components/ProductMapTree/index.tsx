@@ -41,6 +41,7 @@ const ProductMapTree = () => {
         setTreeData(formatData(capabilitiesData[0].children));
       }
     } catch {
+      console.log("inside catch")
     }
   }
 

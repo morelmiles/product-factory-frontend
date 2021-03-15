@@ -22,22 +22,15 @@ const Summary: React.FunctionComponent = () => {
 
   const [data, setData] = useState<any>({});
 
-  const [userId, setUserId] = useState<string | null>(null);
   const [availableTasksAmount, setAvailableTasksAmount] = useState(0);
 
-
-  useEffect(() => {
-    setUserId(localStorage.getItem('userId'));
-  }, []);
-
   const {data: original, error, loading} = useQuery(GET_PRODUCT_BY_ID, {
-    variables: {slug: productSlug, userId: userId == null ? 0 : userId}
+    variables: {slug: productSlug}
   });
 
   let {data: tasks, error: tasksError, loading: tasksLoading} = useQuery(GET_TASKS_BY_PRODUCT, {
     variables: {
       productSlug,
-      userId: userId == null ? 0 : userId,
       input: {statuses: [2]} // 2 - Available
     }
   });

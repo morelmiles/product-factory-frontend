@@ -47,7 +47,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
 
   const productsVariable = {
     productSlug,
-    userId: userId == null ? 0 : userId,
     input: inputData
   };
 

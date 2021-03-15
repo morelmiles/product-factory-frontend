@@ -89,7 +89,7 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
 `
 
 export const GET_PRODUCT_BY_ID = gql`
-  query GetProduct($slug: String!, $userId: Int!) {
+  query GetProduct($slug: String!) {
     product(slug: $slug) {
       name
       id
@@ -144,16 +144,16 @@ export const GET_PRODUCT_BY_ID = gql`
       id
       name
     }
-    isAdminOrManager(slug: $slug, userId: $userId)
+    isAdminOrManager(slug: $slug)
   }
 `;
 
 export const GET_TASKS = gql`
-  query GetTasks($userId: Int!, $input: TaskListInput) {
-    tasks (input: $input, userId: $userId) {
+  query GetTasks($input: TaskListInput) {
+    tasks (input: $input) {
       id
       publishedId
-      canEdit(userId: $userId)
+      canEdit
       priority
       detailUrl
       shortDescription
@@ -247,7 +247,7 @@ export const GET_CAPABILITIES = gql`
 `;
 
 export const GET_CAPABILITY_BY_ID = gql`
-  query GetCapability($nodeId: Int!, $slug: String!, $userId: Int!) {
+  query GetCapability($nodeId: Int!, $slug: String!) {
     capability(nodeId: $nodeId) {
       id
       name
@@ -285,7 +285,7 @@ export const GET_CAPABILITY_BY_ID = gql`
         }
       }
     }
-    isAdminOrManager(slug: $slug, userId: $userId)
+    isAdminOrManager(slug: $slug)
   }
 `;
 
@@ -318,8 +318,8 @@ export const GET_INITIATIVES = gql`
 `;
 
 export const GET_INITIATIVE_BY_ID = gql`
-query GetInitiative($id: Int!, $userId: Int!, $input: TaskListInput!) {
-  initiative(id: $id, input: $input, userId: $userId) {
+query GetInitiative($id: Int!, $input: TaskListInput!) {
+  initiative(id: $id, input: $input) {
     initiative {
       id
       name
@@ -344,7 +344,7 @@ query GetInitiative($id: Int!, $userId: Int!, $input: TaskListInput!) {
       description
       status
       priority
-      canEdit(userId: $userId)
+      canEdit
       taskclaimSet {
         id
         task {
@@ -368,7 +368,7 @@ query GetInitiative($id: Int!, $userId: Int!, $input: TaskListInput!) {
 }`;
 
 export const GET_TASK_BY_ID = gql`
-  query GetTask($productSlug: String!, $publishedId: Int!, $userId: Int) {
+  query GetTask($productSlug: String!, $publishedId: Int!) {
     task(productSlug: $productSlug, publishedId: $publishedId) {
       id
       reviewer {
@@ -376,7 +376,7 @@ export const GET_TASK_BY_ID = gql`
         fullName
       }
       publishedId
-      canEdit(userId: $userId)
+      canEdit
       priority
       detailUrl
       repository
@@ -473,11 +473,11 @@ export const GET_TASK_BY_ID = gql`
 `;
 
 export const GET_TASKS_BY_PRODUCT = gql`
-  query GetTasksByProduct($productSlug: String, $reviewId: Int, $userId: Int, $input: TaskListInput) {
-    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input, userId: $userId) {
+  query GetTasksByProduct($productSlug: String, $reviewId: Int, $input: TaskListInput) {
+    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
       id
       publishedId
-      canEdit(userId: $userId)
+      canEdit
       title
       # description
       shortDescription
@@ -515,12 +515,12 @@ export const GET_TASKS_BY_PRODUCT = gql`
 `;
 
 export const GET_TASKS_BY_PRODUCT_SHORT = gql`
-  query GetTasksByProduct($productSlug: String, $reviewId: Int, $userId: Int, $input: TaskListInput) {
+  query GetTasksByProduct($productSlug: String, $reviewId: Int $input: TaskListInput) {
     tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
       id
       publishedId      
       title
-      canEdit(userId: $userId)
+      canEdit
     }
   }
 `;
@@ -765,9 +765,9 @@ export const GET_REVIEW_BY_ID = gql`
 `;
 
 export const GET_CAPABILITIES_BY_PRODUCT = gql`
-  query GetCapabilities($productSlug: String!, $userId: Int!) {
+  query GetCapabilities($productSlug: String!) {
     capabilities(productSlug: $productSlug)
-    isAdminOrManager(slug: $productSlug, userId: $userId)
+    isAdminOrManager(slug: $productSlug)
   }
 `;
 
