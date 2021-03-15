@@ -164,6 +164,8 @@ const ProductMapTree = () => {
   const count = getVisibleNodeCount({treeData});
   const mapHeight = count * 62;
 
+  console.log("treeData", treeData)
+
   return !capabilitiesError ? (
     <Row style={{width: '100%'}}>
       <Row justify="space-between" style={{width: '100%'}}>

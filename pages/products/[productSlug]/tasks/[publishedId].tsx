@@ -9,7 +9,7 @@ import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT_SHORT} from
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
-import {CustomAvatar, EditIcon} from '../../../../components';
+import {EditIcon} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";

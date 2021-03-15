@@ -333,6 +333,7 @@ const AddTask: React.FunctionComponent<Props> = (
                 placeholder='Select a capability'
                 onChange={setCapability}
                 filterOption={filterOption}
+                defaultValue={capability}
               >
                 {allCapabilities.map((option: any, idx: number) => (
                   <Option key={`cap${idx}`} value={option.id}>
@@ -378,6 +379,7 @@ const AddTask: React.FunctionComponent<Props> = (
                 placeholder="Select initiative"
                 filterOption={filterOption}
                 showSearch
+                defaultValue={initiative}
               >
                 {initiatives.map((option: any, idx: number) => (
                   <Option key={`init${idx}`} value={option.id}>
@@ -427,6 +429,7 @@ const AddTask: React.FunctionComponent<Props> = (
                   placeholder="Access token"
                   value={accessToken}
                   onChange={(e) => setAccessToken(e.target.value)}
+                  defaultValue={accessToken}
                 />
                 <Button
                   className="text-right mt-15"
@@ -472,6 +475,7 @@ const AddTask: React.FunctionComponent<Props> = (
             onChange={setTags}
             filterOption={filterOption}
             placeholder="Select tags"
+            defaultValue={tags}
           >
             {allTags && allTags.map((option: any, idx: number) => (
               <Option key={`cap${idx}`} value={option.id}>
@@ -485,6 +489,7 @@ const AddTask: React.FunctionComponent<Props> = (
           <Select
             mode="multiple"
             onChange={setStacks}
+            defaultValue={stacks}
             filterOption={filterOption}
             placeholder="Select stacks"
           >
@@ -502,6 +507,7 @@ const AddTask: React.FunctionComponent<Props> = (
             onChange={setDependOn}
             filterOption={filterOption}
             placeholder="Select depend on tasks"
+            defaultValue={dependOn}
           >
             {tasks &&
             tasks.map((option: any, idx: number) => (
@@ -519,6 +525,7 @@ const AddTask: React.FunctionComponent<Props> = (
             placeholder="Select a reviewer"
             showSearch
             filterOption={filterOption}
+            defaultValue={reviewSelectValue}
           >
             {
               allUsers.map((user: IUser) => (
