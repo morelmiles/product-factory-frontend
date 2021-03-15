@@ -51,7 +51,8 @@ const ProductMapTree = () => {
     loading: capabilitiesLoading,
     refetch
   } = useQuery(GET_CAPABILITIES_BY_PRODUCT, {
-    variables: {productSlug, userId: userId == null ? 0 : userId}
+    variables: {productSlug, userId: userId == null ? 0 : userId},
+    fetchPolicy: "no-cache"
   });
 
   useEffect(() => {

@@ -352,8 +352,8 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   </Col>
                 </Row>
                 <div className="mt-22">
+                  {showAssignedUser()}
                   <Row style={{marginTop: 10}} className="text-sm mt-8">
-                    {showAssignedUser()}
                     <strong className="my-auto">Created By: </strong>
 
                     <Row align="middle" style={{marginLeft: 15}}>
@@ -418,7 +418,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   {
                     getProp(task, 'priority', null) &&
                     <Row style={{marginTop: 10}} className="text-sm mt-8">
-                        <strong className="my-auto">Priority:&nbsp;</strong>
+                        <strong className="my-auto">Priority:&nbsp;</strong>&nbsp;
                         <Priorities task={task} submit={() => refetch()}/>
                     </Row>
                   }
