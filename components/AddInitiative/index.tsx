@@ -7,7 +7,7 @@ import { getProp } from '../../utilities/filters';
 import { RICH_TEXT_EDITOR_WIDTH } from '../../utilities/constants';
 import dynamic from 'next/dynamic';
 
-const { TextArea } = Input;
+
 const { Option } = Select;
 
 
@@ -24,7 +24,7 @@ type Props = {
     initiative?: any;
 };
 
-const AddInitiative: React.SFC<Props> = ({
+const AddInitiative: React.FunctionComponent<Props> = ({
   modal,
   productSlug,
   closeModal,
@@ -53,9 +53,9 @@ const AddInitiative: React.SFC<Props> = ({
 
   const handleOk = () => {
     if (modalType) {
-      onUpdate();
+      onUpdate().then();
     } else {
-      onCreate();
+      onCreate().then();
     }
 
     closeModal();
@@ -78,7 +78,7 @@ const AddInitiative: React.SFC<Props> = ({
       });
       
       if (res.data && res.data.updateInitiative) {
-        message.success('Initiative is udpated successfully!');
+        message.success('Initiative is updated successfully!');
         submit();
       }
     } catch (e) {
@@ -123,6 +123,7 @@ const AddInitiative: React.SFC<Props> = ({
           </Button>,
         ]}
         width={RICH_TEXT_EDITOR_WIDTH}
+        maskClosable={false}
       >
         {
           modalType ? (

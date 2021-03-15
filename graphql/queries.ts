@@ -265,6 +265,7 @@ export const GET_CAPABILITY_BY_ID = gql`
       }
       tasks {
         id
+        publishedId
         detailUrl
         title
         repository
@@ -273,6 +274,9 @@ export const GET_CAPABILITY_BY_ID = gql`
         tag {
           id
           name
+        }
+        product {
+          slug
         }
       }
       product {
@@ -776,24 +780,6 @@ export const GET_CAPABILITIES_BY_PRODUCT_AS_LIST = gql`
     capabilitiesAsList(productSlug: $productSlug) {
       id
       name
-      #product {
-      #  id
-      #  name
-      #  shortDescription
-      #  videoUrl
-      #}
-      #tasks {
-      #  id
-      #  title
-      #  description
-      #  shortDescription
-      #  status
-      #}
-      #attachments {
-      #  id
-      #  name
-      #  path
-      #}
     }
   }
 `;

@@ -40,6 +40,7 @@ const DeleteModal: React.SFC<Props> = ({
             Submit
           </Button>,
         ]}
+        maskClosable={false}
       >
         <h3>Are you sure?</h3>
       </Modal>

@@ -22,7 +22,7 @@ type LinkType = {
   url: string;
 }
 
-const links: LinkType[] = [
+let links: LinkType[] = [
   {url: '/', type: 'summary', name: 'Summary'},
   {url: '/initiatives', type: 'initiatives', name: 'Initiatives'},
   {url: '/tasks', type: 'tasks', name: 'Tasks'},
@@ -30,6 +30,13 @@ const links: LinkType[] = [
   {url: '/people', type: 'people', name: 'People'},
   {url: '/partners', type: 'partners', name: 'Commercial Partners'}
 ]
+
+// TODO: isAdmin?
+if (false) {
+  links.push(
+    {url: '/settings', type: 'settings', name: 'Settings'}
+  )
+}
 
 const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
   const router = useRouter();
@@ -95,7 +102,6 @@ const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
             </Menu>
           </div>
         )
-
       }
     </>
   );

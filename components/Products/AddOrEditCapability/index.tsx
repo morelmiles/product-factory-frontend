@@ -88,15 +88,11 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
 
   const onUpdate = async () => {
     try {
-      let nodeTitle = name;
-      nodeTitle = nodeTitle.replaceAll("'", "\\'");
-      nodeTitle = nodeTitle.replaceAll('"', "\\'");
-
       const res = await updateCapability({
         variables: {
           productSlug: null,
           nodeId: capability.id,
-          name: nodeTitle,
+          name,
           description,
           stacks,
           videoLink,
@@ -115,15 +111,11 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
 
   const onCreate = async () => {
     try {
-      let nodeTitle = name;
-      nodeTitle = nodeTitle.replaceAll("'", "\\'");
-      nodeTitle = nodeTitle.replaceAll('"', "\\'");
-
       const res = await createCapability({
         variables: {
           productSlug: modalType === 'add-root' ? productSlug : null,
           nodeId: modalType === 'add-child' ? capability.id : null,
-          name: nodeTitle,
+          name,
           description,
           stacks,
           videoLink,
@@ -154,6 +146,7 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
             {modalType === 'edit' ? 'Edit' : 'Add'}
           </Button>
         ]}
+        maskClosable={false}
       >
         <>
           <Row className="mb-15">
@@ -183,7 +176,6 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
               defaultValue={stacks}
               onChange={setStacks}
             >
-              <Option value={0}>Select stacks</Option>
               {allStacks && allStacks.map((option: any, idx: number) => (
                 <Option key={`cap${idx}`} value={option.id}>
                   {option.name}

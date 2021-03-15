@@ -41,7 +41,6 @@ const ProductMapTree = () => {
         setTreeData(formatData(capabilitiesData[0].children));
       }
     } catch {
-      console.log("inside catch")
     }
   }
 
@@ -49,6 +48,8 @@ const ProductMapTree = () => {
     return data.map((node: any) => ({
       id: getProp(node, 'id'),
       title: getProp(node, 'data.name'),
+      description: getProp(node, 'data.description', ''),
+      videoLink: getProp(node, 'data.video_link', ''),
       children: node.children ? formatData(getProp(node, 'children', [])) : []
     }))
   }

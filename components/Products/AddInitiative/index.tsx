@@ -11,8 +11,6 @@ const RichTextEditor = dynamic(
   () => import('../../TextEditor'),
   { ssr: false }
 )
-
-const { TextArea } = Input;
 const { Option } = Select;
 
 type Props = {
@@ -120,6 +118,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
           </Button>,
         ]}
         width={RICH_TEXT_EDITOR_WIDTH}
+        maskClosable={false}
       >
         {
           modalType ? (
