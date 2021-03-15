@@ -64,7 +64,7 @@ const TaskTab: React.FunctionComponent<Props> = (
 
   return (
     <div>
-      <div className="text-right">
+      <div className="text-right tasks-main" style={{marginTop: -55}}>
         <Button
           type="primary"
           onClick={() => setFilterModal(!filterModal)}

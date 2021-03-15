@@ -254,8 +254,11 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                             className="mb-10"
                             onClick={() => showReviewTaskModal(true)}>Submit for review</Button>
                   )}
-                  <Button type="primary"
-                          onClick={() => showLeaveTaskModal(true)}>Leave the task</Button>
+                  <Button
+                    type="primary"
+                    onClick={() => showLeaveTaskModal(true)}
+                    style={{zIndex: 1000}}
+                  >Leave the task</Button>
                 </div>
               )
               : null
@@ -345,7 +348,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
               )}
               <Col>
                 <Row>
-                  <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)'}}>
+                  <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: 30}}>
                     {
                       parse(getProp(task, 'description', ''))
                     }
