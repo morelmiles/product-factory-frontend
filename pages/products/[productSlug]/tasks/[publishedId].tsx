@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, message, Button, Tag, Collapse, List, Modal} from 'antd';
+import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -101,7 +101,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     setAgreementModalVisible(false);
   }
 
-  const [leaveTask] = useMutation(LEAVE_TASK, {
+  const [leaveTask, {loading: leaveTaskLoading}] = useMutation(LEAVE_TASK, {
     variables: {
       taskId,
       userId: user.id
@@ -122,7 +122,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     }
   });
 
-  const [submitTask] = useMutation(IN_REVIEW_TASK, {
+  const [submitTask, {loading: submitTaskLoading}] = useMutation(IN_REVIEW_TASK, {
     variables: {
       taskId,
       userId: user.id
@@ -143,7 +143,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     }
   });
 
-  const [claimTask] = useMutation(CLAIM_TASK, {
+  const [claimTask, {loading: claimTaskLoading}] = useMutation(CLAIM_TASK, {
     variables: {
       taskId,
       userId: user.id
@@ -293,6 +293,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
 
   return (
     <LeftPanelContainer>
+      <Spin tip="Loading..." spinning={loading || leaveTaskLoading || claimTaskLoading || submitTaskLoading} delay={200}>
       {
         !error && (
           <>
@@ -547,7 +548,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                 modal={leaveTaskModal}
                 productSlug={''}
                 closeModal={() => showLeaveTaskModal(false)}
-                submit={leaveTask}
+                submit={() => {showLeaveTaskModal(false); leaveTask().then() }}
                 title="Leave the task"
                 message="Do you really want to leave the task?"
                 submitText="Yes, leave"
@@ -592,6 +593,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
       {/*  <p>Some contents...</p>*/}
       {/*  <p>Some contents...</p>*/}
       {/*</Modal>*/}
+      </Spin>
     </LeftPanelContainer>
   );
 };
