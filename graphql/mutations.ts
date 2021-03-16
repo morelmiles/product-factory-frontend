@@ -206,7 +206,7 @@ export const ACTIVE_MARKET = gql`
 export const LEAVE_TASK = gql`
   mutation LeaveTask($taskId: Int!) {
     leaveTask(taskId: $taskId) {
-      success,
+      success
       message
     }
   }
@@ -215,8 +215,9 @@ export const LEAVE_TASK = gql`
 export const CLAIM_TASK = gql`
   mutation ClaimTask($taskId: Int!) {
     claimTask(taskId: $taskId) {
-      success,
+      success
       message
+      isNeedAgreement
     }
   }
 `;
@@ -273,6 +274,15 @@ export const FAKE_LOGIN = gql`
 export const UPDATE_LICENSE = gql`
   mutation UpdateLicense($userId: Int!, $productSlug: String!, $content: String!) {
     updateLicense(licenseInput: {userId: $userId, productSlug: $productSlug, content: $content}) {
+      status
+      message
+    }
+  }
+`;
+
+export const ACCEPT_AGREEMENT = gql`
+  mutation AgreeLicense($userId: Int!, $productSlug: String!) {
+    agreeLicense(licenseInput: {userId: $userId, productSlug: $productSlug}) {
       status
       message
     }
