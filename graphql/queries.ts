@@ -847,7 +847,7 @@ export const GET_LICENSE = gql`
 `;
 
 export const IS_ADMIN = gql`
-  query IsAdmin($userId: Int!, $productSlug: String!) {
-    isAdmin(userId: $userId, productSlug: $productSlug)
+  query IsAdmin($productSlug: String!) {
+    isAdmin(productSlug: $productSlug)
   }
 `;

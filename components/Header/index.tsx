@@ -29,16 +29,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   const onSearch = () => {
   }
 
-
-  const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"})
-  //
-  // useEffect(() => {
-  //   let userId = localStorage.getItem("userId")
-  //   if (localStorage.getItem("userId")) {
-  //     userLogInAction({isLoggedIn: true, id: userId});
-  //     setUserId(userId)
-  //   }
-  // }, []);
+  const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"});
 
   useEffect(() => {
     if (personData && personData.person) {
