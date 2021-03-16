@@ -168,6 +168,10 @@ const AddTask: React.FunctionComponent<Props> = (
       message.error("Description is required. Please fill out description");
       return;
     }
+    if (!reviewSelectValue) {
+      message.error("Reviewer is required. Please fill out reviewer");
+      return;
+    }
 
     await addNewTask();
   };

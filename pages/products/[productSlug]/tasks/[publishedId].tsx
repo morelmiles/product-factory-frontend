@@ -581,17 +581,17 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
         )
       }
 
-      <Modal
-        okText="I Agree"
-        title="Basic Modal"
-        visible={agreementModalVisible}
-        onOk={handleIAgree}
-        onCancel={() => setAgreementModalVisible(false)}
-      >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-      </Modal>
+      {/*<Modal*/}
+      {/*  okText="I Agree"*/}
+      {/*  title="Basic Modal"*/}
+      {/*  visible={agreementModalVisible}*/}
+      {/*  onOk={handleIAgree}*/}
+      {/*  onCancel={() => setAgreementModalVisible(false)}*/}
+      {/*>*/}
+      {/*  <p>Some contents...</p>*/}
+      {/*  <p>Some contents...</p>*/}
+      {/*  <p>Some contents...</p>*/}
+      {/*</Modal>*/}
     </LeftPanelContainer>
   );
 };
