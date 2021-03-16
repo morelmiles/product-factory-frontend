@@ -95,10 +95,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   }
 
   const [leaveTask, {loading: leaveTaskLoading}] = useMutation(LEAVE_TASK, {
-    variables: {
-      taskId,
-      userId: user.id
-    },
+    variables: {taskId},
     onCompleted(data) {
       const {leaveTask} = data;
       const responseMessage = leaveTask.message;
@@ -116,10 +113,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   });
 
   const [submitTask, {loading: submitTaskLoading}] = useMutation(IN_REVIEW_TASK, {
-    variables: {
-      taskId,
-      userId: user.id
-    },
+    variables: {taskId},
     onCompleted(data) {
       const {inReviewTask} = data;
       const responseMessage = inReviewTask.message;
@@ -137,10 +131,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   });
 
   const [claimTask, {loading: claimTaskLoading}] = useMutation(CLAIM_TASK, {
-    variables: {
-      taskId,
-      userId: user.id
-    },
+    variables: {taskId},
     onCompleted(data) {
       const {claimTask} = data;
       const responseMessage = claimTask.message;

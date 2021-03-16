@@ -11,8 +11,8 @@ export const CREATE_PERSON = gql`
 `;
 
 export const CREATE_PRODUCT = gql`
-  mutation CreateProduct($productInfo: ProductInput!, $userId: Int!) {
-    createProduct(productInfo: $productInfo, userId: $userId) {
+  mutation CreateProduct($productInfo: ProductInput!) {
+    createProduct(productInfo: $productInfo) {
       status
       error
     }
@@ -204,8 +204,8 @@ export const ACTIVE_MARKET = gql`
 `;
 
 export const LEAVE_TASK = gql`
-  mutation LeaveTask($taskId: Int!, $userId: Int!) {
-    leaveTask(taskId: $taskId, userId: $userId) {
+  mutation LeaveTask($taskId: Int!) {
+    leaveTask(taskId: $taskId) {
       success,
       message
     }
@@ -213,8 +213,8 @@ export const LEAVE_TASK = gql`
 `;
 
 export const CLAIM_TASK = gql`
-  mutation ClaimTask($taskId: Int!, $userId: Int!) {
-    claimTask(taskId: $taskId, userId: $userId) {
+  mutation ClaimTask($taskId: Int!) {
+    claimTask(taskId: $taskId) {
       success,
       message
     }
@@ -222,8 +222,8 @@ export const CLAIM_TASK = gql`
 `;
 
 export const IN_REVIEW_TASK = gql`
-  mutation InReviewTask($taskId: Int!, $userId: Int!) {
-    inReviewTask(taskId: $taskId, userId: $userId) {
+  mutation InReviewTask($taskId: Int!) {
+    inReviewTask(taskId: $taskId) {
       success,
       message
     }

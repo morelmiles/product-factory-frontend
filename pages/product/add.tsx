@@ -46,7 +46,6 @@ const AddProduct: React.FunctionComponent = () => {
 
     try {
       setIsShowLoading(true);
-      const userId = localStorage.getItem('userId');
 
       const res = await createProduct({
         variables: {
@@ -58,8 +57,7 @@ const AddProduct: React.FunctionComponent = () => {
             website,
             addGit: mode,
             videoUrl
-          },
-          userId: userId == null ? 0 : userId
+          }
         }
       });
 

@@ -210,7 +210,6 @@ const AddTask: React.FunctionComponent<Props> = (
       stacks,
       dependOn,
       detailUrl,
-      userId: localStorage.getItem('userId'),
       reviewer: reviewSelectValue
     };
 
