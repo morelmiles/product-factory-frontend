@@ -86,7 +86,7 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
                   <Select>
                     <Option value={0}>Select</Option>
                     {getProp(data, "people", []).map((person: any, idx: number) => person.id > 1 && (
-                      <Option key={idx} value={person.id}>{person.fullName}</Option>
+                      <Option key={person.id} value={person.id}>{person.fullName}</Option>
                     ))}
                   </Select>
                 </Form.Item>

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Input, Button, message, Row, Col, Space, Drawer} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
-import {apiDomain, productionMode} from '../../utilities/constants';
+import {productionMode} from '../../utilities/constants';
 // @ts-ignore
 import Logo from '../../public/assets/logo.svg';
 import {useRouter} from 'next/router'
@@ -25,23 +25,12 @@ type Props = {
 
 const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction}) => {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
 
   const onSearch = () => {
   }
 
-  const getSelectedItem = () => {
-    switch (router.asPath) {
-      case "/product/add":
-        return "2";
-      case "/profiles":
-        return "3";
-      default:
-        return "1";
-    }
-  }
 
-  const {data: personData} = useQuery(GET_PERSON)
+  const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"})
   //
   // useEffect(() => {
   //   let userId = localStorage.getItem("userId")
@@ -66,6 +55,14 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
           }
         })
       })
+    } else if (personData && personData.person === null) {
+      userLogInAction({
+        isLoggedIn: false,
+        fullName: "",
+        slug: "",
+        id: null,
+        roles: []
+      });
     }
   }, [personData])
 
@@ -75,20 +72,20 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
       if (success) {
         localStorage.removeItem('userId');
         localStorage.removeItem('fullName');
-        window.location.replace(url);
-        // localStorage.removeItem('userId');
-        // localStorage.removeItem('fullName');
-        // router.push("/switch-test-user").then();
+        if (url) {
+          window.location.replace(url);
+        } else {
+          router.push("/switch-test-user").then();
+        }
       } else {
-        message.error(responseMessage)
+        message.error(responseMessage);
       }
+
     },
     onError(err) {
       message.error("Failed to logout form the system").then();
     }
   });
-
-  // const selectedItem = getSelectedItem();
 
   const [visible, setVisible] = useState(false);
   const showDrawer = () => {
