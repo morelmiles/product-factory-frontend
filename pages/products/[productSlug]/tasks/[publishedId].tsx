@@ -162,6 +162,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
       if (messageText !== '') {
         if (status) {
           message.success(messageText).then();
+          claimTaskEvent();
         } else {
           message.error(messageText).then();
         }
