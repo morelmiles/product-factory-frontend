@@ -5,9 +5,14 @@ import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
-import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT_SHORT} from '../../../../graphql/queries';
+import {
+  GET_LICENSE,
+  GET_PRODUCT_INFO_BY_ID,
+  GET_TASK_BY_ID,
+  GET_TASKS_BY_PRODUCT_SHORT
+} from '../../../../graphql/queries';
 import {TASK_TYPES} from '../../../../graphql/types';
-import {CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
+import {ACCEPT_AGREEMENT, CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {EditIcon} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
@@ -45,6 +50,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   const [taskId, setTaskId] = useState(0);
   const [showEditModal, setShowEditModal] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [license, setLicense] = useState('');
 
   const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
     variables: {publishedId, productSlug, userId: userId == null ? 0 : userId}
@@ -98,6 +104,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   });
 
   const handleIAgree = () => {
+    acceptAgreement().then();
     setAgreementModalVisible(false);
   }
 
@@ -143,6 +150,38 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     }
   });
 
+  const [acceptAgreement] = useMutation(ACCEPT_AGREEMENT, {
+    variables: {
+      userId: user.id,
+      productSlug
+    },
+    onCompleted(data) {
+      const messageText = getProp(data, 'agreeLicense.message', '');
+      const status = getProp(data, 'agreeLicense.status', false);
+
+      if (messageText !== '') {
+        if (status) {
+          message.success(messageText).then();
+        } else {
+          message.error(messageText).then();
+        }
+      }
+    },
+    onError() {
+      message.error('Failed to accept agreement').then();
+    }
+  })
+
+  const {data: licenseOriginal, error: licenseError} = useQuery(GET_LICENSE, {
+    variables: {productSlug}
+  });
+
+  useEffect(() => {
+    if (!licenseError) {
+      setLicense(getProp(licenseOriginal, 'license.agreementContent', ''));
+    }
+  }, [licenseOriginal]);
+
   const [claimTask, {loading: claimTaskLoading}] = useMutation(CLAIM_TASK, {
     variables: {
       taskId,
@@ -152,17 +191,16 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
       const {claimTask} = data;
       const responseMessage = claimTask.message;
 
-      if (claimTask.needArgeement) {
-
-      }
-
-      setAgreementModalVisible(true);
-
-      if (claimTask.success) {
-        message.success(responseMessage).then();
-        fetchData().then();
+      if (claimTask.isNeedAgreement) {
+        setAgreementModalVisible(true);
+        message.info(responseMessage).then();
       } else {
-        message.error(responseMessage).then();
+        if (claimTask.success) {
+          message.success(responseMessage).then();
+          fetchData().then();
+        } else {
+          message.error(responseMessage).then();
+        }
       }
     },
     onError() {
@@ -293,306 +331,310 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
 
   return (
     <LeftPanelContainer>
-      <Spin tip="Loading..." spinning={loading || leaveTaskLoading || claimTaskLoading || submitTaskLoading} delay={200}>
-      {
-        !error && (
-          <>
-            <div className="text-grey">
-              {getBasePath() !== "" && (
-                <>
-                  <Link href={getBasePath()}>
-                    <a className="text-grey">{getProp(product, 'name', '')}</a>
-                  </Link>
-                  <span> / </span>
-                  <Link href={`${getBasePath()}/tasks`}>
-                    <a className="text-grey">Tasks</a>
-                  </Link>
-                  <span> / </span>
-                  {initiativeName && (
-                    <>
-                      <Link
-                        href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
-                        <a className="text-grey">{initiativeName}</a>
-                      </Link>
-                      <span> / </span>
-                    </>
-                  )}
-                </>
-              )}
-              <span>{getProp(original, 'task.title', '')}</span>
-            </div>
-            <Row
-              justify="space-between"
-              className="right-panel-headline strong-height"
-            >
-              <Col md={16}>
-                <div className="section-title">
-                  {getProp(task, 'title', '')}
-                </div>
-              </Col>
-              <Col md={8} className="text-right">
-                {userHasManagerRoots ? (
+      <Spin tip="Loading..." spinning={loading || leaveTaskLoading || claimTaskLoading || submitTaskLoading}
+            delay={200}>
+        {
+          !error && (
+            <>
+              <div className="text-grey">
+                {getBasePath() !== "" && (
+                  <>
+                    <Link href={getBasePath()}>
+                      <a className="text-grey">{getProp(product, 'name', '')}</a>
+                    </Link>
+                    <span> / </span>
+                    <Link href={`${getBasePath()}/tasks`}>
+                      <a className="text-grey">Tasks</a>
+                    </Link>
+                    <span> / </span>
+                    {initiativeName && (
+                      <>
+                        <Link
+                          href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
+                          <a className="text-grey">{initiativeName}</a>
+                        </Link>
+                        <span> / </span>
+                      </>
+                    )}
+                  </>
+                )}
+                <span>{getProp(original, 'task.title', '')}</span>
+              </div>
+              <Row
+                justify="space-between"
+                className="right-panel-headline strong-height"
+              >
+                <Col md={16}>
+                  <div className="section-title">
+                    {getProp(task, 'title', '')}
+                  </div>
+                </Col>
+                <Col md={8} className="text-right">
+                  {userHasManagerRoots ? (
+                    <Col>
+                      <Button
+                        onClick={() => showDeleteModal(true)}
+                      >
+                        Delete
+                      </Button>
+                      <EditIcon
+                        className="ml-10"
+                        onClick={() => setShowEditModal(true)}
+                      />
+                    </Col>
+                  ) : showTaskEvents()}
+                </Col>
+
+
+              </Row>
+              <Row>
+                {getProp(task, 'videoUrl', null) && (
                   <Col>
-                    <Button
-                      onClick={() => showDeleteModal(true)}
-                    >
-                      Delete
-                    </Button>
-                    <EditIcon
-                      className="ml-10"
-                      onClick={() => setShowEditModal(true)}
+                    <ReactPlayer
+                      width="100%"
+                      height="170px"
+                      className="mr-10"
+                      url={getProp(task, 'videoUrl')}
                     />
                   </Col>
-                ) : showTaskEvents()}
-              </Col>
-
-
-            </Row>
-            <Row>
-              {getProp(task, 'videoUrl', null) && (
+                )}
                 <Col>
-                  <ReactPlayer
-                    width="100%"
-                    height="170px"
-                    className="mr-10"
-                    url={getProp(task, 'videoUrl')}
-                  />
-                </Col>
-              )}
-              <Col>
-                <Row>
-                  <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: 30}}>
-                    {
-                      parse(getProp(task, 'description', ''))
-                    }
-                  </Col>
-                </Row>
-                <div className="mt-22">
-                  {showAssignedUser()}
-                  <Row style={{marginTop: 10}} className="text-sm mt-8">
-                    <strong className="my-auto">Created By: </strong>
-
-                    <Row align="middle" style={{marginLeft: 15}}>
-                      <Col>
-                        <CustomAvatar2 person={{
-                          fullname: getProp(task, 'createdBy.fullName', ''),
-                          slug: getProp(task, 'createdBy.slug', '')
-                        }}/>
-                      </Col>
-                      <Col>
-                        <Link href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
-                          <a className="text-grey-9">{getProp(task, 'createdBy.fullName', '')}</a>
-                        </Link>
-                      </Col>
-                    </Row>
+                  <Row>
+                    <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: 30}}>
+                      {
+                        parse(getProp(task, 'description', ''))
+                      }
+                    </Col>
                   </Row>
+                  <div className="mt-22">
+                    {showAssignedUser()}
+                    <Row style={{marginTop: 10}} className="text-sm mt-8">
+                      <strong className="my-auto">Created By: </strong>
 
-                  <Row className="text-sm mt-8">
-                    {
-                      (
-                        TASK_TYPES[getProp(task, 'status')] === "Available" ||
-                        TASK_TYPES[getProp(task, 'status')] === "Draft" ||
-                        TASK_TYPES[getProp(task, 'status')] === "Pending" ||
-                        TASK_TYPES[getProp(task, 'status')] === "Blocked"
-                      ) ? (
-                        <strong className="my-auto">
-                          Status: {TASK_TYPES[getProp(task, 'status')]}
-                        </strong>
-                      ) : (
-                        <>
+                      <Row align="middle" style={{marginLeft: 15}}>
+                        <Col>
+                          <CustomAvatar2 person={{
+                            fullname: getProp(task, 'createdBy.fullName', ''),
+                            slug: getProp(task, 'createdBy.slug', '')
+                          }}/>
+                        </Col>
+                        <Col>
+                          <Link href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
+                            <a className="text-grey-9">{getProp(task, 'createdBy.fullName', '')}</a>
+                          </Link>
+                        </Col>
+                      </Row>
+                    </Row>
+
+                    <Row className="text-sm mt-8">
+                      {
+                        (
+                          TASK_TYPES[getProp(task, 'status')] === "Available" ||
+                          TASK_TYPES[getProp(task, 'status')] === "Draft" ||
+                          TASK_TYPES[getProp(task, 'status')] === "Pending" ||
+                          TASK_TYPES[getProp(task, 'status')] === "Blocked"
+                        ) ? (
                           <strong className="my-auto">
-                            Status: {getCausedBy(assignedTo)}
+                            Status: {TASK_TYPES[getProp(task, 'status')]}
                           </strong>
-                          <div className='ml-5'>
-                            {
-                              getProp(task, 'createdBy', null) !== null && !assignedTo
-                                ? (
-                                  <Row>
-                                    <Col>
-                                      <CustomAvatar2 person={{
-                                        fullname: getProp(task, 'createdBy.fullName', ''),
-                                        slug: getProp(task, 'createdBy.slug', '')
-                                      }}/>
-                                    </Col>
-                                    <div className="my-auto">
-                                      {
-                                        getProp(
-                                          getProp(task, 'createdBy'),
-                                          'fullName',
-                                          ''
-                                        )
-                                      }
-                                    </div>
-                                  </Row>
-                                ) : null
-                            }
-                          </div>
-                        </>
+                        ) : (
+                          <>
+                            <strong className="my-auto">
+                              Status: {getCausedBy(assignedTo)}
+                            </strong>
+                            <div className='ml-5'>
+                              {
+                                getProp(task, 'createdBy', null) !== null && !assignedTo
+                                  ? (
+                                    <Row>
+                                      <Col>
+                                        <CustomAvatar2 person={{
+                                          fullname: getProp(task, 'createdBy.fullName', ''),
+                                          slug: getProp(task, 'createdBy.slug', '')
+                                        }}/>
+                                      </Col>
+                                      <div className="my-auto">
+                                        {
+                                          getProp(
+                                            getProp(task, 'createdBy'),
+                                            'fullName',
+                                            ''
+                                          )
+                                        }
+                                      </div>
+                                    </Row>
+                                  ) : null
+                              }
+                            </div>
+                          </>
+                        )
+                      }
+                    </Row>
+                    {
+                      getProp(task, 'priority', null) &&
+                      <Row style={{marginTop: 10}} className="text-sm mt-8">
+                          <strong className="my-auto">Priority:&nbsp;</strong>&nbsp;
+                          <Priorities task={task} submit={() => refetch()}/>
+                      </Row>
+                    }
+                    {
+                      getProp(task, 'reviewer.slug', null) &&
+                      <Row style={{marginTop: 10}} className="text-sm mt-8">
+                          <strong className="my-auto">Reviewer:</strong>
+
+                          <Row align="middle" style={{marginLeft: 15}}>
+                              <Col>
+                                  <CustomAvatar2 person={{
+                                    fullname: getProp(task, 'reviewer.fullName', ''),
+                                    slug: getProp(task, 'reviewer.slug', '')
+                                  }}/>
+                              </Col>
+                              <Col>
+                                  <Link href={`/people/${getProp(task, 'reviewer.slug', '')}`}>
+                                      <a className="text-grey-9">{getProp(task, 'reviewer.fullName', '')}</a>
+                                  </Link>
+                              </Col>
+                          </Row>
+                      </Row>
+                    }
+                    {stacks.length > 0 && (
+                      <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
+                        <strong className="my-auto">Stacks:&nbsp;</strong>
+                        {stacks.map((tag: any, taskIndex: number) =>
+                          <CheckableTag key={`tag-${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
+                        )}
+                      </Row>
+                    )}
+
+                    {tags.length > 0 && (
+                      <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
+                        <strong className="my-auto">Tags:&nbsp;</strong>
+                        {tags.map((tag: any, taskIndex: number) =>
+                          <Tag key={`stack-${taskIndex}`}>{tag.name}</Tag>
+                        )}
+                      </Row>
+                    )}
+
+                    {
+                      getProp(task, 'capability.id', null) && (
+                        <Row
+                          className="text-sm mt-8"
+                        >
+                          <strong className="my-auto">
+                            Related Capability:
+                          </strong>
+                          <Link href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
+                            <a className="ml-5">{getProp(task, 'capability.name', '')}</a>
+                          </Link>
+                        </Row>
                       )
                     }
-                  </Row>
-                  {
-                    getProp(task, 'priority', null) &&
-                    <Row style={{marginTop: 10}} className="text-sm mt-8">
-                        <strong className="my-auto">Priority:&nbsp;</strong>&nbsp;
-                        <Priorities task={task} submit={() => refetch()}/>
-                    </Row>
-                  }
-                  {
-                    getProp(task, 'reviewer.slug', null) &&
-                    <Row style={{marginTop: 10}} className="text-sm mt-8">
-                        <strong className="my-auto">Reviewer:</strong>
+                  </div>
+                </Col>
+              </Row>
 
-                        <Row align="middle" style={{marginLeft: 15}}>
-                            <Col>
-                                <CustomAvatar2 person={{
-                                  fullname: getProp(task, 'reviewer.fullName', ''),
-                                  slug: getProp(task, 'reviewer.slug', '')
-                                }}/>
-                            </Col>
-                            <Col>
-                                <Link href={`/people/${getProp(task, 'reviewer.slug', '')}`}>
-                                    <a className="text-grey-9">{getProp(task, 'reviewer.fullName', '')}</a>
-                                </Link>
-                            </Col>
-                        </Row>
-                    </Row>
-                  }
-                  {stacks.length > 0 && (
-                    <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
-                      <strong className="my-auto">Stacks:&nbsp;</strong>
-                      {stacks.map((tag: any, taskIndex: number) =>
-                        <CheckableTag key={`tag-${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
-                      )}
-                    </Row>
-                  )}
+              {
+                getProp(task, 'dependOn', []).length > 0 &&
+                <Collapse style={{marginTop: 30}}>
+                    <Panel header="Blocked by" key="1">
+                        <List
+                            bordered
+                            dataSource={getProp(task, 'dependOn', [])}
+                            renderItem={(item: any) => (
+                              <List.Item>
+                                <Link
+                                  href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                              </List.Item>
+                            )}
+                        />
+                    </Panel>
+                </Collapse>
+              }
+              {
+                getProp(task, 'relatives', []).length > 0 &&
+                <Collapse style={{marginTop: 30}}>
+                    <Panel header="Dependant tasks" key="1">
+                        <List
+                            bordered
+                            dataSource={getProp(task, 'relatives', [])}
+                            renderItem={(item: any) => (
+                              <List.Item>
+                                <Link
+                                  href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                              </List.Item>
+                            )}
+                        />
+                    </Panel>
+                </Collapse>
+              }
 
-                  {tags.length > 0 && (
-                    <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
-                      <strong className="my-auto">Tags:&nbsp;</strong>
-                      {tags.map((tag: any, taskIndex: number) =>
-                        <Tag key={`stack-${taskIndex}`}>{tag.name}</Tag>
-                      )}
-                    </Row>
-                  )}
+              <div style={{marginTop: 30}}/>
+              <Comments taskId={getProp(task, 'id', 0)}/>
 
-                  {
-                    getProp(task, 'capability.id', null) && (
-                      <Row
-                        className="text-sm mt-8"
-                      >
-                        <strong className="my-auto">
-                          Related Capability:
-                        </strong>
-                        <Link href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
-                          <a className="ml-5">{getProp(task, 'capability.name', '')}</a>
-                        </Link>
-                      </Row>
-                    )
-                  }
-                </div>
-              </Col>
-            </Row>
+              <Attachments data={getProp(original, 'task.attachment', [])}/>
 
-            {
-              getProp(task, 'dependOn', []).length > 0 &&
-              <Collapse style={{marginTop: 30}}>
-                  <Panel header="Blocked by" key="1">
-                      <List
-                          bordered
-                          dataSource={getProp(task, 'dependOn', [])}
-                          renderItem={(item: any) => (
-                            <List.Item>
-                              <Link
-                                href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
-                            </List.Item>
-                          )}
-                      />
-                  </Panel>
-              </Collapse>
-            }
-            {
-              getProp(task, 'relatives', []).length > 0 &&
-              <Collapse style={{marginTop: 30}}>
-                  <Panel header="Dependant tasks" key="1">
-                      <List
-                          bordered
-                          dataSource={getProp(task, 'relatives', [])}
-                          renderItem={(item: any) => (
-                            <List.Item>
-                              <Link
-                                href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
-                            </List.Item>
-                          )}
-                      />
-                  </Panel>
-              </Collapse>
-            }
-
-            <div style={{marginTop: 30}}/>
-            <Comments taskId={getProp(task, 'id', 0)}/>
-
-            <Attachments data={getProp(original, 'task.attachment', [])}/>
-
-            {deleteModal && (
-              <DeleteModal
-                modal={deleteModal}
-                productSlug={''}
-                closeModal={() => showDeleteModal(false)}
-                submit={deleteTask}
-                title='Delete task'
-              />
-            )}
-            {leaveTaskModal && (
-              <CustomModal
-                modal={leaveTaskModal}
-                productSlug={''}
-                closeModal={() => showLeaveTaskModal(false)}
-                submit={() => {showLeaveTaskModal(false); leaveTask().then() }}
-                title="Leave the task"
-                message="Do you really want to leave the task?"
-                submitText="Yes, leave"
-              />
-            )}
-            {
-              reviewTaskModal && (
-                <CustomModal
-                  modal={reviewTaskModal}
+              {deleteModal && (
+                <DeleteModal
+                  modal={deleteModal}
                   productSlug={''}
-                  closeModal={() => showReviewTaskModal(false)}
-                  submit={submitTask}
-                  title="Submit for review"
-                  message="Do you really want to submit the task for review?"
-                  submitText="Yes, submit"
+                  closeModal={() => showDeleteModal(false)}
+                  submit={deleteTask}
+                  title='Delete task'
                 />
               )}
-            {
-              showEditModal &&
-              <AddTaskContainer
-                  modal={showEditModal}
-                  productSlug={String(productSlug)}
-                  modalType={true}
-                  closeModal={setShowEditModal}
-                  task={task}
-                  submit={fetchData}
-                  tasks={tasks}
-              />
-            }
-          </>
-        )
-      }
+              {leaveTaskModal && (
+                <CustomModal
+                  modal={leaveTaskModal}
+                  productSlug={''}
+                  closeModal={() => showLeaveTaskModal(false)}
+                  submit={() => {
+                    showLeaveTaskModal(false);
+                    leaveTask().then()
+                  }}
+                  title="Leave the task"
+                  message="Do you really want to leave the task?"
+                  submitText="Yes, leave"
+                />
+              )}
+              {
+                reviewTaskModal && (
+                  <CustomModal
+                    modal={reviewTaskModal}
+                    productSlug={''}
+                    closeModal={() => showReviewTaskModal(false)}
+                    submit={submitTask}
+                    title="Submit for review"
+                    message="Do you really want to submit the task for review?"
+                    submitText="Yes, submit"
+                  />
+                )}
+              {
+                showEditModal &&
+                <AddTaskContainer
+                    modal={showEditModal}
+                    productSlug={String(productSlug)}
+                    modalType={true}
+                    closeModal={setShowEditModal}
+                    task={task}
+                    submit={fetchData}
+                    tasks={tasks}
+                />
+              }
+            </>
+          )
+        }
 
-      {/*<Modal*/}
-      {/*  okText="I Agree"*/}
-      {/*  title="Basic Modal"*/}
-      {/*  visible={agreementModalVisible}*/}
-      {/*  onOk={handleIAgree}*/}
-      {/*  onCancel={() => setAgreementModalVisible(false)}*/}
-      {/*>*/}
-      {/*  <p>Some contents...</p>*/}
-      {/*  <p>Some contents...</p>*/}
-      {/*  <p>Some contents...</p>*/}
-      {/*</Modal>*/}
+        <Modal
+          title="Contribution License Agreement"
+          okText="I Agree"
+          visible={agreementModalVisible}
+          onOk={handleIAgree}
+          onCancel={() => setAgreementModalVisible(false)}
+          width={1000}
+          maskClosable={false}
+        >
+          <p>{parse(license)}</p>
+        </Modal>
       </Spin>
     </LeftPanelContainer>
   );
