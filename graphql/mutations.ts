@@ -269,3 +269,12 @@ export const FAKE_LOGIN = gql`
     }
   }
 `;
+
+export const UPDATE_LICENSE = gql`
+  mutation UpdateLicense($userId: Int!, $productSlug: String!, $content: String!) {
+    updateLicense(licenseInput: {userId: $userId, productSlug: $productSlug, content: $content}) {
+      status
+      message
+    }
+  }
+`;

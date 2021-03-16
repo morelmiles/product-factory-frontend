@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, message, Button, Tag, Collapse, List} from 'antd';
+import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -9,7 +9,7 @@ import {GET_PRODUCT_INFO_BY_ID, GET_TASK_BY_ID, GET_TASKS_BY_PRODUCT_SHORT} from
 import {TASK_TYPES} from '../../../../graphql/types';
 import {CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
-import {CustomAvatar, EditIcon} from '../../../../components';
+import {EditIcon} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Attachments from "../../../../components/Attachments";
@@ -36,6 +36,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const {publishedId, productSlug} = router.query;
 
+  const [agreementModalVisible, setAgreementModalVisible] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
   const [leaveTaskModal, showLeaveTaskModal] = useState(false);
   const [reviewTaskModal, showReviewTaskModal] = useState(false);
@@ -89,7 +90,11 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     }
   });
 
-  const [leaveTask] = useMutation(LEAVE_TASK, {
+  const handleIAgree = () => {
+    setAgreementModalVisible(false);
+  }
+
+  const [leaveTask, {loading: leaveTaskLoading}] = useMutation(LEAVE_TASK, {
     variables: {
       taskId,
       userId: user.id
@@ -110,7 +115,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     }
   });
 
-  const [submitTask] = useMutation(IN_REVIEW_TASK, {
+  const [submitTask, {loading: submitTaskLoading}] = useMutation(IN_REVIEW_TASK, {
     variables: {
       taskId,
       userId: user.id
@@ -131,7 +136,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     }
   });
 
-  const [claimTask] = useMutation(CLAIM_TASK, {
+  const [claimTask, {loading: claimTaskLoading}] = useMutation(CLAIM_TASK, {
     variables: {
       taskId,
       userId: user.id
@@ -139,6 +144,13 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
     onCompleted(data) {
       const {claimTask} = data;
       const responseMessage = claimTask.message;
+
+      if (claimTask.needArgeement) {
+
+      }
+
+      setAgreementModalVisible(true);
+
       if (claimTask.success) {
         message.success(responseMessage).then();
         fetchData().then();
@@ -247,8 +259,11 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                             className="mb-10"
                             onClick={() => showReviewTaskModal(true)}>Submit for review</Button>
                   )}
-                  <Button type="primary"
-                          onClick={() => showLeaveTaskModal(true)}>Leave the task</Button>
+                  <Button
+                    type="primary"
+                    onClick={() => showLeaveTaskModal(true)}
+                    style={{zIndex: 1000}}
+                  >Leave the task</Button>
                 </div>
               )
               : null
@@ -271,6 +286,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
 
   return (
     <LeftPanelContainer>
+      <Spin tip="Loading..." spinning={loading || leaveTaskLoading || claimTaskLoading || submitTaskLoading} delay={200}>
       {
         !error && (
           <>
@@ -338,15 +354,15 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
               )}
               <Col>
                 <Row>
-                  <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)'}}>
+                  <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: 30}}>
                     {
                       parse(getProp(task, 'description', ''))
                     }
                   </Col>
                 </Row>
                 <div className="mt-22">
+                  {showAssignedUser()}
                   <Row style={{marginTop: 10}} className="text-sm mt-8">
-                    {showAssignedUser()}
                     <strong className="my-auto">Created By: </strong>
 
                     <Row align="middle" style={{marginLeft: 15}}>
@@ -411,7 +427,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   {
                     getProp(task, 'priority', null) &&
                     <Row style={{marginTop: 10}} className="text-sm mt-8">
-                        <strong className="my-auto">Priority:&nbsp;</strong>
+                        <strong className="my-auto">Priority:&nbsp;</strong>&nbsp;
                         <Priorities task={task} submit={() => refetch()}/>
                     </Row>
                   }
@@ -525,36 +541,52 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                 modal={leaveTaskModal}
                 productSlug={''}
                 closeModal={() => showLeaveTaskModal(false)}
-                submit={leaveTask}
+                submit={() => {showLeaveTaskModal(false); leaveTask().then() }}
                 title="Leave the task"
                 message="Do you really want to leave the task?"
                 submitText="Yes, leave"
               />
             )}
-            {reviewTaskModal && (
-              <CustomModal
-                modal={reviewTaskModal}
-                productSlug={''}
-                closeModal={() => showReviewTaskModal(false)}
-                submit={submitTask}
-                title="Submit for review"
-                message="Do you really want to submit the task for review?"
-                submitText="Yes, submit"
+            {
+              reviewTaskModal && (
+                <CustomModal
+                  modal={reviewTaskModal}
+                  productSlug={''}
+                  closeModal={() => showReviewTaskModal(false)}
+                  submit={submitTask}
+                  title="Submit for review"
+                  message="Do you really want to submit the task for review?"
+                  submitText="Yes, submit"
+                />
+              )}
+            {
+              showEditModal &&
+              <AddTaskContainer
+                  modal={showEditModal}
+                  productSlug={String(productSlug)}
+                  modalType={true}
+                  closeModal={setShowEditModal}
+                  task={task}
+                  submit={fetchData}
+                  tasks={tasks}
               />
-            )}
-            {showEditModal && <AddTaskContainer
-                modal={showEditModal}
-                productSlug={String(productSlug)}
-                modalType={true}
-                closeModal={setShowEditModal}
-                task={task}
-                submit={fetchData}
-                tasks={tasks}
-            />
             }
           </>
         )
       }
+
+      {/*<Modal*/}
+      {/*  okText="I Agree"*/}
+      {/*  title="Basic Modal"*/}
+      {/*  visible={agreementModalVisible}*/}
+      {/*  onOk={handleIAgree}*/}
+      {/*  onCancel={() => setAgreementModalVisible(false)}*/}
+      {/*>*/}
+      {/*  <p>Some contents...</p>*/}
+      {/*  <p>Some contents...</p>*/}
+      {/*  <p>Some contents...</p>*/}
+      {/*</Modal>*/}
+      </Spin>
     </LeftPanelContainer>
   );
 };

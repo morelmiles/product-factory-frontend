@@ -1,26 +1,55 @@
-import React from "react";
+import React, {useState} from "react";
 import LeftPanelContainer from "../../../components/HOC/withLeftPanel";
-import {Tabs} from "antd";
+import {Button, Col, Dropdown, Menu, Row, Space, Tabs, Typography} from "antd";
 import SettingsPolicies from "../../../components/SettingsPolicies";
+import {DownOutlined} from "@ant-design/icons";
 
 
 const {TabPane} = Tabs;
 
 
 const Settings: React.FunctionComponent = () => {
+  const pages: string[] = [
+    'Policies',
+    'Contributions',
+    'Tags'
+  ]
+  const [activePage, setActivePage] = useState('Policies')
+
   return (
     <LeftPanelContainer>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Policies" key="1">
-          <SettingsPolicies/>
-        </TabPane>
-        <TabPane tab="Contributions" key="2">
-          It will be implemented in the future
-        </TabPane>
-        <TabPane tab="Tags" key="3">
-          It will be implemented in the future
-        </TabPane>
-      </Tabs>
+      <Row style={{marginBottom: 20}}>
+        <Col span={24}>
+          <Dropdown className="settings-mobile-menu" trigger={['click']} overlay={
+            <Menu>
+              {
+                pages.map((page: string, index: number) => (
+                  <Menu.Item key={index} onClick={() => setActivePage(page)}>{page}</Menu.Item>
+                ))
+              }
+            </Menu>
+          }>
+            <Button style={{width: '100%'}}>
+              {activePage} <DownOutlined/>
+            </Button>
+          </Dropdown>
+
+          <Tabs className="settings-desktop-menu" onChange={val => setActivePage(val)} activeKey={activePage}>
+            {
+              pages.map((page: string) => (
+                <TabPane tab={page} key={page}/>
+              ))
+            }
+          </Tabs>
+        </Col>
+      </Row>
+
+
+      {
+        activePage === 'Policies' ?
+          <SettingsPolicies/> :
+          <Typography.Text>It will be implemented in the future</Typography.Text>
+      }
     </LeftPanelContainer>
   )
 }

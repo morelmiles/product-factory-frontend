@@ -809,7 +809,7 @@ export const GET_STACKS = gql`
   }
 `;
 
-export const  GET_COMMENTS = gql`
+export const GET_COMMENTS = gql`
   query GetComments($taskId: Int!) {
     comments(taskId: $taskId)
   }
@@ -835,5 +835,19 @@ export const GET_PERSON = gql`
 export const GET_AM_LOGIN_URL = gql`
   query GetAMLink {
     getAuthmachineLoginUrl 
+  }
+`;
+
+export const GET_LICENSE = gql`
+  query GetLicense($productSlug: String!) {
+   license(productSlug: $productSlug) {
+     agreementContent
+   }
+ }
+`;
+
+export const IS_ADMIN = gql`
+  query IsAdmin($userId: Int!, $productSlug: String!) {
+    isAdmin(userId: $userId, productSlug: $productSlug)
   }
 `;

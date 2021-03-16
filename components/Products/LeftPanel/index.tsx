@@ -3,45 +3,48 @@ import {connect} from 'react-redux';
 import {useRouter} from 'next/router';
 import {Avatar, Menu, Row} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
-import {GET_PRODUCT_INFO_BY_ID} from '../../../graphql/queries';
+import {GET_PRODUCT_INFO_BY_ID, IS_ADMIN} from '../../../graphql/queries';
 import {getProp} from '../../../utilities/filters';
 import {getInitialName} from '../../../utilities/utils';
 import {WorkState} from '../../../lib/reducers/work.reducer';
 import {setWorkState} from '../../../lib/actions';
-import Loading from "../../Loading";
 
 
-type Props = {
-  productSlug: any;
-  saveProductToStore?: any;
-};
-
-type LinkType = {
-  type: string;
-  name: string;
-  url: string;
+interface ILeftPanelProps {
+  user: any
+  saveProductToStore?: any
 }
 
-let links: LinkType[] = [
-  {url: '/', type: 'summary', name: 'Summary'},
-  {url: '/initiatives', type: 'initiatives', name: 'Initiatives'},
-  {url: '/tasks', type: 'tasks', name: 'Tasks'},
-  {url: '/capabilities', type: 'capabilities', name: 'Product Map'},
-  {url: '/people', type: 'people', name: 'People'},
-  {url: '/partners', type: 'partners', name: 'Commercial Partners'}
-]
-
-// TODO: isAdmin?
-if (false) {
-  links.push(
-    {url: '/settings', type: 'settings', name: 'Settings'}
-  )
+interface ILink {
+  type: string
+  name: string
+  url: string
 }
 
-const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
-  const router = useRouter();
+const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
+  const router = useRouter()
+  const {productSlug} = router.query
 
-  const {data, error, loading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
+  const {data} = useQuery(IS_ADMIN, {
+    variables: {userId: user.id, productSlug}
+  });
+
+  let links: ILink[] = [
+    {url: '/', type: 'summary', name: 'Summary'},
+    {url: '/initiatives', type: 'initiatives', name: 'Initiatives'},
+    {url: '/tasks', type: 'tasks', name: 'Tasks'},
+    {url: '/capabilities', type: 'capabilities', name: 'Product Map'},
+    {url: '/people', type: 'people', name: 'People'},
+    {url: '/partners', type: 'partners', name: 'Commercial Partners'}
+  ];
+
+  if (getProp(data, 'isAdmin', false)) {
+    links.push(
+      {url: '/settings', type: 'settings', name: 'Settings'}
+    );
+  }
+
+  const {data: product, error: productError, loading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
     variables: {slug: productSlug}
   });
   const selectedIndex: number = links.findIndex((item: any) => {
@@ -54,38 +57,26 @@ const LeftPanel: React.FunctionComponent<Props> = ({productSlug}): any => {
     router.push(`/products/${productSlug}${type}`).then();
   }
 
-  // useEffect(() => {
-  //   if (data) {
-  //     saveProductToStore({
-  //       userRole: data.userRole,
-  //       tags: data.product.tag,
-  //       currentProduct: data.product,
-  //       repositories: data.repositories,
-  //       allTags: data.tags
-  //     })
-  //   }
-  // }, [data]);
-
   if (loading) return null;
 
   return (
     <>
       {
-        !error && (
+        !productError && (
           <div className="left-panel">
             <Row className="profile">
               <div className="my-auto">
                 <Avatar style={{marginRight: 15}}>
-                  {getInitialName(getProp(data, 'product.name', ''))}
+                  {getInitialName(getProp(product, 'product.name', ''))}
                 </Avatar>
               </div>
               <div>
-                <div className="page-title">{getProp(data, 'product.name', '')}</div>
+                <div className="page-title">{getProp(product, 'product.name', '')}</div>
                 <div>
                   <a className="custom-link"
-                     href={getProp(data, 'product.website', '')}
+                     href={getProp(product, 'product.website', '')}
                   >
-                    {getProp(data, 'product.website', '')}
+                    {getProp(product, 'product.website', '')}
                   </a>
                 </div>
               </div>

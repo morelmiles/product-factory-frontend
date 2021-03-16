@@ -475,3 +475,32 @@ p:last-child {
         height: 200px !important;
     }
 }
+
+@media screen and (max-width: 575px) {
+    .tasks-main {
+        margin-top: -76px !important;
+    }
+}
+
+@media screen and (max-width: 300px) {
+    .tasks-main {
+        position: absolute;
+        left: 22px;
+        margin-top: -35px !important;
+    }
+}
+
+.settings-desktop-menu {
+    display: none !important;
+}
+
+@media screen and (min-width: 576px) {
+    .settings-mobile-menu {
+        display: none !important;
+        margin-bottom: 70px !important;
+    }
+
+    .settings-desktop-menu {
+        display: inline !important;
+    }
+}
