@@ -39,16 +39,16 @@ export const UPDATE_TASK = gql`
   }
 `;
 
-export const CREATE_CODE_REPOSITORY = gql`
-  mutation CreateCodeRepository($input: CodeRepositoryInput!) {
-    createCodeRepository(input: $input) {
-      repository {
-        id
-        repository
-      }
-    }
-  }
-`;
+// export const CREATE_CODE_REPOSITORY = gql`
+//   mutation CreateCodeRepository($input: CodeRepositoryInput!) {
+//     createCodeRepository(input: $input) {
+//       repository {
+//         id
+//         repository
+//       }
+//     }
+//   }
+// `;
 
 export const CREATE_CAPABILITY = gql`
   mutation CreateCapability(

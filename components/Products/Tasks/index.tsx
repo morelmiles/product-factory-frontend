@@ -14,12 +14,11 @@ const { Option } = Select;
 type Props = {
   onClick?: () => void;
   currentProduct: any;
-  repositories: Array<any>;
   userRole: string;
 } & RouteComponentProps;
 
 const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
-  const { match, currentProduct, repositories, user } = props;
+  const { match, user } = props;
   const [tagType, setTagType] = useState("all");
   const [sortType, setSortType] = useState("initiatives");
   const [taskType, setTaskType] = useState("all");
@@ -141,7 +140,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
 const mapStateToProps = (state: any) => ({
   user: state.user,
   currentProduct: state.work.currentProduct,
-  repositories: state.work.repositories,
   userRole: state.work.userRole
 });
 

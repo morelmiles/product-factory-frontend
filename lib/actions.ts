@@ -50,24 +50,24 @@ export const setWorkState = (data: any): types.BaseAction => {
   }
 }
 
-export const addRepository = (data: any): types.BaseAction => {
-  return {
-    type: types.ADD_REPOSITORY,
-    payload: data
-  }
-}
-
-export const setCapabilities = (data: any): types.BaseAction => {
-  return {
-    type: types.SET_CAPABILITIES,
-    payload: data
-  }
-}
-
-
-export const addCapability = (data: any): types.BaseAction => {
-  return {
-    type: types.ADD_CAPABILITY,
-    payload: data
-  }
-}
+// export const addRepository = (data: any): types.BaseAction => {
+//   return {
+//     type: types.ADD_REPOSITORY,
+//     payload: data
+//   }
+// }
+//
+// export const setCapabilities = (data: any): types.BaseAction => {
+//   return {
+//     type: types.SET_CAPABILITIES,
+//     payload: data
+//   }
+// }
+//
+//
+// export const addCapability = (data: any): types.BaseAction => {
+//   return {
+//     type: types.ADD_CAPABILITY,
+//     payload: data
+//   }
+// }
