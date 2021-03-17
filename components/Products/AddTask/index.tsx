@@ -144,7 +144,7 @@ const AddTask: React.FunctionComponent<Props> = (
       return;
     }
     if (!description) {
-      message.error("Description is required. Please fill out description");
+      message.error("Long description is required. Please fill out description");
       return;
     }
     if (!targetWorkLocation) {
