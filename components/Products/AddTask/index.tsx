@@ -75,7 +75,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const [editInitiative, toggleInitiative] = useState(false);
   const [targetWorkLocation, setTargetWorkLocation] = useState(modalType ? task.targetWorkLocation : '');
   const [tags, setTags] = useState(
-    modalType && task.tag ? task.tag.map((tag: any) => tag.id) : []
+    modalType && task.tag ? task.tag.map((tag: any) => tag.name) : []
   );
 
   const [tagsSearchValue, setTagsSearchValue] = useState('');
@@ -84,7 +84,7 @@ const AddTask: React.FunctionComponent<Props> = (
 
     if (re.test(val)) {
       setTagsSearchValue(val);
-    } else if (val[val.length - 1] === ' ' || val[val.length - 1] === ',') {
+    } else if (val.length > 1 && (val[val.length - 1] === ' ' || val[val.length - 1] === ',')) {
       setTags(prev => [...prev, val.slice(0, -1)]);
       setTagsSearchValue('');
     } else {
@@ -105,7 +105,9 @@ const AddTask: React.FunctionComponent<Props> = (
   const {data: capabilitiesData} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
     variables: {productSlug}
   });
-  const {data: tagsData} = useQuery(GET_TAGS);
+  const {data: tagsData} = useQuery(GET_TAGS, {
+    variables: {productSlug}
+  });
   const {data: stacksData} = useQuery(GET_STACKS);
   const [createTask] = useMutation(CREATE_TASK);
   const [updateTask] = useMutation(UPDATE_TASK);
@@ -114,6 +116,10 @@ const AddTask: React.FunctionComponent<Props> = (
   const {data: users} = useQuery(GET_USERS);
 
   const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+
+  tasks = tasks.filter(dependOnTask => {
+    return task.id != dependOnTask.id
+  });
 
   useEffect(() => {
     setAllUsers(getProp(users, 'people', []));
@@ -409,7 +415,7 @@ const AddTask: React.FunctionComponent<Props> = (
           </Select>
         </Row>
         <Row>
-          <label>Depend on tasks:</label>
+          <label>Dependant on:</label>
           <Select
             mode="multiple"
             onChange={setDependOn}

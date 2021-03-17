@@ -724,8 +724,8 @@ export const GET_CAPABILITY_PARENT_CRUMBS = gql`
 `;
 
 export const GET_TAGS = gql`
-  query GetTags {
-    tags {
+  query GetTags($productSlug: String) {
+    tags(productSlug: $productSlug) {
       id
       name
       createdAt

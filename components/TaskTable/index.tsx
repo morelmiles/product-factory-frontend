@@ -29,7 +29,6 @@ const TaskTable: React.FunctionComponent<Props> = (
     statusList = TASK_CLAIM_TYPES,
     title = 'Related Tasks',
     hideTitle = false,
-    showPendingTasks = false,
     showInitiativeName = false,
     showProductName = false,
     hideEmptyList = false,
@@ -97,9 +96,13 @@ const TaskTable: React.FunctionComponent<Props> = (
 
                       </Link>
                     </Row>
-                    <Row>
-                      <Typography.Text type="secondary"
-                                       style={{marginBottom: 5}}>{task.shortDescription}</Typography.Text>
+                    <Row style={{marginBottom: 10}}>
+                      <Col>
+                        <Typography.Text
+                          type="secondary"
+                          style={{marginBottom: 5}}
+                        >{task.shortDescription}</Typography.Text>
+                      </Col>
                     </Row>
                     <Row align="middle">
                       {getProp(task, 'stack', []).map((tag: any, taskIndex: number) =>
