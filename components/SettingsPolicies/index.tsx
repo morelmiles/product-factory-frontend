@@ -54,7 +54,7 @@ const SettingsPolicies: React.FunctionComponent<ISettingsPoliciesProps> = ({user
 
   const updateLicenseHandler = () => {
     updateLicense({
-      variables: {productSlug, userId: user.id, content: license}
+      variables: {productSlug, content: license}
     }).then();
   }
 

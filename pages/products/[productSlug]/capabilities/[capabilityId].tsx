@@ -91,7 +91,7 @@ const CapabilityDetail: React.FunctionComponent = () => {
   const [formattedCrumbs, setFormattedCrumbs] = useState<Array<ICrumb>>([]);
 
   const {data, error, loading, refetch} = useQuery(GET_CAPABILITY_BY_ID, {
-    variables: {nodeId: capabilityId, slug: productSlug, userId: userId == null ? 0 : userId}
+    variables: {nodeId: capabilityId, slug: productSlug}
   });
 
   const {data: crumbs, error: crumbsError, loading: crumbsLoading} = useQuery(GET_CAPABILITY_PARENT_CRUMBS, {

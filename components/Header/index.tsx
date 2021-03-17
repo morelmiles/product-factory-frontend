@@ -3,18 +3,17 @@ import {connect} from 'react-redux';
 import {Input, Button, message, Row, Col, Space, Drawer} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
-import {apiDomain} from '../../utilities/constants';
+import {productionMode} from '../../utilities/constants';
 // @ts-ignore
 import Logo from '../../public/assets/logo.svg';
 import {useRouter} from 'next/router'
 import Link from 'antd/lib/typography/Link';
-import {useQuery} from "@apollo/react-hooks";
+import {useMutation, useQuery} from "@apollo/react-hooks";
 import {GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
-import {
-  MenuOutlined
-} from '@ant-design/icons';
-
+import LoginViaAM from "../LoginViaAM";
+import {LOGOUT} from "../../graphql/mutations";
+import { MenuOutlined } from '@ant-design/icons';
 
 const {Search} = Input;
 
@@ -26,31 +25,11 @@ type Props = {
 
 const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction}) => {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
 
   const onSearch = () => {
   }
 
-  const getSelectedItem = () => {
-    switch (router.asPath) {
-      case "/product/add":
-        return "2";
-      case "/profiles":
-        return "3";
-      default:
-        return "1";
-    }
-  }
-
-  const {data: personData} = useQuery(GET_PERSON, {variables: {id: userId}})
-
-  useEffect(() => {
-    let userId = localStorage.getItem("userId")
-    if (localStorage.getItem("userId")) {
-      userLogInAction({isLoggedIn: true, id: userId});
-      setUserId(userId)
-    }
-  }, []);
+  const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"});
 
   useEffect(() => {
     if (personData && personData.person) {
@@ -67,24 +46,37 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
           }
         })
       })
+    } else if (personData && personData.person === null) {
+      userLogInAction({
+        isLoggedIn: false,
+        fullName: "",
+        slug: "",
+        id: null,
+        roles: []
+      });
     }
   }, [personData])
 
-  const logout = () => {
-    fetch(`${apiDomain}/github/logout`)
-      .then(response => response.json())
-      .then(res => {
-        if (res.status) {
-          message.success(`You are logged out !`).then();
-          userLogInAction({isLoggedIn: false});
-          localStorage.removeItem('userId');
-          localStorage.removeItem('fullName');
+  const [logout] = useMutation(LOGOUT, {
+    onCompleted(data) {
+      const {success, message: responseMessage, url} = data.logout;
+      if (success) {
+        localStorage.removeItem('userId');
+        localStorage.removeItem('fullName');
+        if (url) {
+          window.location.replace(url);
+        } else {
           router.push("/switch-test-user").then();
         }
-      });
-  }
+      } else {
+        message.error(responseMessage);
+      }
 
-  // const selectedItem = getSelectedItem();
+    },
+    onError(err) {
+      message.error("Failed to logout form the system").then();
+    }
+  });
 
   const [visible, setVisible] = useState(false);
   const showDrawer = () => {
@@ -122,17 +114,25 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
               user && user.isLoggedIn ? (
                 <Button
                   style={{width: '100%'}}
+                  className="signIn-btn"
                   onClick={() => logout()}
                 >
                   Sign out
                 </Button>
               ) : (
-                <Button
-                  style={{width: '100%'}}
-                  onClick={() => router.push("/switch-test-user")}
-                >
-                  Sign in
-                </Button>
+                <>{
+                  !productionMode
+                    ? <LoginViaAM fullWidth={true} />
+                    : (
+                      <Button
+                        style={{width: '100%'}}
+                        className="signIn-btn"
+                        onClick={() => router.push("/switch-test-user")}
+                      >
+                        Sign in
+                      </Button>
+                    )
+                }</>
               )
             }
 
@@ -203,16 +203,24 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
               {
                 user && user.isLoggedIn ? (
                   <Button
+                    className="signIn-btn"
                     onClick={() => logout()}
                   >
                     Sign out
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => router.push("/switch-test-user")}
-                  >
-                    Sign in
-                  </Button>
+                  <>{
+                    productionMode
+                      ? <LoginViaAM />
+                      : (
+                        <Button
+                          className="signIn-btn"
+                          onClick={() => router.push("/switch-test-user")}
+                        >
+                          Sign in
+                        </Button>
+                      )
+                  }</>
                 )
               }
             </Col>

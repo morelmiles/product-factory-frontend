@@ -42,7 +42,6 @@ const TaskTab: React.FunctionComponent<Props> = (
 
   const {data, error, loading, refetch} = useQuery(GET_TASKS, {
     variables: {
-      userId: userId == null ? 0 : userId,
       input: inputData
     }
   });
