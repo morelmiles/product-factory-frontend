@@ -77,6 +77,21 @@ const AddTask: React.FunctionComponent<Props> = (
   const [tags, setTags] = useState(
     modalType && task.tag ? task.tag.map((tag: any) => tag.id) : []
   );
+
+  const [tagsSearchValue, setTagsSearchValue] = useState('');
+  const tagsSearchValueChangeHandler = (val) => {
+    const re = /^[a-zA-Z0-9-]{0,128}$/;
+
+    if (re.test(val)) {
+      setTagsSearchValue(val);
+    } else if (val[val.length - 1] === ' ' || val[val.length - 1] === ',') {
+      setTags(prev => [...prev, val.slice(0, -1)]);
+      setTagsSearchValue('');
+    } else {
+      message.warn('Tags can only include letters, numbers and -, with the max length of 128 characters').then()
+    }
+  };
+
   const [stacks, setStacks] = useState(
     modalType && task.stack ? task.stack.map((stack: any) => stack.id) : []
   );
@@ -364,12 +379,14 @@ const AddTask: React.FunctionComponent<Props> = (
           <Select
             mode="multiple"
             onChange={setTags}
+            searchValue={tagsSearchValue}
+            onSearch={(e) => tagsSearchValueChangeHandler(e)}
             filterOption={filterOption}
             placeholder="Select tags"
-            defaultValue={tags}
+            value={tags}
           >
             {allTags && allTags.map((option: any, idx: number) => (
-              <Option key={`cap${idx}`} value={option.id}>
+              <Option key={`cap${idx}`} value={option.name}>
                 {option.name}
               </Option>
             ))}
