@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin} from 'antd';
+import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin, Typography, Breadcrumb} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -254,9 +254,9 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                       }}/>
                     </Col>
                     <Col>
-                      <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
-                        <a className="text-grey-9">{getProp(assignee, 'fullName', '')}</a>
-                      </Link>
+                      <Typography.Link className="text-grey-9" href={`/people/${getProp(assignee, 'slug', '')}`}>
+                        {getProp(assignee, 'fullName', '')}
+                      </Typography.Link>
                     </Col>
                   </Row>
                 </Row>
@@ -321,30 +321,29 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
         {
           !error && (
             <>
-              <div className="text-grey">
-                {getBasePath() !== "" && (
-                  <>
-                    <Link href={getBasePath()}>
-                      <a className="text-grey">{getProp(product, 'name', '')}</a>
-                    </Link>
-                    <span> / </span>
-                    <Link href={`${getBasePath()}/tasks`}>
-                      <a className="text-grey">Tasks</a>
-                    </Link>
-                    <span> / </span>
+              {
+                getBasePath() !== "" && (
+                  <Breadcrumb>
+                    <Breadcrumb.Item>
+                      <a href={getBasePath()}>{getProp(product, 'name', '')}</a>
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                      <a href={`${getBasePath()}/tasks`}>Tasks</a>
+                    </Breadcrumb.Item>
                     {initiativeName && (
-                      <>
-                        <Link
-                          href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}>
-                          <a className="text-grey">{initiativeName}</a>
-                        </Link>
-                        <span> / </span>
-                      </>
+                      <Breadcrumb.Item>
+                        <a
+                          href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}
+                        >
+                          {initiativeName}
+                        </a>
+                      </Breadcrumb.Item>
                     )}
-                  </>
-                )}
-                <span>{getProp(original, 'task.title', '')}</span>
-              </div>
+                    <Breadcrumb.Item>{getProp(original, 'task.title', '')}</Breadcrumb.Item>
+                  </Breadcrumb>
+                )
+              }
+
               <Row
                 justify="space-between"
                 className="right-panel-headline strong-height"
@@ -404,9 +403,10 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                           }}/>
                         </Col>
                         <Col>
-                          <Link href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
-                            <a className="text-grey-9">{getProp(task, 'createdBy.fullName', '')}</a>
-                          </Link>
+                          <Typography.Link className="text-grey-9"
+                                           href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
+                            {getProp(task, 'createdBy.fullName', '')}
+                          </Typography.Link>
                         </Col>
                       </Row>
                     </Row>
@@ -475,9 +475,12 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                                   }}/>
                               </Col>
                               <Col>
-                                  <Link href={`/people/${getProp(task, 'reviewer.slug', '')}`}>
-                                      <a className="text-grey-9">{getProp(task, 'reviewer.fullName', '')}</a>
-                                  </Link>
+                                  <Typography.Link
+                                      className="text-grey-9"
+                                      href={`/people/${getProp(task, 'reviewer.slug', '')}`}
+                                  >
+                                    {getProp(task, 'reviewer.fullName', '')}
+                                  </Typography.Link>
                               </Col>
                           </Row>
                       </Row>
@@ -508,9 +511,25 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                           <strong className="my-auto">
                             Related Capability:
                           </strong>
-                          <Link href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
-                            <a className="ml-5">{getProp(task, 'capability.name', '')}</a>
-                          </Link>
+                          <Typography.Link className="ml-5"
+                                           href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
+                            {getProp(task, 'capability.name', '')}
+                          </Typography.Link>
+                        </Row>
+                      )
+                    }
+                    {
+                      getProp(task, 'initiative.id', null) && (
+                        <Row
+                          className="text-sm mt-8"
+                        >
+                          <strong className="my-auto">Initiative:</strong>
+                          <Typography.Link
+                            className="ml-5"
+                            href={`${getBasePath()}/initiatives/${getProp(task, 'initiative.id')}`}
+                          >
+                            {getProp(task, 'initiative.name', '')}
+                          </Typography.Link>
                         </Row>
                       )
                     }

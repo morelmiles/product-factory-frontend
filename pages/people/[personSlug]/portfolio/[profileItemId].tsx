@@ -94,13 +94,6 @@ const ProfileItem: React.FunctionComponent = () => {
             </Link>
           </div>
           <div className="text-grey">{formatDate(task.createdAt)}</div>
-          {
-            task.detailUrl ? (
-              <a href={task.detailUrl} target="_blank">
-                Link to the work on GitHub
-              </a>
-            ) : null
-          }
         </div>
       )
     },

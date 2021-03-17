@@ -13,10 +13,10 @@ export const GET_PRODUCTS = gql`
       initiativeSet {
         id
       }
-      tag {
-        id
-        name
-      }
+      #tag {
+      #  id
+      #  name
+      #}
       attachment {
         name
         fileType
@@ -43,32 +43,10 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
         id
         name
       }
-      #capabilitySet {
+      #tag {
       #  id
       #  name
-      #  availableTaskNum
-      #  taskSet {
-      #    id
-      #    title
-      #    status
-      #  }
-      #  children {
-      #    id
-      #    name
-      #    children {
-      #      id
-      #      name
-      #      children {
-      #       id
-      #        name
-      #      }
-      #    }
-      #  }
       #}
-      tag {
-        id
-        name
-      }
       attachment {
         name
         fileType
@@ -77,10 +55,6 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
       # isAdmin
     }
     # userPerson(slug: $slug)
-    repositories(slug: $slug) {
-      id
-      repository
-    }
     tags {
       id
       name
@@ -103,32 +77,10 @@ export const GET_PRODUCT_BY_ID = gql`
         id
         name
       }
-      #capabilitySet {
+      #tag {
       #  id
       #  name
-      #  availableTaskNum
-      #  taskSet {
-      #    id
-      #    title
-      #    status
-      #  }
-      #  children {
-      #    id
-      #    name
-      #    children {
-      #      id
-      #      name
-      #      children {
-      #        id
-      #        name
-      #      }
-      #    }
-      #  }
       #}
-      tag {
-        id
-        name
-      }
       attachment {
         name
         fileType
@@ -136,10 +88,6 @@ export const GET_PRODUCT_BY_ID = gql`
       }
     }
     # userPerson(slug: $slug)
-    repositories(slug: $slug) {
-      id
-      repository
-    }
     tags {
       id
       name
@@ -155,7 +103,6 @@ export const GET_TASKS = gql`
       publishedId
       canEdit
       priority
-      detailUrl
       shortDescription
       title
       status
@@ -167,15 +114,6 @@ export const GET_TASKS = gql`
         id
         name
       }
-      #taskclaimSet {
-      #  person {
-      #    id
-      #    fullName
-      #    emailAddress
-      #    slug
-      #  }
-      #  kind
-      #}
       tag {
         id
         name
@@ -266,9 +204,7 @@ export const GET_CAPABILITY_BY_ID = gql`
       tasks {
         id
         publishedId
-        detailUrl
         title
-        repository
         description
         shortDescription
         tag {
@@ -283,10 +219,10 @@ export const GET_CAPABILITY_BY_ID = gql`
         name
         videoUrl,
         shortDescription,
-        tag {
-          id
-          name
-        }
+        #tag {
+        #  id
+        #  name
+        #}
       }
     }
     isAdminOrManager(slug: $slug)
@@ -382,8 +318,7 @@ export const GET_TASK_BY_ID = gql`
       publishedId
       canEdit
       priority
-      detailUrl
-      repository
+      targetWorkLocation
       title
       description
       shortDescription
@@ -483,9 +418,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       publishedId
       canEdit
       title
-      # description
       shortDescription
-      detailUrl
       updatedAt
       product {
         name

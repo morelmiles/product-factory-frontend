@@ -9,10 +9,8 @@ import {
   GET_TAGS,
   GET_USERS
 } from '../../../graphql/queries';
-import {CREATE_TASK, CREATE_CODE_REPOSITORY, UPDATE_TASK} from '../../../graphql/mutations';
+import {CREATE_TASK, UPDATE_TASK} from '../../../graphql/mutations';
 import {TASK_TYPES} from '../../../graphql/types';
-// import {addRepository} from '../../../lib/actions';
-// import {WorkState} from '../../../lib/reducers/work.reducer';
 import AddInitiative from '../AddInitiative';
 import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
 import {RICH_TEXT_EDITOR_WIDTH} from '../../../utilities/constants';
@@ -33,18 +31,11 @@ const RichTextEditor = dynamic(
   {ssr: false}
 );
 
-const filterRepositoryId = (arr: Array<any>, url: string) => {
-  const filteredArr = arr.filter((item: any) => item.repository === url);
-  return filteredArr.length ? filteredArr[0].id : null;
-}
-
 type Props = {
   modal?: boolean;
   productSlug?: string;
   closeModal: any;
   currentProduct?: any;
-  repositories?: Array<any>;
-  addRepository?: any;
   tags?: any;
   modalType?: boolean;
   task?: any;
@@ -58,8 +49,6 @@ const AddTask: React.FunctionComponent<Props> = (
     modal,
     productSlug,
     closeModal,
-    repositories,
-    addRepository,
     modalType,
     task,
     submit,
@@ -82,17 +71,9 @@ const AddTask: React.FunctionComponent<Props> = (
   const [initiative, setInitiative] = useState(
     modalType && task.initiative ? task.initiative.id : 0
   );
-  const [repository, setRepository] = useState(
-    modalType && repositories && repositories.length > 0
-      ? filterRepositoryId(repositories, task.repository)
-      : null
-  );
   const [initiatives, setInitiatives] = useState([])
-  const [editRepository, toggleRepository] = useState(false);
   const [editInitiative, toggleInitiative] = useState(false);
-  const [repositoryUrl, setRepositoryUrl] = useState('');
-  const [accessToken, setAccessToken] = useState('');
-  const [detailUrl, setDetailUrl] = useState(modalType ? task.detailUrl : '');
+  const [targetWorkLocation, setTargetWorkLocation] = useState(modalType ? task.targetWorkLocation : '');
   const [tags, setTags] = useState(
     modalType && task.tag ? task.tag.map((tag: any) => tag.id) : []
   );
@@ -113,7 +94,6 @@ const AddTask: React.FunctionComponent<Props> = (
   const {data: stacksData} = useQuery(GET_STACKS);
   const [createTask] = useMutation(CREATE_TASK);
   const [updateTask] = useMutation(UPDATE_TASK);
-  const [createCodeRepository] = useMutation(CREATE_CODE_REPOSITORY);
   const [allUsers, setAllUsers] = useState([]);
   const [reviewSelectValue, setReviewSelectValue] = useState(getProp(task, 'reviewer.slug', ''));
   const {data: users} = useQuery(GET_USERS);
@@ -154,7 +134,6 @@ const AddTask: React.FunctionComponent<Props> = (
     }
   }, [originalInitiatives]);
 
-  // TextEditor configuration
   const onDescriptionChange = (value: any) => {
     setDescription(value);
   };
@@ -166,6 +145,10 @@ const AddTask: React.FunctionComponent<Props> = (
     }
     if (!description) {
       message.error("Description is required. Please fill out description");
+      return;
+    }
+    if (!targetWorkLocation) {
+      message.error("Target work location is required. Please fill out target work location");
       return;
     }
     if (!reviewSelectValue) {
@@ -188,8 +171,7 @@ const AddTask: React.FunctionComponent<Props> = (
     setShortDescription("");
     setCapability(0);
     setInitiative(0);
-    setRepository(null);
-    setRepositoryUrl("");
+    setTargetWorkLocation('');
     setCapability([]);
     setTags([]);
     setStacks([]);
@@ -205,11 +187,10 @@ const AddTask: React.FunctionComponent<Props> = (
       productSlug,
       initiative: initiative === 0 ? null : parseInt(initiative),
       capability: capability === 0 ? null : parseInt(capability),
-      repository: repository === 0 ? null : parseInt(repository),
+      targetWorkLocation,
       tags,
       stacks,
       dependOn,
-      detailUrl,
       reviewer: reviewSelectValue
     };
 
@@ -232,38 +213,6 @@ const AddTask: React.FunctionComponent<Props> = (
       }
     } catch (e) {
       message.error(e.message);
-    }
-  }
-
-  const addNewRepository = async () => {
-    if (!repositoryUrl || !accessToken) {
-      message.error('Please type repository url and access token');
-      return;
-    }
-
-    const input = {
-      repository: repositoryUrl,
-      accessToken,
-      productSlug
-    };
-
-    try {
-      const res = await createCodeRepository({
-        variables: {input}
-      });
-
-      if (
-        res.data &&
-        res.data.createCodeRepository &&
-        res.data.createCodeRepository.repository
-      ) {
-        addRepository(res.data.createCodeRepository.repository);
-        message.success('Repository is created successfully!');
-        setRepository(res.data.createCodeRepository.repository.id);
-        toggleRepository(!editRepository);
-      }
-    } catch (e) {
-      message.error(`Repository creation is failed! Reason: ${e.message}`);
     }
   }
 
@@ -300,34 +249,29 @@ const AddTask: React.FunctionComponent<Props> = (
           />
         </Row>
         <Row className='mb-15'>
-          <label>Short Description*:</label>
-          <TextArea
-            placeholder="Short Description"
-            value={shortDescription}
-            onChange={(e) => setShortDescription(e.target.value)}
-            required
-          />
+          <Col span={24}>
+            <label>Short Description*:</label>
+          </Col>
+          <Col span={24}>
+            <TextArea
+              placeholder="Short Description"
+              value={shortDescription}
+              onChange={(e) => setShortDescription(e.target.value)}
+              maxLength={256}
+              showCount
+              required
+            />
+          </Col>
         </Row>
         <Row
           className="rich-editor mb-15"
         >
-          <label>Description*:</label>
+          <label>Long Description*:</label>
           <RichTextEditor
             initialValue={modalType ? task.description : ''}
             setValue={onDescriptionChange}
           />
         </Row>
-        {modalType && (
-          <Row className='mb-15'>
-            <label>Task detail url:</label>
-            <Input
-              placeholder="Task detail url"
-              value={detailUrl}
-              onChange={(e) => setDetailUrl(e.target.value)}
-              required
-            />
-          </Row>
-        )}
         {
           allCapabilities.length > 0 && (
             <Row className='mb-15'>
@@ -336,6 +280,7 @@ const AddTask: React.FunctionComponent<Props> = (
                 placeholder='Select a capability'
                 onChange={setCapability}
                 filterOption={filterOption}
+                showSearch
                 defaultValue={capability ? capability : null}
               >
                 {allCapabilities.map((option: any, idx: number) => (
@@ -393,72 +338,15 @@ const AddTask: React.FunctionComponent<Props> = (
             </Row>
           </>
         )}
-        {repositories && (
-          <>
-            <Row justify="space-between" className='mb-5'>
-              <Col>
-                <label>Repository:</label>
-              </Col>
-              <Col>
-                {!editRepository ? (
-                  <PlusOutlined
-                    className="my-auto mb-10"
-                    onClick={() => toggleRepository(!editRepository)}
-                  />
-                ) : (
-                  <MinusOutlined
-                    className="my-auto mb-10"
-                    onClick={() => toggleRepository(!editRepository)}
-                  />
-                )}
-              </Col>
-            </Row>
-            {editRepository && (
-              <Row
-                className='mb-15 p-15'
-                style={{
-                  background: "var(--bg-grey)"
-                }}
-              >
-                <label>Repository url:</label>
-                <Input
-                  className='mb-15'
-                  placeholder="https://github.com/<git_username>/<repo_name>"
-                  value={repositoryUrl}
-                  onChange={(e) => setRepositoryUrl(e.target.value)}
-                />
-                <label>Git access token: </label>
-                <Input
-                  placeholder="Access token"
-                  value={accessToken}
-                  onChange={(e) => setAccessToken(e.target.value)}
-                  defaultValue={accessToken}
-                />
-                <Button
-                  className="text-right mt-15"
-                  onClick={() => addNewRepository()}
-                >
-                  Add Repository
-                </Button>
-              </Row>
-            )}
-            <Row
-              justify="space-between"
-              className='mb-15'
-            >
-              <Select
-                onChange={setRepository}
-                placeholder="Select repository"
-              >
-                {repositories.map((option: any, idx: number) => (
-                  <Option key={`init${idx}`} value={option.id}>
-                    {option.repository}
-                  </Option>
-                ))}
-              </Select>
-            </Row>
-          </>
-        )}
+        <Row className='mb-15'>
+          <label>Target work location*:</label>
+          <Input
+            placeholder="Target work location"
+            value={targetWorkLocation}
+            onChange={(e) => setTargetWorkLocation(e.target.value)}
+            required
+          />
+        </Row>
         <Row className='mb-15'>
           <label>Status: </label>
           <Select
@@ -545,14 +433,10 @@ const AddTask: React.FunctionComponent<Props> = (
 const mapStateToProps = (state: any) => ({
   user: state.user,
   currentProduct: state.work.currentProduct,
-  repositories: state.work.repositories,
   userRole: state.work.userRole,
   allTags: state.work.allTags,
 });
 
-// const mapDispatchToProps = (dispatch: any) => ({
-//   addRepository: (data: WorkState) => dispatch(addRepository(data)),
-// });
 const mapDispatchToProps = () => ({});
 
 export default connect(
