@@ -26,7 +26,7 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
   const {productSlug} = router.query
 
   const {data} = useQuery(IS_ADMIN, {
-    variables: {userId: user.id, productSlug}
+    variables: {productSlug}
   });
 
   let links: ILink[] = [

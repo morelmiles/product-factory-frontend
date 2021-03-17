@@ -46,21 +46,18 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   const [leaveTaskModal, showLeaveTaskModal] = useState(false);
   const [reviewTaskModal, showReviewTaskModal] = useState(false);
   const [task, setTask] = useState<any>({});
-  const [userId, setUserId] = useState<string | null>(null);
   const [taskId, setTaskId] = useState(0);
   const [showEditModal, setShowEditModal] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [license, setLicense] = useState('');
 
   const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
-    variables: {publishedId, productSlug, userId: userId == null ? 0 : userId}
+    variables: {publishedId, productSlug}
   });
-
 
   const {data: tasksData} = useQuery(GET_TASKS_BY_PRODUCT_SHORT, {
     variables: {
-      productSlug, input: {},
-      userId: user.id
+      productSlug, input: {}
     }
   });
 
@@ -69,10 +66,6 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
 
   let {data: product} = useQuery(GET_PRODUCT_INFO_BY_ID, {variables: {slug: productSlug}});
   product = product?.product || {};
-
-  useEffect(() => {
-    setUserId(localStorage.getItem('userId'));
-  }, []);
 
   useEffect(() => {
     if (tasksData && tasksData.tasksByProduct) {
@@ -109,10 +102,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   }
 
   const [leaveTask, {loading: leaveTaskLoading}] = useMutation(LEAVE_TASK, {
-    variables: {
-      taskId,
-      userId: user.id
-    },
+    variables: {taskId},
     onCompleted(data) {
       const {leaveTask} = data;
       const responseMessage = leaveTask.message;
@@ -130,10 +120,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   });
 
   const [submitTask, {loading: submitTaskLoading}] = useMutation(IN_REVIEW_TASK, {
-    variables: {
-      taskId,
-      userId: user.id
-    },
+    variables: {taskId},
     onCompleted(data) {
       const {inReviewTask} = data;
       const responseMessage = inReviewTask.message;
@@ -151,10 +138,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   });
 
   const [acceptAgreement] = useMutation(ACCEPT_AGREEMENT, {
-    variables: {
-      userId: user.id,
-      productSlug
-    },
+    variables: {productSlug},
     onCompleted(data) {
       const messageText = getProp(data, 'agreeLicense.message', '');
       const status = getProp(data, 'agreeLicense.status', false);
@@ -184,10 +168,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   }, [licenseOriginal]);
 
   const [claimTask, {loading: claimTaskLoading}] = useMutation(CLAIM_TASK, {
-    variables: {
-      taskId,
-      userId: user.id
-    },
+    variables: {taskId},
     onCompleted(data) {
       const {claimTask} = data;
       const responseMessage = claimTask.message;
