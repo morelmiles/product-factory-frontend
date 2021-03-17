@@ -34,8 +34,6 @@ const ProductMapTree = () => {
     let capabilitiesData: string = "";
     if (capabilities && capabilities.capabilities) {
       capabilitiesData = getProp(capabilities, 'capabilities', '');
-      // @ts-ignore
-      capabilitiesData = capabilitiesData.replaceAll("'", '"').replaceAll('\\\\"', "'");
       try {
         if (capabilitiesData !== "") {
           capabilitiesData = JSON.parse(capabilitiesData);
