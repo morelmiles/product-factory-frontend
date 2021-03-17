@@ -138,10 +138,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   });
 
   const [acceptAgreement] = useMutation(ACCEPT_AGREEMENT, {
-    variables: {
-      userId: user.id,
-      productSlug
-    },
+    variables: {productSlug},
     onCompleted(data) {
       const messageText = getProp(data, 'agreeLicense.message', '');
       const status = getProp(data, 'agreeLicense.status', false);

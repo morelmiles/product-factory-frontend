@@ -272,8 +272,8 @@ export const FAKE_LOGIN = gql`
 `;
 
 export const UPDATE_LICENSE = gql`
-  mutation UpdateLicense($userId: Int!, $productSlug: String!, $content: String!) {
-    updateLicense(licenseInput: {userId: $userId, productSlug: $productSlug, content: $content}) {
+  mutation UpdateLicense($productSlug: String!, $content: String!) {
+    updateLicense(licenseInput: {productSlug: $productSlug, content: $content}) {
       status
       message
     }
@@ -281,8 +281,8 @@ export const UPDATE_LICENSE = gql`
 `;
 
 export const ACCEPT_AGREEMENT = gql`
-  mutation AgreeLicense($userId: Int!, $productSlug: String!) {
-    agreeLicense(licenseInput: {userId: $userId, productSlug: $productSlug}) {
+  mutation AgreeLicense($productSlug: String!) {
+    agreeLicense(licenseInput: {productSlug: $productSlug}) {
       status
       message
     }
