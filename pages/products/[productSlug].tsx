@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {useQuery} from '@apollo/react-hooks';
 import {Col, Divider, Row, Tag, Typography} from 'antd';
 import ReactPlayer from 'react-player';
-import {GET_PRODUCT_BY_ID, GET_TASKS_BY_PRODUCT} from '../../graphql/queries';
+import {GET_PRODUCT_BY_ID, GET_TASKS_BY_PRODUCT_COUNT} from '../../graphql/queries';
 import {TagType} from '../../graphql/types';
 import {DynamicHtml} from '../../components';
 import {getProp} from '../../utilities/filters';
@@ -28,7 +28,7 @@ const Summary: React.FunctionComponent = () => {
     variables: {slug: productSlug}
   });
 
-  let {data: tasks, error: tasksError, loading: tasksLoading} = useQuery(GET_TASKS_BY_PRODUCT, {
+  let {data: tasks, error: tasksError, loading: tasksLoading} = useQuery(GET_TASKS_BY_PRODUCT_COUNT, {
     variables: {
       productSlug,
       input: {statuses: [2]} // 2 - Available
@@ -37,7 +37,7 @@ const Summary: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (!tasksError) {
-      setAvailableTasksAmount(getProp(tasks, 'tasksByProduct', 0).length)
+      setAvailableTasksAmount(getProp(tasks, 'tasksByProductCount', 0))
     }
   }, [tasks]);
 
@@ -130,16 +130,16 @@ const Summary: React.FunctionComponent = () => {
               </Row>
             </div>
             <Divider/>
-            <div className='mt-15'>
-              <Row justify="space-between">
-                <Col>
-                  <div className="section-title mb-15">Product Map</div>
-                </Col>
-              </Row>
-              <Row>
-                <ProductMapTree/>
-              </Row>
-            </div>
+            {/*<div className='mt-15'>*/}
+            {/*  <Row justify="space-between">*/}
+            {/*    <Col>*/}
+            {/*      <div className="section-title mb-15">Product Map</div>*/}
+            {/*    </Col>*/}
+            {/*  </Row>*/}
+            {/*  <Row>*/}
+            {/*    <ProductMapTree/>*/}
+            {/*  </Row>*/}
+            {/*</div>*/}
           </div>
         )
       }

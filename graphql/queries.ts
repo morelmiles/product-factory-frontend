@@ -271,10 +271,10 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
         website
         shortDescription
         fullDescription
-        tag {
-          id
-          name
-        }
+        #tag {
+        #  id
+        #  name
+        #}
       }
     }
     tasks {
@@ -448,6 +448,12 @@ export const GET_TASKS_BY_PRODUCT = gql`
         slug
       }
     }
+  }
+`;
+
+export const GET_TASKS_BY_PRODUCT_COUNT = gql`
+  query GetTasksByProductCount($productSlug: String, $input: TaskListInput) {
+    tasksByProductCount (productSlug: $productSlug, input: $input) 
   }
 `;
 
