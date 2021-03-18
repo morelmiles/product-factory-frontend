@@ -185,44 +185,69 @@ export const GET_CAPABILITIES = gql`
 `;
 
 export const GET_CAPABILITY_BY_ID = gql`
-  query GetCapability($nodeId: Int!, $slug: String!) {
-    capability(nodeId: $nodeId) {
-      id
-      name
-      description
-      stacks {
+  query GetCapability($nodeId: Int!, $slug: String!, $input: TaskListInput!) {
+    capability(nodeId: $nodeId, input: $input) {
+      capability {
         id
         name
-      }
-      videoLink
-      attachments {
-        id
-        name
-        path
-        fileType
+        description
+        stacks {
+          id
+          name
+        }
+        videoLink
+        attachments {
+          id
+          name
+          path
+          fileType
+        }      
+        product {
+          name
+          videoUrl,
+          shortDescription,
+          #tag {
+          #  id
+          #  name
+          #}
+        }
       }
       tasks {
         id
         publishedId
         title
         description
+        status
+        canEdit
+        priority
         shortDescription
         tag {
           id
           name
         }
+        initiative {
+          name
+          id
+        }
         product {
           slug
         }
-      }
-      product {
-        name
-        videoUrl,
-        shortDescription,
-        #tag {
-        #  id
-        #  name
-        #}
+        tag {
+          id
+          name
+        }
+        stack {
+          id
+          name
+        }
+        blocked
+        featured
+        assignedTo {
+          id,
+          fullName,
+          photo,
+          slug
+        }
       }
     }
     isAdminOrManager(slug: $slug)
@@ -282,9 +307,10 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
       publishedId
       title
       description
+      canEdit
+      shortDescription
       status
       priority
-      canEdit
       taskclaimSet {
         id
         task {
@@ -300,7 +326,22 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
         kind
       }
       product {
+        slug
+      }
+      tag {
+        id
         name
+      }
+      stack {
+        id
+        name
+      }
+      blocked
+      featured
+      assignedTo {
+        id,
+        fullName,
+        photo,
         slug
       }
     }
