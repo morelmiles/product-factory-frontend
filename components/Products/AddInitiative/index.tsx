@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Modal, Row, Input, message, Button, Select } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
-import { CREATE_INITIATIVE, UPDATE_INITIATIVE } from '../../../graphql/mutations';
+import {CREATE_INITIATIVE, DELETE_INITIATIVE, UPDATE_INITIATIVE} from '../../../graphql/mutations';
 import { INITIATIVE_TYPES } from '../../../graphql/types';
 import { getProp } from '../../../utilities/filters';
 import { RICH_TEXT_EDITOR_WIDTH } from '../../../utilities/constants';
 import dynamic from 'next/dynamic';
+import DeleteModal from "../DeleteModal";
 
 const RichTextEditor = dynamic(
   () => import('../../TextEditor'),
@@ -18,6 +19,7 @@ type Props = {
     productSlug: string;
     closeModal: any;
     modalType: boolean;
+    handleDelete?: Function;
     submit: Function;
     initiative?: any;
 };
@@ -28,6 +30,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
   closeModal,
   modalType,
   initiative,
+  handleDelete,
   submit
 }) => {
   const [name, setName] = useState(
@@ -103,20 +106,28 @@ const AddInitiative: React.FunctionComponent<Props> = ({
     }
   }
 
+  let footerButtons = modalType ? [
+    <Button type="danger" style={{float: "left"}} onClick={handleDelete}>
+      Delete this initiative
+    </Button>
+    ] : [];
+
+  footerButtons = footerButtons.concat([
+    <Button key="back" onClick={handleCancel}>
+      Cancel
+    </Button>,
+    <Button key="submit" type="primary" onClick={handleOk}>
+      { modalType ? "Edit" : "Add" }
+    </Button>
+  ]);
+
   return (
     <>
       <Modal
         title={ modalType ? "Edit initiative" : "Add initiative" }
         visible={modal}
         onCancel={handleCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            { modalType ? "Edit" : "Add" }
-          </Button>,
-        ]}
+        footer={footerButtons}
         width={RICH_TEXT_EDITOR_WIDTH}
         maskClosable={false}
       >

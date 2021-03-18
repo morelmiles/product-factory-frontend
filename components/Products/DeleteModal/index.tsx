@@ -5,7 +5,7 @@ const { Option } = Select;
 
 type Props = {
     modal?: boolean;
-    productSlug: string;
+    description: string;
     closeModal: any;
     submit: Function;
     title: string;
@@ -13,10 +13,10 @@ type Props = {
 
 const DeleteModal: React.SFC<Props> = ({
   modal,
-  productSlug,
   closeModal,
   submit,
-  title
+  title,
+  description = "Are you sure?",
 }) => {  
   const handleCancel = () => {
     closeModal(!modal);
@@ -36,13 +36,13 @@ const DeleteModal: React.SFC<Props> = ({
           <Button key="back" onClick={handleCancel}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button key="submit" type="danger" onClick={handleOk}>
             Submit
           </Button>,
         ]}
         maskClosable={false}
       >
-        <h3>Are you sure?</h3>
+        {description}
       </Modal>
     </>
   );

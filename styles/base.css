@@ -384,6 +384,12 @@ p:last-child {
     justify-content: flex-end;
 }
 
+.d-flex-justify-center {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 /* Custm CSS */
 .page-title {
     font-size: 24px;
