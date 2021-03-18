@@ -4,19 +4,21 @@ import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {Row, Col, message, Button} from 'antd';
 import {useQuery, useMutation} from '@apollo/react-hooks';
-import {GET_INITIATIVE_BY_ID, GET_PRODUCT_INFO_BY_ID} from '../../../../graphql/queries';
+import {GET_INITIATIVE_BY_ID} from '../../../../graphql/queries';
 import {DELETE_INITIATIVE} from '../../../../graphql/mutations';
 import DeleteModal from '../../../../components/Products/DeleteModal';
 import AddInitiative from '../../../../components/Products/AddInitiative';
 import {TaskTable, DynamicHtml} from '../../../../components';
-import EditIcon from '../../../../components/EditIcon';
 import {getProp} from '../../../../utilities/filters';
 import {getUserRole, hasManagerRoots, randomKeys} from '../../../../utilities/utils';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import Loading from "../../../../components/Loading";
 import {TASK_TYPES} from "../../../../graphql/types";
 import FilterModal from "../../../../components/FilterModal";
-import {FilterOutlined} from "@ant-design/icons";
+import { FilterOutlined, EditOutlined } from "@ant-design/icons";
+import AvatarIcon from "../../../../components/AvatarIcon";
+import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
+import FilledCircle from "../../../../public/assets/icons/filled-circle.svg";
 
 
 type Params = {
@@ -30,12 +32,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
 
   const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
-  const {data: product, error: productError, loading: productLoading} = useQuery(GET_PRODUCT_INFO_BY_ID, {
-    variables: {slug: productSlug}
-  });
-
   const [initiative, setInitiative] = useState({});
-  const [userId, setUserId] = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
   const [filterModal, setFilterModal] = useState(false);
@@ -67,10 +64,6 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
     variables: {id: initiativeId, input: inputData }
   });
 
-  useEffect(() => {
-    setUserId(localStorage.getItem('userId'));
-  }, []);
-
   const fetchData = () => {
     refetch({
       id: initiativeId
@@ -90,57 +83,50 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
     setFilterModal(false);
   };
 
-  if (loading || productLoading) return <Loading/>
+  if (loading) return <Loading/>
+
+  const status = (getProp(initiative, 'status', 1) == 1) ? "Active" : "Completed";
 
   return (
     <LeftPanelContainer>
       {
-        !error && !productError && (
+        !error && (
           <React.Fragment key={randomKeys()}>
             <div className="text-grey">
-              {
-                <>
-                  <Link href={`/products/${productSlug}`}>
-                    <a className="text-grey">{getProp(initiative, 'product.name', '')}</a>
-                  </Link>
-                  <span> / </span>
-                  <Link href={`/products/${productSlug}/initiatives`}>
-                    <a className="text-grey">Initiatives</a>
-                  </Link>
-                  <span> / </span>
-                </>
-              }
-              <span>{getProp(initiative, 'name', '')}</span>
+              <Link href={`/products/${productSlug}`}>
+                <a className="text-grey">{getProp(initiative, 'product.name', '')}</a>
+              </Link>
+              <span> / </span>
+              <Link href={`/products/${productSlug}/initiatives`}>
+                <a className="text-grey">Initiatives</a>
+              </Link>
             </div>
             <Row
               justify="space-between"
               className="right-panel-headline mb-15"
             >
-              <div className="page-title">
-                {getProp(initiative, 'name', '')}
-              </div>
-
-                <Col>
-                  <Button type="primary"
-                          className={userHasManagerRoots ? "mr-10" : ""}
-                          onClick={() => setFilterModal(!filterModal)}
-                          icon={<FilterOutlined />}>Filter</Button>
-
+              <div className="page-title page-title-flex">
+                <div>
+                  {getProp(initiative, 'name', '')}
                   {userHasManagerRoots && (
                     <>
-                      <Button
-                        onClick={() => showDeleteModal(true)}
-                      >
-                        Delete
-                      </Button>
-                      <EditIcon
-                        className='ml-10'
+                      <AvatarIcon
+                        className="ml-10 small-avatar"
+                        icon={<EditOutlined />}
                         onClick={() => setShowEditModal(true)}
                       />
                     </>
                   )}
-
-                </Col>
+                </div>
+                <div className="instance-status">
+                  {status}
+                  <img
+                    src={status === "Active" ? FilledCircle : CheckCircle}
+                    className="check-circle-icon ml-5"
+                    alt="status"
+                  />
+                </div>
+              </div>
             </Row>
             <Row>
               {/* <Col>
@@ -161,6 +147,10 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
               tasks={tasks}
               statusList={TASK_TYPES}
               productSlug={productSlug}
+              content={<Button type="primary"
+                               style={{padding: "0 10px"}}
+                               onClick={() => setFilterModal(!filterModal)}
+                               icon={<FilterOutlined />}>Filter</Button>}
               submit={fetchData}
             />
             {deleteModal && (
@@ -172,17 +162,22 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
                   showDeleteModal(false);
                   deleteInitiative().then()
                 }}
-                title="Delete initiative"
+                title="Delete this initiative"
+                description="Are you sure you want to delete this initiative?"
               />
             )}
             {
               showEditModal && <AddInitiative
-                  modal={showEditModal}
-                  productSlug={productSlug}
-                  modalType={true}
-                  closeModal={setShowEditModal}
-                  submit={fetchData}
-                  initiative={initiative}
+                modal={showEditModal}
+                productSlug={productSlug}
+                modalType={true}
+                closeModal={setShowEditModal}
+                submit={fetchData}
+                handleDelete={() => {
+                  setShowEditModal(false);
+                  showDeleteModal(true);
+                }}
+                initiative={initiative}
               />
             }
             <FilterModal

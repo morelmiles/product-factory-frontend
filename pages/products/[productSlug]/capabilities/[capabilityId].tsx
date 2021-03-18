@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import {connect} from 'react-redux';
 import Link from "next/link";
 import {useRouter} from 'next/router'
 import {Row, Col, Tag, Button, message, Layout, Space, Breadcrumb, Dropdown, Menu} from 'antd';
@@ -7,7 +6,7 @@ import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player';
 import {GET_CAPABILITY_BY_ID, GET_CAPABILITY_PARENT_CRUMBS} from '../../../../graphql/queries';
 import {DELETE_CAPABILITY} from '../../../../graphql/mutations';
-import {TagType} from '../../../../graphql/types';
+import {TagType, TASK_TYPES} from '../../../../graphql/types';
 import {getProp} from '../../../../utilities/filters';
 import {TaskTable, DynamicHtml, ContainerFlex, Header} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
@@ -15,8 +14,9 @@ import AddOrEditCapability from '../../../../components/Products/AddOrEditCapabi
 import EditIcon from '../../../../components/EditIcon';
 import Attachments from "../../../../components/Attachments";
 import Loading from "../../../../components/Loading";
-import {DownOutlined} from "@ant-design/icons";
+import { DownOutlined, FilterOutlined } from "@ant-design/icons";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import FilterModal from "../../../../components/FilterModal";
 
 
 interface ICrumb {
@@ -85,13 +85,24 @@ const CapabilityDetail: React.FunctionComponent = () => {
   productSlug = String(productSlug);
 
   const [capability, setCapability] = useState({});
+  const [tasks, setTasks] = useState([]);
   const [isAdminOrManager, setIsAdminOrManager] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [filterModal, setFilterModal] = useState(false);
   const [formattedCrumbs, setFormattedCrumbs] = useState<Array<ICrumb>>([]);
 
+  const [inputData, setInputData] = useState({
+    sortedBy: "priority",
+    statuses: [],
+    tags: [],
+    priority: [],
+    stacks: [],
+    assignee: [],
+    taskCreator: [],
+  });
+
   const {data, error, loading, refetch} = useQuery(GET_CAPABILITY_BY_ID, {
-    variables: {nodeId: capabilityId, slug: productSlug}
+    variables: {nodeId: capabilityId, slug: productSlug, input: inputData}
   });
 
   const {data: crumbs, error: crumbsError, loading: crumbsLoading} = useQuery(GET_CAPABILITY_PARENT_CRUMBS, {
@@ -121,19 +132,20 @@ const CapabilityDetail: React.FunctionComponent = () => {
   });
 
   useEffect(() => {
-    setUserId(localStorage.getItem('userId'));
-  }, []);
-
-  useEffect(() => {
     if (!error) {
-      setCapability(getProp(data, 'capability', {}));
+      setCapability(getProp(data, 'capability.capability', {}));
+      setTasks(getProp(data, 'capability.tasks', []))
       setIsAdminOrManager(getProp(data, 'isAdminOrManager', false));
     }
   }, [data]);
 
+  const applyFilter = (values: any) => {
+    values = Object.assign(values, {});
+    setInputData(values);
+    setFilterModal(false);
+  };
+
   if (loading || crumbsLoading) return <Loading/>
-
-
 
   return (
     <ContainerFlex>
@@ -219,8 +231,14 @@ const CapabilityDetail: React.FunctionComponent = () => {
 
                 <TaskTable
                   submit={() => refetch()}
-                  tasks={getProp(capability, 'tasks', [])}
+                  tasks={tasks}
                   productSlug={productSlug}
+                  statusList={TASK_TYPES}
+                  showInitiativeName={true}
+                  content={<Button type="primary"
+                                   style={{padding: "0 10px"}}
+                                   onClick={() => setFilterModal(!filterModal)}
+                                   icon={<FilterOutlined />}>Filter</Button>}
                 />
 
                 {
@@ -248,6 +266,12 @@ const CapabilityDetail: React.FunctionComponent = () => {
           }
         </Content>
       </Layout>
+      <FilterModal
+        modal={filterModal}
+        initialForm={inputData}
+        closeModal={() => setFilterModal(false)}
+        submit={applyFilter}
+      />
     </ContainerFlex>
   );
 };
