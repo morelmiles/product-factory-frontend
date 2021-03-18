@@ -130,16 +130,16 @@ const Summary: React.FunctionComponent = () => {
               </Row>
             </div>
             <Divider/>
-            {/*<div className='mt-15'>*/}
-            {/*  <Row justify="space-between">*/}
-            {/*    <Col>*/}
-            {/*      <div className="section-title mb-15">Product Map</div>*/}
-            {/*    </Col>*/}
-            {/*  </Row>*/}
-            {/*  <Row>*/}
-            {/*    <ProductMapTree/>*/}
-            {/*  </Row>*/}
-            {/*</div>*/}
+            <div className='mt-15'>
+              <Row justify="space-between">
+                <Col>
+                  <div className="section-title mb-15">Product Map</div>
+                </Col>
+              </Row>
+              <Row>
+                <ProductMapTree/>
+              </Row>
+            </div>
           </div>
         )
       }
