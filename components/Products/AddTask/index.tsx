@@ -118,7 +118,8 @@ const AddTask: React.FunctionComponent<Props> = (
   const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
   tasks = tasks.filter(dependOnTask => {
-    return task.id != dependOnTask.id
+    let tId = task && task.hasOwnProperty("id") ? task.id : undefined;
+    return tId != dependOnTask.id
   });
 
   useEffect(() => {
