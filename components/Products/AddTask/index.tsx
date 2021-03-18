@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Modal, Row, Col, Input, Select, message, Button} from 'antd';
+import {Modal, Row, Col, Input, Select, message} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {
   GET_CAPABILITIES_BY_PRODUCT_AS_LIST,
@@ -16,6 +16,13 @@ import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
 import {RICH_TEXT_EDITOR_WIDTH} from '../../../utilities/constants';
 import dynamic from "next/dynamic";
 import {getProp} from "../../../utilities/filters";
+
+const Editor = dynamic(
+  () => import('react-draft-wysiwyg').then(mod => mod.Editor),
+  {ssr: false}
+);
+import {EditorState} from 'draft-js';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 
 const {Option} = Select;
@@ -250,6 +257,16 @@ const AddTask: React.FunctionComponent<Props> = (
     setReviewSelectValue(val);
   }
 
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  const uploadCallback = (file) => {
+    return new Promise(
+      (resolve, reject) => {
+        resolve({data: {link: "https://source.unsplash.com/random"}});
+      }
+    );
+  }
+
   return (
     <>
       <Modal
@@ -261,6 +278,28 @@ const AddTask: React.FunctionComponent<Props> = (
         width={RICH_TEXT_EDITOR_WIDTH}
         maskClosable={false}
       >
+        {/*<Editor*/}
+        {/*  editorState={editorState}*/}
+        {/*  editorStyle={{minHeight: 200, border: '1px solid #F1F1F1', padding: '0 15px'}}*/}
+        {/*  onEditorStateChange={setEditorState}*/}
+        {/*  toolbar={{*/}
+        {/*    inline: {inDropdown: true},*/}
+        {/*    list: {inDropdown: true},*/}
+        {/*    textAlign: {inDropdown: true},*/}
+        {/*    link: {inDropdown: true},*/}
+        {/*    history: {inDropdown: true},*/}
+        {/*    image: {*/}
+        {/*      urlEnabled: false,*/}
+        {/*      uploadEnabled: true,*/}
+        {/*      uploadCallback: () => uploadCallback('erf'),*/}
+        {/*      previewImage: true,*/}
+        {/*      inputAccept: 'image/*',*/}
+        {/*      alt: {present: false, mandatory: false},*/}
+        {/*      defaultSize: {width: '50%'},*/}
+        {/*      alignmentEnabled: "CENTER"*/}
+        {/*    }*/}
+        {/*  }}*/}
+        {/*/>*/}
         <Row className='mb-15'>
           <label>Title*:</label>
           <Input
@@ -400,7 +439,7 @@ const AddTask: React.FunctionComponent<Props> = (
           </Select>
         </Row>
         <Row className='mb-15'>
-          <label>Stacks:</label>
+          <label>Stack:</label>
           <Select
             mode="multiple"
             onChange={setStacks}
@@ -451,7 +490,8 @@ const AddTask: React.FunctionComponent<Props> = (
         </Row>
       </Modal>
     </>
-  );
+  )
+    ;
 }
 
 const mapStateToProps = (state: any) => ({
