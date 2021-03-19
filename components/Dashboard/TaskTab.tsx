@@ -13,22 +13,15 @@ type Props = {
   setTaskNum: (value: number) => void,
   showInitiativeName?: boolean,
   showProductName?: boolean,
-  sortedBy: string,
-  statuses: string[],
-  tags: string[],
 };
 
 const TaskTab: React.FunctionComponent<Props> = (
   {
     setTaskNum,
-    sortedBy,
-    statuses,
     showInitiativeName = false,
     showProductName = false,
-    tags
   }
 ) => {
-  const userId = localStorage.getItem('userId');
   const [filterModal, setFilterModal] = useState(false);
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
