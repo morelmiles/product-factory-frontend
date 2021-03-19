@@ -183,26 +183,32 @@ export const GET_CAPABILITIES = gql`
 `;
 
 export const GET_CAPABILITY_BY_ID = gql`
-  query GetCapability($nodeId: Int!) {
-    capability(nodeId: $nodeId) {
-      id
-      name
-      description
-      stacks {
+  query GetCapability($nodeId: Int!, $input: TaskListInput!) {
+    capability(nodeId: $nodeId, input: $input) {
+      capability {
         id
         name
-      }
-      videoLink
-      attachments {
-        id
-        name
-        path
-        fileType
-      }      
-      product {
-        name
-        videoUrl
-        shortDescription
+        description
+        stacks {
+          id
+          name
+        }
+        videoLink
+        attachments {
+          id
+          name
+          path
+          fileType
+        }      
+        product {
+          name
+          videoUrl,
+          shortDescription,
+          #tag {
+          #  id
+          #  name
+          #}
+        }
       }
       tasks {
         id
@@ -235,9 +241,9 @@ export const GET_CAPABILITY_BY_ID = gql`
         blocked
         featured
         assignedTo {
-          id
-          fullName
-          photo
+          id,
+          fullName,
+          photo,
           slug
         }
       }
