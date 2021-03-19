@@ -68,7 +68,7 @@ export const downloadFile = (url: string, name: string) => {
 }
 
 export const getUserRole = (roles: {role: string, product: string}[], product: any) => {
-  roles.filter(r => r.product === product)
+  roles = roles.filter(r => r.product === product)
   if (roles.length > 0) {
     return roles[0].role
   } else {
