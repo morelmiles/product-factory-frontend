@@ -183,14 +183,6 @@ export const DELETE_METRICS = gql`
   }
 `;
 
-export const DELETE_MAP = gql`
-  mutation DeleteMap($id: uuid!) {
-    delete_map(where: { id: { _eq: $id } }) {
-      affected_rows
-    }
-  }
-`;
-
 export const ACTIVE_COUNTRY = gql`
   mutation UpdateCountry($id: uuid!, $active: Boolean!) {
     update_country(where: { id: { _eq: $id } }, _set: { active: $active }) {
@@ -287,6 +279,15 @@ export const UPDATE_LICENSE = gql`
 export const ACCEPT_AGREEMENT = gql`
   mutation AgreeLicense($productSlug: String!) {
     agreeLicense(licenseInput: {productSlug: $productSlug}) {
+      status
+      message
+    }
+  }
+`;
+
+export const UPLOAD_IMAGE = gql`
+  mutation UploadImage($file: Upload!) {
+    uploadImage(file: $file) {
       status
       message
     }

@@ -9,7 +9,7 @@ import {
   GET_TAGS,
   GET_USERS
 } from '../../../graphql/queries';
-import {CREATE_TASK, UPDATE_TASK} from '../../../graphql/mutations';
+import {CREATE_TASK, UPDATE_TASK, UPLOAD_IMAGE} from '../../../graphql/mutations';
 import {TASK_TYPES} from '../../../graphql/types';
 import AddInitiative from '../AddInitiative';
 import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
@@ -87,13 +87,13 @@ const AddTask: React.FunctionComponent<Props> = (
   );
 
   const [tagsSearchValue, setTagsSearchValue] = useState('');
-  const tagsSearchValueChangeHandler = (val) => {
+  const tagsSearchValueChangeHandler = (val: any) => {
     const re = /^[a-zA-Z0-9-]{0,128}$/;
 
     if (re.test(val)) {
       setTagsSearchValue(val);
     } else if (val.length > 1 && (val[val.length - 1] === ' ' || val[val.length - 1] === ',')) {
-      setTags(prev => [...prev, val.slice(0, -1)]);
+      setTags((prev: any) => [...prev, val.slice(0, -1)]);
       setTagsSearchValue('');
     } else {
       message.warn('Tags can only include letters, numbers and -, with the max length of 128 characters').then()
@@ -125,6 +125,7 @@ const AddTask: React.FunctionComponent<Props> = (
 
   const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
+  // @ts-ignore
   tasks = tasks.filter(dependOnTask => {
     let tId = task && task.hasOwnProperty("id") ? task.id : undefined;
     return tId != dependOnTask.id
@@ -233,17 +234,17 @@ const AddTask: React.FunctionComponent<Props> = (
           variables: {input}
         })
 
-        const modalTypeText = modalType ? 'updateTask' : 'createTask';
-        const messageText = getProp(res, `data.${modalTypeText}.message`, '');
+      const modalTypeText = modalType ? 'updateTask' : 'createTask';
+      const messageText = getProp(res, `data.${modalTypeText}.message`, '');
 
-        if (messageText && getProp(res, `data.${modalTypeText}.status`, false)) {
-          submit();
-          message.success(messageText);
-        } else if (messageText) {
-          message.error(messageText);
-        }
+      if (messageText && getProp(res, `data.${modalTypeText}.status`, false)) {
+        submit();
+        message.success(messageText);
+      } else if (messageText) {
+        message.error(messageText);
+      }
 
-        closeModal(!modal);
+      closeModal(!modal);
     } catch (e) {
       message.error(e.message);
     }
@@ -264,12 +265,33 @@ const AddTask: React.FunctionComponent<Props> = (
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   const uploadCallback = (file: any) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function () {
+      console.log(reader.result);
+
+      uploadImage({
+        variables: {
+          file: reader.result
+        }
+      }).then();
+    };
+
     return new Promise(
       (resolve, reject) => {
-        resolve({data: {link: "https://source.unsplash.com/random"}});
+        resolve({data: {link: "http://0.0.0.0:8080/images/test.jpeg"}});
       }
     );
   }
+
+  const [uploadImage] = useMutation(UPLOAD_IMAGE, {
+    onCompleted(res) {
+      console.log('RES', res);
+    },
+    onError() {
+      message.error('Error with image loading').then();
+    }
+  });
 
   return (
     <>
@@ -284,7 +306,13 @@ const AddTask: React.FunctionComponent<Props> = (
       >
         {/*<Editor*/}
         {/*  editorState={editorState}*/}
-        {/*  editorStyle={{minHeight: 200, border: '1px solid #F1F1F1', padding: '0 15px'}}*/}
+        {/*  editorStyle={{*/}
+        {/*    minHeight: 100,*/}
+        {/*    maxHeight: 300,*/}
+        {/*    overflowY: 'auto',*/}
+        {/*    border: '1px solid #F1F1F1',*/}
+        {/*    padding: '0 15px'*/}
+        {/*  }}*/}
         {/*  onEditorStateChange={setEditorState}*/}
         {/*  toolbar={{*/}
         {/*    inline: {inDropdown: true},*/}
@@ -295,7 +323,7 @@ const AddTask: React.FunctionComponent<Props> = (
         {/*    image: {*/}
         {/*      urlEnabled: false,*/}
         {/*      uploadEnabled: true,*/}
-        {/*      uploadCallback: () => uploadCallback('erf'),*/}
+        {/*      uploadCallback,*/}
         {/*      previewImage: true,*/}
         {/*      inputAccept: 'image/*',*/}
         {/*      alt: {present: false, mandatory: false},*/}
