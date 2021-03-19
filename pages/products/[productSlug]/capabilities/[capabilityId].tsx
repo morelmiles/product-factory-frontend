@@ -142,8 +142,8 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
 
   useEffect(() => {
     if (!error) {
-      setCapability(getProp(data, 'capability', {}));
-      setTasks(getProp(data, 'capability.tasks', []));
+      setCapability(getProp(data, 'capability.capability', {}));
+      setTasks(getProp(data, 'capability.tasks', []))
     }
   }, [data]);
 
