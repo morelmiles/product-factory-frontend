@@ -52,7 +52,6 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
         fileType
         path
       }
-      # isAdmin
     }
     # userPerson(slug: $slug)
     tags {
@@ -92,7 +91,6 @@ export const GET_PRODUCT_BY_ID = gql`
       id
       name
     }
-    isAdminOrManager(slug: $slug)
   }
 `;
 
@@ -185,32 +183,26 @@ export const GET_CAPABILITIES = gql`
 `;
 
 export const GET_CAPABILITY_BY_ID = gql`
-  query GetCapability($nodeId: Int!, $slug: String!, $input: TaskListInput!) {
-    capability(nodeId: $nodeId, input: $input) {
-      capability {
+  query GetCapability($nodeId: Int!) {
+    capability(nodeId: $nodeId) {
+      id
+      name
+      description
+      stacks {
         id
         name
-        description
-        stacks {
-          id
-          name
-        }
-        videoLink
-        attachments {
-          id
-          name
-          path
-          fileType
-        }      
-        product {
-          name
-          videoUrl,
-          shortDescription,
-          #tag {
-          #  id
-          #  name
-          #}
-        }
+      }
+      videoLink
+      attachments {
+        id
+        name
+        path
+        fileType
+      }      
+      product {
+        name
+        videoUrl
+        shortDescription
       }
       tasks {
         id
@@ -243,14 +235,13 @@ export const GET_CAPABILITY_BY_ID = gql`
         blocked
         featured
         assignedTo {
-          id,
-          fullName,
-          photo,
+          id
+          fullName
+          photo
           slug
         }
       }
     }
-    isAdminOrManager(slug: $slug)
   }
 `;
 
@@ -751,7 +742,6 @@ export const GET_REVIEW_BY_ID = gql`
 export const GET_CAPABILITIES_BY_PRODUCT = gql`
   query GetCapabilities($productSlug: String!) {
     capabilities(productSlug: $productSlug)
-    isAdminOrManager(slug: $productSlug)
   }
 `;
 
@@ -824,10 +814,4 @@ export const GET_LICENSE = gql`
      agreementContent
    }
  }
-`;
-
-export const IS_ADMIN = gql`
-  query IsAdmin($productSlug: String!) {
-    isAdmin(productSlug: $productSlug)
-  }
 `;

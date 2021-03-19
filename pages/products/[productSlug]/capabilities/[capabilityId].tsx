@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Link from "next/link";
 import {useRouter} from 'next/router'
-import {Row, Col, Tag, Button, message, Layout, Space, Breadcrumb, Dropdown, Menu} from 'antd';
+import {Row, Col, Button, message, Layout, Space, Breadcrumb, Dropdown, Menu} from 'antd';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player';
 import {GET_CAPABILITY_BY_ID, GET_CAPABILITY_PARENT_CRUMBS} from '../../../../graphql/queries';
@@ -14,9 +14,14 @@ import AddOrEditCapability from '../../../../components/Products/AddOrEditCapabi
 import EditIcon from '../../../../components/EditIcon';
 import Attachments from "../../../../components/Attachments";
 import Loading from "../../../../components/Loading";
-import { DownOutlined, FilterOutlined } from "@ant-design/icons";
+import {DownOutlined, FilterOutlined} from "@ant-design/icons";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import FilterModal from "../../../../components/FilterModal";
+import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
+import {connect} from "react-redux";
+
+
+const {Content} = Layout;
 
 
 interface ICrumb {
@@ -34,7 +39,9 @@ interface IParentsCrumbsProps {
   capabilityName: string
 }
 
-const {Content} = Layout;
+interface ICapabilityDetailProps {
+  user: any
+}
 
 const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = (
   {productSlug, crumbs, capabilityName}
@@ -79,17 +86,19 @@ const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = (
   )
 }
 
-const CapabilityDetail: React.FunctionComponent = () => {
+
+const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user}) => {
   const router = useRouter();
   let {capabilityId, productSlug} = router.query;
   productSlug = String(productSlug);
 
   const [capability, setCapability] = useState({});
   const [tasks, setTasks] = useState([]);
-  const [isAdminOrManager, setIsAdminOrManager] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [filterModal, setFilterModal] = useState(false);
   const [formattedCrumbs, setFormattedCrumbs] = useState<Array<ICrumb>>([]);
+
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
@@ -133,9 +142,8 @@ const CapabilityDetail: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (!error) {
-      setCapability(getProp(data, 'capability.capability', {}));
-      setTasks(getProp(data, 'capability.tasks', []))
-      setIsAdminOrManager(getProp(data, 'isAdminOrManager', false));
+      setCapability(getProp(data, 'capability', {}));
+      setTasks(getProp(data, 'capability.tasks', []));
     }
   }, [data]);
 
@@ -145,7 +153,7 @@ const CapabilityDetail: React.FunctionComponent = () => {
     setFilterModal(false);
   };
 
-  if (loading || crumbsLoading) return <Loading/>
+  if (loading || crumbsLoading) return <Loading/>;
 
   return (
     <ContainerFlex>
@@ -172,7 +180,7 @@ const CapabilityDetail: React.FunctionComponent = () => {
                     </div>
                   </Col>
                   {
-                    isAdminOrManager &&
+                    userHasManagerRoots &&
                     <Col>
                         <Button
                             onClick={() => showDeleteModal(true)}
@@ -222,8 +230,10 @@ const CapabilityDetail: React.FunctionComponent = () => {
                   <Col span={12}>
                     {
                       getProp(capability, 'attachments', []).length > 0 && (
-                        <Attachments style={{marginTop: 20, marginBottom: 50}}
-                                     data={getProp(capability, 'attachments', [])}/>
+                        <Attachments
+                          style={{marginTop: 20, marginBottom: 50}}
+                          data={getProp(capability, 'attachments', [])}
+                        />
                       )
                     }
                   </Col>
@@ -235,17 +245,22 @@ const CapabilityDetail: React.FunctionComponent = () => {
                   productSlug={productSlug}
                   statusList={TASK_TYPES}
                   showInitiativeName={true}
-                  content={<Button type="primary"
-                                   style={{padding: "0 10px"}}
-                                   onClick={() => setFilterModal(!filterModal)}
-                                   icon={<FilterOutlined />}>Filter</Button>}
+                  content={
+                    <Button
+                      type="primary"
+                      style={{padding: "0 10px"}}
+                      onClick={() => setFilterModal(!filterModal)}
+                      icon={<FilterOutlined/>}
+                    >
+                      Filter
+                    </Button>
+                  }
                 />
 
                 {
                   deleteModal &&
                   <DeleteModal
                       modal={deleteModal}
-                      productSlug={productSlug}
                       closeModal={() => showDeleteModal(false)}
                       submit={deleteCapability}
                       title="Delete capability"
@@ -276,5 +291,15 @@ const CapabilityDetail: React.FunctionComponent = () => {
   );
 };
 
+const mapStateToProps = (state: any) => ({
+  user: state.user
+});
 
-export default CapabilityDetail;
+const mapDispatchToProps = () => ({});
+
+const CapabilityDetailContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CapabilityDetail);
+
+export default CapabilityDetailContainer;

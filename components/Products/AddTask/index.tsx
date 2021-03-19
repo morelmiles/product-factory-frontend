@@ -18,6 +18,7 @@ import dynamic from "next/dynamic";
 import {getProp} from "../../../utilities/filters";
 
 const Editor = dynamic(
+  // @ts-ignore
   () => import('react-draft-wysiwyg').then(mod => mod.Editor),
   {ssr: false}
 );
@@ -232,14 +233,17 @@ const AddTask: React.FunctionComponent<Props> = (
           variables: {input}
         })
 
-      if (!res.errors) {
-        submit();
-        const messageType = modalType ? 'updated' : 'created';
-        message.success(`Task is ${messageType} successfully!`);
+        const modalTypeText = modalType ? 'updateTask' : 'createTask';
+        const messageText = getProp(res, `data.${modalTypeText}.message`, '');
+
+        if (messageText && getProp(res, `data.${modalTypeText}.status`, false)) {
+          submit();
+          message.success(messageText);
+        } else if (messageText) {
+          message.error(messageText);
+        }
+
         closeModal(!modal);
-      } else {
-        message.error(res.errors[0].message);
-      }
     } catch (e) {
       message.error(e.message);
     }
@@ -259,7 +263,7 @@ const AddTask: React.FunctionComponent<Props> = (
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
-  const uploadCallback = (file) => {
+  const uploadCallback = (file: any) => {
     return new Promise(
       (resolve, reject) => {
         resolve({data: {link: "https://source.unsplash.com/random"}});

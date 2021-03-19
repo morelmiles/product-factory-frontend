@@ -1,5 +1,5 @@
 import moment from "moment";
-import { MANAGER_ROLES } from "../graphql/types";
+import {ADMIN_ROLES, MANAGER_ROLES} from "../graphql/types";
 
 export const randomKeys = (length: number = 7): string => {
   return Math.random().toString(36).substring(length);
@@ -68,7 +68,7 @@ export const downloadFile = (url: string, name: string) => {
 }
 
 export const getUserRole = (roles: {role: string, product: string}[], product: any) => {
-  roles.filter(r => r.product === product)
+  roles = roles.filter(r => r.product === product);
   if (roles.length > 0) {
     return roles[0].role
   } else {
@@ -77,3 +77,4 @@ export const getUserRole = (roles: {role: string, product: string}[], product: a
 }
 
 export const hasManagerRoots = (userRole: string) => MANAGER_ROLES.includes(userRole);
+export const hasAdminRoots = (userRole: string) => ADMIN_ROLES.includes(userRole);

@@ -10,12 +10,18 @@ import {GET_CAPABILITIES_BY_PRODUCT} from "../../graphql/queries";
 import {useRouter} from "next/router";
 import Loading from "../Loading";
 import AddOrEditCapability from "../Products/AddOrEditCapability";
+import {getUserRole, hasManagerRoots} from "../../utilities/utils";
+import {connect} from "react-redux";
 
 
 const {Search} = Input;
 
 
-const ProductMapTree = () => {
+interface IProductMapTree {
+  user: any
+}
+
+const ProductMapTree: React.FunctionComponent<IProductMapTree> = ({user}) => {
   const router = useRouter();
   const {productSlug} = router.query;
 
@@ -128,7 +134,7 @@ const ProductMapTree = () => {
   }
 
   const onSearch = (value: string) => setSearchString(value);
-  const isAdminOrManager = getProp(capabilities, 'isAdminOrManager', false);
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   if (capabilitiesLoading) return <Loading/>
 
@@ -194,7 +200,7 @@ const ProductMapTree = () => {
           </Col>
         )}
         {
-          isAdminOrManager &&
+          userHasManagerRoots &&
           <Col xs={24} sm={24} md={8} lg={6} style={{marginBottom: 20}}>
               <Button
                   style={{width: '100%'}}
@@ -216,16 +222,17 @@ const ProductMapTree = () => {
         <Row style={{width: '100%'}}>
           <div style={{height: mapHeight, width: '100%'}}>
             <SortableTree
+              isVirtualized={false}
               treeData={treeData}
               onChange={(treeData: TreeNode[]) => setTreeData(treeData)}
-              canDrag={isAdminOrManager}
+              canDrag={userHasManagerRoots}
               onMoveNode={treeChangeHandler}
               searchMethod={customSearchMethod}
               searchQuery={searchString}
               searchFocusOffset={searchFocusIndex}
               searchFinishCallback={onTreeSearch}
               generateNodeProps={({node}) => ({
-                buttons: isAdminOrManager
+                buttons: userHasManagerRoots
                   ? [
                     <>
                       <button
@@ -286,4 +293,15 @@ const ProductMapTree = () => {
   ) : null
 }
 
-export default ProductMapTree;
+const mapStateToProps = (state: any) => ({
+  user: state.user
+});
+
+const mapDispatchToProps = () => ({});
+
+const ProductMapTreeContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProductMapTree);
+
+export default ProductMapTreeContainer;

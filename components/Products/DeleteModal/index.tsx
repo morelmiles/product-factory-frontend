@@ -5,13 +5,13 @@ const { Option } = Select;
 
 type Props = {
     modal?: boolean;
-    description: string;
+    description?: string;
     closeModal: any;
     submit: Function;
     title: string;
 };
 
-const DeleteModal: React.SFC<Props> = ({
+const DeleteModal: React.FunctionComponent<Props> = ({
   modal,
   closeModal,
   submit,

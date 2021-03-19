@@ -577,7 +577,6 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
               {deleteModal && (
                 <DeleteModal
                   modal={deleteModal}
-                  productSlug={''}
                   closeModal={() => showDeleteModal(false)}
                   submit={deleteTask}
                   title='Delete task'

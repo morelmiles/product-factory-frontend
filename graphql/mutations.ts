@@ -25,6 +25,8 @@ export const CREATE_TASK = gql`
       task {
         title
       }
+      status
+      message
     }
   }
 `;
@@ -35,6 +37,8 @@ export const UPDATE_TASK = gql`
       task {
         title
       }
+      status
+      message
     }
   }
 `;

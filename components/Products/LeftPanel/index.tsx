@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import {useRouter} from 'next/router';
 import {Avatar, Menu, Row} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
-import {GET_PRODUCT_INFO_BY_ID, IS_ADMIN} from '../../../graphql/queries';
+import {GET_PRODUCT_INFO_BY_ID} from '../../../graphql/queries';
 import {getProp} from '../../../utilities/filters';
-import {getInitialName} from '../../../utilities/utils';
+import {getInitialName, getUserRole, hasAdminRoots} from '../../../utilities/utils';
 import {WorkState} from '../../../lib/reducers/work.reducer';
 import {setWorkState} from '../../../lib/actions';
 
@@ -25,10 +25,6 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
   const router = useRouter()
   const {productSlug} = router.query
 
-  const {data} = useQuery(IS_ADMIN, {
-    variables: {productSlug}
-  });
-
   let links: ILink[] = [
     {url: '/', type: 'summary', name: 'Summary'},
     {url: '/initiatives', type: 'initiatives', name: 'Initiatives'},
@@ -38,7 +34,9 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
     {url: '/partners', type: 'partners', name: 'Commercial Partners'}
   ];
 
-  if (getProp(data, 'isAdmin', false)) {
+  const userHasAdminRoots = hasAdminRoots((getUserRole(user.roles, productSlug)));
+
+  if (userHasAdminRoots) {
     links.push(
       {url: '/settings', type: 'settings', name: 'Settings'}
     );

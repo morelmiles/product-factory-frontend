@@ -40,3 +40,4 @@ export const TASK_LIST_TYPES = [
 export const INITIATIVE_TYPES = ["Active", "Completed"];
 export const USER_ROLES = ["User", "Product Admin", "Product Manager", "Contributor", "Super Admin"];
 export const MANAGER_ROLES = ["Product Admin", "Product Manager", "Super Admin"];
+export const ADMIN_ROLES = ["Product Admin", "Super Admin"];
