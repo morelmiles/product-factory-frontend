@@ -13,7 +13,6 @@ type Props = {
   title?: string;
   hideTitle?: boolean;
   hideEmptyList?: boolean;
-  submit: Function;
   content?: any;
 };
 
@@ -22,7 +21,6 @@ const InitiativeTable: React.FunctionComponent<Props> = (
     initiatives,
     hideTitle = false,
     hideEmptyList = false,
-    submit,
     productSlug,
     content = undefined,
   }
@@ -38,12 +36,12 @@ const InitiativeTable: React.FunctionComponent<Props> = (
     <div className="mt-30 d-flex-justify-center">
         <Typography.Title level={5} style={{marginBottom: 0}}>Initiatives</Typography.Title> {content}
     </div>}
-    <Row className="task-tab mb-20">
+    <Row className="mb-20">
       {initiatives && initiatives.length > 0 ? (
         <>
           {
             initiatives.map((initiative: any, index: number) => {
-              const status = (getProp(initiative, 'status', 1) == 1) ? "Active" : "Completed";
+              const status = (getProp(initiative, "status", 1) == 1) ? "Active" : "Completed";
 
               return (
                 <Col key={index} span={24}>
@@ -62,10 +60,10 @@ const InitiativeTable: React.FunctionComponent<Props> = (
                         </Link>
                       </Row>
                       <Row align="middle" className="mt-10">
-                        {getProp(initiative, 'taskStacks', []).map((tag: any, taskIndex: number) =>
+                        {getProp(initiative, "taskStacks", []).map((tag: any, taskIndex: number) =>
                           <CheckableTag key={`${index}-stack${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
                         )}
-                        {getProp(initiative, 'taskTags', []).map((tag: any, taskIndex: number) =>
+                        {getProp(initiative, "taskTags", []).map((tag: any, taskIndex: number) =>
                           <Tag key={`${index}-tag${taskIndex}`}>{tag.name}</Tag>
                         )}
                       </Row>
@@ -94,7 +92,7 @@ const InitiativeTable: React.FunctionComponent<Props> = (
               )
             })
           }
-        </> ) : !hideEmptyList && <Empty style={{ margin: "20px auto"}} description={"The initiative list is empty"}/>
+        </> ) : !hideEmptyList && <Empty style={{ margin: "20px auto"}} description={"The initiative list is empty"} />
       }
     </Row>
   </>

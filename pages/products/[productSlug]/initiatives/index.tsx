@@ -12,6 +12,7 @@ import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
 import InitiativeTable from "../../../../components/InitiativeTable";
 import {FilterOutlined} from "@ant-design/icons";
 import InitiativeFilterModal from "../../../../components/InitiativeFilterModal";
+import Loading from "../../../../components/Loading";
 
 type Params = {
   user: any,
@@ -60,27 +61,27 @@ const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
             {/*    </div>*/}
             {/*  </Col>*/}
             {/*</Row>*/}
-            <InitiativeTable
-              initiatives={data?.initiatives ? data.initiatives : []}
-              submit={() => refetch()}
-              content={<div className="d-flex-justify-center">
-                {userHasManagerRoots && (
-                  <Col>
-                    <Button
-                      className="ml-10"
-                      onClick={() => setShowEditModal(!showEditModal)}
-                    >
-                      Add new initiative
-                    </Button>
-                  </Col>
-                )}
-                <Button
-                  type="primary"
-                  onClick={() => setFilterModal(!filterModal)}
-                  icon={<FilterOutlined/>}
-                >Filter</Button>
-              </div>}
-              productSlug={productSlug} />
+            {loading ? <Loading /> :
+              <InitiativeTable
+                initiatives={data?.initiatives ? data.initiatives : []}
+                content={<div className="d-flex-justify-center">
+                  {userHasManagerRoots && (
+                    <Col>
+                      <Button
+                        className="ml-10"
+                        onClick={() => setShowEditModal(!showEditModal)}
+                      >
+                        Add new initiative
+                      </Button>
+                    </Col>
+                  )}
+                  <Button
+                    type="primary"
+                    onClick={() => setFilterModal(!filterModal)}
+                    icon={<FilterOutlined/>}
+                  >Filter</Button>
+                </div>}
+                productSlug={productSlug} />}
             {
               showEditModal &&
               <AddInitiative
