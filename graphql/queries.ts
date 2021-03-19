@@ -253,10 +253,11 @@ export const GET_CAPABILITY_BY_ID = gql`
 
 
 export const GET_INITIATIVES = gql`
-  query GetInitiatives($productSlug: String, $stacks: [String]) {
-    initiatives(productSlug: $productSlug, stacks: $stacks) {
+  query GetInitiatives($productSlug: String, $input: InitiativeListInput!) {
+    initiatives(productSlug: $productSlug, input: $input) {
       id
       name
+      status
       product {
         id
         name
@@ -266,15 +267,12 @@ export const GET_INITIATIVES = gql`
         id
         name
       }
-      taskSet {
-        id
-        status
-      }
       taskStacks {
         id
         name
       }
       availableTaskCount
+      completedTaskCount
     }
   }
 `;

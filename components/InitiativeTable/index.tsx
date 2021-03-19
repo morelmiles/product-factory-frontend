@@ -1,193 +1,101 @@
 import React from 'react';
 import Link from 'next/link';
-import {Row, Tag, Divider, Col, Typography, Empty} from 'antd';
+import {Row, Tag, Divider, Col, Empty, Typography} from 'antd';
 import {getProp} from '../../utilities/filters';
-import {TASK_CLAIM_TYPES} from '../../graphql/types';
-import {CheckCircleFilled, ThunderboltFilled} from '@ant-design/icons';
-import Priorities from "../Priorities";
 import CheckableTag from "antd/lib/tag/CheckableTag";
-import CustomAvatar2 from "../CustomAvatar2";
-
+import {pluralize} from "apollo/lib/utils";
+import CheckCircle from "../../public/assets/icons/check-circle.svg";
+import FilledCircle from "../../public/assets/icons/filled-circle.svg";
 
 type Props = {
-  tasks: any;
+  initiatives: any;
   productSlug?: string;
-  statusList?: Array<string>;
   title?: string;
   hideTitle?: boolean;
   hideEmptyList?: boolean;
-  showPendingTasks?: boolean;
-  showInitiativeName?: boolean;
-  showProductName?: boolean;
-  submit: Function;
   content?: any;
 };
 
-const TaskTable: React.FunctionComponent<Props> = (
+const InitiativeTable: React.FunctionComponent<Props> = (
   {
-    tasks,
-    statusList = TASK_CLAIM_TYPES,
-    title = "Related Tasks",
+    initiatives,
     hideTitle = false,
-    showInitiativeName = false,
-    showProductName = false,
     hideEmptyList = false,
-    submit,
+    productSlug,
     content = undefined,
   }
 ) => {
+
+
+  const getTaskText = (availableTasks: number, status: string) => {
+    return `${pluralize(availableTasks, `${status} task`)}`;
+  }
+
   return <>
-    {!hideTitle && <div className="mt-30 d-flex-justify-center">{title} {content}</div>}
-    <Row className="task-tab mb-20">
-      {tasks && tasks.length > 0 ? (
+    {!hideTitle &&
+    <div className="mt-30 d-flex-justify-center">
+        <Typography.Title level={5} style={{marginBottom: 0}}>Initiatives</Typography.Title> {content}
+    </div>}
+    <Row className="mb-20">
+      {initiatives && initiatives.length > 0 ? (
         <>
           {
-            tasks.map((task: any, index: number) => {
-              const status = getProp(task, 'status');
-              let taskStatus = statusList[status];
-              if (status === "Done") {
-                const dependents = getProp(task, 'dependOn', []);
-                let count = 0;
-                for (let i = 0; i < dependents.length; i += 1) {
-                  if (statusList[dependents[i].status] === "Done") {
-                    count += 1;
-                  }
-                }
-
-                if (count === dependents.length) {
-                  taskStatus = "Done";
-                }
-              }
-
-              const taskClaimSet = getProp(task, 'taskClaimSet', null)
-                ? getProp(task, 'taskClaimSet', null)[0]
-                : null;
-
-              const productName = getProp(task, 'product.name', '');
-              const productSlug = getProp(task, 'product.slug', '');
-              const initiativeName = getProp(task, 'initiative.name', '');
-              const initiativeId = getProp(task, 'initiative.id', '');
-              const assignee = getProp(task, 'assignedTo', null);
+            initiatives.map((initiative: any, index: number) => {
+              const status = (getProp(initiative, "status", 1) == 1) ? "Active" : "Completed";
 
               return (
                 <Col key={index} span={24}>
                   <Divider/>
                   <Row justify="space-between">
-                    <Col span={14}>
+                    <Col span={18}>
                       <Row>
-                        {
-                          showProductName && (
-                            <>
-                              <Link href={`/products/${productSlug}`}>
-                                <a className="text-grey-9">{productName}</a>
-                              </Link>&nbsp;/&nbsp;
-                            </>
-                          )
-                        }
                         <Link
-                          href={`/products/${productSlug}/tasks/${task.publishedId}`}
+                          href={`/products/${productSlug}/initiatives/${initiative.id}`}
                         >
                           <strong>
                             <a className="text-grey-9">
-                              <Row align="middle">
-                                {task.title}
-                              </Row>
+                              <Row align="middle">{initiative.name}</Row>
                             </a>
                           </strong>
-
                         </Link>
                       </Row>
-                      <Row style={{marginBottom: 10}}>
-                        <Col>
-                          <Typography.Text
-                            type="secondary"
-                            style={{marginBottom: 5}}
-                          >{task.shortDescription}</Typography.Text>
-                        </Col>
-                      </Row>
-                      <Row align="middle">
-                        {getProp(task, 'stack', []).map((tag: any, taskIndex: number) =>
+                      <Row align="middle" className="mt-10">
+                        {getProp(initiative, "taskStacks", []).map((tag: any, taskIndex: number) =>
                           <CheckableTag key={`${index}-stack${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
                         )}
-                        {getProp(task, 'tag', []).map((tag: any, taskIndex: number) =>
+                        {getProp(initiative, "taskTags", []).map((tag: any, taskIndex: number) =>
                           <Tag key={`${index}-tag${taskIndex}`}>{tag.name}</Tag>
                         )}
-
-                        {
-                          (initiativeName && showInitiativeName) &&
-
-                          <Link href={`/products/${productSlug}/initiatives/${initiativeId}`}>
-                            <span className="text-grey-9 pointer link">
-                              <ThunderboltFilled
-                                  style={{color: '#999', marginRight: 4, fontSize: 16}}
-                              />
-                              {initiativeName}
-                            </span>
-                          </Link>
-                        }
                       </Row>
                     </Col>
-
-                    <Col span={4} className="ml-auto" style={{textAlign: "center"}}>
-                      <Priorities task={task} submit={() => submit()}/>
-                    </Col>
-
-                    <Col span={6}
-                         className="ml-auto"
-                         style={{textAlign: "right"}}
-                    >
-                      {
-                        (
-                          taskStatus !== "Claimed"
-                        ) ? (
-                          <>
-                            {taskStatus === "Done" && (
-                              <CheckCircleFilled style={{color: '#389E0D', marginRight: 8}}/>
-                            )}
-                            <span>{taskStatus}</span>
-                          </>
-                        ) : taskClaimSet ? (
-                          <>
-                            <div>{taskStatus}</div>
-                            <Row>
-                              <CustomAvatar2
-                                person={{fullname: taskClaimSet.person.fullName, slug: taskClaimSet.person.slug}}
-                                size={35}/>
-                              <div className="my-auto">
-                                <Link
-                                  href={`/people/${getProp(taskClaimSet, 'person.slug', '')}`}
-                                >
-                                  <a className="text-grey-9">{getProp(taskClaimSet, 'person.fullName', '')}</a>
-                                </Link>
-                              </div>
-                            </Row>
-                          </>
-                        ) : (
-                          <span>{taskStatus}</span>
-                        )}
-                      {assignee ? (
-                        <div className="mt-10">
-                          <div className="d-flex-end" style={{fontSize: 13}}>
-
-                            <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
-                              <CustomAvatar2 person={{fullname: assignee.fullName, slug: assignee.slug}} size={35}/>
-                            </Link>
-                            <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
-                              {getProp(assignee, 'fullName', '')}
-                            </Link>
-                          </div>
-                        </div>
-                      ) : null}
+                    <Col span={6} className="text-right">
+                      <div className="mb-5">
+                        <img
+                          src={status === "Active" ? FilledCircle : CheckCircle}
+                          className="check-circle-icon ml-5"
+                          alt="status"
+                        />
+                        {status}
+                      </div>
+                      <Link
+                          href={`/products/${productSlug}/initiatives/${initiative.id}`}
+                      >
+                        <a style={{textDecoration: "underline", fontWeight: 600}}>
+                          {status === "Active"
+                            ? getTaskText(initiative.availableTaskCount, "available")
+                            : getTaskText(initiative.completedTaskCount, "completed")}
+                        </a>
+                      </Link>
                     </Col>
                   </Row>
                 </Col>
               )
             })
           }
-        </> ) : !hideEmptyList && <Empty style={{ margin: "20px auto"}} description={"The task list is empty"}/>
+        </> ) : !hideEmptyList && <Empty style={{ margin: "20px auto"}} description={"The initiative list is empty"} />
       }
     </Row>
   </>
 };
 
-export default TaskTable;
+export default InitiativeTable;
