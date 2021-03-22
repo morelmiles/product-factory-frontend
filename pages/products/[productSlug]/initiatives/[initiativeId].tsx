@@ -58,7 +58,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
       router.push(`/products/${productSlug}/initiatives`).then();
     },
     onError() {
-      message.error("Failed to delete item!").then();
+      message.error("Failed to delete item").then();
     }
   });
 

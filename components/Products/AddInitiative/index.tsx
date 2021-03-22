@@ -1,38 +1,35 @@
-import React, {useEffect, useState} from 'react';
-import { Modal, Row, Input, message, Button, Select } from 'antd';
-import { useMutation } from '@apollo/react-hooks';
-import {CREATE_INITIATIVE, DELETE_INITIATIVE, UPDATE_INITIATIVE} from '../../../graphql/mutations';
-import { INITIATIVE_TYPES } from '../../../graphql/types';
-import { getProp } from '../../../utilities/filters';
-import { RICH_TEXT_EDITOR_WIDTH } from '../../../utilities/constants';
-import dynamic from 'next/dynamic';
-import DeleteModal from "../DeleteModal";
+import React, {useState} from 'react';
+import {Modal, Row, Input, message, Button, Select, Col} from 'antd';
+import {useMutation} from '@apollo/react-hooks';
+import {CREATE_INITIATIVE, UPDATE_INITIATIVE} from '../../../graphql/mutations';
+import {INITIATIVE_TYPES} from '../../../graphql/types';
+import {getProp} from '../../../utilities/filters';
+import {RICH_TEXT_EDITOR_WIDTH} from '../../../utilities/constants';
+import RichTextEditor from "../../RichTextEditor";
 
-const RichTextEditor = dynamic(
-  () => import('../../TextEditor'),
-  { ssr: false }
-)
-const { Option } = Select;
+
+const {Option} = Select;
+
 
 type Props = {
-    modal?: boolean;
-    productSlug: string;
-    closeModal: any;
-    modalType: boolean;
-    handleDelete?: Function;
-    submit: Function;
-    initiative?: any;
+  modal?: boolean;
+  productSlug: string;
+  closeModal: any;
+  modalType: boolean;
+  handleDelete?: Function;
+  submit: Function;
+  initiative?: any;
 };
 
 const AddInitiative: React.FunctionComponent<Props> = ({
-  modal,
-  productSlug,
-  closeModal,
-  modalType,
-  initiative,
-  handleDelete,
-  submit
-}) => {
+                                                         modal,
+                                                         productSlug,
+                                                         closeModal,
+                                                         modalType,
+                                                         initiative,
+                                                         handleDelete,
+                                                         submit
+                                                       }) => {
   const [name, setName] = useState(
     modalType ? getProp(initiative, 'name', '') : ''
   );
@@ -44,11 +41,6 @@ const AddInitiative: React.FunctionComponent<Props> = ({
   const [createInitiative] = useMutation(CREATE_INITIATIVE);
   const [updateInitiative] = useMutation(UPDATE_INITIATIVE);
 
-  // TextEditor configuration
-  const onDescriptionChange = (value: any) => {
-    setDescription(value);
-  };
-  
   const handleCancel = () => {
     closeModal(!modal);
   };
@@ -66,7 +58,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
       status,
       productSlug
     };
-    
+
     try {
       const res = await updateInitiative({
         variables: {
@@ -74,7 +66,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
           id: initiative ? initiative.id : 0
         }
       });
-      
+
       if (res.data && res.data.updateInitiative) {
         message.success('Initiative is updated successfully!');
         submit();
@@ -83,7 +75,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
       message.success('Initiative modification is failed!');
     }
   }
-  
+
   const onCreate = async () => {
     const input = {
       name,
@@ -91,12 +83,12 @@ const AddInitiative: React.FunctionComponent<Props> = ({
       productSlug,
       status,
     };
-    
+
     try {
       const res = await createInitiative({
-        variables: { input }
+        variables: {input}
       });
-      
+
       if (res.data && res.data.createInitiative) {
         message.success('Initiative is created successfully!');
         submit();
@@ -110,21 +102,21 @@ const AddInitiative: React.FunctionComponent<Props> = ({
     <Button type="danger" style={{float: "left"}} onClick={handleDelete}>
       Delete this initiative
     </Button>
-    ] : [];
+  ] : [];
 
   footerButtons = footerButtons.concat([
     <Button key="back" onClick={handleCancel}>
       Cancel
     </Button>,
     <Button key="submit" type="primary" onClick={handleOk}>
-      { modalType ? "Edit" : "Add" }
+      {modalType ? "Edit" : "Add"}
     </Button>
   ]);
 
   return (
     <>
       <Modal
-        title={ modalType ? "Edit initiative" : "Add initiative" }
+        title={modalType ? "Edit initiative" : "Add initiative"}
         visible={modal}
         onCancel={handleCancel}
         footer={footerButtons}
@@ -143,14 +135,14 @@ const AddInitiative: React.FunctionComponent<Props> = ({
                   required
                 />
               </Row>
-              <Row
-                className="rich-editor mb-15"
-              >
-                <label>Description:</label>
-                <RichTextEditor
-                  initialValue={modalType ? getProp(initiative, 'description', '') : ""}
-                  setValue={onDescriptionChange}
-                />
+              <Row style={{width: '100%', marginBottom: 20}}>
+                <Col span={24}>
+                  <label>Description:</label>
+                  <RichTextEditor
+                    initialHTMLValue={modalType ? getProp(initiative, 'description', '') : ''}
+                    onChangeHTML={setDescription}
+                  />
+                </Col>
               </Row>
               <Row className="mb-15">
                 <label>Status:</label>
@@ -159,7 +151,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
                   onChange={setStatus}
                 >
                   {INITIATIVE_TYPES.map((option: any, idx: number) => (
-                    <Option key={`cap${idx}`} value={idx+1}>
+                    <Option key={`cap${idx}`} value={idx + 1}>
                       {option}
                     </Option>
                   ))}
@@ -176,14 +168,14 @@ const AddInitiative: React.FunctionComponent<Props> = ({
                   onChange={(e) => setName(e.target.value)}
                 />
               </Row>
-              <Row
-                className="rich-editor mb-15"
-              >
-                <label>Description:</label>
-                <RichTextEditor
-                  initialValue={modalType ? getProp(initiative, 'description', '') : null}
-                  setValue={onDescriptionChange}
-                />
+              <Row style={{width: '100%', marginBottom: 20}}>
+                <Col span={24}>
+                  <label>Description:</label>
+                  <RichTextEditor
+                    initialHTMLValue={modalType ? getProp(initiative, 'description', '') : ''}
+                    onChangeHTML={setDescription}
+                  />
+                </Col>
               </Row>
               <Row className='mb-15'>
                 <label>Status:</label>
@@ -192,7 +184,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
                   onChange={setStatus}
                 >
                   {INITIATIVE_TYPES.map((option: any, idx: number) => (
-                    <Option key={`cap${idx}`} value={idx+1}>
+                    <Option key={`cap${idx}`} value={idx + 1}>
                       {option}
                     </Option>
                   ))}

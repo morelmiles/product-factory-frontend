@@ -512,3 +512,8 @@ p:last-child {
         display: inline !important;
     }
 }
+
+.rdw-editor-toolbar * {
+    box-sizing: content-box !important;
+    color: #262626;
+}

@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Modal, Row, Input, message, Button, Select} from 'antd';
+import {Modal, Row, Input, message, Button, Select, Col} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {CREATE_CAPABILITY, UPDATE_CAPABILITY} from '../../../graphql/mutations';
 import Attachment from '../../../components/Attachment';
 import {getProp} from '../../../utilities/filters';
 import {useRouter} from "next/router";
 import {GET_STACKS} from "../../../graphql/queries";
+import RichTextEditor from "../../RichTextEditor";
+import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
 
 
 const {Option} = Select;
@@ -146,6 +148,7 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
             {modalType === 'edit' ? 'Edit' : 'Add'}
           </Button>
         ]}
+        width={RICH_TEXT_EDITOR_WIDTH}
         maskClosable={false}
       >
         <>
@@ -158,15 +161,14 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
               required
             />
           </Row>
-          <Row className="mb-15">
-            <label>Description*:</label>
-            <Input.TextArea
-              rows={2}
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
+          <Row style={{width: '100%', marginBottom: 20}}>
+            <Col span={24}>
+              <label>Description*:</label>
+              <RichTextEditor
+                initialHTMLValue={description}
+                onChangeHTML={setDescription}
+              />
+            </Col>
           </Row>
           <Row className="mb-15">
             <label>Stacks:</label>

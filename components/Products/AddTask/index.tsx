@@ -247,7 +247,6 @@ const AddTask: React.FunctionComponent<Props> = (
   const reviewSelectChange = (val: any) => {
     setReviewSelectValue(val);
   }
-  console.log(description);
 
   return (
     <>

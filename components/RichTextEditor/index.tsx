@@ -22,7 +22,9 @@ interface IRichTextEditorProps {
   needClear?: boolean
 }
 
-const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = ({initialHTMLValue, onChangeHTML, needClear= false}) => {
+const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
+  {initialHTMLValue, onChangeHTML, needClear = false}
+) => {
   const [editorStateValue, setEditorStateValue] = useState(EditorState.createEmpty());
 
   const updateEditorValueByHTML = (HTMLValue: string) => {
@@ -80,7 +82,14 @@ const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = ({initialH
   };
 
   const editorStateHandler = (val: any) => {
-    onChangeHTML(draftToHtml(convertToRaw(val.getCurrentContent())));
+    const isEmpty = !val.getCurrentContent().hasText();
+
+    if (!isEmpty) {
+      onChangeHTML(draftToHtml(convertToRaw(val.getCurrentContent())));
+    } else {
+      onChangeHTML('');
+    }
+
     setEditorStateValue(val);
   }
 
