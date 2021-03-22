@@ -4,7 +4,7 @@ import {Modal, Row, Col, Input, Select, message} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {
   GET_CAPABILITIES_BY_PRODUCT_AS_LIST,
-  GET_INITIATIVES,
+  GET_INITIATIVES_SHORT,
   GET_STACKS,
   GET_TAGS,
   GET_USERS
@@ -97,7 +97,7 @@ const AddTask: React.FunctionComponent<Props> = (
     modalType && task.dependOn ? task.dependOn.map((tag: any) => tag.id) : []
   );
 
-  const {data: originalInitiatives, loading: initiativeLoading, refetch: fetchInitiatives} = useQuery(GET_INITIATIVES, {
+  const {data: originalInitiatives, loading: initiativeLoading, refetch: fetchInitiatives} = useQuery(GET_INITIATIVES_SHORT, {
     variables: {productSlug}
   });
   const {data: capabilitiesData} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {

@@ -277,6 +277,16 @@ export const GET_INITIATIVES = gql`
   }
 `;
 
+
+export const GET_INITIATIVES_SHORT = gql`
+  query GetInitiatives($productSlug: String) {
+    initiatives(productSlug: $productSlug) {
+      id
+      name
+    }
+  }
+`;
+
 export const GET_INITIATIVE_BY_ID = gql`
 query GetInitiative($id: Int!, $input: TaskListInput!) {
   initiative(id: $id, input: $input) {
