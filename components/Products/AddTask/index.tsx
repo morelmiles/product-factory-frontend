@@ -9,21 +9,13 @@ import {
   GET_TAGS,
   GET_USERS
 } from '../../../graphql/queries';
-import {CREATE_TASK, UPDATE_TASK, UPLOAD_IMAGE} from '../../../graphql/mutations';
+import {CREATE_TASK, UPDATE_TASK} from '../../../graphql/mutations';
 import {TASK_TYPES} from '../../../graphql/types';
 import AddInitiative from '../AddInitiative';
 import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
 import {RICH_TEXT_EDITOR_WIDTH} from '../../../utilities/constants';
-import dynamic from "next/dynamic";
 import {getProp} from "../../../utilities/filters";
-
-const Editor = dynamic(
-  // @ts-ignore
-  () => import('react-draft-wysiwyg').then(mod => mod.Editor),
-  {ssr: false}
-);
-import {EditorState} from 'draft-js';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import RichTextEditor from "../../RichTextEditor";
 
 
 const {Option} = Select;
@@ -33,11 +25,6 @@ interface IUser {
   fullName: string
   slug: string
 }
-
-const RichTextEditor = dynamic(
-  () => import('../../TextEditor'),
-  {ssr: false}
-);
 
 type Props = {
   modal?: boolean;
@@ -64,13 +51,16 @@ const AddTask: React.FunctionComponent<Props> = (
   }
 ) => {
   const [title, setTitle] = useState(modalType ? task.title : '');
-  const [description, setDescription] = useState(modalType ? task.description : '');
+
   const [allCapabilities, setAllCapabilities] = useState([]);
   const [allTags, setAllTags] = useState([]);
   const [skip, setSkip] = React.useState(false);
   const [allStacks, setAllStacks] = useState([]);
   const [shortDescription, setShortDescription] = useState(
     modalType ? task.shortDescription : ''
+  );
+  const [description, setDescription] = useState(
+    modalType ? task.description : ''
   );
   const [status, setStatus] = useState(modalType ? task.status : 2);
   const [capability, setCapability] = useState(
@@ -165,16 +155,12 @@ const AddTask: React.FunctionComponent<Props> = (
     }
   }, [originalInitiatives]);
 
-  const onDescriptionChange = (value: any) => {
-    setDescription(value);
-  };
-
   const handleOk = async () => {
     if (!title) {
       message.error("Title is required. Please fill out title");
       return;
     }
-    if (!description) {
+    if (!description || description === '<p></p>') {
       message.error("Long description is required. Please fill out description");
       return;
     }
@@ -198,7 +184,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const clearData = () => {
     setTitle("");
     setStatus(2);
-    setDescription("");
+    setDescription('');
     setShortDescription("");
     setCapability(0);
     setInitiative(0);
@@ -212,7 +198,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const addNewTask = async () => {
     const input = {
       title,
-      description: description.toString('html'),
+      description,
       shortDescription: shortDescription,
       status: status,
       productSlug,
@@ -261,37 +247,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const reviewSelectChange = (val: any) => {
     setReviewSelectValue(val);
   }
-
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
-  const uploadCallback = (file: any) => {
-    const reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = function () {
-      console.log(reader.result);
-
-      uploadImage({
-        variables: {
-          file: reader.result
-        }
-      }).then();
-    };
-
-    return new Promise(
-      (resolve, reject) => {
-        resolve({data: {link: "http://0.0.0.0:8080/images/test.jpeg"}});
-      }
-    );
-  }
-
-  const [uploadImage] = useMutation(UPLOAD_IMAGE, {
-    onCompleted(res) {
-      console.log('RES', res);
-    },
-    onError() {
-      message.error('Error with image loading').then();
-    }
-  });
+  console.log(description);
 
   return (
     <>
@@ -304,34 +260,6 @@ const AddTask: React.FunctionComponent<Props> = (
         width={RICH_TEXT_EDITOR_WIDTH}
         maskClosable={false}
       >
-        {/*<Editor*/}
-        {/*  editorState={editorState}*/}
-        {/*  editorStyle={{*/}
-        {/*    minHeight: 100,*/}
-        {/*    maxHeight: 300,*/}
-        {/*    overflowY: 'auto',*/}
-        {/*    border: '1px solid #F1F1F1',*/}
-        {/*    padding: '0 15px'*/}
-        {/*  }}*/}
-        {/*  onEditorStateChange={setEditorState}*/}
-        {/*  toolbar={{*/}
-        {/*    inline: {inDropdown: true},*/}
-        {/*    list: {inDropdown: true},*/}
-        {/*    textAlign: {inDropdown: true},*/}
-        {/*    link: {inDropdown: true},*/}
-        {/*    history: {inDropdown: true},*/}
-        {/*    image: {*/}
-        {/*      urlEnabled: false,*/}
-        {/*      uploadEnabled: true,*/}
-        {/*      uploadCallback,*/}
-        {/*      previewImage: true,*/}
-        {/*      inputAccept: 'image/*',*/}
-        {/*      alt: {present: false, mandatory: false},*/}
-        {/*      defaultSize: {width: '50%'},*/}
-        {/*      alignmentEnabled: "CENTER"*/}
-        {/*    }*/}
-        {/*  }}*/}
-        {/*/>*/}
         <Row className='mb-15'>
           <label>Title*:</label>
           <Input
@@ -356,14 +284,11 @@ const AddTask: React.FunctionComponent<Props> = (
             />
           </Col>
         </Row>
-        <Row
-          className="rich-editor mb-15"
-        >
-          <label>Long Description*:</label>
-          <RichTextEditor
-            initialValue={modalType ? task.description : ''}
-            setValue={onDescriptionChange}
-          />
+        <Row style={{width: '100%', marginBottom: 25}}>
+          <Col span={24}>
+            <label>Long Description*:</label>
+            <RichTextEditor initialHTMLValue={description} onChangeHTML={setDescription}/>
+          </Col>
         </Row>
         {
           allCapabilities.length > 0 && (

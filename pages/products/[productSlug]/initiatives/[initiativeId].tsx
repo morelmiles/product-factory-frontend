@@ -17,7 +17,9 @@ import {TASK_TYPES} from "../../../../graphql/types";
 import FilterModal from "../../../../components/FilterModal";
 import { FilterOutlined, EditOutlined } from "@ant-design/icons";
 import AvatarIcon from "../../../../components/AvatarIcon";
+// @ts-ignore
 import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
+// @ts-ignore
 import FilledCircle from "../../../../public/assets/icons/filled-circle.svg";
 
 
