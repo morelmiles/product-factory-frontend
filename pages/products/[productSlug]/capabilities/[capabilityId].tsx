@@ -207,7 +207,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
                       </Col>
                     </Row>
                   )}
-                  <Row>
+                  <Row className="html-description">
                     <Col span={24}>
                       <DynamicHtml
                         className='mb-10'

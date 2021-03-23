@@ -130,14 +130,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
                 </div>
               </div>
             </Row>
-            <Row>
-              {/* <Col>
-                <ReactPlayer
-                  width="100%"
-                  height="170px"
-                  url='https://www.youtube.com/watch?v=ysz5S6PUM-U'
-                />
-              </Col> */}
+            <Row className="html-description">
               <Col span={10}>
                 <DynamicHtml
                   className='mb-10'

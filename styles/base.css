@@ -517,3 +517,7 @@ p:last-child {
     box-sizing: content-box !important;
     color: #262626;
 }
+
+.html-description img {
+    width: 100% !important;
+}

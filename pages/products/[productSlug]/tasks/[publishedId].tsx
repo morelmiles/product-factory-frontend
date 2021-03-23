@@ -380,7 +380,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   </Col>
                 )}
                 <Col>
-                  <Row>
+                  <Row className="html-description">
                     <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: 30}}>
                       {
                         parse(getProp(task, 'description', ''))
