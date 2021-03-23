@@ -58,6 +58,10 @@ const SettingsPolicies: React.FunctionComponent<ISettingsPoliciesProps> = ({user
           contributing to your product
         </Typography.Text>
         {
+          !license &&
+          <RichTextEditor onChangeHTML={setLicense} toolbarHeight={86}/>
+        }
+        {
           license &&
           <RichTextEditor initialHTMLValue={license} onChangeHTML={setLicense} toolbarHeight={86}/>
         }
