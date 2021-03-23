@@ -521,3 +521,7 @@ p:last-child {
 .html-description img {
     width: 100% !important;
 }
+
+.gray-link {
+    color: #262626 !important;
+}

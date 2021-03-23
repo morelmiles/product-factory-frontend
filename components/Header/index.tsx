@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Input, Button, message, Row, Col, Space, Drawer} from 'antd';
+import {Input, Button, message, Row, Col, Space, Drawer, Typography} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
 import {productionMode} from '../../utilities/constants';
@@ -143,15 +143,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
           </Space>
 
           <Space direction="vertical" style={{marginTop: 20}}>
-            <Link href="/">
-              <a style={{color: '#262626'}}>Work on Open Products</a>
-            </Link>
-            <Link href="/product/add">
-              <a style={{color: '#262626'}}>Add Product</a>
-            </Link>
-            <Link href="">
-              <a style={{color: '#262626'}}>Find Talent</a>
-            </Link>
+            <Typography.Link className="gray-link" href="/">Work on Open Products</Typography.Link>
+            <Typography.Link className="gray-link" href="/product/add">Add Product</Typography.Link>
+            <Typography.Link className="gray-link" href="">Find Talent</Typography.Link>
           </Space>
 
           {/*<Button*/}
@@ -166,19 +160,13 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         <Col span={10}>
           <Row justify="center">
             <Col style={{marginRight: 20}}>
-              <Link href="/">
-                <a style={{color: '#262626'}}>Work on Open Products</a>
-              </Link>
+              <Typography.Link className="gray-link" href="/">Work on Open Products</Typography.Link>
             </Col>
             <Col style={{marginRight: 20}}>
-              <Link href="/product/add">
-                <a style={{color: '#262626'}}>Add Product</a>
-              </Link>
+              <Typography.Link className="gray-link" href="/product/add">Add Product</Typography.Link>
             </Col>
             <Col style={{marginRight: 20}}>
-              <Link href="">
-                <a style={{color: '#262626'}}>Find Talent</a>
-              </Link>
+              <Typography.Link className="gray-link" href="">Find Talent</Typography.Link>
             </Col>
           </Row>
         </Col>

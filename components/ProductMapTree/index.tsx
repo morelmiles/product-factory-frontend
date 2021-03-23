@@ -26,6 +26,7 @@ const ProductMapTree: React.FunctionComponent<IProductMapTree> = ({user}) => {
   const {productSlug} = router.query;
 
   const [treeData, setTreeData] = useState<any>([]);
+
   const [searchString, setSearchString] = useState('');
   const [searchFocusIndex, setSearchFocusIndex] = useState(0);
   const [searchFoundCount, setSearchFoundCount] = useState<any>(null);
@@ -58,14 +59,38 @@ const ProductMapTree: React.FunctionComponent<IProductMapTree> = ({user}) => {
     }
   }
 
+  const isExpandedById = (id: number, data?: any) => {
+    if (!data) data = treeData;
+    let isExpanded: boolean = false;
+
+    data.map((node: any) => {
+      if (getProp(node, 'id') === id && getProp(node, 'expanded', false)) {
+        isExpanded = true;
+        return;
+      }
+
+      if (getProp(node, 'children', []).length > 0) {
+        if (isExpandedById(id, node.children)) {
+          isExpanded = true;
+        }
+      }
+    });
+
+    return isExpanded;
+  }
+
   const formatData = (data: any) => {
-    return data.map((node: any) => ({
-      id: getProp(node, 'id'),
-      title: getProp(node, 'data.name'),
-      description: getProp(node, 'data.description', ''),
-      videoLink: getProp(node, 'data.video_link', ''),
-      children: node.children ? formatData(getProp(node, 'children', [])) : []
-    }))
+    return data.map((node: any) => {
+
+      return {
+        id: getProp(node, 'id'),
+        title: getProp(node, 'data.name'),
+        description: getProp(node, 'data.description', ''),
+        videoLink: getProp(node, 'data.video_link', ''),
+        children: node.children ? formatData(getProp(node, 'children', [])) : [],
+        expanded: isExpandedById(getProp(node, 'id'))
+      }
+    })
   }
 
   const {
