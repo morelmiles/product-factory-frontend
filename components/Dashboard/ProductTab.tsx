@@ -78,7 +78,7 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
                         {getProp(product, 'name', '')}
                       </Link>
                     </div>
-                    <div className="text-grey">
+                    <div className="text-grey html-description">
                       {parse(getProp(product, 'shortDescription', ''))}
                     </div>
                   </div>

@@ -151,7 +151,6 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
             {deleteModal && (
               <DeleteModal
                 modal={deleteModal}
-                productSlug={productSlug}
                 closeModal={() => showDeleteModal(false)}
                 submit={() => {
                   showDeleteModal(false);

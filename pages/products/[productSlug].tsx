@@ -72,7 +72,7 @@ const Summary: React.FunctionComponent = () => {
             </Row>
             <Row>
               <Col xs={24} sm={24} md={13}>
-                <div className="description" style={{paddingRight: 40}}>
+                <div className="description html-description" style={{paddingRight: 40}}>
                   <DynamicHtml
                     text={getProp(data, 'product.fullDescription', '')}
                   />

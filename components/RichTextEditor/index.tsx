@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {getProp} from "../../utilities/filters";
-import {message} from "antd";
+import {Col, message, Row} from "antd";
 import {useMutation} from "@apollo/react-hooks";
 import {UPLOAD_IMAGE} from "../../graphql/mutations";
 import draftToHtml from "draftjs-to-html";
@@ -17,13 +17,13 @@ const Editor = dynamic(
 
 
 interface IRichTextEditorProps {
-  initialHTMLValue: string
+  initialHTMLValue?: string
   onChangeHTML: Function
-  needClear?: boolean
+  toolbarHeight?: number
 }
 
 const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
-  {initialHTMLValue, onChangeHTML, needClear = false}
+  {initialHTMLValue, onChangeHTML, toolbarHeight= 'max-height'}
 ) => {
   const [editorStateValue, setEditorStateValue] = useState(EditorState.createEmpty());
 
@@ -37,14 +37,10 @@ const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
   }
 
   useEffect(() => {
-    updateEditorValueByHTML(initialHTMLValue);
+    if (initialHTMLValue) {
+      updateEditorValueByHTML(initialHTMLValue);
+    }
   }, []);
-
-  // useEffect(() => {
-  //   if (needClear) {
-  //     updateEditorValueByHTML('');
-  //   }
-  // }, [needClear]);
 
   const [uploadImage] = useMutation(UPLOAD_IMAGE, {
     onError() {
@@ -94,32 +90,37 @@ const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
   }
 
   return (
-    <Editor
-      // @ts-ignore
-      editorState={editorStateValue}
-      editorStyle={{
-        minHeight: 150,
-        border: '1px solid #F1F1F1',
-        padding: '0 15px'
-      }}
-      onEditorStateChange={editorStateHandler}
-      toolbar={{
-        inline: {inDropdown: true},
-        list: {inDropdown: true},
-        textAlign: {inDropdown: true},
-        link: {inDropdown: true},
-        history: {inDropdown: true},
-        image: {
-          urlEnabled: true,
-          uploadEnabled: true,
-          uploadCallback,
-          previewImage: true,
-          inputAccept: 'image/*',
-          alt: {present: false, mandatory: false},
-          defaultSize: {width: '100%'}
-        }
-      }}
-    />
+    <Row style={{width: '100%', marginBottom: 25}}>
+      <Col span={24}>
+        <Editor
+          // @ts-ignore
+          editorState={editorStateValue}
+          editorStyle={{
+            minHeight: 150,
+            border: '1px solid #F1F1F1',
+            padding: '0 15px'
+          }}
+          toolbarStyle={{height: toolbarHeight, display: 'flex', alignContent: 'start'}}
+          onEditorStateChange={editorStateHandler}
+          toolbar={{
+            inline: {inDropdown: true},
+            list: {inDropdown: true},
+            textAlign: {inDropdown: true},
+            link: {inDropdown: true},
+            history: {inDropdown: true},
+            image: {
+              urlEnabled: true,
+              uploadEnabled: true,
+              uploadCallback,
+              previewImage: true,
+              inputAccept: 'image/*',
+              alt: {present: false, mandatory: false},
+              defaultSize: {width: '100%'}
+            }
+          }}
+        />
+      </Col>
+    </Row>
   )
 }
 

@@ -633,7 +633,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
           width={1000}
           maskClosable={false}
         >
-          <p>{parse(license)}</p>
+          <p className="html-description">{parse(license)}</p>
         </Modal>
       </Spin>
     </LeftPanelContainer>

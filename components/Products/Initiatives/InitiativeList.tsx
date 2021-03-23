@@ -96,7 +96,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({history, location, mat
                         className='pointer'
                         onClick={() => goToDetails(initiative.id)}
                       >
-                        <div>
+                        <div className='html-description'>
                           <h4 className='mt-5'>{initiative.name}</h4>
                           <DynamicHtml
                             text={getProp(initiative, 'description', '')}

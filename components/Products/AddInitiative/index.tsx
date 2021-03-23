@@ -21,15 +21,17 @@ type Props = {
   initiative?: any;
 };
 
-const AddInitiative: React.FunctionComponent<Props> = ({
-                                                         modal,
-                                                         productSlug,
-                                                         closeModal,
-                                                         modalType,
-                                                         initiative,
-                                                         handleDelete,
-                                                         submit
-                                                       }) => {
+const AddInitiative: React.FunctionComponent<Props> = (
+  {
+    modal,
+    productSlug,
+    closeModal,
+    modalType,
+    initiative,
+    handleDelete,
+    submit
+  }
+) => {
   const [name, setName] = useState(
     modalType ? getProp(initiative, 'name', '') : ''
   );
@@ -79,7 +81,7 @@ const AddInitiative: React.FunctionComponent<Props> = ({
   const onCreate = async () => {
     const input = {
       name,
-      description: description.toString('html'),
+      description,
       productSlug,
       status,
     };

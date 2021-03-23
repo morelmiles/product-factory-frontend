@@ -1,24 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {Layout, Row, message, Input, Button, Select, Col} from 'antd';
+import {Layout, Row, message, Input, Button} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {useRouter} from 'next/router';
 import {CREATE_PRODUCT} from '../../graphql/mutations';
 import {Header} from '../../components';
 
 import {ContainerFlex} from '../../components';
-import dynamic from 'next/dynamic';
 import Loading from "../../components/Loading";
 import {GET_USERS} from "../../graphql/queries";
 import {getProp} from "../../utilities/filters";
+import RichTextEditor from "../../components/RichTextEditor";
 
-
-const RichTextEditor = dynamic(
-  () => import('../../components/TextEditor'),
-  {ssr: false}
-)
 
 const {Content} = Layout;
 const {TextArea} = Input;
+
 
 const AddProduct: React.FunctionComponent = () => {
   const router = useRouter();
@@ -99,10 +95,10 @@ const AddProduct: React.FunctionComponent = () => {
                     autoSize={{minRows: 3}}
                   />
                 </Row>
-                <Row className="rich-editor mb-15">
+                <Row>
                   <label>Full description:</label>
 
-                  <RichTextEditor setValue={setFullDescription}/>
+                  <RichTextEditor onChangeHTML={setFullDescription}/>
                 </Row>
                 <Row className='mb-15'>
                   <label>Website url *:</label>

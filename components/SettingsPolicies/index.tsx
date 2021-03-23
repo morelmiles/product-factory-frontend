@@ -1,28 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {Button, message, Row, Space, Typography} from "antd";
-import dynamic from 'next/dynamic';
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {GET_LICENSE} from "../../graphql/queries";
 import {useRouter} from "next/router";
 import {getProp} from "../../utilities/filters";
-import {EditorValue} from "react-rte";
 import {UPDATE_LICENSE} from "../../graphql/mutations";
 import {connect} from "react-redux";
+import RichTextEditor from "../RichTextEditor";
 
 
 interface ISettingsPoliciesProps {
   user: any
 }
-
-const RichTextEditor = dynamic(
-  () => import('../TextEditor'),
-  {ssr: false}
-)
-
-const RichTextEditor2 = dynamic(
-  () => import('../TextEditor'),
-  {ssr: false}
-)
 
 const SettingsPolicies: React.FunctionComponent<ISettingsPoliciesProps> = ({user}) => {
   const router = useRouter();
@@ -52,6 +41,8 @@ const SettingsPolicies: React.FunctionComponent<ISettingsPoliciesProps> = ({user
     }
   }, [licenseOriginal]);
 
+  console.log(license);
+
   const updateLicenseHandler = () => {
     updateLicense({
       variables: {productSlug, content: license}
@@ -67,21 +58,8 @@ const SettingsPolicies: React.FunctionComponent<ISettingsPoliciesProps> = ({user
           contributing to your product
         </Typography.Text>
         {
-          license !== '' ?
-            <RichTextEditor
-              initialValue={license}
-              setValue={(val: EditorValue) => {
-                setLicense(val.toString('html'))
-              }}
-              editorStyle={{height: 400}}
-            /> :
-            <RichTextEditor2
-              initialValue={''}
-              setValue={(val: EditorValue) => {
-                setLicense(val.toString('html'))
-              }}
-              editorStyle={{height: 400}}
-            />
+          license &&
+          <RichTextEditor initialHTMLValue={license} onChangeHTML={setLicense} toolbarHeight={86}/>
         }
         <Row justify="end" style={{marginBottom: 30}}>
           <Button type="primary" onClick={updateLicenseHandler}>Update license</Button>

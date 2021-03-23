@@ -47,7 +47,7 @@ const ContributionLicenseAgreement: React.FunctionComponent = () => {
         </Col>
       </Row>
 
-      <Row justify="center">
+      <Row justify="center" className="html-description">
         <Col span={20}>
           {parse(license)}
         </Col>
