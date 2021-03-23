@@ -1,15 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
 import Link from 'next/link';
 import {useQuery} from '@apollo/react-hooks';
 import {Col, Divider, Row, Tag, Typography} from 'antd';
 import ReactPlayer from 'react-player';
-import {GET_PRODUCT_BY_ID, GET_TASKS_BY_PRODUCT_COUNT} from '../../graphql/queries';
+import {GET_PRODUCT_BY_SLUG, GET_TASKS_BY_PRODUCT_COUNT} from '../../graphql/queries';
 import {TagType} from '../../graphql/types';
 import {DynamicHtml} from '../../components';
 import {getProp} from '../../utilities/filters';
-import {setWorkState} from '../../lib/actions';
-import {WorkState} from '../../lib/reducers/work.reducer';
 import LeftPanelContainer from '../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
 import Loading from "../../components/Loading";
@@ -24,7 +21,7 @@ const Summary: React.FunctionComponent = () => {
 
   const [availableTasksAmount, setAvailableTasksAmount] = useState(0);
 
-  const {data: original, error, loading} = useQuery(GET_PRODUCT_BY_ID, {
+  const {data: original, error, loading} = useQuery(GET_PRODUCT_BY_SLUG, {
     variables: {slug: productSlug}
   });
 
@@ -47,7 +44,7 @@ const Summary: React.FunctionComponent = () => {
       id: getProp(node, 'id'),
       title: getProp(node, 'data.name'),
       children: node.children ? formatData(getProp(node, 'children', [])) : []
-    }))
+    }));
   }
 
   useEffect(() => {
@@ -56,7 +53,7 @@ const Summary: React.FunctionComponent = () => {
     }
   }, [original]);
 
-  if (loading || tasksLoading) return <Loading/>
+  if (loading || tasksLoading) return <Loading/>;
 
 
   return (
@@ -147,18 +144,5 @@ const Summary: React.FunctionComponent = () => {
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  user: state.user,
-  work: state.work,
-});
 
-const mapDispatchToProps = (dispatch: any) => ({
-  saveProductToStore: (data: WorkState) => dispatch(setWorkState(data))
-});
-
-const SummaryContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Summary);
-
-export default SummaryContainer;
+export default Summary;

@@ -1,18 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {useRouter} from 'next/router';
-import {Avatar, Menu, Row} from 'antd';
+import {Avatar, Button, Col, Menu, Modal, Row, Typography} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
-import {GET_PRODUCT_INFO_BY_ID} from '../../../graphql/queries';
+import {GET_PRODUCT_BY_SLUG, GET_PRODUCT_INFO_BY_ID} from '../../../graphql/queries';
 import {getProp} from '../../../utilities/filters';
 import {getInitialName, getUserRole, hasAdminRoots} from '../../../utilities/utils';
-import {WorkState} from '../../../lib/reducers/work.reducer';
-import {setWorkState} from '../../../lib/actions';
+import {EditOutlined} from "@ant-design/icons";
+import AddOrEditProduct from "../../AddOrEditProduct";
+import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
 
 
 interface ILeftPanelProps {
   user: any
-  saveProductToStore?: any
 }
 
 interface ILink {
@@ -22,8 +22,14 @@ interface ILink {
 }
 
 const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
-  const router = useRouter()
-  const {productSlug} = router.query
+  const router = useRouter();
+  const {productSlug} = router.query;
+
+  const {data: productOriginal} = useQuery(GET_PRODUCT_BY_SLUG, {
+    variables: {slug: productSlug}
+  });
+
+  const [isEditingModalVisible, setIsEditingModalVisible] = useState(false);
 
   let links: ILink[] = [
     {url: '/', type: 'summary', name: 'Summary'},
@@ -57,27 +63,54 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
 
   if (loading) return null;
 
+
+  const footerButtons = ([
+    <Button type="danger" style={{float: "left"}} onClick={() => {
+    }}>Delete this product</Button>,
+    <Button key="back" onClick={() => setIsEditingModalVisible(false)}>Cancel</Button>,
+    <Button key="submit" type="primary" onClick={() => {
+    }}>Edit</Button>
+  ]);
+
   return (
     <>
       {
         !productError && (
           <div className="left-panel">
-            <Row className="profile">
-              <div className="my-auto">
-                <Avatar style={{marginRight: 15}}>
-                  {getInitialName(getProp(product, 'product.name', ''))}
-                </Avatar>
-              </div>
-              <div>
-                <div className="page-title">{getProp(product, 'product.name', '')}</div>
-                <div>
-                  <a className="custom-link"
-                     href={getProp(product, 'product.website', '')}
-                  >
-                    {getProp(product, 'product.website', '')}
-                  </a>
-                </div>
-              </div>
+            <Row justify="space-between" align="middle" style={{margin: '15px 10px 20px 10px'}}>
+              <Col>
+                <Row align="middle">
+                  <Col style={{marginRight: 10}}>
+                    <Avatar>
+                      {getInitialName(getProp(product, 'product.name', ''))}
+                    </Avatar>
+                  </Col>
+                  <Col>
+                    <Row>
+                      <Typography.Title
+                        style={{marginBottom: 5}}
+                        level={4}
+                      >{getProp(product, 'product.name', '')}</Typography.Title>
+                    </Row>
+                    <Row>
+                      <Typography.Link className="gray-link" href={getProp(product, 'product.website', '')}>
+                        {getProp(product, 'product.website', '')}
+                      </Typography.Link>
+                    </Row>
+                  </Col>
+                </Row>
+              </Col>
+              <Col>
+                {
+                  userHasAdminRoots &&
+                  <Button
+                      onClick={() => setIsEditingModalVisible(true)}
+                      type="primary"
+                      icon={<EditOutlined/>}
+                      style={{marginLeft: 10}}
+                  />
+                }
+              </Col>
             </Row>
             <Menu mode="inline" selectedKeys={[selectedLink]}>
               {links.map((link: any, index: number) => (
@@ -92,6 +125,17 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
           </div>
         )
       }
+
+      <Modal
+        visible={isEditingModalVisible}
+        footer={footerButtons}
+        onCancel={() => setIsEditingModalVisible(false)}
+        width={RICH_TEXT_EDITOR_WIDTH}
+        title="Edit Product"
+        maskClosable={false}
+      >
+        <AddOrEditProduct isEditing={true} productData={getProp(productOriginal, 'product')}/>
+      </Modal>
     </>
   );
 };
@@ -101,9 +145,7 @@ const mapStateToProps = (state: any) => ({
   work: state.work,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-  saveProductToStore: (data: WorkState) => dispatch(setWorkState(data))
-});
+const mapDispatchToProps = () => ({});
 
 const LeftPanelContainer = connect(
   mapStateToProps,

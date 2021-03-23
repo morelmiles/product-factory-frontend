@@ -26,7 +26,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const {user} = props;
   const [statuses, setStatuses] = useState<Array<number>>([]);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const [filterModal, setFilterModal] = useState(false);
   const [tasks, setTasks] = useState<any>([]);
   const [inputData, setInputData] = useState({
@@ -65,10 +64,6 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     setInputData(values);
     setFilterModal(false);
   }
-
-  useEffect(() => {
-    setUserId(localStorage.getItem('userId'));
-  }, []);
 
   useEffect(() => {
     if (data && data.tasksByProduct) {

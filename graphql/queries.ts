@@ -61,7 +61,7 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
   }
 `
 
-export const GET_PRODUCT_BY_ID = gql`
+export const GET_PRODUCT_BY_SLUG = gql`
   query GetProduct($slug: String!) {
     product(slug: $slug) {
       name

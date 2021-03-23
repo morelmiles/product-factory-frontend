@@ -14,7 +14,7 @@ export const CREATE_PRODUCT = gql`
   mutation CreateProduct($productInfo: ProductInput!) {
     createProduct(productInfo: $productInfo) {
       status
-      error
+      message
     }
   }
 `;
