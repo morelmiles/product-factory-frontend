@@ -19,6 +19,7 @@ import CheckableTag from "antd/lib/tag/CheckableTag";
 import FilterModal from "../../../../components/FilterModal";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import {connect} from "react-redux";
+import parse from 'html-react-parser';
 
 
 const {Content} = Layout;
@@ -209,10 +210,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
                   )}
                   <Row className="html-description">
                     <Col span={24}>
-                      <DynamicHtml
-                        className='mb-10'
-                        text={getProp(capability, 'description', '')}
-                      />
+                      {parse(getProp(capability, 'description', ''))}
                     </Col>
                   </Row>
                   <Row>
