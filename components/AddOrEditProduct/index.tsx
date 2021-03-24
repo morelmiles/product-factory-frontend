@@ -36,8 +36,21 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
   const router = useRouter();
   const {productSlug} = router.query;
 
-  const [fileList, setFileList] = useState([]);
-  const [photo, setPhoto] = useState(null);
+
+  const [fileList, setFileList] = useState<any>([]);
+  const [photo, setPhoto] = useState(isEditing ? getProp(productData, 'photo', null) : null);
+
+  const productPhoto = getProp(productData, 'photo', null);
+
+  useEffect(() => {
+    if (productPhoto) {
+      setFileList([{
+        uid: '-1',
+        url: productPhoto,
+      }]);
+    }
+  }, [productPhoto]);
+
 
   const [name, setName] = useState(isEditing ? getProp(productData, 'name', '') : '');
   const [shortDescription, setShortDescription] = useState(isEditing ? getProp(productData, 'shortDescription', '') : '');
@@ -144,6 +157,8 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
 
     setIsShowLoading(true);
 
+    console.log(photo);
+
     updateProduct({
       variables: {
         productInput: {
@@ -153,7 +168,8 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
           fullDescription,
           website,
           videoUrl
-        }
+        },
+        file: photo
       }
     }).then();
   }
@@ -161,6 +177,10 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
   const onUploadChange = ({fileList: newFileList}: any) => {
     setFileList(newFileList);
   };
+
+  // const onUploadRemove = ({fileList: newFileList}: any) => {
+  //
+  // }
 
   const onImagePreview = async (file: any) => {
     let src = file.url;
@@ -192,7 +212,7 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
   useEffect(() => {
     if (fileList.length > 0) {
       setPhoto(getProp(fileList[0], 'thumbUrl', null));
-    } else {
+    } else if (!productPhoto) {
       setPhoto(null);
     }
   }, [fileList]);
