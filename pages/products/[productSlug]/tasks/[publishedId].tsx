@@ -31,6 +31,8 @@ import CustomAvatar2 from "../../../../components/CustomAvatar2";
 
 const {Panel} = Collapse;
 
+const notLoginErrorMessage = "You cannot claim the task, please authenticate to the system";
+
 
 type Params = {
   user?: any;
@@ -185,14 +187,24 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
         }
       }
     },
-    onError() {
-      message.error("Failed to claim a task!").then();
+    onError({ graphQLErrors, networkError }) {
+      if (graphQLErrors && graphQLErrors.length > 0) {
+        let msg = graphQLErrors[0].message;
+        if (msg === "The person is undefined, please login to perform this action") {
+          msg = notLoginErrorMessage
+        }
+        message.error(msg).then();
+      }
+      if (networkError && networkError.length > 0) {
+        message.error(networkError[0].message).then();
+      }
     }
   });
 
   const claimTaskEvent = () => {
-    if (user.id === undefined) {
-      message.error("You cannot claim the task, please authenticate to the system").then()
+    let userId = user.id;
+    if (userId === undefined || userId === null) {
+      message.error(notLoginErrorMessage).then()
       return
     }
 
@@ -297,7 +309,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
             }
           </>
         ) : null}
-        {(taskStatus === "Available" && userRole === "Contributor") && (
+        {(taskStatus === "Available") && (
           <>
             <div className="flex-column ml-auto">
               <Button type="primary"
