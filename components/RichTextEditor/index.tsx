@@ -23,7 +23,7 @@ interface IRichTextEditorProps {
 }
 
 const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
-  {initialHTMLValue, onChangeHTML, toolbarHeight= 'max-height'}
+  {initialHTMLValue, onChangeHTML, toolbarHeight = 'max-height'}
 ) => {
   const [editorStateValue, setEditorStateValue] = useState(EditorState.createEmpty());
 
@@ -57,7 +57,8 @@ const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
         reader.onload = async () => {
           const res = await uploadImage({
             variables: {
-              file: reader.result
+              file: reader.result,
+              place: 'attachments'
             }
           });
 

@@ -26,10 +26,14 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
   const {productSlug} = router.query;
 
   const {data: productOriginal} = useQuery(GET_PRODUCT_BY_SLUG, {
-    variables: {slug: productSlug}
+    variables: {slug: productSlug},
+    fetchPolicy: "no-cache"
   });
 
   const [isEditingModalVisible, setIsEditingModalVisible] = useState(false);
+  const [isDeleteProductModalVisible, setIsDeleteProductModalVisible] = useState(false);
+  const [toUpdate, setToUpdate] = useState(0);
+  const [toDelete, setToDelete] = useState(0);
 
   let links: ILink[] = [
     {url: '/', type: 'summary', name: 'Summary'},
@@ -66,10 +70,15 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
 
   const footerButtons = ([
     <Button type="danger" style={{float: "left"}} onClick={() => {
+      setIsDeleteProductModalVisible(true)
     }}>Delete this product</Button>,
     <Button key="back" onClick={() => setIsEditingModalVisible(false)}>Cancel</Button>,
-    <Button key="submit" type="primary" onClick={() => {
-    }}>Edit</Button>
+    <Button key="submit" type="primary" onClick={() => setToUpdate(prev => prev + 1)}>Edit</Button>
+  ]);
+
+  const footerDeleteProductButtons = ([
+    <Button key="back" onClick={() => setIsDeleteProductModalVisible(false)}>No</Button>,
+    <Button type="danger" onClick={() => setToDelete(prev => prev + 1)}>Yes, I'm sure</Button>
   ]);
 
   return (
@@ -134,7 +143,23 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
         title="Edit Product"
         maskClosable={false}
       >
-        <AddOrEditProduct isEditing={true} productData={getProp(productOriginal, 'product')}/>
+        <AddOrEditProduct
+          isEditing={true}
+          productData={getProp(productOriginal, 'product')}
+          toUpdate={toUpdate}
+          toDelete={toDelete}
+          closeModal={() => setIsEditingModalVisible(false)}
+        />
+      </Modal>
+
+      <Modal
+        visible={isDeleteProductModalVisible}
+        footer={footerDeleteProductButtons}
+        onCancel={() => setIsDeleteProductModalVisible(false)}
+        title="Delete Product"
+        maskClosable={false}
+      >
+        <Typography.Text>Are you sure you want to remove this product permanently?</Typography.Text>
       </Modal>
     </>
   );

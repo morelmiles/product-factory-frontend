@@ -19,7 +19,9 @@ type Props = {
 };
 
 const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
-  const {data, error, loading} = useQuery(GET_PRODUCTS);
+  const {data, error, loading} = useQuery(GET_PRODUCTS, {
+    fetchPolicy: "no-cache"
+  });
   const router = useRouter();
 
   useEffect(() => {

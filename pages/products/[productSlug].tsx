@@ -22,7 +22,8 @@ const Summary: React.FunctionComponent = () => {
   const [availableTasksAmount, setAvailableTasksAmount] = useState(0);
 
   const {data: original, error, loading} = useQuery(GET_PRODUCT_BY_SLUG, {
-    variables: {slug: productSlug}
+    variables: {slug: productSlug},
+    fetchPolicy: "no-cache"
   });
 
   let {data: tasks, error: tasksError, loading: tasksLoading} = useQuery(GET_TASKS_BY_PRODUCT_COUNT, {
