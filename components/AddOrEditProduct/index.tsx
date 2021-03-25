@@ -36,9 +36,8 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
   const router = useRouter();
   const {productSlug} = router.query;
 
-
   const [fileList, setFileList] = useState<any>([]);
-  const [photo, setPhoto] = useState(isEditing ? getProp(productData, 'photo', null) : null);
+  const [photo, setPhoto] = useState(null);
 
   const productPhoto = getProp(productData, 'photo', null);
 
@@ -51,6 +50,17 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
     }
   }, [productPhoto]);
 
+  useEffect(() => {
+    if (fileList.length > 0) {
+      const thumbUrl = getProp(fileList[0], 'thumbUrl', null);
+      const url = getProp(fileList[0], 'url', null);
+
+      if (thumbUrl) setPhoto(thumbUrl);
+      else if (url) setPhoto(url);
+    } else {
+      setPhoto(null);
+    }
+  }, [fileList]);
 
   const [name, setName] = useState(isEditing ? getProp(productData, 'name', '') : '');
   const [shortDescription, setShortDescription] = useState(isEditing ? getProp(productData, 'shortDescription', '') : '');
@@ -155,9 +165,9 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
       return;
     }
 
-    setIsShowLoading(true);
-
     console.log(photo);
+
+    setIsShowLoading(true);
 
     updateProduct({
       variables: {
@@ -177,10 +187,6 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
   const onUploadChange = ({fileList: newFileList}: any) => {
     setFileList(newFileList);
   };
-
-  // const onUploadRemove = ({fileList: newFileList}: any) => {
-  //
-  // }
 
   const onImagePreview = async (file: any) => {
     let src = file.url;
@@ -208,14 +214,6 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
       deleteProduct().then();
     }
   }, [toDelete]);
-
-  useEffect(() => {
-    if (fileList.length > 0) {
-      setPhoto(getProp(fileList[0], 'thumbUrl', null));
-    } else if (!productPhoto) {
-      setPhoto(null);
-    }
-  }, [fileList]);
 
   return (
     <>
