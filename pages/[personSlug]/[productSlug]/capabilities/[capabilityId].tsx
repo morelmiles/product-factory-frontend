@@ -35,6 +35,7 @@ interface ICrumb {
 }
 
 interface IParentsCrumbsProps {
+  personSlug: string
   productSlug: string
   crumbs: ICrumb[]
   capabilityName: string
@@ -45,18 +46,18 @@ interface ICapabilityDetailProps {
 }
 
 const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = (
-  {productSlug, crumbs, capabilityName}
+  {personSlug, productSlug, crumbs, capabilityName}
 ) => {
   return (
     <Breadcrumb>
       <Breadcrumb.Item>
-        <Link href={`/products/${productSlug}/capabilities`}>Capabilities</Link>
+        <Link href={`/${personSlug}/${productSlug}/capabilities`}>Capabilities</Link>
       </Breadcrumb.Item>
 
       {
         crumbs.map(crumb => (
           <>
-            <Link href={`/products/${productSlug}/capabilities/${crumb.id}`}>{crumb.name}</Link>
+            <Link href={`/${personSlug}/${productSlug}/capabilities/${crumb.id}`}>{crumb.name}</Link>
 
             <Breadcrumb.Item key={crumb.id}>
 
@@ -65,7 +66,7 @@ const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = (
                   {
                     crumb.siblings.map(sibling => (
                       <Menu.Item key={sibling.id}>
-                        <Link href={`/products/${productSlug}/capabilities/${sibling.id}`}>
+                        <Link href={`/${personSlug}/${productSlug}/capabilities/${sibling.id}`}>
                           {sibling.name}
                         </Link>
                       </Menu.Item>
@@ -73,7 +74,7 @@ const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = (
                   }
                 </Menu>
               }>
-                <a href={`/products/${productSlug}/capabilities/${crumb.id}`}>
+                <a href={`/${personSlug}/${productSlug}/capabilities/${crumb.id}`}>
                   <DownOutlined style={{marginLeft: 5}}/>
                 </a>
               </Dropdown>
@@ -90,7 +91,7 @@ const ParentsCrumbs: React.FunctionComponent<IParentsCrumbsProps> = (
 
 const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user}) => {
   const router = useRouter();
-  let {capabilityId, productSlug} = router.query;
+  let {capabilityId, personSlug, productSlug} = router.query;
   productSlug = String(productSlug);
 
   const [capability, setCapability] = useState({});
@@ -134,7 +135,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
     onCompleted() {
       message.success("Item is successfully deleted!").then();
       refetch().then();
-      router.push(`/products/${productSlug}/capabilities`).then();
+      router.push(`/${personSlug}/${productSlug}/capabilities`).then();
     },
     onError() {
       message.error("Failed to delete item!").then();
@@ -165,6 +166,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
             !error && !crumbsError && (
               <>
                 <ParentsCrumbs
+                  personSlug={personSlug}
                   productSlug={productSlug}
                   crumbs={formattedCrumbs}
                   capabilityName={getProp(capability, 'name', '')}

@@ -104,7 +104,7 @@ const Summary: React.FunctionComponent = () => {
             <div className='mt-15'>
               <Row justify="space-between" className='mb-10'>
                 <Col>
-                  <Link href={`/products/${productSlug}/tasks#available`}>
+                  <Link href={`/${getProp(data, 'product.owner', '')}/${productSlug}/tasks#available`}>
                     <Typography.Link strong style={{fontSize: '1.1rem'}}>{availableTasksAmount} Available
                       Tasks</Typography.Link>
                   </Link>
@@ -120,7 +120,7 @@ const Summary: React.FunctionComponent = () => {
                       const direction = idx % 2 === 0 ? 'left' : 'right';
                       return (
                         <Col key={`cap-${idx}`} span={12} style={{textAlign: direction}}>
-                          <Link href={`/products/${productSlug}/capabilities/${capability.id}`}>
+                          <Link href={`/${getProp(data, 'product.owner', '')}/${productSlug}/capabilities/${capability.id}`}>
                             {capability.name}
                           </Link>&nbsp;
                           {`(${capability.availableTaskNum}/${capability.taskSet.length} 

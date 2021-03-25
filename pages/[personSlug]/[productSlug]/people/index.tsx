@@ -73,7 +73,7 @@ const PeopleList: React.FunctionComponent = () => {
                                 className="black-color"
                                 style={{fontSize: 14}}
                               >
-                                <Link href={`/people/${getProp(item, 'person.slug', '')}`}>
+                                <Link href={`/${getProp(item, 'person.slug', '')}`}>
                                   {getProp(item, 'person.fullName', '')}
                                 </Link>
                               </Typography.Text>

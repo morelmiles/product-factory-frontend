@@ -41,7 +41,7 @@ type Params = {
 
 const Task: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
-  const {publishedId, productSlug} = router.query;
+  const {publishedId, personSlug, productSlug} = router.query;
 
   const [agreementModalVisible, setAgreementModalVisible] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
@@ -82,7 +82,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   }, [original]);
 
   const getBasePath = () => {
-    return `/products/${productSlug}`;
+    return `/${personSlug}/${productSlug}`;
   }
 
   const [deleteTask] = useMutation(DELETE_TASK, {
@@ -195,7 +195,9 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
         }
         message.error(msg).then();
       }
+      //@ts-ignore
       if (networkError && networkError.length > 0) {
+        //@ts-ignore
         message.error(networkError[0].message).then();
       }
     }
@@ -263,7 +265,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                       }}/>
                     </Col>
                     <Col>
-                      <Typography.Link className="text-grey-9" href={`/people/${getProp(assignee, 'slug', '')}`}>
+                      <Typography.Link className="text-grey-9" href={`/${getProp(assignee, 'slug', '')}`}>
                         {getProp(assignee, 'fullName', '')}
                       </Typography.Link>
                     </Col>
@@ -342,7 +344,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                     {initiativeName && (
                       <Breadcrumb.Item>
                         <a
-                          href={`/products/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}
+                          href={`/${getProp(product, 'owner', '')}/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}
                         >
                           {initiativeName}
                         </a>
@@ -413,7 +415,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                         </Col>
                         <Col>
                           <Typography.Link className="text-grey-9"
-                                           href={`/people/${getProp(task, 'createdBy.slug', '')}`}>
+                                           href={`/${getProp(task, 'createdBy.slug', '')}`}>
                             {getProp(task, 'createdBy.fullName', '')}
                           </Typography.Link>
                         </Col>
@@ -486,7 +488,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                               <Col>
                                   <Typography.Link
                                       className="text-grey-9"
-                                      href={`/people/${getProp(task, 'reviewer.slug', '')}`}
+                                      href={`/${getProp(task, 'reviewer.slug', '')}`}
                                   >
                                     {getProp(task, 'reviewer.fullName', '')}
                                   </Typography.Link>
@@ -556,7 +558,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                             renderItem={(item: any) => (
                               <List.Item>
                                 <Link
-                                  href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                                  href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
                               </List.Item>
                             )}
                         />
@@ -573,7 +575,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                             renderItem={(item: any) => (
                               <List.Item>
                                 <Link
-                                  href={`/products/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                                  href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
                               </List.Item>
                             )}
                         />

@@ -67,7 +67,7 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
                 }
               >
                 <div onClick={
-                  () => goTo(`/products/${product.slug}`)
+                  () => goTo(`/${getProp(product, 'owner', 'products')}/${product.slug}`)
                 }>
                   <div className="pb-50">
                     {
@@ -76,7 +76,7 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
                       ))
                     }
                     <div>
-                      <Link href={`/products/${product.slug}`}>
+                      <Link href={`/${getProp(product, 'owner', 'products')}/${product.slug}`}>
                         {getProp(product, 'name', '')}
                       </Link>
                     </div>
@@ -89,7 +89,7 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
                     bottom: 16
                   }}>
                     {availableTasks > 0 && (
-                      <Link href={`/products/${product.slug}/tasks`}>
+                      <Link href={`/${getProp(product, 'owner', 'products')}/${product.slug}/tasks`}>
                         <div>
                           <img
                             src={CheckCircle}
@@ -104,7 +104,7 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
                     )}
                     <span>
                       {availableTasks > 0 && (<>&nbsp;&nbsp;</>)}
-                      <Link href={`/products/${product.slug}/initiatives`}>
+                      <Link href={`/${getProp(product, 'owner', 'products')}/${product.slug}/initiatives`}>
                         {getAvailableInitiativeText(initiatives)}
                       </Link>
                     </span>

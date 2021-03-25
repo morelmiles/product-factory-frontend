@@ -38,8 +38,7 @@ export const CustomAvatar = (item: any, attr = "name", size: any = 'default', ro
                     <div className="font-bold">
                         {attr === "fullName" ? (
                             <Link
-                                // className="text-grey-9"
-                                href={`/people/${item.slug}`}
+                                href={`/${item.slug}`}
                             >{item[attr]}</Link>
                         ) : (
                             <Avatar size={size} src={item.photo} style={{background: 'linear-gradient(140deg, #F833CD, #1734CC)'}}/>
@@ -49,8 +48,7 @@ export const CustomAvatar = (item: any, attr = "name", size: any = 'default', ro
                                 <div className="font-bold">
                                     {attr === "fullName" ? (
                                         <Link
-                                            // className="text-grey-9"
-                                            href={`/people/${item.slug}`}
+                                            href={`/${item.slug}`}
                                         >
                                             {item[attr]}
                                         </Link>

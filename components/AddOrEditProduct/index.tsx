@@ -98,7 +98,7 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
 
         if (status) {
           const newSlug = getProp(res, 'updateProduct.newSlug', '');
-          const newLink = (newSlug ? `/products/${newSlug}/` : '/');
+          const newLink = (newSlug ? `/${getProp(productData, 'owner', 'products')}/${newSlug}/` : '/');
           router.push('/').then(() => {
             router.push(newLink).then(() => {
               message.success(messageText).then();

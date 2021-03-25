@@ -21,12 +21,7 @@ type Params = {
   currentProduct: any;
 } & RouteComponentProps;
 
-const InitiativeDetail: React.SFC<Params> = ({match, history, user, currentProduct}) => {
-  const params: any = matchPath(match.url, {
-    path: "/products/:productSlug/initiatives/:initiativeId",
-    exact: false,
-    strict: false
-  });
+const InitiativeDetail: React.FunctionComponent<Params> = ({user, currentProduct}) => {
   const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
     variables: {id: params.params.initiativeId}
   });
@@ -40,7 +35,7 @@ const InitiativeDetail: React.SFC<Params> = ({match, history, user, currentProdu
     },
     onCompleted() {
       message.success("Item is successfully deleted!").then();
-      history.push(`/products/${params.params.productSlug}/initiatives`);
+      history.push(`/${params.params.personSlug}/${params.params.productSlug}/initiatives`);
     },
     onError(err) {
       message.error("Failed to delete item!").then();
@@ -74,14 +69,14 @@ const InitiativeDetail: React.SFC<Params> = ({match, history, user, currentProdu
               {
                 <>
                   <Link
-                    to={`/products/${params.params.productSlug}`}
+                    to={`/${params.params.personSlug}/${params.params.productSlug}`}
                     className="text-grey"
                   >
                     {getProp(currentProduct, 'name', '')}
                   </Link>
                   <span> / </span>
                   <Link
-                    to={`/products/${params.params.productSlug}/initiatives`}
+                    to={`/${params.params.personSlug}/${params.params.productSlug}/initiatives`}
                     className="text-grey"
                   >
                     Initiatives

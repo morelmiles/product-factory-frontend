@@ -65,7 +65,7 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
       ? links[0].type : links[selectedIndex].type;
 
     const goToDetail = (type: string) => {
-      router.push(`/products/${productSlug}${type}`).then();
+      router.push(`/${getProp(product, 'product.owner', '')}/${productSlug}${type}`).then();
     }
 
     if (loading) return null;

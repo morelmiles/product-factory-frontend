@@ -78,14 +78,14 @@ const TaskTable: React.FunctionComponent<Props> = (
                         {
                           showProductName && (
                             <>
-                              <Link href={`/products/${productSlug}`}>
+                              <Link href={`/${getProp(task, 'product.owner', '')}/${productSlug}`}>
                                 <a className="text-grey-9">{productName}</a>
                               </Link>&nbsp;/&nbsp;
                             </>
                           )
                         }
                         <Link
-                          href={`/products/${productSlug}/tasks/${task.publishedId}`}
+                          href={`/${getProp(task, 'product.owner', '')}/${productSlug}/tasks/${task.publishedId}`}
                         >
                           <strong>
                             <a className="text-grey-9">
@@ -116,7 +116,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                         {
                           (initiativeName && showInitiativeName) &&
 
-                          <Link href={`/products/${productSlug}/initiatives/${initiativeId}`}>
+                          <Link href={`/${getProp(task, 'product.owner', '')}/${productSlug}/initiatives/${initiativeId}`}>
                             <span className="text-grey-9 pointer link">
                               <ThunderboltFilled
                                   style={{color: '#999', marginRight: 4, fontSize: 16}}
@@ -155,7 +155,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                                 size={35}/>
                               <div className="my-auto">
                                 <Link
-                                  href={`/people/${getProp(taskClaimSet, 'person.slug', '')}`}
+                                  href={`/${getProp(taskClaimSet, 'person.slug', '')}`}
                                 >
                                   <a className="text-grey-9">{getProp(taskClaimSet, 'person.fullName', '')}</a>
                                 </Link>
@@ -169,10 +169,10 @@ const TaskTable: React.FunctionComponent<Props> = (
                         <div className="mt-10">
                           <div className="d-flex-end" style={{fontSize: 13}}>
 
-                            <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
+                            <Link href={`/${getProp(assignee, 'slug', '')}`}>
                               <CustomAvatar2 person={{fullname: assignee.fullName, slug: assignee.slug}} size={35}/>
                             </Link>
-                            <Link href={`/people/${getProp(assignee, 'slug', '')}`}>
+                            <Link href={`/${getProp(assignee, 'slug', '')}`}>
                               {getProp(assignee, 'fullName', '')}
                             </Link>
                           </div>

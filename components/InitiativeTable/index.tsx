@@ -10,6 +10,7 @@ import FilledCircle from "../../public/assets/icons/filled-circle.svg";
 type Props = {
   initiatives: any;
   productSlug?: string;
+  personSlug?: string;
   title?: string;
   hideTitle?: boolean;
   hideEmptyList?: boolean;
@@ -22,11 +23,10 @@ const InitiativeTable: React.FunctionComponent<Props> = (
     hideTitle = false,
     hideEmptyList = false,
     productSlug,
+    personSlug,
     content = undefined,
   }
 ) => {
-
-
   const getTaskText = (availableTasks: number, status: string) => {
     return `${pluralize(availableTasks, `${status} task`)}`;
   }
@@ -50,7 +50,7 @@ const InitiativeTable: React.FunctionComponent<Props> = (
                     <Col span={18}>
                       <Row>
                         <Link
-                          href={`/products/${productSlug}/initiatives/${initiative.id}`}
+                          href={`/${personSlug}/${productSlug}/initiatives/${initiative.id}`}
                         >
                           <strong>
                             <a className="text-grey-9">
@@ -78,7 +78,7 @@ const InitiativeTable: React.FunctionComponent<Props> = (
                         {status}
                       </div>
                       <Link
-                          href={`/products/${productSlug}/initiatives/${initiative.id}`}
+                          href={`/${personSlug}/${productSlug}/initiatives/${initiative.id}`}
                       >
                         <a style={{textDecoration: "underline", fontWeight: 600}}>
                           {status === "Active"
