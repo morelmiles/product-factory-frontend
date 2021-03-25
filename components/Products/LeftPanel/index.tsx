@@ -92,7 +92,7 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
             <div className="left-panel">
               {
                 userHasAdminRoots &&
-                <Row style={{position: 'absolute', top: 10, right: 18}}>
+                <Row style={{position: 'absolute', top: 10, right: 18, zIndex: 100}}>
                     <Button
                         onClick={() => setIsEditingModalVisible(true)}
                         type="primary"

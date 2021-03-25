@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {useQuery} from '@apollo/react-hooks';
 import {Col, Divider, Row, Tag, Typography} from 'antd';
+import {LockFilled} from '@ant-design/icons';
 import ReactPlayer from 'react-player';
 import {GET_PRODUCT_BY_SLUG, GET_TASKS_BY_PRODUCT_COUNT} from '../../graphql/queries';
 import {TagType} from '../../graphql/types';
@@ -66,7 +67,13 @@ const Summary: React.FunctionComponent = () => {
               <Typography.Text strong style={{
                 fontSize: '1.5rem',
                 marginBottom: 12
-              }}>About {getProp(data, 'product.name', '')}</Typography.Text>
+              }}>
+                About {getProp(data, 'product.name', '')}
+                {
+                  getProp(data, 'product.isPrivate', false) &&
+                  <LockFilled style={{color: '#888', marginLeft: 10}}/>
+                }
+              </Typography.Text>
             </Row>
             <Row>
               <Col xs={24} sm={24} md={13}>

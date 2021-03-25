@@ -10,13 +10,10 @@ export const GET_PRODUCTS = gql`
       fullDescription
       slug
       videoUrl
+      isPrivate
       initiativeSet {
         id
       }
-      #tag {
-      #  id
-      #  name
-      #}
       attachment {
         name
         fileType
@@ -40,14 +37,11 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
       fullDescription
       slug
       videoUrl
+      isPrivate
       initiativeSet {
         id
         name
       }
-      #tag {
-      #  id
-      #  name
-      #}
       attachment {
         name
         fileType
@@ -68,27 +62,22 @@ export const GET_PRODUCT_BY_SLUG = gql`
       photo
       name
       id
-      name
       website
       shortDescription
       fullDescription
       slug
       videoUrl
+      isPrivate
       initiativeSet {
         id
         name
       }
-      #tag {
-      #  id
-      #  name
-      #}
       attachment {
         name
         fileType
         path
       }
     }
-    # userPerson(slug: $slug)
     tags {
       id
       name

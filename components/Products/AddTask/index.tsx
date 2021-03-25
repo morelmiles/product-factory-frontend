@@ -62,6 +62,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const [description, setDescription] = useState(
     modalType ? task.description : ''
   );
+  const [longDescriptionClear, setLongDescriptionClear] = useState(0);
   const [status, setStatus] = useState(modalType ? task.status : 2);
   const [capability, setCapability] = useState(
     modalType && task.capability ? task.capability.id : 0
@@ -184,7 +185,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const clearData = () => {
     setTitle("");
     setStatus(2);
-    setDescription('');
+    setLongDescriptionClear(prev => prev + 1);
     setShortDescription("");
     setCapability(0);
     setInitiative(0);
@@ -193,6 +194,7 @@ const AddTask: React.FunctionComponent<Props> = (
     setTags([]);
     setStacks([]);
     setDependOn([]);
+    setReviewSelectValue(null);
   }
 
   const addNewTask = async () => {
@@ -226,6 +228,8 @@ const AddTask: React.FunctionComponent<Props> = (
       if (messageText && getProp(res, `data.${modalTypeText}.status`, false)) {
         submit();
         message.success(messageText);
+
+        if (!modalType) clearData();
       } else if (messageText) {
         message.error(messageText);
       }
@@ -286,7 +290,7 @@ const AddTask: React.FunctionComponent<Props> = (
         <Row style={{width: '100%', marginBottom: 25}}>
           <Col span={24}>
             <label>Long Description*:</label>
-            <RichTextEditor initialHTMLValue={description} onChangeHTML={setDescription}/>
+            <RichTextEditor initialHTMLValue={description} onChangeHTML={setDescription} clear={longDescriptionClear}/>
           </Col>
         </Row>
         {
@@ -298,7 +302,7 @@ const AddTask: React.FunctionComponent<Props> = (
                 onChange={setCapability}
                 filterOption={filterOption}
                 showSearch
-                defaultValue={capability ? capability : null}
+                value={capability ? capability : null}
               >
                 {allCapabilities.map((option: any, idx: number) => (
                   <Option key={`cap${idx}`} value={option.id}>
@@ -344,7 +348,7 @@ const AddTask: React.FunctionComponent<Props> = (
                 placeholder="Select initiative"
                 filterOption={filterOption}
                 showSearch
-                defaultValue={initiative ? initiative : null}
+                value={initiative ? initiative : null}
               >
                 {initiatives.map((option: any, idx: number) => (
                   <Option key={`init${idx}`} value={option.id}>
@@ -367,7 +371,7 @@ const AddTask: React.FunctionComponent<Props> = (
         <Row className='mb-15'>
           <label>Status: </label>
           <Select
-            defaultValue={status}
+            value={status}
             onChange={setStatus}
             placeholder="Select status"
           >
@@ -399,7 +403,7 @@ const AddTask: React.FunctionComponent<Props> = (
           <Select
             mode="multiple"
             onChange={setStacks}
-            defaultValue={stacks}
+            value={stacks}
             filterOption={filterOption}
             placeholder="Select stacks"
           >
@@ -417,7 +421,7 @@ const AddTask: React.FunctionComponent<Props> = (
             onChange={setDependOn}
             filterOption={filterOption}
             placeholder="Select depend on tasks"
-            defaultValue={dependOn}
+            value={dependOn}
           >
             {tasks &&
             tasks.map((option: any, idx: number) => (
@@ -435,7 +439,7 @@ const AddTask: React.FunctionComponent<Props> = (
             placeholder="Select a reviewer"
             showSearch
             filterOption={filterOption}
-            defaultValue={reviewSelectValue ? reviewSelectValue : null}
+            value={reviewSelectValue ? reviewSelectValue : null}
           >
             {
               allUsers.map((user: IUser) => (

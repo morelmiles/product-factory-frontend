@@ -20,10 +20,11 @@ interface IRichTextEditorProps {
   initialHTMLValue?: string
   onChangeHTML: Function
   toolbarHeight?: number
+  clear?: number
 }
 
 const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
-  {initialHTMLValue, onChangeHTML, toolbarHeight = 'max-height'}
+  {initialHTMLValue, onChangeHTML, toolbarHeight = 'max-height', clear= 0}
 ) => {
   const [editorStateValue, setEditorStateValue] = useState(EditorState.createEmpty());
 
@@ -41,6 +42,12 @@ const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
       updateEditorValueByHTML(initialHTMLValue);
     }
   }, []);
+
+  useEffect(() => {
+    if (clear !== 0) {
+      updateEditorValueByHTML('');
+    }
+  }, [clear]);
 
   const [uploadImage] = useMutation(UPLOAD_IMAGE, {
     onError() {
