@@ -18,7 +18,6 @@ const Dashboard: React.FunctionComponent = () => {
   const [mode, setMode] = useState('products');
   const [productTags, setProductTags] = useState([]);
   const [taskTags, setTaskTags] = useState([]);
-  const [productSortType, setProductSortType] = useState("initiatives");
   const [taskSortType, setTaskSortType] = useState("priority");
   const [taskStatus, setTaskStatus] = useState([]);
   const [productNum, setProductNum] = useState(0);
@@ -89,20 +88,6 @@ const Dashboard: React.FunctionComponent = () => {
                     >
                       {tagsData?.data ? tagsData.data.tags.map((tag: { id: string, name: string }) =>
                         <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
-                    </Select>
-                </Col>
-
-                <Col span={12}>
-                    <label>Sorted by: </label>
-                    <Select
-                        defaultValue={productSortType}
-                        onChange={(value: any) => changeSearchTerm("initiatives", value)}
-                    >
-                        <Option value="initiatives">Number of initiatives</Option>
-                        <Option value="1">1</Option>
-                        <Option value="2">2</Option>
-                        <Option value="3">3</Option>
-                        <Option value="4">4</Option>
                     </Select>
                 </Col>
             </Row>

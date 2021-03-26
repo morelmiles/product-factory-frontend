@@ -37,6 +37,7 @@ type Props = {
   submit?: any;
   tasks?: Array<any>;
   stacks?: Array<any>;
+  user: any;
 };
 
 const AddTask: React.FunctionComponent<Props> = (
@@ -47,7 +48,8 @@ const AddTask: React.FunctionComponent<Props> = (
     modalType,
     task,
     submit,
-    tasks
+    tasks,
+    user
   }
 ) => {
   const [title, setTitle] = useState(modalType ? task.title : '');
@@ -91,6 +93,14 @@ const AddTask: React.FunctionComponent<Props> = (
     }
   };
 
+  console.log(user)
+
+  useEffect(() => {
+    if (reviewSelectValue === '') {
+      setReviewSelectValue(getProp(user, 'slug', ''));
+    }
+  }, [user]);
+
   const [stacks, setStacks] = useState(
     modalType && task.stack ? task.stack.map((stack: any) => stack.id) : []
   );
@@ -98,7 +108,11 @@ const AddTask: React.FunctionComponent<Props> = (
     modalType && task.dependOn ? task.dependOn.map((tag: any) => tag.id) : []
   );
 
-  const {data: originalInitiatives, loading: initiativeLoading, refetch: fetchInitiatives} = useQuery(GET_INITIATIVES_SHORT, {
+  const {
+    data: originalInitiatives,
+    loading: initiativeLoading,
+    refetch: fetchInitiatives
+  } = useQuery(GET_INITIATIVES_SHORT, {
     variables: {productSlug}
   });
   const {data: capabilitiesData} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
