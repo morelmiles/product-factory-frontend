@@ -56,6 +56,7 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
       variables: {slug: productSlug},
       fetchPolicy: "no-cache"
     });
+
     const productPhoto = getProp(product, 'product.photo', '');
 
     const selectedIndex: number = links.findIndex((item: any) => {

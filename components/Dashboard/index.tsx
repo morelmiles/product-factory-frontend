@@ -1,60 +1,20 @@
 import React, {useState} from 'react';
 import {Row, Col, Radio, Select, Layout} from 'antd';
-import {useRouter} from 'next/router'
 import {RadioChangeEvent} from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
-import classnames from 'classnames';
-import {useQuery} from "@apollo/react-hooks";
-import {GET_TAGS} from "../../graphql/queries";
-
 
 const {Option} = Select;
 const {Content} = Layout;
 
 const Dashboard: React.FunctionComponent = () => {
-  const router = useRouter();
-  let searchParams: any = new URLSearchParams(router.asPath.split('?')[1]);
   const [mode, setMode] = useState('products');
-  const [productTags, setProductTags] = useState([]);
-  const [taskTags, setTaskTags] = useState([]);
-  const [taskSortType, setTaskSortType] = useState("priority");
-  const [taskStatus, setTaskStatus] = useState([]);
   const [productNum, setProductNum] = useState(0);
   const [taskNum, setTaskNum] = useState(0);
-  const tagsData = useQuery(GET_TAGS);
 
   const handleModeChange = (e: RadioChangeEvent): void => {
     setMode(e.target.value);
   };
-
-  const changeSearchTerm = (key: string, value: any) => {
-    searchParams.set(key, value.toString());
-    router.push({
-      pathname: location.pathname,
-      search: searchParams.toString()
-    }).then();
-
-    switch (key) {
-      case "product-tag":
-        setProductTags(value);
-        break;
-      case "initiatives":
-        setProductSortType(value.toString());
-        break;
-      case "task-sorted":
-        setTaskSortType(value.toString());
-        break;
-      case "status":
-        setTaskStatus(value);
-        break;
-      case "task-tag":
-        setTaskTags(value);
-        break;
-      default:
-        break;
-    }
-  }
 
   return (
     <Content className="container main-page">
@@ -82,13 +42,7 @@ const Dashboard: React.FunctionComponent = () => {
             <Row gutter={10} justify="end">
                 <Col span={12}>
                     <label>Tags: </label>
-                    <Select
-                        defaultValue={productTags}
-                        onChange={(value: any) => changeSearchTerm("product-tag", value)}
-                    >
-                      {tagsData?.data ? tagsData.data.tags.map((tag: { id: string, name: string }) =>
-                        <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
-                    </Select>
+
                 </Col>
             </Row>
           }
@@ -102,9 +56,6 @@ const Dashboard: React.FunctionComponent = () => {
             setTaskNum={setTaskNum}
             showInitiativeName={true}
             showProductName={true}
-            sortedBy={taskSortType}
-            statuses={taskStatus}
-            tags={taskTags}
           />
         )
       }
