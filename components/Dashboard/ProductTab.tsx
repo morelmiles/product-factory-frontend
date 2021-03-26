@@ -15,11 +15,12 @@ import Loading from "../Loading";
 let pluralize = require('pluralize');
 
 type Props = {
+  stacksFilter: string[];
   setProductNum: (value: number) => void;
 };
 
-const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
-  const {data, error, loading} = useQuery(GET_PRODUCTS, {
+const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= [], setProductNum}) => {
+  const {data, error, loading, refetch} = useQuery(GET_PRODUCTS, {
     fetchPolicy: "no-cache"
   });
   const router = useRouter();
@@ -29,6 +30,15 @@ const ProductTab: React.FunctionComponent<Props> = ({setProductNum}) => {
       setProductNum(getProp(data, 'products', []).length);
     }
   }, [data]);
+
+  useEffect(() => {
+    console.log(stacksFilter);
+    refetch({
+      stackFilter: {
+        stacks: stacksFilter
+      }
+    });
+  }, [stacksFilter]);
 
   const getAvailableTaskText = (availableTasks: number) => {
     if (availableTasks === 0) return '';

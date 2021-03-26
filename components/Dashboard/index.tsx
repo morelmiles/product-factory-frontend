@@ -1,16 +1,29 @@
 import React, {useState} from 'react';
-import {Row, Col, Radio, Select, Layout} from 'antd';
+import {Row, Col, Radio, Select, Layout, Space} from 'antd';
 import {RadioChangeEvent} from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
+import {useQuery} from "@apollo/react-hooks";
+import {GET_STACKS} from "../../graphql/queries";
+import {getProp} from "../../utilities/filters";
 
 const {Option} = Select;
 const {Content} = Layout;
 
+
+interface IStack {
+  id: number
+  name: string
+}
+
 const Dashboard: React.FunctionComponent = () => {
   const [mode, setMode] = useState('products');
   const [productNum, setProductNum] = useState(0);
+  const [stacksFilter, setStacksFilter] = useState<any>([]);
   const [taskNum, setTaskNum] = useState(0);
+
+  const {data: stacksData} = useQuery(GET_STACKS);
+  console.log(stacksData)
 
   const handleModeChange = (e: RadioChangeEvent): void => {
     setMode(e.target.value);
@@ -36,13 +49,26 @@ const Dashboard: React.FunctionComponent = () => {
           </Radio.Group>
         </Col>
 
-        <Col xs={24} sm={12} md={12} lg={8} style={{marginTop: 20}}>
+        <Col xs={24} sm={12} md={12} lg={8} style={{marginTop: 20, width: '100%'}}>
           {
             mode === "products" &&
-            <Row gutter={10} justify="end">
-                <Col span={12}>
-                    <label>Tags: </label>
-
+            <Row justify="end">
+                <Col>
+                    <Space style={{width: '100%'}}>
+                        <label>Stack: </label>
+                        <Select
+                            mode="multiple"
+                            placeholder="Select stack"
+                            style={{minWidth: '200px'}}
+                            onChange={(val) => {setStacksFilter(val)}}
+                        >
+                          {
+                            getProp(stacksData, 'stacks', []).map((stack: IStack) => (
+                              <Option key={`stack-${stack.id}`} value={stack.name}>{stack.name}</Option>
+                            ))
+                          }
+                        </Select>
+                    </Space>
                 </Col>
             </Row>
           }
@@ -50,7 +76,7 @@ const Dashboard: React.FunctionComponent = () => {
       </Row>
       {
         mode === "products" ? (
-          <ProductTab setProductNum={setProductNum}/>
+          <ProductTab stacksFilter={stacksFilter} setProductNum={setProductNum}/>
         ) : (
           <TaskTab
             setTaskNum={setTaskNum}

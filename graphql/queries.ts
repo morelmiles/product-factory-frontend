@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const GET_PRODUCTS = gql`
-  query GetProducts {
-    products {
+  query GetProducts($stackFilter: StackListInput) {
+    products(stackFilter: $stackFilter) {
       id
       name
       owner
