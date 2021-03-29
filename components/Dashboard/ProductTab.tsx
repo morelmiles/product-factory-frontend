@@ -32,7 +32,6 @@ const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= [], setProduc
   }, [data]);
 
   useEffect(() => {
-    console.log(stacksFilter);
     refetch({
       stackFilter: {
         stacks: stacksFilter
