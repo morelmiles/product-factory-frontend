@@ -1,60 +1,33 @@
 import React, {useState} from 'react';
-import {Row, Col, Radio, Select, Layout} from 'antd';
-import {useRouter} from 'next/router'
+import {Row, Col, Radio, Select, Layout, Space} from 'antd';
 import {RadioChangeEvent} from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
 import {useQuery} from "@apollo/react-hooks";
-import {GET_TAGS} from "../../graphql/queries";
-
+import {GET_STACKS} from "../../graphql/queries";
+import {getProp} from "../../utilities/filters";
 
 const {Option} = Select;
 const {Content} = Layout;
 
+
+interface IStack {
+  id: number
+  name: string
+}
+
 const Dashboard: React.FunctionComponent = () => {
-  const router = useRouter();
-  let searchParams: any = new URLSearchParams(router.asPath.split('?')[1]);
   const [mode, setMode] = useState('products');
-  const [productTags, setProductTags] = useState([]);
-  const [taskTags, setTaskTags] = useState([]);
-  const [productSortType, setProductSortType] = useState("initiatives");
-  const [taskSortType, setTaskSortType] = useState("priority");
-  const [taskStatus, setTaskStatus] = useState([]);
   const [productNum, setProductNum] = useState(0);
+  const [stacksFilter, setStacksFilter] = useState<any>([]);
   const [taskNum, setTaskNum] = useState(0);
-  const tagsData = useQuery(GET_TAGS);
+
+  const {data: stacksData} = useQuery(GET_STACKS);
+  console.log(stacksData)
 
   const handleModeChange = (e: RadioChangeEvent): void => {
     setMode(e.target.value);
   };
-
-  const changeSearchTerm = (key: string, value: any) => {
-    searchParams.set(key, value.toString());
-    router.push({
-      pathname: location.pathname,
-      search: searchParams.toString()
-    }).then();
-
-    switch (key) {
-      case "product-tag":
-        setProductTags(value);
-        break;
-      case "initiatives":
-        setProductSortType(value.toString());
-        break;
-      case "task-sorted":
-        setTaskSortType(value.toString());
-        break;
-      case "status":
-        setTaskStatus(value);
-        break;
-      case "task-tag":
-        setTaskTags(value);
-        break;
-      default:
-        break;
-    }
-  }
 
   return (
     <Content className="container main-page">
@@ -76,33 +49,26 @@ const Dashboard: React.FunctionComponent = () => {
           </Radio.Group>
         </Col>
 
-        <Col xs={24} sm={12} md={12} lg={8} style={{marginTop: 20}}>
+        <Col xs={24} sm={12} md={12} lg={8} style={{marginTop: 20, width: '100%'}}>
           {
             mode === "products" &&
-            <Row gutter={10} justify="end">
-                <Col span={12}>
-                    <label>Tags: </label>
-                    <Select
-                        defaultValue={productTags}
-                        onChange={(value: any) => changeSearchTerm("product-tag", value)}
-                    >
-                      {tagsData?.data ? tagsData.data.tags.map((tag: { id: string, name: string }) =>
-                        <Option key={tag.id} value={tag.id}>{tag.name}</Option>) : []}
-                    </Select>
-                </Col>
-
-                <Col span={12}>
-                    <label>Sorted by: </label>
-                    <Select
-                        defaultValue={productSortType}
-                        onChange={(value: any) => changeSearchTerm("initiatives", value)}
-                    >
-                        <Option value="initiatives">Number of initiatives</Option>
-                        <Option value="1">1</Option>
-                        <Option value="2">2</Option>
-                        <Option value="3">3</Option>
-                        <Option value="4">4</Option>
-                    </Select>
+            <Row justify="end">
+                <Col>
+                    <Space style={{width: '100%'}}>
+                        <label>Stack: </label>
+                        <Select
+                            mode="multiple"
+                            placeholder="Select stack"
+                            style={{minWidth: '200px'}}
+                            onChange={(val) => {setStacksFilter(val)}}
+                        >
+                          {
+                            getProp(stacksData, 'stacks', []).map((stack: IStack) => (
+                              <Option key={`stack-${stack.id}`} value={stack.name}>{stack.name}</Option>
+                            ))
+                          }
+                        </Select>
+                    </Space>
                 </Col>
             </Row>
           }
@@ -110,15 +76,12 @@ const Dashboard: React.FunctionComponent = () => {
       </Row>
       {
         mode === "products" ? (
-          <ProductTab setProductNum={setProductNum}/>
+          <ProductTab stacksFilter={stacksFilter} setProductNum={setProductNum}/>
         ) : (
           <TaskTab
             setTaskNum={setTaskNum}
             showInitiativeName={true}
             showProductName={true}
-            sortedBy={taskSortType}
-            statuses={taskStatus}
-            tags={taskTags}
           />
         )
       }

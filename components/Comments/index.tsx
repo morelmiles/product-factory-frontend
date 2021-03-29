@@ -94,7 +94,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
         {
           text.split(' ').map((textItem, index) => {
             if (textItem[0] === '@') {
-              return <Link key={index} href={`/people/${textItem.substring(1)}`}>{textItem + ' '}</Link>;
+              return <Link key={index} href={`/${textItem.substring(1)}`}>{textItem + ' '}</Link>;
             } else {
               return <span key={index}>{textItem + ' '}</span>;
             }
@@ -114,7 +114,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
             actions={[<span key="comment-nested-reply-to" onClick={() => {
               openSendSubCommentModal(comment.id)
             }}>Reply to</span>]}
-            author={<Link href={`/people/${comment.data.person.slug}`}>{comment.data.person.fullname}</Link>}
+            author={<Link href={`/${comment.data.person.slug}`}>{comment.data.person.fullname}</Link>}
             avatar={
               <CustomAvatar2 person={comment.data.person}/>
             }

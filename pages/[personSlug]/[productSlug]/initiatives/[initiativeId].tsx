@@ -55,7 +55,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
     },
     onCompleted() {
       message.success("Item is successfully deleted!").then();
-      router.push(`/products/${productSlug}/initiatives`).then();
+      router.push(`/${getProp(initiative, 'product.owner')}/${productSlug}/initiatives`).then();
     },
     onError() {
       message.error("Failed to delete item").then();
@@ -95,11 +95,11 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
         !error && (
           <React.Fragment key={randomKeys()}>
             <div className="text-grey">
-              <Link href={`/products/${productSlug}`}>
+              <Link href={`/${getProp(initiative, 'product.owner')}/${productSlug}`}>
                 <a className="text-grey">{getProp(initiative, 'product.name', '')}</a>
               </Link>
               <span> / </span>
-              <Link href={`/products/${productSlug}/initiatives`}>
+              <Link href={`/${getProp(initiative, 'product.owner')}/${productSlug}/initiatives`}>
                 <a className="text-grey">Initiatives</a>
               </Link>
             </div>

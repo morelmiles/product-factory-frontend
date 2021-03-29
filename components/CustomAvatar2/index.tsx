@@ -14,7 +14,7 @@ interface ICustomAvatar2Props {
 
 const CustomAvatar2: React.FunctionComponent<ICustomAvatar2Props> = ({person, size = 40}) => {
   return (
-    <Link href={`/people/${person.slug}`}>
+    <Link href={`/${person.slug}`}>
       <Avatar
         size={size}
         style={{

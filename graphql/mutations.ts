@@ -11,8 +11,27 @@ export const CREATE_PERSON = gql`
 `;
 
 export const CREATE_PRODUCT = gql`
-  mutation CreateProduct($productInfo: ProductInput!) {
-    createProduct(productInfo: $productInfo) {
+  mutation CreateProduct($productInput: ProductInput!, $file: Upload) {
+    createProduct(productInput: $productInput, file: $file) {
+      status
+      message
+    }
+  }
+`;
+
+export const UPDATE_PRODUCT = gql`
+  mutation UpdateProduct($productInput: ProductInput!, $file: Upload) {
+    updateProduct(productInput: $productInput, file: $file) {
+      newSlug
+      status
+      message
+    }
+  }
+`;
+
+export const DELETE_PRODUCT = gql`
+  mutation CreateProduct($slug: String!) {
+    deleteProduct(slug: $slug) {
       status
       message
     }
@@ -286,8 +305,8 @@ export const ACCEPT_AGREEMENT = gql`
 `;
 
 export const UPLOAD_IMAGE = gql`
-  mutation UploadImage($file: Upload!) {
-    uploadImage(file: $file) {
+  mutation UploadImage($file: Upload!, $place: String!) {
+    uploadImage(file: $file, place: $place) {
       url
       status
       message

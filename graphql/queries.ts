@@ -1,22 +1,20 @@
 import gql from 'graphql-tag';
 
 export const GET_PRODUCTS = gql`
-  query GetProducts {
-    products {
+  query GetProducts($stackFilter: StackListInput) {
+    products(stackFilter: $stackFilter) {
       id
       name
+      owner
       website
       shortDescription
       fullDescription
       slug
       videoUrl
+      isPrivate
       initiativeSet {
         id
       }
-      #tag {
-      #  id
-      #  name
-      #}
       attachment {
         name
         fileType
@@ -31,6 +29,8 @@ export const GET_PRODUCTS = gql`
 export const GET_PRODUCT_INFO_BY_ID = gql`
   query GetProduct($slug: String!) {
     product(slug: $slug) {
+      owner
+      photo
       name
       id
       name
@@ -39,14 +39,11 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
       fullDescription
       slug
       videoUrl
+      isPrivate
       initiativeSet {
         id
         name
       }
-      #tag {
-      #  id
-      #  name
-      #}
       attachment {
         name
         fileType
@@ -64,29 +61,26 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
 export const GET_PRODUCT_BY_SLUG = gql`
   query GetProduct($slug: String!) {
     product(slug: $slug) {
+      owner
+      photo
       name
       id
-      name
       website
       shortDescription
       fullDescription
       slug
       videoUrl
+      isPrivate
       initiativeSet {
         id
         name
       }
-      #tag {
-      #  id
-      #  name
-      #}
       attachment {
         name
         fileType
         path
       }
     }
-    # userPerson(slug: $slug)
     tags {
       id
       name
@@ -202,12 +196,9 @@ export const GET_CAPABILITY_BY_ID = gql`
         }      
         product {
           name
-          videoUrl,
-          shortDescription,
-          #tag {
-          #  id
-          #  name
-          #}
+          owner
+          videoUrl
+          shortDescription
         }
       }
       tasks {
@@ -228,6 +219,7 @@ export const GET_CAPABILITY_BY_ID = gql`
           id
         }
         product {
+          owner
           slug
         }
         tag {
@@ -260,6 +252,7 @@ export const GET_INITIATIVES = gql`
       status
       product {
         id
+        owner
         name
         website
       }
@@ -298,13 +291,10 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
       product {
         id
         name
+        owner
         website
         shortDescription
         fullDescription
-        #tag {
-        #  id
-        #  name
-        #}
       }
     }
     tasks {
@@ -331,6 +321,7 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
         kind
       }
       product {
+        owner
         slug
       }
       tag {
@@ -427,6 +418,7 @@ export const GET_TASK_BY_ID = gql`
         }
         product {
           name
+          owner
           slug
         }
         initiative {
@@ -449,6 +441,7 @@ export const GET_TASK_BY_ID = gql`
         title
         publishedId
         product {
+          owner
           slug
         }
       }
@@ -467,6 +460,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       shortDescription
       updatedAt
       product {
+        owner
         name
         slug
       }
@@ -531,6 +525,7 @@ export const GET_PRODUCT_PERSONS = gql`
         }
       }
       product {
+        owner
         name
       }
       right
@@ -546,6 +541,7 @@ export const GET_PARTNERS = gql`
         photo
       }
       product {
+        owner
         name
       }
       person
@@ -596,6 +592,7 @@ export const GET_PERSON_PROFILE = gql`
           product {
             id
             name
+            owner
             website
             shortDescription
             fullDescription
@@ -641,6 +638,7 @@ export const GET_REVIEWS = gql`
       product {
         id
         name
+        owner
         website
         shortDescription
         fullDescription
@@ -679,6 +677,7 @@ export const GET_REVIEW_BY_ID = gql`
           id
           slug
           name
+          owner
           website
           shortDescription
           fullDescription
@@ -721,6 +720,7 @@ export const GET_REVIEW_BY_ID = gql`
         product {
           id
           name
+          owner
           website
           shortDescription
           fullDescription

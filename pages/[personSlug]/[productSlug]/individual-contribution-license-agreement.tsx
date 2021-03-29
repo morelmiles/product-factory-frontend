@@ -41,7 +41,7 @@ const ContributionLicenseAgreement: React.FunctionComponent = () => {
       <Row justify="center" style={{padding: '20px 0', textAlign: 'center'}}>
         <Col>
           <Typography.Title>
-            <Typography.Link className="text-grey-9" href={`/products/${productSlug}`}>{productTitle}</Typography.Link>
+            <Typography.Link className="text-grey-9" href={`/${getProp(productOriginal, 'product.owner', '')}/${productSlug}`}>{productTitle}</Typography.Link>
           </Typography.Title>
           <Typography.Title level={2}>Contribution License Agreement</Typography.Title>
         </Col>

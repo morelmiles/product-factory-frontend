@@ -23,7 +23,7 @@ interface IProductMapTree {
 
 const ProductMapTree: React.FunctionComponent<IProductMapTree> = ({user}) => {
   const router = useRouter();
-  const {productSlug} = router.query;
+  const {personSlug, productSlug} = router.query;
 
   const [treeData, setTreeData] = useState<any>([]);
 
@@ -291,7 +291,7 @@ const ProductMapTree: React.FunctionComponent<IProductMapTree> = ({user}) => {
                     justify="space-between"
                     style={{minWidth: 200}}
                   >
-                    <Link href={`/products/${productSlug}/capabilities/${node.id}`}>
+                    <Link href={`/${personSlug}/${productSlug}/capabilities/${node.id}`}>
                       {node.title}
                     </Link>
                     <div className='pl-25'>{node.subtitle}</div>

@@ -39,7 +39,7 @@ const Portfolio: React.FunctionComponent = () => {
                   <Row>
                     <Col span={17}>
                       <Link
-                        href={`/people/${personSlug}/portfolio/${getProp(review, 'id', '')}`}
+                        href={`/${personSlug}/portfolio/${getProp(review, 'id', '')}`}
                       >
                         <a className="text-grey-9">{getProp(review, 'product.name', '')}</a>
                       </Link>

@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import '../../../../styles/Profile.module.less';
+import '../../../styles/Profile.module.less';
 import {Col, Layout, Radio, Row, Spin, Table, Typography} from "antd";
-import Header from "../../../../components/Header";
-import ContainerFlex from "../../../../components/ContainerFlex";
-import {getProp} from "../../../../utilities/filters";
-import {formatDate} from "../../../../utilities/utils";
+import Header from "../../../components/Header";
+import ContainerFlex from "../../../components/ContainerFlex";
+import {getProp} from "../../../utilities/filters";
+import {formatDate} from "../../../utilities/utils";
 import Link from 'next/link';
 import {useQuery} from "@apollo/react-hooks";
-import {GET_PERSON_PROFILE, GET_REVIEW_BY_ID, GET_TASKS_BY_PRODUCT} from "../../../../graphql/queries";
+import {GET_PERSON_PROFILE, GET_REVIEW_BY_ID, GET_TASKS_BY_PRODUCT} from "../../../graphql/queries";
 import {useRouter} from "next/router";
-import {CustomAvatar, StarScore} from "../../../../components";
+import {CustomAvatar, StarScore} from "../../../components";
 import ReactPlayer from "react-player";
-import ProfileTop from "../../../../components/Profile/ProfileTop";
+import ProfileTop from "../../../components/Profile/ProfileTop";
 import {RadioChangeEvent} from "antd/es";
-import Attachments from "../../../../components/Attachments";
+import Attachments from "../../../components/Attachments";
 
 const {Content} = Layout;
 
@@ -89,7 +89,7 @@ const ProfileItem: React.FunctionComponent = () => {
       render: (task: any) => (
         <div style={{width: 200}}>
           <div>
-            <Link href={`/products/${getProp(review, 'review.review.product.slug', '')}/tasks/${task.id}`}>
+            <Link href={`/${getProp(review, 'review.review.product.owner', '')}/${getProp(review, 'review.review.product.slug', '')}/tasks/${task.id}`}>
               <a className="text-grey-9">{task.title}</a>
             </Link>
           </div>
@@ -130,7 +130,7 @@ const ProfileItem: React.FunctionComponent = () => {
                     <Row style={{marginBottom: 3}}>
                       <Typography.Text strong>Product: </Typography.Text>
                       <Link
-                        href={`/products/${getProp(review, 'review.review.product.slug', '')}`}
+                        href={`/${getProp(review, 'review.review.product.owner', '')}/${getProp(review, 'review.review.product.slug', '')}`}
                       >
                         <a className="text-black"
                            style={{marginLeft: 5}}>{getProp(review, 'review.review.product.name', '')}</a>
@@ -142,7 +142,7 @@ const ProfileItem: React.FunctionComponent = () => {
                         <Row style={{marginBottom: 3}}>
                           <Typography.Text strong>Initiative: </Typography.Text>
                           <Link
-                            href={`/products/${getProp(review, 'review.review.product.id', '')}/initiatives/${initiative.id}`}
+                            href={`/${getProp(review, 'review.review.product.owner', '')}/${getProp(review, 'review.review.product.id', '')}/initiatives/${initiative.id}`}
                           >
                             <a className="text-black">{initiative.name}</a>
                           </Link>
