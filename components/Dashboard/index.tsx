@@ -4,7 +4,6 @@ import {useRouter} from 'next/router'
 import {RadioChangeEvent} from 'antd/lib/radio';
 import ProductTab from './ProductTab';
 import TaskTab from './TaskTab';
-import classnames from 'classnames';
 import {useQuery} from "@apollo/react-hooks";
 import {GET_TAGS} from "../../graphql/queries";
 

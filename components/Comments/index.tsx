@@ -163,7 +163,7 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({taskId, submit, 
   const addComment = () => {
     createComment({
       variables: {
-        personId: localStorage.getItem('userId'), text: commentText, taskId
+        text: commentText, taskId
       }
     }).then();
   }
