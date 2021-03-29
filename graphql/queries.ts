@@ -127,6 +127,7 @@ export const GET_TASKS = gql`
       product {
         name
         slug
+        owner
       }
       assignedTo {
         id,

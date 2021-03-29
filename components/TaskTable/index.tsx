@@ -68,6 +68,7 @@ const TaskTable: React.FunctionComponent<Props> = (
               const initiativeName = getProp(task, 'initiative.name', '');
               const initiativeId = getProp(task, 'initiative.id', '');
               const assignee = getProp(task, 'assignedTo', null);
+              const owner = getProp(task, 'product.owner', '');
 
               return (
                 <Col key={index} span={24}>
@@ -78,22 +79,22 @@ const TaskTable: React.FunctionComponent<Props> = (
                         {
                           showProductName && (
                             <>
-                              <Link href={`/${getProp(task, 'product.owner', '')}/${productSlug}`}>
+                              <Link href={owner ? `/${owner}/${productSlug}` : ""}>
                                 <a className="text-grey-9">{productName}</a>
                               </Link>&nbsp;/&nbsp;
                             </>
                           )
                         }
                         <Link
-                          href={`/${getProp(task, 'product.owner', '')}/${productSlug}/tasks/${task.publishedId}`}
+                          href={`/${owner}/${productSlug}/tasks/${task.publishedId}`}
                         >
-                          <strong>
-                            <a className="text-grey-9">
+                          <a className="text-grey-9">
+                            <strong>
                               <Row align="middle">
                                 {task.title}
                               </Row>
-                            </a>
-                          </strong>
+                            </strong>
+                          </a>
 
                         </Link>
                       </Row>

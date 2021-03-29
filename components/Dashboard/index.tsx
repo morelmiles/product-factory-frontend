@@ -23,7 +23,6 @@ const Dashboard: React.FunctionComponent = () => {
   const [taskNum, setTaskNum] = useState(0);
 
   const {data: stacksData} = useQuery(GET_STACKS);
-  console.log(stacksData)
 
   const handleModeChange = (e: RadioChangeEvent): void => {
     setMode(e.target.value);
