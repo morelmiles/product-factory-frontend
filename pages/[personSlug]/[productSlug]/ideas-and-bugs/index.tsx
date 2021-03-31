@@ -40,7 +40,7 @@ const ItemList = (items: any, itemType: string, personSlug: string, productSlug:
                           </a>
                         </Link>
                       </Row>
-                      <Row style={{marginBottom: 10}}>
+                      <Row>
                         <Col>
                           <Typography.Text
                             type="secondary"
@@ -49,7 +49,7 @@ const ItemList = (items: any, itemType: string, personSlug: string, productSlug:
                         </Col>
                       </Row>
                       {relatedCapability && (
-                        <Row align="middle">
+                        <Row align="middle" style={{marginTop: 10}}>
 
                           <Link href={`/${personSlug}/${productSlug}/capabilities/${relatedCapability.id}`}>
                             <span className="text-grey-9 pointer link">
@@ -63,9 +63,8 @@ const ItemList = (items: any, itemType: string, personSlug: string, productSlug:
                   <Col span={8}>
                     <div className="mt-10">
                       <div className="d-flex-end" style={{fontSize: 13}}>
-                        <Link href={`/${assignPersonSlug}`}>
-                          <CustomAvatar2 person={{fullname: person.fullName, slug: assignPersonSlug}} size={35}/>
-                        </Link>
+                        <CustomAvatar2 person={{fullname: person.fullName, slug: assignPersonSlug}}
+                                       size={35} />
                         <Link href={`/${assignPersonSlug}`}>
                           {person.fullName}
                         </Link>

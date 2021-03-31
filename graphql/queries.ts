@@ -843,6 +843,8 @@ export const GET_PRODUCT_IDEAS = gql`
         name
       }
       person {
+        id
+        slug
         fullName
         username
       }
@@ -865,6 +867,33 @@ export const GET_PRODUCT_IDEA_BY_ID = gql`
         id
         fullName
         username
+        slug
+      }
+      product {
+        slug
+        name
+      }
+    }
+  }
+`;
+
+
+export const GET_PRODUCT_BUG_BY_ID = gql`
+  query GetProductIdeaById($id: Int) {
+    bug(id: $id) {
+      id
+      bugType
+      headline
+      description
+      relatedCapability {
+        id
+        name
+      }
+      person {
+        id
+        fullName
+        username
+        slug
       }
       product {
         slug

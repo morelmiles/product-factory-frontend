@@ -321,3 +321,11 @@ export const DELETE_IDEA = gql`
     }
   }
 `;
+
+export const DELETE_BUG = gql`
+  mutation DeleteBug($id: ID!) {
+    deleteBug(id: $id) {
+      isExists
+    }
+  }
+`;
