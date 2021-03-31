@@ -313,3 +313,11 @@ export const UPLOAD_IMAGE = gql`
     }
   }
 `;
+
+export const DELETE_IDEA = gql`
+  mutation DeleteIdea($id: ID!) {
+    deleteIdea(id: $id) {
+      isExists
+    }
+  }
+`;

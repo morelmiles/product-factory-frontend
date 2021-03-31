@@ -830,3 +830,65 @@ export const GET_LICENSE = gql`
    }
  }
 `;
+
+export const GET_PRODUCT_IDEAS = gql`
+  query GetProductIdeas($productSlug: String) {
+    ideas(productSlug: $productSlug) {
+      id
+      ideaType
+      headline
+      description
+      relatedCapability {
+        id
+        name
+      }
+      person {
+        fullName
+        username
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_IDEA_BY_ID = gql`
+  query GetProductIdeaById($id: Int) {
+    idea(id: $id) {
+      id
+      ideaType
+      headline
+      description
+      relatedCapability {
+        id
+        name
+      }
+      person {
+        id
+        fullName
+        username
+      }
+      product {
+        slug
+        name
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_BAGS = gql`
+  query GetProductBags($productSlug: String) {
+    bugs(productSlug: $productSlug) {
+      id
+      bugType
+      headline
+      description
+      relatedCapability {
+        id
+        name
+      }
+      person {
+        fullName
+        username
+      }
+    }
+  }
+`

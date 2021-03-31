@@ -41,7 +41,8 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
       {url: '/tasks', type: 'tasks', name: 'Tasks'},
       {url: '/capabilities', type: 'capabilities', name: 'Product Map'},
       {url: '/people', type: 'people', name: 'People'},
-      {url: '/partners', type: 'partners', name: 'Commercial Partners'}
+      {url: '/partners', type: 'partners', name: 'Commercial Partners'},
+      {url: '/ideas-and-bugs', type: 'ideas-and-bugs', name: 'Ideas & Bugs'}
     ];
 
     const userHasAdminRoots = hasAdminRoots((getUserRole(user.roles, productSlug)));
