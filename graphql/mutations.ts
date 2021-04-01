@@ -313,3 +313,73 @@ export const UPLOAD_IMAGE = gql`
     }
   }
 `;
+
+export const DELETE_IDEA = gql`
+  mutation DeleteIdea($id: ID!) {
+    deleteIdea(id: $id) {
+      isExists
+    }
+  }
+`;
+
+export const DELETE_BUG = gql`
+  mutation DeleteBug($id: ID!) {
+    deleteBug(id: $id) {
+      isExists
+    }
+  }
+`;
+
+export const CREATE_BUG = gql`
+  mutation CreateBug($input: BugInput!) {
+    createBug(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const UPDATE_BUG = gql`
+  mutation UpdateBug($input: BugInput!, $id: Int!) {
+    updateBug(input: $input, id: $id) {
+      success
+      message
+    }
+  }
+`;
+
+export const CREATE_IDEA = gql`
+  mutation CreateIdea($input: IdeaInput!) {
+    createIdea(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const UPDATE_IDEA = gql`
+  mutation UpdateIdea($input: IdeaInput!, $id: Int!) {
+    updateIdea(input: $input, id: $id) {
+      success
+      message
+    }
+  }
+`;
+
+export const VOTE_BUG = gql`
+  mutation VoteBug($input: VoteInput!) {
+    voteBug(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const VOTE_IDEA = gql`
+  mutation VoteIdea($input: VoteInput!) {
+    voteIdea(input: $input) {
+      success
+      message
+    }
+  }
+`;
