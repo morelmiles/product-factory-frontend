@@ -329,3 +329,21 @@ export const DELETE_BUG = gql`
     }
   }
 `;
+
+export const CREATE_BUG = gql`
+  mutation CreateBug($input: BugInput!) {
+    createBug(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const UPDATE_BUG = gql`
+  mutation UpdateBug($input: BugInput!, $id: Int!) {
+    updateBug(input: $input, id: $id) {
+      success
+      message
+    }
+  }
+`;

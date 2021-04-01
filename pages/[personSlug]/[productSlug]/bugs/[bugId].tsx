@@ -12,12 +12,11 @@ import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import parse from "html-react-parser";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
-
+import AddEditBug from "../../../../components/AddEditBug";
 
 
 type Params = {
   user?: any;
-  currentProduct: any;
 };
 
 const Task: React.FunctionComponent<Params> = ({user}) => {
@@ -25,7 +24,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   const {bugId, personSlug, productSlug} = router.query;
 
   const [deleteModal, showDeleteModal] = useState(false);
-  const [bug, setIdea] = useState<any>({});
+  const [bug, setBug] = useState<any>({});
   const [showEditModal, setShowEditModal] = useState(false);
 
   const {data: bugData, error, loading, refetch} = useQuery(GET_PRODUCT_BUG_BY_ID, {
@@ -51,10 +50,10 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   });
 
   useEffect(() => {
-    if (bugData) {
-      setIdea(bugData?.bug || {});
-    }
+    if (bugData) setBug(bugData?.bug || {});
   }, [bugData]);
+
+  const fetchData = async () => await refetch();
 
   return (
     <LeftPanelContainer>
@@ -158,18 +157,17 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   description="Are you sure you want to delete Bug?"
                 />
               )}
-              {/*{*/}
-              {/*  showEditModal &&*/}
-              {/*  <AddTaskContainer*/}
-              {/*      modal={showEditModal}*/}
-              {/*      productSlug={String(productSlug)}*/}
-              {/*      modalType={true}*/}
-              {/*      closeModal={setShowEditModal}*/}
-              {/*      task={task}*/}
-              {/*      submit={fetchData}*/}
-              {/*      tasks={tasks}*/}
-              {/*  />*/}
-              {/*}*/}
+              {
+                showEditModal &&
+                <AddEditBug
+                    modal={showEditModal}
+                    productSlug={productSlug}
+                    editMode={true}
+                    closeModal={setShowEditModal}
+                    bug={bug}
+                    submit={fetchData}
+                />
+              }
             </>
           )
         }
@@ -179,8 +177,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  user: state.user,
-  currentProduct: state.work.currentProduct || {}
+  user: state.user
 });
 
 const mapDispatchToProps = () => ({});

@@ -93,8 +93,6 @@ const AddTask: React.FunctionComponent<Props> = (
     }
   };
 
-  console.log(user)
-
   useEffect(() => {
     if (reviewSelectValue === '') {
       setReviewSelectValue(getProp(user, 'slug', ''));

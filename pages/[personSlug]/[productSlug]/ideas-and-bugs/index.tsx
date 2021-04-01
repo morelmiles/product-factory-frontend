@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Col, Radio, Row, Typography, Button} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
 import {connect} from 'react-redux';
+import parse from "html-react-parser";
 import {GET_PRODUCT_IDEAS, GET_PRODUCT_BAGS} from '../../../../graphql/queries';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {RadioChangeEvent} from "antd/es";
@@ -9,6 +10,7 @@ import Link from "next/link";
 import Loading from "../../../../components/Loading";
 import {useRouter} from "next/router";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
+import AddEditBug from "../../../../components/AddEditBug";
 
 type Props = {
   user: { isLoggedIn: boolean, id: string },
@@ -45,7 +47,7 @@ const ItemList = (items: any, itemType: string, personSlug: string, productSlug:
                           <Typography.Text
                             type="secondary"
                             style={{marginBottom: 5}}
-                          >{item.description}</Typography.Text>
+                          >{parse(item.description)}</Typography.Text>
                         </Col>
                       </Row>
                       {relatedCapability && (
@@ -89,12 +91,12 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
   const [mode, setMode] = useState('ideas');
   const [showIdeaAddModal, setIdeaShowAddModal] = useState(false);
   const [showBugAddModal, setBugShowAddModal] = useState(false);
-  const {data: ideas, loading: ideasLoading} = useQuery(GET_PRODUCT_IDEAS, {
+  const {data: ideas, loading: ideasLoading, refetch: refetchIdeas} = useQuery(GET_PRODUCT_IDEAS, {
     variables: {productSlug},
     fetchPolicy: "no-cache"
   });
 
-  const {data: bugs, loading: bugsLoading} = useQuery(GET_PRODUCT_BAGS, {
+  const {data: bugs, loading: bugsLoading, refetch: refetchBugs} = useQuery(GET_PRODUCT_BAGS, {
     variables: {productSlug},
     fetchPolicy: "no-cache"
   });
@@ -132,6 +134,14 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
           : ItemList(bugs?.bugs || [], "bugs", personSlug, productSlug)
         }
       </>
+      {showBugAddModal &&
+        <AddEditBug
+            modal={showBugAddModal}
+            productSlug={productSlug}
+            closeModal={setBugShowAddModal}
+            submit={refetchBugs}
+        />
+      }
     </LeftPanelContainer>
   );
 }
@@ -140,4 +150,4 @@ const mapStateToProps = (state: any) => ({
   user: state.user,
 });
 
-export default connect(mapStateToProps, null)(IdeasAndBugs)
+export default connect(mapStateToProps, null)(IdeasAndBugs);

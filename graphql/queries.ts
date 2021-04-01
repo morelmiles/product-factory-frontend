@@ -26,6 +26,16 @@ export const GET_PRODUCTS = gql`
   }
 `
 
+export const GET_PRODUCTS_SHORT = gql`
+  query GetProducts($stackFilter: StackListInput) {
+    products(stackFilter: $stackFilter) {
+      id
+      name
+      slug
+    }
+  }
+`
+
 export const GET_PRODUCT_INFO_BY_ID = gql`
   query GetProduct($slug: String!) {
     product(slug: $slug) {
@@ -896,6 +906,7 @@ export const GET_PRODUCT_BUG_BY_ID = gql`
         slug
       }
       product {
+        id
         slug
         name
       }

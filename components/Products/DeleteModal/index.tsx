@@ -1,7 +1,5 @@
 import React from 'react';
-import { Modal, Button, Select } from 'antd';
-
-const { Option } = Select;
+import { Modal, Button } from 'antd';
 
 type Props = {
     modal?: boolean;
