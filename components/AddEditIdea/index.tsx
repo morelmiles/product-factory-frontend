@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Modal, Row, Input, Select, message, Checkbox} from 'antd';
+import {Modal, Row, Input, Select, message} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {
   GET_CAPABILITIES_BY_PRODUCT_AS_LIST, GET_PRODUCTS_SHORT
 } from '../../graphql/queries';
-import {CREATE_BUG, UPDATE_BUG} from '../../graphql/mutations';
+import {CREATE_IDEA, UPDATE_IDEA} from '../../graphql/mutations';
 import {RICH_TEXT_EDITOR_WIDTH} from '../../utilities/constants';
 import {getProp} from "../../utilities/filters";
 import RichTextEditor from "../RichTextEditor";
+import {IDEA_TYPES} from "../../graphql/types";
 
 const {Option} = Select;
 
@@ -19,7 +20,7 @@ type Props = {
   currentProduct?: any,
   modalType?: boolean,
   submit?: any;
-  bug: {
+  idea: {
     id: string,
     headline: string,
     description: string,
@@ -29,29 +30,29 @@ type Props = {
     recentCapability: {
       id
     } | null,
-    bugType: boolean,
+    ideaType: string,
   },
 };
 
-const AddEditBug: React.FunctionComponent<Props> = (
+const AddEditIdea: React.FunctionComponent<Props> = (
   {
     modal = false,
     productSlug,
     closeModal,
     editMode = false,
-    bug,
+    idea,
     submit,
   }
 ) => {
-  const [headline, setHeadline] = useState(editMode ? bug.headline : '');
+  const [headline, setHeadline] = useState(editMode ? idea.headline : '');
 
   const [allCapabilities, setAllCapabilities] = useState([]);
-  const [description, setDescription] = useState(editMode ? bug.description : '');
+  const [description, setDescription] = useState(editMode ? idea.description : '');
   const [descriptionClear, setDescriptionClear] = useState(0);
-  const [bugType, setBugType] = useState(false);
-  const [product, setProduct] = useState(editMode ? bug.product?.id || null : null);
+  const [ideaType, setIdeaType] = useState(editMode ? idea.ideaType : '');
+  const [product, setProduct] = useState(editMode ? idea.product?.id || null : null);
   const [capability, setCapability] = useState(
-    editMode && bug.relatedCapability ? bug.relatedCapability?.id || null : null
+    editMode && idea.relatedCapability ? idea.relatedCapability?.id || null : null
   );
 
   const {data: capabilitiesData, refetch: capabilitiesRefetch} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
@@ -61,8 +62,8 @@ const AddEditBug: React.FunctionComponent<Props> = (
   const {data: productsData} = useQuery(GET_PRODUCTS_SHORT, {
     fetchPolicy: "no-cache"
   });
-  const [createBug] = useMutation(CREATE_BUG);
-  const [updateBug] = useMutation(UPDATE_BUG);
+  const [createIdea] = useMutation(CREATE_IDEA);
+  const [updateIdea] = useMutation(UPDATE_IDEA);
 
   const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
@@ -103,8 +104,12 @@ const AddEditBug: React.FunctionComponent<Props> = (
       message.error("Product is required. Please select the product");
       return;
     }
+    if (ideaType === "") {
+      message.error("Please select what best matches your idea");
+      return;
+    }
 
-    await addNewBug();
+    await addNewIdea();
   };
 
   const handleCancel = () => {
@@ -118,29 +123,29 @@ const AddEditBug: React.FunctionComponent<Props> = (
     setProduct(null);
     setDescription("");
     setDescriptionClear(prev => prev + 1);
-    setBugType(false);
+    setIdeaType("");
   }
 
   // @ts-ignore
-  const addNewBug = async () => {
+  const addNewIdea = async () => {
     const input = {
       headline,
       description,
       productId: parseInt(product),
       relatedCapabilityId: capability !== null ? parseInt(capability) : null,
-      bugType,
+      ideaType,
     };
 
     try {
       const res = editMode
-        ? await updateBug({
-          variables: {input, id: parseInt(bug.id)}
+        ? await updateIdea({
+          variables: {input, id: parseInt(idea.id)}
         })
-        : await createBug({
+        : await createIdea({
           variables: {input}
         })
 
-      const modalTypeText = editMode ? 'updateBug' : 'createBug';
+      const modalTypeText = editMode ? 'updateIdea' : 'createIdea';
       const messageText = getProp(res, `data.${modalTypeText}.message`, '');
 
       if (messageText && getProp(res, `data.${modalTypeText}.success`, false)) {
@@ -161,7 +166,7 @@ const AddEditBug: React.FunctionComponent<Props> = (
   return (
     <>
       <Modal
-        title={`${editMode ? "Edit" : "Add"} Bug`}
+        title={`${editMode ? "Edit" : "Add"} Idea`}
         visible={modal}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -170,7 +175,7 @@ const AddEditBug: React.FunctionComponent<Props> = (
         maskClosable={false}
       >
         <Row className='mb-15'>
-          <label>Please give your bug a name *:</label>
+          <label>Please give your idea a name *:</label>
           <Input
             placeholder="Headline"
             value={headline}
@@ -179,8 +184,23 @@ const AddEditBug: React.FunctionComponent<Props> = (
           />
         </Row>
         <Row className='mb-15'>
-          <label>Please describe the bug *:</label>
+          <label>Please describe the idea *:</label>
           <RichTextEditor initialHTMLValue={description} onChangeHTML={setDescription} clear={descriptionClear}/>
+        </Row>
+        <Row className='mb-15'>
+          <label>Which of the following best matches your idea? *:</label>
+          <Select
+            placeholder='Select an idea type'
+            onChange={setIdeaType}
+            value={ideaType}
+          >
+            <Option value="">-------------</Option>
+            {IDEA_TYPES.map((option: any, idx: number) => (
+              <Option key={`cap${idx}`} value={option.id}>
+                {option.name}
+              </Option>
+            ))}
+          </Select>
         </Row>
         <Row className='mb-15'>
           <label>Product *:</label>
@@ -213,10 +233,6 @@ const AddEditBug: React.FunctionComponent<Props> = (
             ))}
           </Select>
         </Row>
-        <Row className='mb-15'>
-          <label>Is this bug security related?: </label>&nbsp;
-          <Checkbox checked={bugType} onChange={(e) => setBugType(e.target.checked)}/>
-        </Row>
       </Modal>
     </>
   )
@@ -230,4 +246,4 @@ const mapStateToProps = (state: any) => ({
 export default connect(
   mapStateToProps,
   null
-)(AddEditBug);
+)(AddEditIdea);

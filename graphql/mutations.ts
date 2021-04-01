@@ -347,3 +347,21 @@ export const UPDATE_BUG = gql`
     }
   }
 `;
+
+export const CREATE_IDEA = gql`
+  mutation CreateIdea($input: IdeaInput!) {
+    createIdea(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const UPDATE_IDEA = gql`
+  mutation UpdateIdea($input: IdeaInput!, $id: Int!) {
+    updateIdea(input: $input, id: $id) {
+      success
+      message
+    }
+  }
+`;

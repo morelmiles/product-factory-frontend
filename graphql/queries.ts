@@ -880,6 +880,7 @@ export const GET_PRODUCT_IDEA_BY_ID = gql`
         slug
       }
       product {
+        id
         slug
         name
       }

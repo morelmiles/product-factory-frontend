@@ -15,20 +15,19 @@ import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import parse from "html-react-parser";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
-
+import AddEditIdea from "../../../../components/AddEditIdea";
 
 const getIdeaType = (ideaType: number) => {
   let searchedType = IDEA_TYPES.filter((t) => t.id === ideaType)
   return searchedType.length > 0 ? searchedType[0].name : ideaType
 }
 
-
 type Params = {
   user?: any;
   currentProduct: any;
 };
 
-const Task: React.FunctionComponent<Params> = ({user}) => {
+const Idea: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const {ideaId, personSlug, productSlug} = router.query;
 
@@ -59,9 +58,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   });
 
   useEffect(() => {
-    if (ideaData) {
-      setIdea(ideaData?.idea || {});
-    }
+    if (ideaData) setIdea(ideaData?.idea || {});
   }, [ideaData]);
 
   return (
@@ -166,18 +163,17 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                   description="Are you sure you want to delete Idea?"
                 />
               )}
-              {/*{*/}
-              {/*  showEditModal &&*/}
-              {/*  <AddTaskContainer*/}
-              {/*      modal={showEditModal}*/}
-              {/*      productSlug={String(productSlug)}*/}
-              {/*      modalType={true}*/}
-              {/*      closeModal={setShowEditModal}*/}
-              {/*      task={task}*/}
-              {/*      submit={fetchData}*/}
-              {/*      tasks={tasks}*/}
-              {/*  />*/}
-              {/*}*/}
+              {
+                showEditModal &&
+                  <AddEditIdea
+                    modal={showEditModal}
+                    productSlug={productSlug}
+                    editMode={true}
+                    closeModal={setShowEditModal}
+                    idea={idea}
+                    submit={refetch}
+                  />
+              }
             </>
           )
         }
@@ -191,11 +187,7 @@ const mapStateToProps = (state: any) => ({
   currentProduct: state.work.currentProduct || {}
 });
 
-const mapDispatchToProps = () => ({});
-
-const TaskContainer = connect(
+export default connect(
   mapStateToProps,
-  mapDispatchToProps
-)(Task);
-
-export default TaskContainer;
+  null
+)(Idea);

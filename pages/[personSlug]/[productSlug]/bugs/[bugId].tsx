@@ -19,7 +19,7 @@ type Params = {
   user?: any;
 };
 
-const Task: React.FunctionComponent<Params> = ({user}) => {
+const Bug: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const {bugId, personSlug, productSlug} = router.query;
 
@@ -180,11 +180,7 @@ const mapStateToProps = (state: any) => ({
   user: state.user
 });
 
-const mapDispatchToProps = () => ({});
-
-const TaskContainer = connect(
+export default connect(
   mapStateToProps,
-  mapDispatchToProps
-)(Task);
-
-export default TaskContainer;
+  null
+)(Bug);

@@ -11,6 +11,7 @@ import Loading from "../../../../components/Loading";
 import {useRouter} from "next/router";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import AddEditBug from "../../../../components/AddEditBug";
+import AddEditIdea from "../../../../components/AddEditIdea";
 
 type Props = {
   user: { isLoggedIn: boolean, id: string },
@@ -140,6 +141,14 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
             productSlug={productSlug}
             closeModal={setBugShowAddModal}
             submit={refetchBugs}
+        />
+      }
+      {showIdeaAddModal &&
+        <AddEditIdea
+            modal={showIdeaAddModal}
+            productSlug={productSlug}
+            closeModal={setIdeaShowAddModal}
+            submit={refetchIdeas}
         />
       }
     </LeftPanelContainer>
