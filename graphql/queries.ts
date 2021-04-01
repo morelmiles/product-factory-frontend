@@ -858,6 +858,7 @@ export const GET_PRODUCT_IDEAS = gql`
         fullName
         username
       }
+      voteUp
     }
   }
 `;
@@ -884,6 +885,7 @@ export const GET_PRODUCT_IDEA_BY_ID = gql`
         slug
         name
       }
+      voteUp
     }
   }
 `;
@@ -911,11 +913,12 @@ export const GET_PRODUCT_BUG_BY_ID = gql`
         slug
         name
       }
+      voteUp
     }
   }
 `;
 
-export const GET_PRODUCT_BAGS = gql`
+export const GET_PRODUCT_BUGS = gql`
   query GetProductBags($productSlug: String) {
     bugs(productSlug: $productSlug) {
       id
@@ -927,9 +930,12 @@ export const GET_PRODUCT_BAGS = gql`
         name
       }
       person {
+        id
+        slug
         fullName
         username
       }
+      voteUp
     }
   }
 `

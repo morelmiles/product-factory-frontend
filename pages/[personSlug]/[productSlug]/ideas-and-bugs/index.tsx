@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {Col, Radio, Row, Typography, Button} from 'antd';
+import {Col, Radio, Row, Typography, Button, Empty} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
 import {connect} from 'react-redux';
 import parse from "html-react-parser";
-import {GET_PRODUCT_IDEAS, GET_PRODUCT_BAGS} from '../../../../graphql/queries';
+import {GET_PRODUCT_IDEAS, GET_PRODUCT_BUGS} from '../../../../graphql/queries';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {RadioChangeEvent} from "antd/es";
 import Link from "next/link";
@@ -17,7 +17,7 @@ type Props = {
   user: { isLoggedIn: boolean, id: string },
 };
 
-const ItemList = (items: any, itemType: string, personSlug: string, productSlug: string) => {
+const ItemList = (items: any, itemType: string, personSlug: string, productSlug: string, user: {id: string}) => {
   return (
     <>
       {items.length > 0 ? items.map((item: any, index: number) => {
@@ -66,11 +66,20 @@ const ItemList = (items: any, itemType: string, personSlug: string, productSlug:
                   <Col span={8}>
                     <div className="mt-10">
                       <div className="d-flex-end" style={{fontSize: 13}}>
-                        <CustomAvatar2 person={{fullname: person.fullName, slug: assignPersonSlug}}
-                                       size={35} />
-                        <Link href={`/${assignPersonSlug}`}>
-                          {person.fullName}
-                        </Link>
+                        {user.id === person.id ? <strong>Created by You</strong> : (
+                          <>
+                            <CustomAvatar2 person={{fullname: person.fullName, slug: assignPersonSlug}}
+                                           size={35} />
+                            <Link href={`/${assignPersonSlug}`}>
+                              {person.fullName}
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-10">
+                      <div className="d-flex-end" style={{fontSize: 13}}>
+                        Votes: {item.voteUp}
                       </div>
                     </div>
                   </Col>
@@ -79,7 +88,7 @@ const ItemList = (items: any, itemType: string, personSlug: string, productSlug:
             </Row>
           </div>
         )
-      }) : `The ${itemType} list is empty`}
+      }) : <Empty style={{ margin: "20px auto"}} description={`The ${itemType} list is empty`} />}
     </>
   )
 }
@@ -97,7 +106,7 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
     fetchPolicy: "no-cache"
   });
 
-  const {data: bugs, loading: bugsLoading, refetch: refetchBugs} = useQuery(GET_PRODUCT_BAGS, {
+  const {data: bugs, loading: bugsLoading, refetch: refetchBugs} = useQuery(GET_PRODUCT_BUGS, {
     variables: {productSlug},
     fetchPolicy: "no-cache"
   });
@@ -131,8 +140,8 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
       </div>
       <>
         {ideaMode
-          ? ItemList(ideas?.ideas || [], "ideas", personSlug, productSlug)
-          : ItemList(bugs?.bugs || [], "bugs", personSlug, productSlug)
+          ? ItemList(ideas?.ideas || [], "ideas", personSlug, productSlug, user)
+          : ItemList(bugs?.bugs || [], "bugs", personSlug, productSlug, user)
         }
       </>
       {showBugAddModal &&

@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Row, Col, message, Button, Spin, Typography, Breadcrumb} from 'antd';
+import { ArrowUpOutlined } from '@ant-design/icons';
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import { GET_PRODUCT_BUG_BY_ID } from '../../../../graphql/queries';
-import {DELETE_BUG} from '../../../../graphql/mutations';
+import {DELETE_BUG, VOTE_BUG} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {EditIcon} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
@@ -26,6 +27,7 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
   const [deleteModal, showDeleteModal] = useState(false);
   const [bug, setBug] = useState<any>({});
   const [showEditModal, setShowEditModal] = useState(false);
+  const [voteType, setVoteType] = useState(0);
 
   const {data: bugData, error, loading, refetch} = useQuery(GET_PRODUCT_BUG_BY_ID, {
     variables: {id: bugId}
@@ -47,6 +49,21 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
     onError() {
       message.error("Failed to delete item!").then();
     }
+  });
+
+  const [voteBug] = useMutation(VOTE_BUG, {
+    variables: {
+      input: {
+        objectId: parseInt(bugId),
+        voteType
+      }
+    },
+    onCompleted: (msg) => {
+      const {success, message: voteMessage} = msg.voteBug;
+      message[success ? "success" : "error"](voteMessage).then();
+      if (success) refetch();
+    },
+    onError: (msg) => message.error(msg.voteBug.message).then(),
   });
 
   useEffect(() => {
@@ -108,29 +125,33 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
                       &nbsp;{bug.bugType ? "Private" : "Public"}
                     </Row>
                     <Row style={{marginTop: 10}} className="text-sm mt-8">
-                      <strong className="my-auto">Created By: </strong>
 
-                      <Row align="middle" style={{marginLeft: 15}}>
-                        <Col>
-                          <CustomAvatar2 person={{
-                            fullname: getProp(bug, 'person.fullName', ''),
-                            slug: getProp(bug, 'person.slug', '')
-                          }}/>
-                        </Col>
-                        <Col>
-                          <Typography.Link className="text-grey-9"
-                                           href={`/${getProp(bug, 'person.slug', '')}`}>
-                            {getProp(bug, 'person.fullName', '')}
-                          </Typography.Link>
-                        </Col>
-                      </Row>
+                      {bug.person?.id === user.id ? (
+                        <strong className="my-auto">Created By You</strong>
+                      ) : (
+                        <>
+                          <strong className="my-auto">Created By: </strong>
+                          <Row align="middle" style={{marginLeft: 15}}>
+                            <Col>
+                              <CustomAvatar2 person={{
+                                fullname: getProp(bug, 'person.fullName', ''),
+                                slug: getProp(bug, 'person.slug', '')
+                              }}/>
+                            </Col>
+                            <Col>
+                              <Typography.Link className="text-grey-9"
+                                               href={`/${getProp(bug, 'person.slug', '')}`}>
+                                {getProp(bug, 'person.fullName', '')}
+                              </Typography.Link>
+                            </Col>
+                          </Row>
+                        </>
+                      )}
                     </Row>
 
                     {
                       bug.relatedCapability && (
-                        <Row
-                          className="text-sm mt-8"
-                        >
+                        <Row className="text-sm mt-8">
                           <strong className="my-auto">
                             Related Capability:
                           </strong>
@@ -141,6 +162,18 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
                         </Row>
                       )
                     }
+
+                    <Row className="text-sm mt-8">
+                      <strong>Votes:</strong>&nbsp;{bug.voteUp}
+                    </Row>
+
+                    {user.isLoggedIn && user.id !== bug?.person?.id && (
+                      <Row className="text-sm mt-15">
+                        <Button icon={<ArrowUpOutlined />}
+                                type="primary"
+                                onClick={voteBug}>Upvote</Button>
+                      </Row>
+                    )}
 
                   </div>
                 </Col>

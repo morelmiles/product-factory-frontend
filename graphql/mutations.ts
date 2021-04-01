@@ -365,3 +365,21 @@ export const UPDATE_IDEA = gql`
     }
   }
 `;
+
+export const VOTE_BUG = gql`
+  mutation VoteBug($input: VoteInput!) {
+    voteBug(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const VOTE_IDEA = gql`
+  mutation VoteIdea($input: VoteInput!) {
+    voteIdea(input: $input) {
+      success
+      message
+    }
+  }
+`;

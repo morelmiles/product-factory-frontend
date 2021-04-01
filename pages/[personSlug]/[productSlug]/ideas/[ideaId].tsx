@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Row, Col, message, Button, Spin, Typography, Breadcrumb} from 'antd';
+import { ArrowUpOutlined } from '@ant-design/icons';
 import {useRouter} from 'next/router';
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import {
   GET_PRODUCT_IDEA_BY_ID,
 } from '../../../../graphql/queries';
 import {IDEA_TYPES} from '../../../../graphql/types';
-import {DELETE_IDEA} from '../../../../graphql/mutations';
+import {DELETE_IDEA, VOTE_IDEA} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {EditIcon} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
@@ -34,6 +35,7 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
   const [deleteModal, showDeleteModal] = useState(false);
   const [idea, setIdea] = useState<any>({});
   const [showEditModal, setShowEditModal] = useState(false);
+  const [voteType, setVoteType] = useState(0);
 
   const {data: ideaData, error, loading, refetch} = useQuery(GET_PRODUCT_IDEA_BY_ID, {
     variables: {id: ideaId}
@@ -55,6 +57,21 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
     onError() {
       message.error("Failed to delete item!").then();
     }
+  });
+
+  const [voteIdea] = useMutation(VOTE_IDEA, {
+    variables: {
+      input: {
+        objectId: parseInt(ideaId),
+        voteType
+      }
+    },
+    onCompleted: (msg) => {
+      const {success, message: voteMessage} = msg.voteIdea;
+      message[success ? "success" : "error"](voteMessage).then();
+      if (success) refetch();
+    },
+    onError: (msg) => message.error(msg.voteIdea.message).then(),
   });
 
   useEffect(() => {
@@ -114,29 +131,32 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
                       &nbsp;{getIdeaType(idea.ideaType)}
                     </Row>
                     <Row style={{marginTop: 10}} className="text-sm mt-8">
-                      <strong className="my-auto">Created By: </strong>
-
-                      <Row align="middle" style={{marginLeft: 15}}>
-                        <Col>
-                          <CustomAvatar2 person={{
-                            fullname: getProp(idea, 'person.fullName', ''),
-                            slug: getProp(idea, 'person.slug', '')
-                          }}/>
-                        </Col>
-                        <Col>
-                          <Typography.Link className="text-grey-9"
-                                           href={`/${getProp(idea, 'person.slug', '')}`}>
-                            {getProp(idea, 'person.fullName', '')}
-                          </Typography.Link>
-                        </Col>
-                      </Row>
+                      {idea.person?.id === user.id ? (
+                        <strong className="my-auto">Created By You</strong>
+                      ) : (
+                        <>
+                          <strong className="my-auto">Created By: </strong>
+                          <Row align="middle" style={{marginLeft: 15}}>
+                            <Col>
+                              <CustomAvatar2 person={{
+                                fullname: getProp(idea, 'person.fullName', ''),
+                                slug: getProp(idea, 'person.slug', '')
+                              }}/>
+                            </Col>
+                            <Col>
+                              <Typography.Link className="text-grey-9"
+                                               href={`/${getProp(idea, 'person.slug', '')}`}>
+                                {getProp(idea, 'person.fullName', '')}
+                              </Typography.Link>
+                            </Col>
+                          </Row>
+                        </>
+                      )}
                     </Row>
 
                     {
                       idea.relatedCapability && (
-                        <Row
-                          className="text-sm mt-8"
-                        >
+                        <Row className="text-sm mt-8">
                           <strong className="my-auto">
                             Related Capability:
                           </strong>
@@ -147,6 +167,18 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
                         </Row>
                       )
                     }
+
+                    <Row className="text-sm mt-8">
+                      <strong>Votes:</strong>&nbsp;{idea.voteUp}
+                    </Row>
+
+                    {user.isLoggedIn && user.id !== idea?.person?.id && (
+                      <Row className="text-sm mt-15">
+                        <Button icon={<ArrowUpOutlined />}
+                                type="primary"
+                                onClick={voteIdea}>Upvote</Button>
+                      </Row>
+                    )}
 
                   </div>
                 </Col>
