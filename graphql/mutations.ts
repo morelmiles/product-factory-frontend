@@ -240,16 +240,35 @@ export const CLAIM_TASK = gql`
 export const IN_REVIEW_TASK = gql`
   mutation InReviewTask($taskId: Int!) {
     inReviewTask(taskId: $taskId) {
-      success,
+      success
       message
     }
   }
 `;
 
-export const CREATE_COMMENT = gql`
-  mutation CreateComment($text: String!, $taskId: Int, $parentId: Int) {
-    createComment(commentInput: {text: $text, taskId: $taskId, parentId: $parentId}) {
-      status
+export const CREATE_TASK_COMMENT = gql`
+  mutation CreateTaskComment($text: String!, $objectId: Int, $parentId: Int) {
+    createTaskComment(commentInput: {text: $text, commentedObjectId: $objectId, parentId: $parentId}) {
+      success
+      message
+    }
+  }
+`;
+
+export const CREATE_BUG_COMMENT = gql`
+  mutation CreateBugComment($text: String!, $objectId: Int, $parentId: Int) {
+    createBugComment(commentInput: {text: $text, commentedObjectId: $objectId, parentId: $parentId}) {
+      success
+      message
+    }
+  }
+`;
+
+export const CREATE_IDEA_COMMENT = gql`
+  mutation CreateIdeaComment($text: String!, $objectId: Int, $parentId: Int) {
+    createIdeaComment(commentInput: {text: $text, commentedObjectId: $objectId, parentId: $parentId}) {
+      success
+      message
     }
   }
 `;

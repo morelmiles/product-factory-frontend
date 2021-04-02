@@ -17,6 +17,7 @@ import parse from "html-react-parser";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import AddEditIdea from "../../../../components/AddEditIdea";
+import Comments from "../../../../components/Comments";
 
 const getIdeaType = (ideaType: number) => {
   let searchedType = IDEA_TYPES.filter((t) => t.id === ideaType)
@@ -184,7 +185,9 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
                 </Col>
               </Row>
 
-              <div style={{marginTop: 30}}/>
+              <div style={{marginTop: 30}} />
+
+              <Comments objectId={idea?.id || 0} objectType="idea" />
 
               {deleteModal && (
                 <DeleteModal

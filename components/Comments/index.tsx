@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {Button, Comment, Form, Mentions, message, Modal} from "antd";
-import {GET_COMMENTS, GET_USERS} from "../../graphql/queries";
+import {GET_BUG_COMMENTS, GET_IDEA_COMMENTS, GET_TASK_COMMENTS, GET_USERS} from "../../graphql/queries";
 import {getProp} from "../../utilities/filters";
 import CustomAvatar2 from "../CustomAvatar2";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {CREATE_COMMENT} from "../../graphql/mutations";
+import {CREATE_TASK_COMMENT, CREATE_BUG_COMMENT, CREATE_IDEA_COMMENT} from "../../graphql/mutations";
 import Link from "next/link";
 
 
@@ -47,36 +47,56 @@ interface ICommentsText {
   text: string
 }
 
+const commentCreateType = {
+  task: {
+    mutation: CREATE_TASK_COMMENT, mutationKey: "createTaskComment"
+  },
+  idea: {
+    mutation: CREATE_IDEA_COMMENT, mutationKey: "createIdeaComment"
+  },
+  bug: {
+    mutation: CREATE_BUG_COMMENT, mutationKey: "createBugComment"
+  }
+};
 
-const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, allUsers}) => {
-  const [createComment] = useMutation(CREATE_COMMENT, {
-      onCompleted(res) {
-        if (getProp(res, 'createComment.status', false)) {
-          submit();
-          setIsModalVisible(false);
-          setCommentText('');
-          message.success('Comment was sent').then();
-        } else {
-          message.error("Failed to send comment").then();
-        }
-      },
-      onError() {
+const commentGetType = {
+  task: GET_TASK_COMMENTS,
+  idea: GET_IDEA_COMMENTS,
+  bug: GET_BUG_COMMENTS,
+};
+
+
+
+const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, allUsers, objectType}) => {
+  const cType = commentCreateType[objectType];
+  const [createComment] = cType ? useMutation(cType.mutation, {
+    onCompleted(res) {
+      if (getProp(res, `${cType.mutationKey}.success`, false)) {
+        submit();
+        setIsModalVisible(false);
+        setCommentText("");
+        message.success("Comment was sent").then();
+      } else {
         message.error("Failed to send comment").then();
       }
+    },
+    onError() {
+      message.error("Failed to send comment").then();
     }
-  );
+  }
+  ) : "";
 
   const addComment = () => {
     createComment({
       variables: {
-        personId: localStorage.getItem('userId'), text: commentText, parentId: currentCommentId
+        text: commentText, parentId: currentCommentId
       }
     }).then();
   }
 
   const closeModal = () => {
     setIsModalVisible(false);
-    setCommentText('');
+    setCommentText("");
   }
 
   const [commentText, setCommentText] = useState('');
@@ -111,18 +131,16 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
         comments.map((comment: IComment, index) => (
           <Comment
             key={index}
-            actions={[<span key="comment-nested-reply-to" onClick={() => {
-              openSendSubCommentModal(comment.id)
-            }}>Reply to</span>]}
+            actions={[<span key="comment-nested-reply-to"
+                            onClick={() => openSendSubCommentModal(comment.id)}>Reply to</span>]}
             author={<Link href={`/${comment.data.person.slug}`}>{comment.data.person.fullname}</Link>}
-            avatar={
-              <CustomAvatar2 person={comment.data.person}/>
-            }
-            content={
-              <CommentsText text={comment.data.text}/>
-            }
+            avatar={<CustomAvatar2 person={comment.data.person}/>}
+            content={<CommentsText text={comment.data.text}/>}
           >
-            <CommentContainer comments={getProp(comment, 'children', [])} submit={submit} allUsers={allUsers}/>
+            <CommentContainer comments={getProp(comment, "children", [])}
+                              objectType={objectType}
+                              submit={submit}
+                              allUsers={allUsers}/>
           </Comment>
         ))
       }
@@ -142,28 +160,32 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
   )
 };
 
-const AddComment: React.FunctionComponent<IAddCommentProps> = ({taskId, submit, allUsers}) => {
-  const [createComment] = useMutation(CREATE_COMMENT, {
-      onCompleted(res) {
-        if (getProp(res, 'createComment.status', false)) {
-          submit();
-          setCommentText('');
-          message.success('Comment was sent').then();
-        } else {
-          message.error("Failed to send comment").then();
-        }
-      },
-      onError() {
+const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, objectType, submit, allUsers}) => {
+  const {mutation, mutationKey} = commentCreateType[objectType];
+  const [createComment] = useMutation(mutation, {
+    onCompleted(res) {
+      if (getProp(res, `${mutationKey}.success`, false)) {
+        submit();
+        setCommentText("");
+        message.success("Comment was sent").then();
+      } else {
         message.error("Failed to send comment").then();
       }
+    },
+    onError() {
+      message.error("Failed to send comment").then();
     }
+  }
   );
-  const [commentText, setCommentText] = useState('');
+  const [commentText, setCommentText] = useState("");
 
   const addComment = () => {
+    if (commentText === "") {
+      return
+    }
     createComment({
       variables: {
-        text: commentText, taskId
+        text: commentText, objectId
       }
     }).then();
   }
@@ -188,9 +210,9 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({taskId, submit, 
   )
 }
 
-const Comments: React.FunctionComponent<ICommentsProps> = ({taskId}) => {
-  const {data, error, loading, refetch} = useQuery(GET_COMMENTS, {
-    variables: {taskId}
+const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType}) => {
+  const {data, error, loading, refetch} = useQuery(commentGetType[objectType], {
+    variables: {objectId}
   });
   const {data: users} = useQuery(GET_USERS);
 
@@ -198,19 +220,25 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({taskId}) => {
 
   useEffect(() => {
     if (!error && !loading) {
-      let fetchComments = getProp(data, 'comments', '[]');
+      let fetchComments = getProp(data, `${objectType}Comments`, "[]");
       fetchComments = JSON.parse(fetchComments);
       setComments(fetchComments)
     }
 
   }, [data]);
 
-  const allUsers = getProp(users, 'people', []);
+  const allUsers = getProp(users, "people", []);
 
   return (
     <>
-      <CommentContainer comments={comments} submit={refetch} allUsers={allUsers}/>
-      <AddComment taskId={taskId} submit={refetch} allUsers={allUsers}/>
+      <CommentContainer comments={comments}
+                        submit={refetch}
+                        objectType={objectType}
+                        allUsers={allUsers}/>
+      <AddComment objectId={objectId}
+                  submit={refetch}
+                  objectType={objectType}
+                  allUsers={allUsers} />
     </>
   )
 };
