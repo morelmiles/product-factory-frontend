@@ -469,31 +469,31 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
                     {
                       getProp(task, 'priority', null) &&
                       <Row style={{marginTop: 10}} className="text-sm mt-8">
-                          <strong className="my-auto">Priority:&nbsp;</strong>&nbsp;
-                          <Priorities task={task} submit={() => refetch()}/>
+                        <strong className="my-auto">Priority:&nbsp;</strong>&nbsp;
+                        <Priorities task={task} submit={() => refetch()}/>
                       </Row>
                     }
                     {
                       getProp(task, 'reviewer.slug', null) &&
                       <Row style={{marginTop: 10}} className="text-sm mt-8">
-                          <strong className="my-auto">Reviewer:</strong>
+                        <strong className="my-auto">Reviewer:</strong>
 
-                          <Row align="middle" style={{marginLeft: 15}}>
-                              <Col>
-                                  <CustomAvatar2 person={{
-                                    fullname: getProp(task, 'reviewer.fullName', ''),
-                                    slug: getProp(task, 'reviewer.slug', '')
-                                  }}/>
-                              </Col>
-                              <Col>
-                                  <Typography.Link
-                                      className="text-grey-9"
-                                      href={`/${getProp(task, 'reviewer.slug', '')}`}
-                                  >
-                                    {getProp(task, 'reviewer.fullName', '')}
-                                  </Typography.Link>
-                              </Col>
-                          </Row>
+                        <Row align="middle" style={{marginLeft: 15}}>
+                          <Col>
+                            <CustomAvatar2 person={{
+                              fullname: getProp(task, 'reviewer.fullName', ''),
+                              slug: getProp(task, 'reviewer.slug', '')
+                            }}/>
+                          </Col>
+                          <Col>
+                            <Typography.Link
+                              className="text-grey-9"
+                              href={`/${getProp(task, 'reviewer.slug', '')}`}
+                            >
+                              {getProp(task, 'reviewer.fullName', '')}
+                            </Typography.Link>
+                          </Col>
+                        </Row>
                       </Row>
                     }
                     {stacks.length > 0 && (
@@ -551,40 +551,40 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
               {
                 getProp(task, 'dependOn', []).length > 0 &&
                 <Collapse style={{marginTop: 30}}>
-                    <Panel header="Blocked by" key="1">
-                        <List
-                            bordered
-                            dataSource={getProp(task, 'dependOn', [])}
-                            renderItem={(item: any) => (
-                              <List.Item>
-                                <Link
-                                  href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
-                              </List.Item>
-                            )}
-                        />
-                    </Panel>
+                  <Panel header="Blocked by" key="1">
+                    <List
+                      bordered
+                      dataSource={getProp(task, 'dependOn', [])}
+                      renderItem={(item: any) => (
+                        <List.Item>
+                          <Link
+                            href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                        </List.Item>
+                      )}
+                    />
+                  </Panel>
                 </Collapse>
               }
               {
                 getProp(task, 'relatives', []).length > 0 &&
                 <Collapse style={{marginTop: 30}}>
-                    <Panel header="Dependant tasks" key="1">
-                        <List
-                            bordered
-                            dataSource={getProp(task, 'relatives', [])}
-                            renderItem={(item: any) => (
-                              <List.Item>
-                                <Link
-                                  href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
-                              </List.Item>
-                            )}
-                        />
-                    </Panel>
+                  <Panel header="Dependant tasks" key="1">
+                    <List
+                      bordered
+                      dataSource={getProp(task, 'relatives', [])}
+                      renderItem={(item: any) => (
+                        <List.Item>
+                          <Link
+                            href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}>{item.title}</Link>
+                        </List.Item>
+                      )}
+                    />
+                  </Panel>
                 </Collapse>
               }
 
-              <div style={{marginTop: 30}}/>
-              <Comments taskId={getProp(task, 'id', 0)}/>
+              <div style={{marginTop: 30}} />
+              <Comments objectId={getProp(task, 'id', 0)} objectType="task" />
 
               <Attachments data={getProp(original, 'task.attachment', [])}/>
 
@@ -625,13 +625,13 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
               {
                 showEditModal &&
                 <AddTaskContainer
-                    modal={showEditModal}
-                    productSlug={String(productSlug)}
-                    modalType={true}
-                    closeModal={setShowEditModal}
-                    task={task}
-                    submit={fetchData}
-                    tasks={tasks}
+                  modal={showEditModal}
+                  productSlug={String(productSlug)}
+                  modalType={true}
+                  closeModal={setShowEditModal}
+                  task={task}
+                  submit={fetchData}
+                  tasks={tasks}
                 />
               }
             </>

@@ -14,6 +14,7 @@ import parse from "html-react-parser";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import AddEditBug from "../../../../components/AddEditBug";
+import Comments from "../../../../components/Comments";
 
 
 type Params = {
@@ -179,7 +180,9 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
                 </Col>
               </Row>
 
-              <div style={{marginTop: 30}}/>
+              <div style={{marginTop: 30}} />
+
+              <Comments objectId={bug?.id || 0} objectType="bug" />
 
               {deleteModal && (
                 <DeleteModal

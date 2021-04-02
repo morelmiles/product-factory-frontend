@@ -804,9 +804,21 @@ export const GET_STACKS = gql`
   }
 `;
 
-export const GET_COMMENTS = gql`
-  query GetComments($taskId: Int!) {
-    comments(taskId: $taskId)
+export const GET_TASK_COMMENTS = gql`
+  query GetTaskComments($objectId: Int!) {
+    taskComments(objectId: $objectId)
+  }
+`;
+
+export const GET_BUG_COMMENTS = gql`
+  query GetBugComments($objectId: Int!) {
+    bugComments(objectId: $objectId)
+  }
+`;
+
+export const GET_IDEA_COMMENTS = gql`
+  query GetIdeaComments($objectId: Int!) {
+    ideaComments(objectId: $objectId)
   }
 `;
 
