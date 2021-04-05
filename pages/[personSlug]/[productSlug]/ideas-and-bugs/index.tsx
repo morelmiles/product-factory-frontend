@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Col, Radio, Row, Typography, Button, Empty} from 'antd';
+import {Col, Radio, Row, Typography, Button, Empty, message} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
 import {connect} from 'react-redux';
 import parse from "html-react-parser";
@@ -98,7 +98,7 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter();
   const {productSlug, personSlug} = router.query;
   const {user} = props;
-  const [mode, setMode] = useState('ideas');
+  const [mode, setMode] = useState("idea");
   const [showIdeaAddModal, setIdeaShowAddModal] = useState(false);
   const [showBugAddModal, setBugShowAddModal] = useState(false);
   const {data: ideas, loading: ideasLoading, refetch: refetchIdeas} = useQuery(GET_PRODUCT_IDEAS, {
@@ -111,7 +111,15 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
     fetchPolicy: "no-cache"
   });
 
-  const ideaMode = mode === "ideas";
+  const ideaMode = mode === "idea";
+
+  const addAction = () => {
+    if (user.isLoggedIn) {
+      ideaMode ? setIdeaShowAddModal(true) : setBugShowAddModal(true);
+    } else {
+      message.warning(`You cannot create a new ${mode}, please authenticate to the system`);
+    }
+  };
 
   if (ideasLoading || bugsLoading) return <Loading/>;
 
@@ -123,20 +131,18 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
           value={mode}
           style={{marginBottom: 20}}
         >
-          <Radio.Button value="ideas"
-                        style={{borderRadius: '5px 0 0 5px'}}>Ideas</Radio.Button>
-          <Radio.Button value="bugs"
-                        style={{borderRadius: '0 5px 5px 0'}}>Bugs</Radio.Button>
+          <Radio.Button value="idea"
+                        style={{borderRadius: "5px 0 0 5px"}}>Ideas</Radio.Button>
+          <Radio.Button value="bug"
+                        style={{borderRadius: "0 5px 5px 0"}}>Bugs</Radio.Button>
         </Radio.Group>
-        {user.isLoggedIn && (
-          <Button
-            className="text-right add-task-btn"
-            style={{marginLeft: "auto"}}
-            onClick={() => ideaMode ? setIdeaShowAddModal(true) : setBugShowAddModal(true)}
-          >
-            Add {ideaMode ? "Idea" : "Bug"}
-          </Button>
-        )}
+        <Button
+          className="text-right add-task-btn"
+          style={{marginLeft: "auto"}}
+          onClick={() => addAction()}
+        >
+          Add {ideaMode ? "Idea" : "Bug"}
+        </Button>
       </div>
       <>
         {ideaMode
