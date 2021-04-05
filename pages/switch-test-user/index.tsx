@@ -85,9 +85,8 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
                 >
                   <Select>
                     <Option value={0}>Select</Option>
-                    {getProp(data, "people", []).map((person: any, idx: number) => person.id > 1 && (
-                      <Option key={person.id} value={person.id}>{person.fullName}</Option>
-                    ))}
+                    {getProp(data, "people", []).map((person: any, idx: number) =>
+                      <Option key={person.id} value={person.id}>{person.fullName}</Option>)}
                   </Select>
                 </Form.Item>
                 <Form.Item className="d-flex-justify">
