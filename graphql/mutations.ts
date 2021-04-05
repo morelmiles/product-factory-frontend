@@ -273,6 +273,15 @@ export const CREATE_IDEA_COMMENT = gql`
   }
 `;
 
+export const CREATE_CAPABILITY_COMMENT = gql`
+  mutation CreateCapabilityComment($text: String!, $objectId: Int, $parentId: Int) {
+    createCapabilityComment(commentInput: {text: $text, commentedObjectId: $objectId, parentId: $parentId}) {
+      success
+      message
+    }
+  }
+`;
+
 export const UPDATE_CAPABILITY_TREE = gql`
   mutation UpdateCapabilityTree ($productSlug: String!, $tree: JSONString!) {
     updateCapabilityTree(productSlug: $productSlug, tree: $tree) {

@@ -20,6 +20,7 @@ import FilterModal from "../../../../components/FilterModal";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import {connect} from "react-redux";
 import parse from 'html-react-parser';
+import Comments from "../../../../components/Comments";
 
 
 const {Content} = Layout;
@@ -256,6 +257,12 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
                     </Button>
                   }
                 />
+
+                <div style={{marginTop: 30}} />
+
+                <div className="mt-40 mb-10 d-flex-justify-center">Comments</div>
+
+                <Comments objectId={capability?.id || 0} objectType="capability" />
 
                 {
                   deleteModal &&

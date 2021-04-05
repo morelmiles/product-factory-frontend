@@ -822,6 +822,12 @@ export const GET_IDEA_COMMENTS = gql`
   }
 `;
 
+export const GET_CAPABILITY_COMMENTS = gql`
+  query GetCapabilityComments($objectId: Int!) {
+    capabilityComments(objectId: $objectId)
+  }
+`;
+
 export const GET_PERSON = gql`
   query GetPerson($id: Int) {
     person (id: $id) {

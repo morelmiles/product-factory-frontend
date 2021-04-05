@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {Button, Comment, Form, Mentions, message, Modal} from "antd";
-import {GET_BUG_COMMENTS, GET_IDEA_COMMENTS, GET_TASK_COMMENTS, GET_USERS} from "../../graphql/queries";
+import {GET_BUG_COMMENTS, GET_IDEA_COMMENTS, GET_TASK_COMMENTS, GET_CAPABILITY_COMMENTS,
+  GET_USERS} from "../../graphql/queries";
 import {getProp} from "../../utilities/filters";
 import CustomAvatar2 from "../CustomAvatar2";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {CREATE_TASK_COMMENT, CREATE_BUG_COMMENT, CREATE_IDEA_COMMENT} from "../../graphql/mutations";
+import {CREATE_TASK_COMMENT, CREATE_BUG_COMMENT, CREATE_IDEA_COMMENT,
+  CREATE_CAPABILITY_COMMENT} from "../../graphql/mutations";
 import Link from "next/link";
 
 
@@ -56,13 +58,17 @@ const commentCreateType = {
   },
   bug: {
     mutation: CREATE_BUG_COMMENT, mutationKey: "createBugComment"
-  }
+  },
+  capability: {
+    mutation: CREATE_CAPABILITY_COMMENT, mutationKey: "createCapabilityComment"
+  },
 };
 
 const commentGetType = {
   task: GET_TASK_COMMENTS,
   idea: GET_IDEA_COMMENTS,
   bug: GET_BUG_COMMENTS,
+  capability: GET_CAPABILITY_COMMENTS,
 };
 
 
