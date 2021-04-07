@@ -104,10 +104,10 @@ const AddEditIdea: React.FunctionComponent<Props> = (
       message.error("Product is required. Please select the product");
       return;
     }
-    if (ideaType === "") {
-      message.error("Please select what best matches your idea");
-      return;
-    }
+    // if (ideaType === "") {
+    //   message.error("Please select what best matches your idea");
+    //   return;
+    // }
 
     await addNewIdea();
   };
@@ -123,7 +123,7 @@ const AddEditIdea: React.FunctionComponent<Props> = (
     setProduct(null);
     setDescription("");
     setDescriptionClear(prev => prev + 1);
-    setIdeaType("");
+    setIdeaType(null);
   }
 
   // @ts-ignore
@@ -133,7 +133,7 @@ const AddEditIdea: React.FunctionComponent<Props> = (
       description,
       productId: parseInt(product),
       relatedCapabilityId: capability !== null ? parseInt(capability) : null,
-      ideaType,
+      // ideaType,
     };
 
     try {
@@ -187,21 +187,21 @@ const AddEditIdea: React.FunctionComponent<Props> = (
           <label>Please describe the idea *:</label>
           <RichTextEditor initialHTMLValue={description} onChangeHTML={setDescription} clear={descriptionClear}/>
         </Row>
-        <Row className='mb-15'>
-          <label>Which of the following best matches your idea? *:</label>
-          <Select
-            placeholder='Select an idea type'
-            onChange={setIdeaType}
-            value={ideaType}
-          >
-            <Option value="">-------------</Option>
-            {IDEA_TYPES.map((option: any, idx: number) => (
-              <Option key={`cap${idx}`} value={option.id}>
-                {option.name}
-              </Option>
-            ))}
-          </Select>
-        </Row>
+        {/*<Row className='mb-15'>*/}
+        {/*  <label>Which of the following best matches your idea? *:</label>*/}
+        {/*  <Select*/}
+        {/*    placeholder='Select an idea type'*/}
+        {/*    onChange={setIdeaType}*/}
+        {/*    value={ideaType}*/}
+        {/*  >*/}
+        {/*    <Option value="">-------------</Option>*/}
+        {/*    {IDEA_TYPES.map((option: any, idx: number) => (*/}
+        {/*      <Option key={`cap${idx}`} value={option.id}>*/}
+        {/*        {option.name}*/}
+        {/*      </Option>*/}
+        {/*    ))}*/}
+        {/*  </Select>*/}
+        {/*</Row>*/}
         <Row className='mb-15'>
           <label>Product *:</label>
           <Select

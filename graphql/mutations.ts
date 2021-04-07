@@ -233,6 +233,8 @@ export const CLAIM_TASK = gql`
       success
       message
       isNeedAgreement
+      claimedTaskLink
+      claimedTaskName
     }
   }
 `;

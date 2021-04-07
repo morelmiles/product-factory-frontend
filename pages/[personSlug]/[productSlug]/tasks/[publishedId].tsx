@@ -183,7 +183,21 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
           message.success(responseMessage).then();
           fetchData().then();
         } else {
-          message.error(responseMessage).then();
+          message.error(claimTask.claimedTaskName ?
+            <div>
+              You cannot claim the task, you have an active task.
+              <br/>
+              <strong className="pointer"
+                      onClick={() => {
+                        router.push(claimTask.claimedTaskLink);
+                        message.destroy();
+                      }}>
+                {claimTask.claimedTaskName}
+              </strong>
+              <br/>
+              Please complete another task to claim a new task.
+            </div>
+            : responseMessage, 5).then();
         }
       }
     },
