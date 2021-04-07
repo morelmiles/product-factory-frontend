@@ -127,10 +127,10 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
                     </Col>
                   </Row>
                   <div className="mt-22">
-                    <Row style={{marginTop: 10}} className="text-sm mt-8">
-                      <strong className="my-auto">Idea Type: </strong>
-                      &nbsp;{getIdeaType(idea.ideaType)}
-                    </Row>
+                    {/*<Row style={{marginTop: 10}} className="text-sm mt-8">*/}
+                    {/*  <strong className="my-auto">Idea Type: </strong>*/}
+                    {/*  &nbsp;{getIdeaType(idea.ideaType)}*/}
+                    {/*</Row>*/}
                     <Row style={{marginTop: 10}} className="text-sm mt-8">
                       {idea.person?.id === user.id ? (
                         <strong className="my-auto">Created By You</strong>
