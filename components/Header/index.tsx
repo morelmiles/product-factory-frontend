@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Input, Button, message, Row, Col, Space, Drawer, Typography} from 'antd';
+import {Input, Button, message, Row, Col, Space, Drawer, Typography, Menu, Dropdown} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
 import {productionMode} from '../../utilities/constants';
@@ -13,7 +13,7 @@ import {GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
 import LoginViaAM from "../LoginViaAM";
 import {LOGOUT} from "../../graphql/mutations";
-import { MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons';
 
 const {Search} = Input;
 
@@ -29,17 +29,39 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   const onSearch = () => {
   }
 
+  const menu = (
+    <Menu style={{minWidth: 150}}>
+      {user?.claimedTask ?
+        <Menu.Item key="0">
+          <div className="text-center">
+            <Link href={user.claimedTask.link} >
+              <a className="text-grey-9">
+                <strong>Claimed task:</strong><br/>
+                <div className="truncate" style={{width: 200}}>{user.claimedTask.title}</div>
+              </a>
+            </Link>
+          </div>
+      </Menu.Item> : null}
+
+      <Menu.Item key="1" onClick={() => logout()} className="signIn-btn text-center">
+        <LogoutOutlined /> Sign out
+      </Menu.Item>
+    </Menu>
+  );
+
   const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"});
 
   useEffect(() => {
     if (personData && personData.person) {
-      const {person} = personData;
+      const {fullName, slug, id, username, productpersonSet, claimedTask} = personData.person;
       userLogInAction({
         isLoggedIn: true,
-        fullName: person.fullName,
-        slug: person.slug,
-        id: person.id,
-        roles: person.productpersonSet.map((role: any) => {
+        fullName,
+        slug,
+        id,
+        claimedTask,
+        username: username,
+        roles: productpersonSet.map((role: any) => {
           return {
             product: role.product.slug,
             role: USER_ROLES[role.right]
@@ -51,7 +73,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         isLoggedIn: false,
         fullName: "",
         slug: "",
+        username: "",
         id: null,
+        claimedTask: null,
         roles: []
       });
     }
@@ -190,12 +214,12 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             <Col>
               {
                 user && user.isLoggedIn ? (
-                  <Button
-                    className="signIn-btn"
-                    onClick={() => logout()}
-                  >
-                    Sign out
-                  </Button>
+                  <Dropdown overlay={menu} trigger={['click']} placement="bottomRight" className="ml-15">
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                      <strong className="text-grey-9">{user.username}</strong>
+                      <DownOutlined className="text-grey-9 ml-5" />
+                    </a>
+                  </Dropdown>
                 ) : (
                   <>{
                     productionMode

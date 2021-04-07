@@ -16,7 +16,9 @@ export const userReducer = (
     isLoggedIn: false,//userId ? true : false,
     fullName: '',
     slug: '',
+    username: '',
     id: null,
+    claimedTask: null,
     roles: []
   },
   action: BaseAction

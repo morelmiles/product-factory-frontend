@@ -834,12 +834,17 @@ export const GET_PERSON = gql`
       id
       fullName
       slug
+      username
       productpersonSet {
         right
         product {
           name
           slug
         }
+      }
+      claimedTask {
+        title
+        link
       }
     }
   }
