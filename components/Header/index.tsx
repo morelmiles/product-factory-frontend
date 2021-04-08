@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Input, Button, message, Row, Col, Space, Drawer, Typography, Menu, Dropdown} from 'antd';
+import {Input, Button, message, Row, Col, Drawer, Typography, Menu, Dropdown} from 'antd';
 import {userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
 import {productionMode} from '../../utilities/constants';
@@ -133,49 +133,56 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
           onClose={onClose}
           visible={visible}
         >
-          <Space direction="vertical">
+          <Search
+            placeholder="Search for open source product or initiative"
+            onSearch={onSearch}
+          />
+          <Menu style={{borderRight: 0, marginTop: 10}}>
+            <Menu.Item key="0">
+              <Link href="/">
+                <a className="text-grey-9">Work on Open Products</a>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="1">
+              <Link href="/product/add">
+                <a className="text-grey-9">Add Product</a>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="2">
+              <Link href="/">
+                <a className="text-grey-9">Find Talent</a>
+              </Link>
+            </Menu.Item>
+            {user?.claimedTask ?
+              <Menu.Item key="3">
+                <Link href={user.claimedTask.link}>
+                  <a className="text-grey-9 truncate">
+                    <strong>Claimed task: </strong> {user.claimedTask.title}
+                  </a>
+                </Link>
+            </Menu.Item> : null}
             {
               user && user.isLoggedIn ? (
-                <Button
-                  style={{width: '100%'}}
-                  className="signIn-btn"
-                  onClick={() => logout()}
-                >
+                <Menu.Item key="4" onClick={() => logout()} className="signIn-btn">
                   Sign out
-                </Button>
+                </Menu.Item>
               ) : (
-                <>{
-                  !productionMode
-                    ? <LoginViaAM fullWidth={true} />
-                    : (
-                      <Button
-                        style={{width: '100%'}}
-                        className="signIn-btn"
-                        onClick={() => router.push("/switch-test-user")}
-                      >
-                        Sign in
-                      </Button>
-                    )
-                }</>
+                <>
+                  {
+                    productionMode
+                      ? <LoginViaAM fullWidth={true} />
+                      : (
+                        <Menu.Item key="4">
+                          <Link href="/switch-test-user">
+                            <a className="text-grey-9">Sign in</a>
+                          </Link>
+                        </Menu.Item>
+                      )
+                  }
+                </>
               )
             }
-
-            <Search
-              placeholder="Search for open source product or initiative"
-              onSearch={onSearch}
-            />
-          </Space>
-
-          <Space direction="vertical" style={{marginTop: 20}}>
-            <Typography.Link className="gray-link" href="/">Work on Open Products</Typography.Link>
-            <Typography.Link className="gray-link" href="/product/add">Add Product</Typography.Link>
-            <Typography.Link className="gray-link" href="">Find Talent</Typography.Link>
-          </Space>
-
-          {/*<Button*/}
-          {/*  style={{position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', width: '80%'}}*/}
-          {/*  onClick={onClose}*/}
-          {/*>Close</Button>*/}
+          </Menu>
         </Drawer>
       </Row>
 
@@ -214,7 +221,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             <Col>
               {
                 user && user.isLoggedIn ? (
-                  <Dropdown overlay={menu} trigger={['click']} placement="bottomRight" className="ml-15">
+                  <Dropdown overlay={menu} placement="bottomRight" className="ml-15">
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                       <strong className="text-grey-9">{user.username}</strong>
                       <DownOutlined className="text-grey-9 ml-5" />
