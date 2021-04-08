@@ -60,11 +60,6 @@ export const GET_PRODUCT_INFO_BY_ID = gql`
         path
       }
     }
-    # userPerson(slug: $slug)
-    tags {
-      id
-      name
-    }
   }
 `
 
@@ -90,10 +85,6 @@ export const GET_PRODUCT_BY_SLUG = gql`
         fileType
         path
       }
-    }
-    tags {
-      id
-      name
     }
   }
 `;
@@ -522,24 +513,46 @@ export const GET_TASKS_BY_PRODUCT_SHORT = gql`
 export const GET_PRODUCT_PERSONS = gql`
   query GetProductPerson($productSlug: String) {
     productPersons(productSlug: $productSlug) {
-      person {
-        id
-        fullName
-        emailAddress
-        photo
-        slug
-        headline
-        personsocialSet {
-          id,
-          name,
-          url
+      contributors {
+        person {
+          id
+          fullName
+          emailAddress
+          photo
+          slug
+          headline
+          personsocialSet {
+            id
+            name
+            url
+          }
         }
+        product {
+          owner
+          name
+        }
+        right
       }
-      product {
-        owner
-        name
+      productTeam {
+        person {
+          id
+          fullName
+          emailAddress
+          photo
+          slug
+          headline
+          personsocialSet {
+            id
+            name
+            url
+          }
+        }
+        product {
+          owner
+          name
+        }
+        right
       }
-      right
     }
   }
 `
