@@ -87,8 +87,6 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
       <Button type="danger" onClick={() => setToDelete(prev => prev + 1)}>Yes, I'm sure</Button>
     ]);
 
-    console.log("selectedLink", selectedLink)
-
     return (
       <>
         {
