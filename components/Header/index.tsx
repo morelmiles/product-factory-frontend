@@ -153,9 +153,17 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                 <a className="text-grey-9">Find Talent</a>
               </Link>
             </Menu.Item>
+            {user?.claimedTask ?
+              <Menu.Item key="3">
+                <Link href={user.claimedTask.link}>
+                  <a className="text-grey-9 truncate">
+                    <strong>Claimed task: </strong> {user.claimedTask.title}
+                  </a>
+                </Link>
+            </Menu.Item> : null}
             {
               user && user.isLoggedIn ? (
-                <Menu.Item key="3" onClick={() => logout()} className="signIn-btn">
+                <Menu.Item key="4" onClick={() => logout()} className="signIn-btn">
                   Sign out
                 </Menu.Item>
               ) : (
@@ -164,7 +172,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                     productionMode
                       ? <LoginViaAM fullWidth={true} />
                       : (
-                        <Menu.Item key="3">
+                        <Menu.Item key="4">
                           <Link href="/switch-test-user">
                             <a className="text-grey-9">Sign in</a>
                           </Link>
