@@ -87,6 +87,8 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
       <Button type="danger" onClick={() => setToDelete(prev => prev + 1)}>Yes, I'm sure</Button>
     ]);
 
+    console.log("selectedLink", selectedLink)
+
     return (
       <>
         {
@@ -133,7 +135,7 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
               <Menu mode="inline" selectedKeys={[selectedLink]}>
                 {links.map((link: any, index: number) => (
                   <Menu.Item
-                    key={index}
+                    key={link.type}
                     onClick={() => goToDetail(link.url)}
                   >
                     {link.name}
