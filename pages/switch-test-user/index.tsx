@@ -25,7 +25,7 @@ type Props = {
 const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => {
   const router = useRouter();
   const [form] = Form.useForm();
-  const { data, error, loading } = useQuery(GET_USERS, {variables: {showOnlyTestUsers: true}});
+  const { data, error, loading } = useQuery(GET_USERS, {variables: {showOnlyTestUsers: false}});
 
   const [login] = useMutation(FAKE_LOGIN);
 
