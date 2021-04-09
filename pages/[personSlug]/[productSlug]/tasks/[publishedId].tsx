@@ -3,15 +3,15 @@ import {connect} from 'react-redux';
 import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin, Typography, Breadcrumb} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
-import {useQuery, useMutation} from '@apollo/react-hooks';
+import {useQuery, useMutation, useLazyQuery} from '@apollo/react-hooks';
 import ReactPlayer from 'react-player'
 import {
-  GET_LICENSE,
+  GET_LICENSE, GET_PERSON,
   GET_PRODUCT_INFO_BY_ID,
   GET_TASK_BY_ID,
   GET_TASKS_BY_PRODUCT_SHORT
 } from '../../../../graphql/queries';
-import {TASK_TYPES} from '../../../../graphql/types';
+import {TASK_TYPES, USER_ROLES} from '../../../../graphql/types';
 import {ACCEPT_AGREEMENT, CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {EditIcon} from '../../../../components';
@@ -27,6 +27,8 @@ import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import AddTaskContainer from "../../../../components/Products/AddTask";
 import Comments from "../../../../components/Comments";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
+import {UserState} from "../../../../lib/reducers/user.reducer";
+import {userLogInAction} from "../../../../lib/actions";
 
 
 const {Panel} = Collapse;
@@ -39,7 +41,7 @@ type Params = {
   currentProduct: any;
 };
 
-const Task: React.FunctionComponent<Params> = ({user}) => {
+const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
   const router = useRouter();
   const {publishedId, personSlug, productSlug} = router.query;
 
@@ -52,6 +54,12 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [license, setLicense] = useState('');
+
+  const [getPersonData, {data: personData}] = useLazyQuery(GET_PERSON, {
+    fetchPolicy: "no-cache",
+    enabled: false,
+    manual: true
+  });
 
   const {data: original, error, loading, refetch} = useQuery(GET_TASK_BY_ID, {
     variables: {publishedId, productSlug}
@@ -112,6 +120,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
         message.success(responseMessage).then();
         fetchData().then();
         showLeaveTaskModal(false);
+        getPersonData();
       } else {
         message.error(responseMessage).then();
       }
@@ -129,6 +138,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
       if (inReviewTask.success) {
         message.success(responseMessage).then();
         fetchData().then();
+        getPersonData();
         showReviewTaskModal(false);
       } else {
         message.error(responseMessage).then();
@@ -182,6 +192,7 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
         if (claimTask.success) {
           message.success(responseMessage).then();
           fetchData().then();
+          getPersonData();
         } else {
           message.error(claimTask.claimedTaskName ?
             <div>
@@ -247,6 +258,36 @@ const Task: React.FunctionComponent<Params> = ({user}) => {
       setTask(data.data.task);
     }
   }
+
+  useEffect(() => {
+    if (personData && personData.person) {
+      const {fullName, slug, id, username, productpersonSet, claimedTask} = personData.person;
+      userLogInAction({
+        isLoggedIn: true,
+        fullName,
+        slug,
+        id,
+        claimedTask,
+        username: username,
+        roles: productpersonSet.map((role: any) => {
+          return {
+            product: role.product.slug,
+            role: USER_ROLES[role.right]
+          }
+        })
+      })
+    } else if (personData && personData.person === null) {
+      userLogInAction({
+        isLoggedIn: false,
+        fullName: "",
+        slug: "",
+        username: "",
+        id: null,
+        claimedTask: null,
+        roles: []
+      });
+    }
+  }, [personData])
 
   useEffect(() => {
     if (original) {
@@ -673,7 +714,9 @@ const mapStateToProps = (state: any) => ({
   currentProduct: state.work.currentProduct || {}
 });
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = (dispatch: any) => ({
+  userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
+});
 
 const TaskContainer = connect(
   mapStateToProps,
