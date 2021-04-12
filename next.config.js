@@ -59,5 +59,10 @@ module.exports = withPlugins([
     // ]
     [
         withImages
-    ]
+    ],
+    {
+      env: {
+        APPLICATION_MODE: process.env.APPLICATION_MODE,
+      },
+    }
 ])
