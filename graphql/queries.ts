@@ -91,10 +91,9 @@ export const GET_PRODUCT_BY_SLUG = gql`
 
 export const GET_TASKS = gql`
   query GetTasks($input: TaskListInput) {
-    tasks (input: $input) {
+    tasklisting (input: $input) {
       id
       publishedId
-      canEdit
       priority
       shortDescription
       title
@@ -103,38 +102,18 @@ export const GET_TASKS = gql`
         id
         name
       }
-      capability {
-        id
+      tags
+      stacks
+      hasActiveDepends
+      assignedTo {
+        fullName
         name
       }
-      tag {
-        id
-        name
-      }
-      stack {
-        id
-        name
-      }
-      dependOn {
-        id
-        title
-        status
-        dependOn {
-          id
-          title
-          status
-        }
-      }
+      blocked
       product {
         name
         slug
         owner
-      }
-      assignedTo {
-        id,
-        fullName,
-        photo,
-        slug
       }
     }
   }
@@ -206,39 +185,26 @@ export const GET_CAPABILITY_BY_ID = gql`
       tasks {
         id
         publishedId
-        title
-        description
-        status
-        canEdit
         priority
         shortDescription
-        tag {
+        title
+        status
+        initiative {
           id
           name
         }
-        initiative {
+        tags
+        stacks
+        blocked
+        hasActiveDepends
+        assignedTo {
+          fullName
           name
-          id
         }
         product {
+          name
+          slug
           owner
-          slug
-        }
-        tag {
-          id
-          name
-        }
-        stack {
-          id
-          name
-        }
-        blocked
-        featured
-        assignedTo {
-          id,
-          fullName,
-          photo,
-          slug
         }
       }
     }
@@ -302,45 +268,26 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
     tasks {
       id
       publishedId
-      title
-      description
-      canEdit
-      shortDescription
-      status
       priority
-      taskclaimSet {
+      shortDescription
+      title
+      status
+      initiative {
         id
-        task {
-          title
-        }
-        person {
-          id
-          fullName
-          emailAddress
-          photo
-          slug
-        }
-        kind
+        name
+      }
+      tags
+      stacks
+      blocked
+      hasActiveDepends
+      assignedTo {
+        fullName
+        name
       }
       product {
+        name
+        slug
         owner
-        slug
-      }
-      tag {
-        id
-        name
-      }
-      stack {
-        id
-        name
-      }
-      blocked
-      featured
-      assignedTo {
-        id,
-        fullName,
-        photo,
-        slug
       }
     }
   }
@@ -454,40 +401,29 @@ export const GET_TASK_BY_ID = gql`
 
 export const GET_TASKS_BY_PRODUCT = gql`
   query GetTasksByProduct($productSlug: String, $reviewId: Int, $input: TaskListInput) {
-    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
+    tasklistingByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
       id
       publishedId
-      canEdit
-      title
-      shortDescription
-      updatedAt
-      product {
-        owner
-        name
-        slug
-      }
-      tag {
-        id
-        name
-      }
-      stack {
-        id
-        name
-      }
-      createdAt
-      status
-      blocked
-      featured
       priority
+      shortDescription
+      title
+      status
       initiative {
-        name
         id
+        name
       }
+      tags
+      stacks
+      blocked
+      hasActiveDepends
       assignedTo {
-        id,
-        fullName,
-        photo,
+        fullName
+        name
+      }
+      product {
+        name
         slug
+        owner
       }
     }
   }
@@ -495,17 +431,16 @@ export const GET_TASKS_BY_PRODUCT = gql`
 
 export const GET_TASKS_BY_PRODUCT_COUNT = gql`
   query GetTasksByProductCount($productSlug: String, $input: TaskListInput) {
-    tasksByProductCount (productSlug: $productSlug, input: $input) 
+    tasklistingByProductCount (productSlug: $productSlug, input: $input) 
   }
 `;
 
 export const GET_TASKS_BY_PRODUCT_SHORT = gql`
   query GetTasksByProduct($productSlug: String, $reviewId: Int $input: TaskListInput) {
-    tasksByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
+    tasklistingByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
       id
       publishedId      
       title
-      canEdit
     }
   }
 `;

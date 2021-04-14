@@ -78,8 +78,8 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
   product = product?.product || {};
 
   useEffect(() => {
-    if (tasksData && tasksData.tasksByProduct) {
-      setTasks(tasksData.tasksByProduct)
+    if (tasksData && tasksData.tasklistingByProduct) {
+      setTasks(tasksData.tasklistingByProduct)
     }
   }, [tasksData])
 

@@ -46,17 +46,8 @@ const TaskTable: React.FunctionComponent<Props> = (
               const status = getProp(task, 'status');
               let taskStatus = statusList[status];
               if (status === "Done") {
-                const dependents = getProp(task, 'dependOn', []);
-                let count = 0;
-                for (let i = 0; i < dependents.length; i += 1) {
-                  if (statusList[dependents[i].status] === "Done") {
-                    count += 1;
-                  }
-                }
-
-                if (count === dependents.length) {
-                  taskStatus = "Done";
-                }
+                const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
+                if (!hasActiveDepends) taskStatus = "Done";
               }
 
               const taskClaimSet = getProp(task, 'taskClaimSet', null)
@@ -107,11 +98,11 @@ const TaskTable: React.FunctionComponent<Props> = (
                         </Col>
                       </Row>
                       <Row align="middle">
-                        {getProp(task, 'stack', []).map((tag: any, taskIndex: number) =>
-                          <CheckableTag key={`${index}-stack${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
+                        {getProp(task, 'stacks', []).map((stack: any, stackIndex: number) =>
+                          <CheckableTag key={`stack-${stackIndex}`} checked={true}>{stack}</CheckableTag>
                         )}
-                        {getProp(task, 'tag', []).map((tag: any, taskIndex: number) =>
-                          <Tag key={`${index}-tag${taskIndex}`}>{tag.name}</Tag>
+                        {getProp(task, 'tags', []).map((tag: any, tagIndex: number) =>
+                          <Tag key={`tag${tagIndex}`}>{tag}</Tag>
                         )}
 
                         {

@@ -66,8 +66,8 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   }
 
   useEffect(() => {
-    if (data && data.tasksByProduct) {
-      setTasks(data.tasksByProduct);
+    if (data && data.tasklistingByProduct) {
+      setTasks(data.tasklistingByProduct);
     }
   }, [data]);
 
