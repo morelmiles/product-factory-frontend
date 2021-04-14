@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import {connect} from 'react-redux';
 import {Row, Tag, Divider, Col, Typography, Empty} from 'antd';
 import {getProp} from '../../utilities/filters';
 import {TASK_CLAIM_TYPES} from '../../graphql/types';
@@ -7,6 +8,7 @@ import {CheckCircleFilled, ThunderboltFilled} from '@ant-design/icons';
 import Priorities from "../Priorities";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import CustomAvatar2 from "../CustomAvatar2";
+import {getUserRole, hasManagerRoots} from "../../utilities/utils";
 
 
 type Props = {
@@ -21,6 +23,8 @@ type Props = {
   showProductName?: boolean;
   submit: Function;
   content?: any;
+  user: any,
+  userRole: any
 };
 
 const TaskTable: React.FunctionComponent<Props> = (
@@ -34,6 +38,7 @@ const TaskTable: React.FunctionComponent<Props> = (
     hideEmptyList = false,
     submit,
     content = undefined,
+    roles,
   }
 ) => {
   return <>
@@ -60,6 +65,7 @@ const TaskTable: React.FunctionComponent<Props> = (
               const initiativeId = getProp(task, 'initiative.id', '');
               const assignee = getProp(task, 'assignedTo', null);
               const owner = getProp(task, 'product.owner', '');
+              const canEdit = hasManagerRoots((getUserRole(roles, productSlug)));
 
               return (
                 <Col key={index} span={24}>
@@ -121,7 +127,9 @@ const TaskTable: React.FunctionComponent<Props> = (
                     </Col>
 
                     <Col span={4} className="ml-auto" style={{textAlign: "center"}}>
-                      <Priorities task={task} submit={() => submit()}/>
+                      <Priorities task={task}
+                                  submit={() => submit()}
+                                  canEdit={canEdit} />
                     </Col>
 
                     <Col span={6}
@@ -182,4 +190,11 @@ const TaskTable: React.FunctionComponent<Props> = (
   </>
 };
 
-export default TaskTable;
+const mapStateToProps = (state: any) => ({
+  roles: state.user.roles,
+});
+
+export default connect(
+  mapStateToProps,
+  null
+)(TaskTable);

@@ -31,8 +31,6 @@ const InitiativeTable: React.FunctionComponent<Props> = (
     return `${pluralize(availableTasks, `${status} task`)}`;
   }
 
-  console.log("productSlug!", productSlug)
-  console.log("personSlug", personSlug)
 
   return <>
     {!hideTitle &&

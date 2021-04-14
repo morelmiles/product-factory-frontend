@@ -80,8 +80,6 @@ const PeopleList: React.FunctionComponent = () => {
 
   if (loading) return <Loading/>;
 
-  console.log("productTeam", productTeam)
-
   return (
     <LeftPanelContainer>
       {

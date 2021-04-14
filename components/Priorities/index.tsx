@@ -8,10 +8,11 @@ import {CHANGE_TASK_PRIORITY} from "../../graphql/mutations";
 
 interface IProps {
   task: any,
-  submit: Function
+  submit: Function,
+  canEdit: boolean,
 }
 
-const Priorities: React.FunctionComponent<IProps> = ({task, submit}) => {
+const Priorities: React.FunctionComponent<IProps> = ({task, submit, canEdit = false}) => {
   const currentPriority = getProp(task, 'priority', '');
   const taskId = getProp(task, 'id', 0);
   const otherPriorities = ['High', 'Medium', 'Low'].filter(priority => priority != currentPriority);
@@ -38,8 +39,6 @@ const Priorities: React.FunctionComponent<IProps> = ({task, submit}) => {
         return '#00A2F7';
     }
   }
-
-  const canEdit = getProp(task, 'canEdit', false);
 
   return (
     <Dropdown overlay={
