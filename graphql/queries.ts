@@ -115,6 +115,9 @@ export const GET_TASKS = gql`
         slug
         owner
       }
+      task {
+        id
+      }
     }
   }
 `;
@@ -206,6 +209,9 @@ export const GET_CAPABILITY_BY_ID = gql`
           slug
           owner
         }
+        task {
+          id
+        }
       }
     }
   }
@@ -288,6 +294,9 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
         name
         slug
         owner
+      }
+      task {
+        id
       }
     }
   }
@@ -425,6 +434,9 @@ export const GET_TASKS_BY_PRODUCT = gql`
         slug
         owner
       }
+      task {
+        id
+      }
     }
   }
 `;
@@ -441,6 +453,9 @@ export const GET_TASKS_BY_PRODUCT_SHORT = gql`
       id
       publishedId      
       title
+      task {
+        id
+      }
     }
   }
 `;

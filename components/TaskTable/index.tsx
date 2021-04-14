@@ -50,6 +50,14 @@ const TaskTable: React.FunctionComponent<Props> = (
             tasks.map((task: any, index: number) => {
               const status = getProp(task, 'status');
               let taskStatus = statusList[status];
+
+              const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
+              if (hasActiveDepends) {
+                taskStatus = "Blocked";
+              } else if (!hasActiveDepends && taskStatus === "Blocked") {
+                taskStatus = "Available";
+              }
+
               if (status === "Done") {
                 const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
                 if (!hasActiveDepends) taskStatus = "Done";
@@ -115,7 +123,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                           (initiativeName && showInitiativeName) &&
 
                           <Link href={`/${getProp(task, 'product.owner', '')}/${productSlug}/initiatives/${initiativeId}`}>
-                            <span className="text-grey-9 pointer link">
+                            <span className="text-grey-9 pointer link" style={{marginBottom: 8}}>
                               <ThunderboltFilled
                                   style={{color: '#999', marginRight: 4, fontSize: 16}}
                               />
