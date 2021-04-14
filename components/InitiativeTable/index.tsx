@@ -31,6 +31,7 @@ const InitiativeTable: React.FunctionComponent<Props> = (
     return `${pluralize(availableTasks, `${status} task`)}`;
   }
 
+
   return <>
     {!hideTitle &&
     <div className="mt-30 d-flex-justify-center">

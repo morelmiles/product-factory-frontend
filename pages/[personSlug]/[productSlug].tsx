@@ -36,7 +36,7 @@ const Summary: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (!tasksError) {
-      setAvailableTasksAmount(getProp(tasks, 'tasksByProductCount', 0))
+      setAvailableTasksAmount(getProp(tasks, 'tasklistingByProductCount', 0))
     }
   }, [tasks]);
 

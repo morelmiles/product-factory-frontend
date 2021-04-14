@@ -46,13 +46,13 @@ const TaskTab: React.FunctionComponent<Props> = (
   }
 
   useEffect(() => {
-    if (!error && data && data.tasks) {
-      setTaskNum(data.tasks.length);
+    if (!error && data && data.tasklisting) {
+      setTaskNum(data.tasklisting.length);
     }
   });
 
   if (loading) return <Loading/>
-  if (!data || !data.tasks) return <h3 className="text-center">No tasks</h3>
+  if (!data || !data.tasklisting) return <h3 className="text-center">No tasks</h3>
 
   return (
     <div>
@@ -65,7 +65,7 @@ const TaskTab: React.FunctionComponent<Props> = (
       </div>
       <TaskTable
         submit={() => refetch()}
-        tasks={data.tasks}
+        tasks={data.tasklisting}
         statusList={TASK_TYPES}
         showInitiativeName={showInitiativeName}
         showProductName={showProductName}

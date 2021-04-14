@@ -241,7 +241,7 @@ const AddTask: React.FunctionComponent<Props> = (
         submit();
         message.success(messageText);
 
-        if (!modalType) clearData();
+        clearData();
       } else if (messageText) {
         message.error(messageText);
       }
@@ -437,7 +437,7 @@ const AddTask: React.FunctionComponent<Props> = (
           >
             {tasks &&
             tasks.map((option: any, idx: number) => (
-              <Option key={`cap${idx}`} value={option.id}>
+              <Option key={`cap${idx}`} value={option.task.id}>
                 {option.title}
               </Option>
             ))}

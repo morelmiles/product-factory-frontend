@@ -78,8 +78,8 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
   product = product?.product || {};
 
   useEffect(() => {
-    if (tasksData && tasksData.tasksByProduct) {
-      setTasks(tasksData.tasksByProduct)
+    if (tasksData && tasksData.tasklistingByProduct) {
+      setTasks(tasksData.tasklistingByProduct)
     }
   }, [tasksData])
 
@@ -525,7 +525,9 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
                       getProp(task, 'priority', null) &&
                       <Row style={{marginTop: 10}} className="text-sm mt-8">
                         <strong className="my-auto">Priority:&nbsp;</strong>&nbsp;
-                        <Priorities task={task} submit={() => refetch()}/>
+                        <Priorities task={task}
+                                    submit={() => refetch()}
+                                    canEdit={userHasManagerRoots} />
                       </Row>
                     }
                     {

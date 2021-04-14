@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, Button} from 'antd';
+import {Col, Button} from 'antd';
 import {useRouter} from 'next/router'
 import {useQuery} from '@apollo/react-hooks';
 import {GET_INITIATIVES} from '../../../../graphql/queries';
@@ -21,7 +21,7 @@ type Params = {
 const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
   const router = useRouter();
   const [filterModal, setFilterModal] = useState(false);
-  let {productSlug} = router.query;
+  let {productSlug, personSlug} = router.query;
   productSlug = String(productSlug);
   const [inputData, setInputData] = useState({
     statuses: [1],
@@ -48,19 +48,6 @@ const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
       {
         !error && (
           <React.Fragment key={randomKeys()}>
-            {/*<Row*/}
-            {/*  justify="space-between"*/}
-            {/*  className="right-panel-headline mb-15"*/}
-            {/*>*/}
-            {/*  <Col>*/}
-            {/*    <div className="page-title text-center">*/}
-            {/*      {data?.initiatives*/}
-            {/*        ? `Explore ${data?.initiatives?.length} initiatives`*/}
-            {/*        : 'No initiatives'*/}
-            {/*      }*/}
-            {/*    </div>*/}
-            {/*  </Col>*/}
-            {/*</Row>*/}
             {loading ? <Loading /> :
               <InitiativeTable
                 initiatives={data?.initiatives ? data.initiatives : []}
@@ -81,6 +68,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
                     icon={<FilterOutlined/>}
                   >Filter</Button>
                 </div>}
+                personSlug={personSlug}
                 productSlug={productSlug} />}
             {
               showEditModal &&
