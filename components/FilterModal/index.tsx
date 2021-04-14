@@ -149,7 +149,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
               allowClear
             >
               {stacks.map((tag: {id: string, name: string}) =>
-                <Option key={tag.id} value={tag.id}>{tag.name}</Option>)}
+                <Option key={tag.id} value={tag.name}>{tag.name}</Option>)}
             </Select>
           </Form.Item>
           <Form.Item name="tags" label="Tags">
@@ -161,7 +161,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
               allowClear
             >
               {tags.map((tag: {id: string, name: string}) =>
-                <Option key={tag.id} value={tag.id}>{tag.name}</Option>)}
+                <Option key={tag.id} value={tag.name}>{tag.name}</Option>)}
             </Select>
           </Form.Item>
           <Form.Item name="assignee" label="Assignee">
