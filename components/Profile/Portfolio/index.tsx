@@ -1,5 +1,5 @@
-import React from 'react'
-import {Row, Col, Spin} from 'antd'
+import React, {useEffect, useState} from 'react'
+import {Row, Col, Spin, Empty} from 'antd'
 import {useQuery} from '@apollo/react-hooks'
 import {GET_REVIEWS} from '../../../graphql/queries'
 import ReactPlayer from 'react-player'
@@ -12,11 +12,11 @@ import Loading from "../../Loading";
 
 
 const Portfolio: React.FunctionComponent = () => {
-  const router = useRouter()
-  const {personSlug} = router.query
+  const router = useRouter();
+  const {personSlug} = router.query;
 
   const {
-    data: reviews,
+    data: reviewsData,
     error: reviewError,
     loading: reviewLoading
   } = useQuery(GET_REVIEWS, {
@@ -24,6 +24,8 @@ const Portfolio: React.FunctionComponent = () => {
   })
 
   if (reviewLoading) return <Loading/>
+
+  const reviews = reviewsData?.reviews || [];
 
   return (
     <>
@@ -33,7 +35,7 @@ const Portfolio: React.FunctionComponent = () => {
           <Spin size="large"/>
         ) : !reviewError && (
           <>
-            {reviews && getProp(reviews, 'reviews', []).map((review: any, index: number) => {
+            {reviews.length > 0 ? reviews.map((review: any, index: number) => {
               return (
                 <div key={`review-${index}`} className="grey-border p-24 mb-24">
                   <Row>
@@ -79,7 +81,7 @@ const Portfolio: React.FunctionComponent = () => {
                   </Row>
                 </div>
               )
-            })}
+            }): <Empty style={{ margin: "30px auto"}} description="Portfolio is empty" />}
           </>
         )}
       </div>
