@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {Row, Col, Spin, Empty} from 'antd'
 import {useQuery} from '@apollo/react-hooks'
 import {GET_REVIEWS} from '../../../graphql/queries'
