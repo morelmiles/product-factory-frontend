@@ -29,11 +29,12 @@ import Comments from "../../../../components/Comments";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import {UserState} from "../../../../lib/reducers/user.reducer";
 import {userLogInAction} from "../../../../lib/actions";
+import showUnAuthModal from "../../../../components/UnAuthModal";
 
 
 const {Panel} = Collapse;
 
-const notLoginErrorMessage = "You cannot claim the task, please authenticate to the system";
+const actionName = "Claim the task";
 
 
 type Params = {
@@ -216,9 +217,10 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
       if (graphQLErrors && graphQLErrors.length > 0) {
         let msg = graphQLErrors[0].message;
         if (msg === "The person is undefined, please login to perform this action") {
-          msg = notLoginErrorMessage
+          showUnAuthModal(router, actionName);
+        } else {
+          message.error(msg).then();
         }
-        message.error(msg).then();
       }
       //@ts-ignore
       if (networkError && networkError.length > 0) {
@@ -231,7 +233,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
   const claimTaskEvent = () => {
     let userId = user.id;
     if (userId === undefined || userId === null) {
-      message.error(notLoginErrorMessage).then()
+      showUnAuthModal(router, actionName);
       return
     }
 
