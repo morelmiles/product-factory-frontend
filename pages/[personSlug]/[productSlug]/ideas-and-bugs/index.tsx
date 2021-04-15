@@ -12,6 +12,7 @@ import {useRouter} from "next/router";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import AddEditBug from "../../../../components/AddEditBug";
 import AddEditIdea from "../../../../components/AddEditIdea";
+import showUnAuthModal from "../../../../components/UnAuthModal";
 
 type Props = {
   user: { isLoggedIn: boolean, id: string },
@@ -117,7 +118,7 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
     if (user.isLoggedIn) {
       ideaMode ? setIdeaShowAddModal(true) : setBugShowAddModal(true);
     } else {
-      message.warning(`You cannot create a new ${mode}, please authenticate to the system`);
+      showUnAuthModal(router, `Create a new ${mode}`);
     }
   };
 

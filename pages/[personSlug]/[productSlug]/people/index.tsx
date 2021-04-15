@@ -14,14 +14,14 @@ import {useRouter} from "next/router";
 
 
 const peopleData = (data: any) => {
-  return data.length > 0 ? data.map((item: any, index: number) => {
-    const socials = getProp(item.person, 'personsocialSet', []);
+  return data.length > 0 ? data.map((person: any, index: number) => {
+    const socials = getProp(person, 'personsocialSet', []);
     return (
       <div key={`person-${index}`} className="product-list-item">
         <Row>
           <Col xs={24}>
             <Row wrap={false}>
-              {CustomAvatar(item.person, 'fullName', 64)}
+              {CustomAvatar(person, 'fullName', 64)}
               <div style={{paddingLeft: 10}}>
                 <Row>
                   <Typography.Text
@@ -29,15 +29,15 @@ const peopleData = (data: any) => {
                     className="black-color"
                     style={{fontSize: 14}}
                   >
-                    <Link href={`/${getProp(item, 'person.slug', '')}`}>
-                      {getProp(item, 'person.fullName', '')}
+                    <Link href={`/${getProp(person, 'slug', '')}`}>
+                      {getProp(person, 'fullName', '')}
                     </Link>
                   </Typography.Text>
                 </Row>
                 <Row>
                   <Typography.Text
                     style={{fontSize: 14, padding: "2px 0"}}
-                  >{getProp(item, 'person.headline', '')}</Typography.Text>
+                  >{getProp(person, 'headline', '')}</Typography.Text>
                 </Row>
                 <Row style={{fontSize: 16, color: '#8C8C8C'}}>
                   <Space size={8}>

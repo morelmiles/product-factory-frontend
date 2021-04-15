@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Modal, Row, Col, Input, Select, message} from 'antd';
+import {Modal, Row, Col, Input, Select, message, TreeSelect} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {
-  GET_CAPABILITIES_BY_PRODUCT_AS_LIST,
+  GET_CAPABILITIES_BY_PRODUCT,
   GET_INITIATIVES_SHORT,
   GET_STACKS,
   GET_TAGS,
@@ -20,6 +20,7 @@ import RichTextEditor from "../../RichTextEditor";
 
 const {Option} = Select;
 const {TextArea} = Input;
+const { TreeNode } = TreeSelect;
 
 interface IUser {
   fullName: string
@@ -55,6 +56,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const [title, setTitle] = useState(modalType ? task.title : '');
 
   const [allCapabilities, setAllCapabilities] = useState([]);
+  const [treeData, setTreeData] = useState<any>([]);
   const [allTags, setAllTags] = useState([]);
   const [skip, setSkip] = React.useState(false);
   const [allStacks, setAllStacks] = useState([]);
@@ -113,7 +115,7 @@ const AddTask: React.FunctionComponent<Props> = (
   } = useQuery(GET_INITIATIVES_SHORT, {
     variables: {productSlug}
   });
-  const {data: capabilitiesData} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
+  const {data: capabilitiesData, loading: capabilitiesLoading} = useQuery(GET_CAPABILITIES_BY_PRODUCT, {
     variables: {productSlug}
   });
   const {data: tagsData} = useQuery(GET_TAGS, {
@@ -128,6 +130,64 @@ const AddTask: React.FunctionComponent<Props> = (
 
   const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
+  const convertDataAndSetTree = (capabilities: any) => {
+    let capabilitiesData: string = "";
+    if (capabilities && capabilities.capabilities) {
+      capabilitiesData = getProp(capabilities, 'capabilities', '');
+      try {
+        if (capabilitiesData !== "") {
+          capabilitiesData = JSON.parse(capabilitiesData);
+          //@ts-ignore
+          setTreeData(capabilitiesData.length > 0 && capabilitiesData[0].children
+            //@ts-ignore
+            ? formatData(capabilitiesData[0].children) : [])
+        } else {
+          setTreeData([]);
+        }
+      } catch (e) {
+        if (e instanceof SyntaxError) setTreeData([]);
+      }
+    } else {
+      setTreeData([]);
+    }
+  }
+
+  const formatData = (data: any) => {
+    return data.map((node: any) => {
+      const nodeId = getProp(node, 'id');
+
+      return {
+        id: nodeId,
+        title: getProp(node, 'data.name'),
+        value: nodeId,
+        description: getProp(node, 'data.description', ''),
+        videoLink: getProp(node, 'data.video_link', ''),
+        children: node.children ? formatData(getProp(node, 'children', [])) : [],
+        expanded: isExpandedById(nodeId)
+      }
+    })
+  }
+
+  const isExpandedById = (id: number, data?: any) => {
+    if (!data) data = treeData;
+    let isExpanded: boolean = false;
+
+    data.map((node: any) => {
+      if (getProp(node, 'id') === id && getProp(node, 'expanded', false)) {
+        isExpanded = true;
+        return;
+      }
+
+      if (getProp(node, 'children', []).length > 0) {
+        if (isExpandedById(id, node.children)) {
+          isExpanded = true;
+        }
+      }
+    });
+
+    return isExpanded;
+  }
+
   // @ts-ignore
   tasks = tasks.filter(dependOnTask => {
     let tId = task && task.hasOwnProperty("id") ? task.id : undefined;
@@ -139,8 +199,8 @@ const AddTask: React.FunctionComponent<Props> = (
   }, [users]);
 
   useEffect(() => {
-    if (capabilitiesData && capabilitiesData.capabilitiesAsList) {
-      setAllCapabilities(capabilitiesData.capabilitiesAsList);
+    if (!capabilitiesLoading && !capabilitiesData.hasOwnProperty("error")) {
+      convertDataAndSetTree(capabilitiesData);
     }
   }, [capabilitiesData]);
 
@@ -264,6 +324,8 @@ const AddTask: React.FunctionComponent<Props> = (
     setReviewSelectValue(val);
   }
 
+  const filterTreeNode = (input: string, node: any) => node.title.toLowerCase().indexOf(input.toLowerCase()) !== -1;
+
   return (
     <>
       <Modal
@@ -306,22 +368,21 @@ const AddTask: React.FunctionComponent<Props> = (
           </Col>
         </Row>
         {
-          allCapabilities.length > 0 && (
+          treeData.length > 0 && (
             <Row className='mb-15'>
               <label>Capability:</label>
-              <Select
-                placeholder='Select a capability'
-                onChange={setCapability}
-                filterOption={filterOption}
+              <TreeSelect
                 showSearch
+                style={{ width: '100%' }}
                 value={capability ? capability : null}
-              >
-                {allCapabilities.map((option: any, idx: number) => (
-                  <Option key={`cap${idx}`} value={option.id}>
-                    {option.name}
-                  </Option>
-                ))}
-              </Select>
+                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                placeholder="Please select"
+                allowClear
+                treeData={treeData}
+                treeDefaultExpandAll
+                filterTreeNode={filterTreeNode}
+                onChange={setCapability}
+              />
             </Row>
           )
         }

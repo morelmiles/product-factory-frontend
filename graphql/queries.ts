@@ -464,44 +464,30 @@ export const GET_PRODUCT_PERSONS = gql`
   query GetProductPerson($productSlug: String) {
     productPersons(productSlug: $productSlug) {
       contributors {
-        person {
+        id
+        fullName
+        emailAddress
+        photo
+        slug
+        headline
+        personsocialSet {
           id
-          fullName
-          emailAddress
-          photo
-          slug
-          headline
-          personsocialSet {
-            id
-            name
-            url
-          }
-        }
-        product {
-          owner
           name
+          url
         }
-        right
       }
       productTeam {
-        person {
+        id
+        fullName
+        emailAddress
+        photo
+        slug
+        headline
+        personsocialSet {
           id
-          fullName
-          emailAddress
-          photo
-          slug
-          headline
-          personsocialSet {
-            id
-            name
-            url
-          }
-        }
-        product {
-          owner
           name
+          url
         }
-        right
       }
     }
   }
