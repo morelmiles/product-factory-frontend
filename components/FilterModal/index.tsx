@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, Button, Select, FormInstance, Form} from 'antd';
+import {Modal, Button, Select, Form} from 'antd';
 import {
   TASK_LIST_TYPES,
   TASK_LIST_TYPES_FOR_CONTRIBUTOR,
@@ -34,9 +34,6 @@ const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-};
 
 const FilterModal: React.FunctionComponent<Props> = ({
   user,
@@ -55,7 +52,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
   const [form] = Form.useForm()
   const handleCancel = () => closeModal(!modal);
   const [userHasManagerRoots, setUserRoot] = useState(false);
-  const [userRole, setUserRole] = useState("Visitor")
+  const [userRoles, setUserRoles] = useState([])
 
   const {data: tagsData} = useQuery(GET_TAGS);
   const {data: stacksData} = useQuery(GET_STACKS);
@@ -75,9 +72,10 @@ const FilterModal: React.FunctionComponent<Props> = ({
 
   useEffect(() => {
     if (user.isLoggedIn) {
-      let userRole = getUserRole(user.roles, productSlug ? productSlug : "");
-      setUserRole(userRole);
-      setUserRoot(productSlug ? hasManagerRoots(userRole) : true);
+      let userRoles = getUserRole(user.roles, productSlug ? productSlug : "");
+
+      setUserRoles(userRoles);
+      setUserRoot(productSlug ? hasManagerRoots(userRoles) : true);
     } else {
       setUserRoot(false)
     }
@@ -197,7 +195,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
               allowClear
             >
               {(userHasManagerRoots ? TASK_LIST_TYPES :
-                (userRole === "Contributor" ? TASK_LIST_TYPES_FOR_CONTRIBUTOR : TASK_LIST_TYPES_FOR_GUEST))
+                (userRoles.includes("Contributor") ? TASK_LIST_TYPES_FOR_CONTRIBUTOR : TASK_LIST_TYPES_FOR_GUEST))
                 .map((option: { id: number, name: string }) => (
                 <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
               ))}

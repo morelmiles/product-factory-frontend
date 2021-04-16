@@ -129,6 +129,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
         modal={filterModal}
         initialForm={inputData}
         closeModal={() => setFilterModal(false)}
+        productSlug={productSlug}
         submit={applyFilter}
       />
 
