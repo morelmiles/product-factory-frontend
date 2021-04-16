@@ -1,5 +1,4 @@
 import React from "react";
-import App from "next/app";
 import {wrapper} from "../lib/redux";
 import { apolloClient } from '../lib/apolloClient';
 import { ApolloProvider as ApolloHooksProvider } from '@apollo/react-hooks'

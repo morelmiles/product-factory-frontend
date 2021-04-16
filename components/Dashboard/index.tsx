@@ -54,10 +54,10 @@ const Dashboard: React.FunctionComponent = () => {
             <Row justify="end">
                 <Col>
                     <Space style={{width: '100%'}}>
-                        <label>Stack: </label>
+                        <label>Skills Required: </label>
                         <Select
                             mode="multiple"
-                            placeholder="Select stack"
+                            placeholder="Specify skills required"
                             style={{minWidth: '200px'}}
                             onChange={(val) => {setStacksFilter(val)}}
                         >

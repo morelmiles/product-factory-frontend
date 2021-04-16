@@ -1,16 +1,21 @@
 import {Modal} from 'antd';
 import {productionMode} from "../../utilities/constants";
 
-const showUnAuthModal = (router, actionName: string) => {
+const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
 
   const signInAction = () => {
-    router.push(productionMode ? "/" : "/switch-test-user");
     modal.destroy();
+    if (productionMode) {
+      window.location.replace(loginUrl);
+    } else {
+      router.push("/switch-test-user")
+    }
   }
 
-  const loginAction = () => {
-    // router.push("/");
+  const registerAction = () => {
+    window.location.replace(loginUrl);
   }
+
   const modal = Modal.info({
     title: "Sign In or Register",
     closable: true,
@@ -20,7 +25,7 @@ const showUnAuthModal = (router, actionName: string) => {
 
         <p>Existing Users: <a href={null} onClick={() => signInAction()}>Sign in here</a></p>
 
-        <p>New to OpenUnited? <a href={null} onClick={() => loginAction()}>Register here</a></p>
+        <p>New to OpenUnited? <a href={null} onClick={() => registerAction()}>Register here</a></p>
       </div>
     ),
     okButtonProps: { disabled: true, style: {display: "none"} },

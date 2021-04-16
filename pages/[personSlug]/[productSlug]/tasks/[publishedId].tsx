@@ -40,9 +40,10 @@ const actionName = "Claim the task";
 type Params = {
   user?: any;
   currentProduct: any;
+  loginUrl: string;
 };
 
-const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
+const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}) => {
   const router = useRouter();
   const {publishedId, personSlug, productSlug} = router.query;
 
@@ -217,7 +218,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
       if (graphQLErrors && graphQLErrors.length > 0) {
         let msg = graphQLErrors[0].message;
         if (msg === "The person is undefined, please login to perform this action") {
-          showUnAuthModal(router, actionName);
+          showUnAuthModal(router, actionName, loginUrl);
         } else {
           message.error(msg).then();
         }
@@ -233,7 +234,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
   const claimTaskEvent = () => {
     let userId = user.id;
     if (userId === undefined || userId === null) {
-      showUnAuthModal(router, actionName);
+      showUnAuthModal(router, actionName, loginUrl);
       return
     }
 
@@ -557,7 +558,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
                     }
                     {stacks.length > 0 && (
                       <Row style={{marginTop: 10}} className="text-sm mt-8 tag-bottom-0">
-                        <strong className="my-auto">Stacks:&nbsp;</strong>
+                        <strong className="my-auto">Skills required:&nbsp;</strong>
                         {stacks.map((tag: any, taskIndex: number) =>
                           <CheckableTag key={`tag-${taskIndex}`} checked={true}>{tag.name}</CheckableTag>
                         )}
@@ -715,7 +716,8 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction}) => {
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
-  currentProduct: state.work.currentProduct || {}
+  currentProduct: state.work.currentProduct || {},
+  loginUrl: state.work.loginUrl
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
