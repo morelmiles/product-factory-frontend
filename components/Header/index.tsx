@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Input, Button, message, Row, Col, Drawer, Typography, Menu, Dropdown} from 'antd';
-import {userLogInAction} from '../../lib/actions';
+import {setLoginURL, userLogInAction} from '../../lib/actions';
 import {UserState} from '../../lib/reducers/user.reducer';
 import {productionMode} from '../../utilities/constants';
 // @ts-ignore
@@ -9,7 +9,7 @@ import Logo from '../../public/assets/logo.svg';
 import {useRouter} from 'next/router'
 import Link from 'antd/lib/typography/Link';
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {GET_PERSON} from "../../graphql/queries";
+import {GET_AM_LOGIN_URL, GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
 import LoginViaAM from "../LoginViaAM";
 import {LOGOUT} from "../../graphql/mutations";
@@ -21,10 +21,12 @@ const {Search} = Input;
 type Props = {
   user?: any;
   userLogInAction?: any;
+  setLoginURL: (loginUrl: string) => void
 };
 
-const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction}) => {
+const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction, setLoginURL}) => {
   const router = useRouter();
+  const {data: authMachineData} = useQuery(GET_AM_LOGIN_URL);
 
   const onSearch = () => {
   }
@@ -50,6 +52,11 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
   );
 
   const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"});
+
+  useEffect(() => {
+    if (authMachineData && authMachineData?.getAuthmachineLoginUrl) setLoginURL(authMachineData.getAuthmachineLoginUrl);
+  }, [authMachineData])
+
 
   useEffect(() => {
     if (personData && personData.person) {
@@ -256,6 +263,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
+  setLoginURL: (loginUrl: string) => dispatch(setLoginURL(loginUrl)),
 });
 
 const HeaderMenu = connect(

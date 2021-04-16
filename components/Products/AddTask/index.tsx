@@ -472,13 +472,13 @@ const AddTask: React.FunctionComponent<Props> = (
           </Select>
         </Row>
         <Row className='mb-15'>
-          <label>Stack:</label>
+          <label>Skills Required:</label>
           <Select
             mode="multiple"
             onChange={setStacks}
             value={stacks}
             filterOption={filterOption}
-            placeholder="Select stacks"
+            placeholder="Specify skills required"
           >
             {allStacks && allStacks.map((option: any, idx: number) => (
               <Option key={`cap${idx}`} value={option.id}>

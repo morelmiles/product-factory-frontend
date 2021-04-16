@@ -43,10 +43,10 @@ export const setUserRole = (data: any): types.BaseAction => {
   }
 }
 
-export const setWorkState = (data: any): types.BaseAction => {
+export const setLoginURL = (loginUrl: string): types.BaseAction => {
   return {
-    type: types.SET_WORK_STATE,
-    payload: data
+    type: types.SET_LOGIN_URL,
+    payload: { loginUrl }
   }
 }
 
