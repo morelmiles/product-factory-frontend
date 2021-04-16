@@ -3,6 +3,8 @@ import {productionMode} from "../../utilities/constants";
 
 const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
 
+  console.log("loginurl", loginUrl)
+
   const signInAction = () => {
     modal.destroy();
     if (productionMode) {
@@ -13,6 +15,7 @@ const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
   }
 
   const registerAction = () => {
+    modal.destroy();
     window.location.replace(loginUrl);
   }
 
