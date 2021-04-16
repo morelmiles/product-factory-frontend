@@ -313,7 +313,6 @@ export const GET_TASK_BY_ID = gql`
       publishedId
       canEdit
       priority
-      targetWorkLocation
       title
       description
       shortDescription
