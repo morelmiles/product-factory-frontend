@@ -69,12 +69,8 @@ export const downloadFile = (url: string, name: string) => {
 
 export const getUserRole = (roles: {role: string, product: string}[], product: any) => {
   roles = roles.filter(r => r.product === product);
-  if (roles.length > 0) {
-    return roles[0].role
-  } else {
-    return "User"
-  }
+  return roles.map(r => r.role);
 }
 
-export const hasManagerRoots = (userRole: string) => MANAGER_ROLES.includes(userRole);
-export const hasAdminRoots = (userRole: string) => ADMIN_ROLES.includes(userRole);
+export const hasManagerRoots = (userRoles: string[]) => MANAGER_ROLES.some(r=> userRoles.includes(r));
+export const hasAdminRoots = (userRoles: string[]) => ADMIN_ROLES.some(r=> userRoles.includes(r));

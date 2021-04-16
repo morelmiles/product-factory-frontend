@@ -73,8 +73,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     }
   });
 
-  const userRole = getUserRole(user.roles, productSlug);
-  const userHasManagerRoots = hasManagerRoots(userRole);
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   let {data: product} = useQuery(GET_PRODUCT_INFO_BY_ID, {variables: {slug: productSlug}});
   product = product?.product || {};

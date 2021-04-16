@@ -292,6 +292,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
         modal={filterModal}
         initialForm={inputData}
         closeModal={() => setFilterModal(false)}
+        productSlug={productSlug}
         submit={applyFilter}
       />
     </ContainerFlex>

@@ -178,6 +178,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
               modal={filterModal}
               initialForm={inputData}
               closeModal={() => setFilterModal(false)}
+              productSlug={productSlug}
               submit={applyFilter}
             />
           </React.Fragment>
