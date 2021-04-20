@@ -50,8 +50,8 @@ const TaskTable: React.FunctionComponent<Props> = (
             tasks.map((task: any, index: number) => {
               const status = getProp(task, 'status');
               let taskStatus = statusList[status];
-
               const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
+
               if (hasActiveDepends) {
                 taskStatus = "Blocked";
               } else if (!hasActiveDepends && taskStatus === "Blocked") {
@@ -59,13 +59,10 @@ const TaskTable: React.FunctionComponent<Props> = (
               }
 
               if (status === "Done") {
-                const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
                 if (!hasActiveDepends) taskStatus = "Done";
               }
 
-              const taskClaimSet = getProp(task, 'taskClaimSet', null)
-                ? getProp(task, 'taskClaimSet', null)[0]
-                : null;
+              const inReview = taskStatus === "Claimed" && !hasActiveDepends;
 
               const productName = getProp(task, 'product.name', '');
               const productSlug = getProp(task, 'product.slug', '');
@@ -154,34 +151,32 @@ const TaskTable: React.FunctionComponent<Props> = (
                             )}
                             <span>{taskStatus}</span>
                           </>
-                        ) : taskClaimSet ? (
+                        ) : inReview ? (
                           <>
-                            <div>{taskStatus}</div>
-                            <Row>
-                              <CustomAvatar2
-                                person={{fullname: taskClaimSet.person.fullName, slug: taskClaimSet.person.slug}}
-                                size={35}/>
-                              <div className="my-auto">
+                            <div>In Review</div>
+                            <div className="mt-10">
+                              <div className="d-flex-end" style={{fontSize: 13}}>
+                                <CustomAvatar2
+                                  person={{fullname: getProp(task, 'reviewer.fullName', ''), slug: getProp(task, 'reviewer.username', '')}}
+                                  size={35}/>
                                 <Link
-                                  href={`/${getProp(taskClaimSet, 'person.slug', '')}`}
+                                  href={`/${getProp(task, 'reviewer.username', '')}`}
                                 >
-                                  <a className="text-grey-9">{getProp(taskClaimSet, 'person.fullName', '')}</a>
+                                  <a className="text-grey-9">{getProp(task, 'reviewer.fullName', '')}</a>
                                 </Link>
                               </div>
-                            </Row>
+                            </div>
                           </>
                         ) : (
                           <span>{taskStatus}</span>
                         )}
-                      {assignee ? (
+                      {(assignee && !inReview) ? (
                         <div className="mt-10">
                           <div className="d-flex-end" style={{fontSize: 13}}>
 
-                            <Link href={`/${getProp(assignee, 'slug', '')}`}>
-                              <CustomAvatar2 person={{fullname: assignee.fullName, slug: assignee.slug}} size={35}/>
-                            </Link>
-                            <Link href={`/${getProp(assignee, 'slug', '')}`}>
-                              {getProp(assignee, 'fullName', '')}
+                            <CustomAvatar2 person={{fullname: assignee.fullName, slug: assignee.username}} size={35}/>
+                            <Link href={`/${assignee.username}`}>
+                              <a className="text-grey-9">{assignee.fullName}</a>
                             </Link>
                           </div>
                         </div>

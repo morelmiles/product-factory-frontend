@@ -525,3 +525,7 @@ p:last-child {
 .gray-link {
     color: #262626 !important;
 }
+
+.d-flex-end .ant-avatar {
+    min-width: 35px;
+}

@@ -248,6 +248,24 @@ export const IN_REVIEW_TASK = gql`
   }
 `;
 
+export const REJECT_TASK = gql`
+  mutation rejectTask($taskId: Int!) {
+    rejectTask(taskId: $taskId) {
+      success
+      message
+    }
+  }
+`;
+
+export const APPROVE_TASK = gql`
+  mutation approveTask($taskId: Int!) {
+    approveTask(taskId: $taskId) {
+      success
+      message
+    }
+  }
+`;
+
 export const CREATE_TASK_COMMENT = gql`
   mutation CreateTaskComment($text: String!, $objectId: Int, $parentId: Int) {
     createTaskComment(commentInput: {text: $text, commentedObjectId: $objectId, parentId: $parentId}) {
