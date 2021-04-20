@@ -58,11 +58,15 @@ const TaskTable: React.FunctionComponent<Props> = (
                 taskStatus = "Available";
               }
 
+              const inReview = getProp(task, 'inReview', false);
+
               if (status === "Done") {
                 if (!hasActiveDepends) taskStatus = "Done";
               }
 
-              const inReview = taskStatus === "Claimed" && !hasActiveDepends;
+              if (inReview && taskStatus !== "Done") {
+                taskStatus = "In Review";
+              }
 
               const productName = getProp(task, 'product.name', '');
               const productSlug = getProp(task, 'product.slug', '');
@@ -143,7 +147,7 @@ const TaskTable: React.FunctionComponent<Props> = (
                     >
                       {
                         (
-                          taskStatus !== "Claimed"
+                          taskStatus !== "Claimed" && taskStatus !== "In Review"
                         ) ? (
                           <>
                             {taskStatus === "Done" && (
