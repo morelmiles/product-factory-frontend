@@ -130,7 +130,7 @@ const ProfileItem: React.FunctionComponent = () => {
                     <Row style={{marginBottom: 3}}>
                       <Typography.Text strong>Product: </Typography.Text>
                       <Link
-                        href={`/${getProp(review, 'review.review.product.owner', '')}/${getProp(review, 'review.review.product.slug', '')}`}
+                        href={review ? `/${getProp(review, 'review.review.product.owner', '')}/${getProp(review, 'review.review.product.slug', '')}` : ""}
                       >
                         <a className="text-black"
                            style={{marginLeft: 5}}>{getProp(review, 'review.review.product.name', '')}</a>
@@ -142,7 +142,7 @@ const ProfileItem: React.FunctionComponent = () => {
                         <Row style={{marginBottom: 3}}>
                           <Typography.Text strong>Initiative: </Typography.Text>
                           <Link
-                            href={`/${getProp(review, 'review.review.product.owner', '')}/${getProp(review, 'review.review.product.id', '')}/initiatives/${initiative.id}`}
+                            href={review ? `/${getProp(review, 'review.review.product.owner', '')}/${getProp(review, 'review.review.product.id', '')}/initiatives/${initiative.id}` : ""}
                           >
                             <a className="text-black">{initiative.name}</a>
                           </Link>

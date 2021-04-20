@@ -104,12 +104,12 @@ export const GET_TASKS = gql`
       }
       tags
       stacks
+      blocked
       hasActiveDepends
       assignedTo {
         fullName
-        name
+        username
       }
-      blocked
       product {
         name
         slug
@@ -117,6 +117,10 @@ export const GET_TASKS = gql`
       }
       task {
         id
+      }
+      reviewer {
+        fullName
+        username
       }
     }
   }
@@ -202,7 +206,11 @@ export const GET_CAPABILITY_BY_ID = gql`
         hasActiveDepends
         assignedTo {
           fullName
-          name
+          username
+        }
+        reviewer {
+          fullName
+          username
         }
         product {
           name
@@ -288,7 +296,11 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
       hasActiveDepends
       assignedTo {
         fullName
-        name
+        username
+      }
+      reviewer {
+        fullName
+        username
       }
       product {
         name
@@ -340,15 +352,7 @@ export const GET_TASK_BY_ID = gql`
         fullName
         slug
       }
-      taskclaimSet {
-        person {
-          id
-          fullName
-          emailAddress
-          slug
-        }
-        kind
-      }
+      hasActiveDepends
       capability {
         id
         name
@@ -387,12 +391,7 @@ export const GET_TASK_BY_ID = gql`
           fullName
           slug
         }
-        taskclaimSet {
-          person {
-            slug
-            fullName
-          }
-        }
+        hasActiveDepends
       }
       relatives {
         title
@@ -426,7 +425,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       hasActiveDepends
       assignedTo {
         fullName
-        name
+        username
       }
       product {
         name
@@ -435,6 +434,10 @@ export const GET_TASKS_BY_PRODUCT = gql`
       }
       task {
         id
+      }
+      reviewer {
+        fullName
+        username
       }
     }
   }

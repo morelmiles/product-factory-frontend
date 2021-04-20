@@ -20,7 +20,6 @@ import RichTextEditor from "../../RichTextEditor";
 
 const {Option} = Select;
 const {TextArea} = Input;
-const { TreeNode } = TreeSelect;
 
 interface IUser {
   fullName: string
@@ -55,7 +54,6 @@ const AddTask: React.FunctionComponent<Props> = (
 ) => {
   const [title, setTitle] = useState(modalType ? task.title : '');
 
-  const [allCapabilities, setAllCapabilities] = useState([]);
   const [treeData, setTreeData] = useState<any>([]);
   const [allTags, setAllTags] = useState([]);
   const [skip, setSkip] = React.useState(false);
