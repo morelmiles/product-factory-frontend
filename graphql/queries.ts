@@ -102,6 +102,7 @@ export const GET_TASKS = gql`
         id
         name
       }
+      inReview
       tags
       stacks
       blocked
@@ -196,6 +197,7 @@ export const GET_CAPABILITY_BY_ID = gql`
         shortDescription
         title
         status
+        inReview
         initiative {
           id
           name
@@ -286,6 +288,7 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
       shortDescription
       title
       status
+      inReview
       initiative {
         id
         name
@@ -415,6 +418,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       shortDescription
       title
       status
+      inReview
       initiative {
         id
         name

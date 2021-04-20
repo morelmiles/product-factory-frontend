@@ -421,10 +421,9 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
 
   let status = TASK_TYPES[getProp(task, 'status')];
   const initiativeName = getProp(task, 'initiative.name', undefined);
-  const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
-  const inReview = status === "Claimed" && !hasActiveDepends;
+  const inReview = getProp(task, 'inReview', false);
 
-  if (inReview) status = "In Review";
+  if (inReview && status !== "Done") status = "In Review";
 
   const showInReviewEvents = () => {
 
@@ -500,7 +499,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                           onClick={() => setShowEditModal(true)}
                         />
                       </Col>
-                      {inReview && showInReviewEvents()}
+                      {status === "In Review" && showInReviewEvents()}
                     </>
                   ) : showTaskEvents()}
                 </Col>
@@ -520,7 +519,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                 )}
                 <Col>
                   <Row className="html-description">
-                    <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: inReview ? 100 : 50}}>
+                    <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: status === "In Review" ? 100 : 50}}>
                       {
                         parse(getProp(task, 'description', ''))
                       }
