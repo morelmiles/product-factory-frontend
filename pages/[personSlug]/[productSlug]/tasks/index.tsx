@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Row, Col, Button} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
 import {GET_TASKS_BY_PRODUCT} from '../../../../graphql/queries';
-import {TaskTable} from '../../../../components';
+import TaskTableTiles from '../../../../components/TaskTableTiles';
 import AddTask from '../../../../components/Products/AddTask';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import {useRouter} from "next/router";
@@ -109,16 +109,17 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
           </Col>
         </Row>
       </div>
-      <div>
+      <div className="pt-15">
         {
           !error ?
-            <TaskTable
+            <TaskTableTiles
               submit={() => refetch(productsVariable)}
               tasks={tasks}
               statusList={TASK_TYPES}
               showInitiativeName={true}
               hideTitle={true}
-              showPendingTasks={userHasManagerRoots}
+              gridSize={8}
+              pagesize={36}
             /> : (
               <h3 className="text-center mt-30">No tasks</h3>
             )
