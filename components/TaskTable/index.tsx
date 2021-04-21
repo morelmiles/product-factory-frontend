@@ -34,6 +34,8 @@ const TaskTable: React.FunctionComponent<Props> = ({
   statusList = TASK_CLAIM_TYPES,
   hideEmptyList = false,
   showInitiativeName = false,
+  roles,
+  submit,
 }) => {
   const [current, setCurrent] = useState(1);
   const pagesize = 48;
@@ -47,28 +49,25 @@ const TaskTable: React.FunctionComponent<Props> = ({
         {curTasks && curTasks.length > 0 ? (
           <>
             {curTasks.map((task: any, index: number) => {
-              const status = getProp(task, "status");
+              const status = getProp(task, 'status');
               let taskStatus = statusList[status];
+              const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
 
-              const hasActiveDepends = getProp(task, "hasActiveDepends", false);
               if (hasActiveDepends) {
                 taskStatus = "Blocked";
               } else if (!hasActiveDepends && taskStatus === "Blocked") {
                 taskStatus = "Available";
               }
 
+              const inReview = getProp(task, 'inReview', false);
+
               if (status === "Done") {
-                const hasActiveDepends = getProp(
-                  task,
-                  "hasActiveDepends",
-                  false
-                );
                 if (!hasActiveDepends) taskStatus = "Done";
               }
 
-              const taskClaimSet = getProp(task, "taskClaimSet", null)
-                ? getProp(task, "taskClaimSet", null)[0]
-                : null;
+              if (inReview && taskStatus !== "Done") {
+                taskStatus = "In Review";
+              }
 
               const productName = getProp(task, "product.name", "");
               const productSlug = getProp(task, "product.slug", "");
@@ -76,7 +75,7 @@ const TaskTable: React.FunctionComponent<Props> = ({
               const initiativeId = getProp(task, "initiative.id", "");
               // const assignee = getProp(task, "assignedTo", null);
               const owner = getProp(task, "product.owner", "");
-              // const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
+              const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
 
               return (
                 <Col key={index} md={8} lg={6} sm={12} className="task-box">
@@ -131,13 +130,9 @@ const TaskTable: React.FunctionComponent<Props> = ({
 
                     <div className="task-box-video">
                       <b className="mr-15">Priority</b>
-                      <span
-                        className={
-                          task.priority ? task.priority.toLowerCase() : ""
-                        }
-                      >
-                        {task.priority}
-                      </span>
+                      <Priorities task={task}
+                                  submit={() => submit()}
+                                  canEdit={canEdit} />
                     </div>
                     <p>
                       <b className="mr-15">Status</b>
