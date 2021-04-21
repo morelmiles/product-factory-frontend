@@ -200,6 +200,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
           <ReactPlayer url={modalVideoUrl}
                        playing={playing}
                        playsinline={true}
+                       controls={true}
                        width="100%" />
       </Modal>
     </>
