@@ -115,6 +115,7 @@ export const GET_TASKS = gql`
         name
         slug
         owner
+        videoUrl
       }
       task {
         id
@@ -435,6 +436,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
         name
         slug
         owner
+        videoUrl
       }
       task {
         id

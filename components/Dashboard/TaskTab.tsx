@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_TASKS } from "../../graphql/queries";
-import TaskTable from "../TaskTable";
+import TaskTableTiles from "../TaskTableTiles";
 import Loading from "../Loading";
 import { TASK_TYPES } from "../../graphql/types";
 import FilterModal from "../FilterModal";
@@ -56,7 +56,7 @@ const TaskTab: React.FunctionComponent<Props> = ({
 
   return (
     <>
-      <TaskTable
+      <TaskTableTiles
         submit={() => refetch()}
         tasks={tasks}
         statusList={TASK_TYPES}
