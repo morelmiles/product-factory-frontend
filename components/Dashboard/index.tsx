@@ -35,7 +35,7 @@ const Dashboard: React.FunctionComponent = () => {
           <Select
             mode="multiple"
             placeholder="Specify skills required"
-            style={{ minWidth: "200px" }}
+            style={{ minWidth: "170px", width: "auto" }}
             onChange={(val) => {
               setStacksFilter(val);
             }}
@@ -64,16 +64,17 @@ const Dashboard: React.FunctionComponent = () => {
           value={tabkey}
         >
           <Option key="tasks" value="tasks">
-            Tasks1
+            Tasks
           </Option>
           <Option key="products" value="products">
-            Products1
+            Products
           </Option>
         </Select>
         <div className="extra">{extraTabButtons()}</div>
       </div>
       <Row gutter={50} className="mb-40">
-        <Col md={18}>
+        {/*<Col md={18}>*/}
+        <Col md={24}>
           <Tabs
             activeKey={tabkey}
             className="main-tab"
@@ -100,9 +101,9 @@ const Dashboard: React.FunctionComponent = () => {
             </TabPane> */}
           </Tabs>
         </Col>
-        <Col md={6}>
-          <VacancyBox />
-        </Col>
+        {/*<Col md={6}>*/}
+        {/*  <VacancyBox />*/}
+        {/*</Col>*/}
       </Row>
     </Content>
   );

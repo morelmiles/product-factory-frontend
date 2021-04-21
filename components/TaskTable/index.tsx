@@ -33,9 +33,10 @@ const TaskTable: React.FunctionComponent<Props> = ({
   tasks,
   statusList = TASK_CLAIM_TYPES,
   hideEmptyList = false,
+  showInitiativeName = false,
 }) => {
   const [current, setCurrent] = useState(1);
-  const pagesize = 9;
+  const pagesize = 48;
   const curTasks = tasks.slice(
     current * pagesize - pagesize,
     current * pagesize
@@ -78,7 +79,7 @@ const TaskTable: React.FunctionComponent<Props> = ({
               // const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
 
               return (
-                <Col key={index} md={8} className="task-box">
+                <Col key={index} md={8} lg={6} sm={12} className="task-box">
                   <div className="task-box-title">
                     <Link
                       href={`/${owner}/${productSlug}/tasks/${task.publishedId}`}
@@ -111,18 +112,23 @@ const TaskTable: React.FunctionComponent<Props> = ({
                         {productName}
                       </Link>
                     </div>
-                    <span>
-                      <b>Initiattive</b>
-                    </span>
-                    <br />
-                    <div className="task-box-video">
-                      <PlaySquareOutlined />
-                      <Link
-                        href={`/${owner}/${productSlug}/initiatives/${initiativeId}`}
-                      >
-                        {initiativeName}
-                      </Link>
-                    </div>
+                    {(initiativeName && showInitiativeName) && (
+                      <>
+                        <span>
+                          <b>Initiative</b>
+                        </span>
+                        <br />
+                        <div className="task-box-video">
+                          {/*<PlaySquareOutlined />*/}
+                          <Link
+                            href={`/${owner}/${productSlug}/initiatives/${initiativeId}`}
+                          >
+                            {initiativeName}
+                          </Link>
+                        </div>
+                      </>
+                    )}
+
                     <div className="task-box-video">
                       <b className="mr-15">Priority</b>
                       <span
@@ -136,9 +142,9 @@ const TaskTable: React.FunctionComponent<Props> = ({
                     <p>
                       <b className="mr-15">Status</b>
                       <span>{taskStatus}</span>
-                      <b style={{ float: "right" }} className="point">
-                        10 Points
-                      </b>
+                      {/*<b style={{ float: "right" }} className="point">*/}
+                      {/*  10 Points*/}
+                      {/*</b>*/}
                     </p>
                   </div>
                 </Col>
@@ -161,6 +167,7 @@ const TaskTable: React.FunctionComponent<Props> = ({
             total={tasks.length}
             onChange={setCurrent}
             pageSize={pagesize}
+            showSizeChanger={false}
           />
         </div>
       )}
