@@ -1,17 +1,12 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import { connect } from "react-redux";
-import { Row, Tag, Col, Empty, Pagination } from "antd";
+import { Row, Tag, Col, Empty, Pagination, Modal } from "antd";
 import { getProp } from "../../utilities/filters";
 import { TASK_CLAIM_TYPES } from "../../graphql/types";
-import {
-  CheckCircleFilled,
-  ThunderboltFilled,
-  PlaySquareOutlined,
-} from "@ant-design/icons";
+import { PlaySquareOutlined } from "@ant-design/icons";
 import Priorities from "../Priorities";
-import CheckableTag from "antd/lib/tag/CheckableTag";
-import CustomAvatar2 from "../CustomAvatar2";
+import ReactPlayer from 'react-player';
 import { getUserRole, hasManagerRoots } from "../../utilities/utils";
 
 type Props = {
@@ -19,7 +14,6 @@ type Props = {
   productSlug?: string;
   statusList?: Array<string>;
   title?: string;
-  hideTitle?: boolean;
   hideEmptyList?: boolean;
   showPendingTasks?: boolean;
   showInitiativeName?: boolean;
@@ -36,6 +30,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
   statusList = TASK_CLAIM_TYPES,
   hideEmptyList = false,
   showInitiativeName = false,
+  showProductName = true,
   roles,
   submit,
   pagesize = 48,
@@ -43,10 +38,24 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
 
 }) => {
   const [current, setCurrent] = useState(1);
+  const [modalVideoUrl, setModalVideoUrl] = useState("");
+  const [showModalVideo, setShowModalVideo] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const curTasks = tasks.slice(
     current * pagesize - pagesize,
     current * pagesize
   );
+
+  const showVideoModal = (productVideoUrl) => {
+    setModalVideoUrl(productVideoUrl);
+    setShowModalVideo(true);
+    setPlaying(true);
+  };
+
+  useEffect(() => {
+      if (!playing) setShowModalVideo(false);
+  }, [playing]);
+
   return (
     <>
       <Row gutter={20}>
@@ -75,6 +84,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
 
               const productName = getProp(task, "product.name", "");
               const productSlug = getProp(task, "product.slug", "");
+              const productVideoUrl = getProp(task, "product.videoUrl", "");
               const initiativeName = getProp(task, "initiative.name", "");
               const initiativeId = getProp(task, "initiative.id", "");
               // const assignee = getProp(task, "assignedTo", null);
@@ -105,16 +115,22 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                         <br />
                       </span>
                     )}
-                    <span>
-                      <b>Product</b>
-                    </span>
-                    <br />
-                    <div className="task-box-video">
-                      <PlaySquareOutlined />
-                      <Link href={owner ? `/${owner}/${productSlug}` : ""}>
-                        {productName}
-                      </Link>
-                    </div>
+                    {(productName && showProductName) && (
+                      <>
+                        <span>
+                          <b>Product</b>
+                        </span>
+                        <br />
+                        <div className="task-box-video">
+                          {productVideoUrl !== "" && <PlaySquareOutlined className="pointer"
+                                                                         onClick={() => showVideoModal(productVideoUrl)} />}
+                          <Link href={owner ? `/${owner}/${productSlug}` : ""}>
+                            {productName}
+                          </Link>
+                        </div>
+                      </>
+                    )}
+
                     {(initiativeName && showInitiativeName) && (
                       <>
                         <span>
@@ -170,6 +186,19 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
           />
         </div>
       )}
+
+      <Modal
+        visible={showModalVideo}
+        title={null}
+        closeIcon={null}
+        className="video-modal"
+        onCancel={() => setPlaying(false)}
+        footer={null}>
+          <ReactPlayer url={modalVideoUrl}
+                       playing={playing}
+                       playsinline={true}
+                       width="100%" />
+      </Modal>
     </>
   );
 };

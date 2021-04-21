@@ -117,7 +117,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
               tasks={tasks}
               statusList={TASK_TYPES}
               showInitiativeName={true}
-              hideTitle={true}
+              showProductName={false}
               gridSize={8}
               pagesize={36}
             /> : (
