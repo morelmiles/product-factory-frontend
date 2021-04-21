@@ -13,7 +13,7 @@ import {GET_AM_LOGIN_URL, GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
 import LoginViaAM from "../LoginViaAM";
 import {LOGOUT} from "../../graphql/mutations";
-import { MenuOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons';
+import { MenuOutlined, DownOutlined, LogoutOutlined, UserOutlined, BookOutlined } from '@ant-design/icons';
 
 const {Search} = Input;
 
@@ -33,19 +33,23 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
   const menu = (
     <Menu style={{minWidth: 150}}>
+      <Menu.Item key="0" className="signIn-btn">
+        <Link href={`/${user?.username}`} className="text-grey-9">
+          <UserOutlined /> Your profile
+        </Link>
+      </Menu.Item>
       {user?.claimedTask ?
-        <Menu.Item key="0">
-          <div className="text-center">
-            <Link href={user.claimedTask.link} >
-              <a className="text-grey-9">
-                <strong>Claimed task:</strong><br/>
-                <div className="truncate" style={{width: 200}}>{user.claimedTask.title}</div>
-              </a>
-            </Link>
-          </div>
+        <Menu.Item key="1">
+          <Link href={user.claimedTask.link} className="text-grey-9">
+            <BookOutlined />
+            <a className="text-grey-9">
+              <strong>Claimed task:</strong><br/>
+              <div className="truncate" style={{width: 200}}>{user.claimedTask.title}</div>
+            </a>
+          </Link>
       </Menu.Item> : null}
 
-      <Menu.Item key="1" onClick={() => logout()} className="signIn-btn text-center">
+      <Menu.Item key="2" onClick={() => logout()} className="signIn-btn">
         <LogoutOutlined /> Sign out
       </Menu.Item>
     </Menu>
