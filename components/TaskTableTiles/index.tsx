@@ -21,7 +21,9 @@ type Props = {
   submit: Function;
   content?: any;
   roles: any;
-  gridSize?: number;
+  gridSizeLg?: number;
+  gridSizeMd?: number;
+  gridSizeSm?: number;
   pagesize?: number;
 };
 
@@ -34,8 +36,9 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
   roles,
   submit,
   pagesize = 48,
-  gridSize = 6,
-
+  gridSizeLg = 6,
+  gridSizeMd = 8,
+  gridSizeSm = 12,
 }) => {
   const [current, setCurrent] = useState(1);
   const [modalVideoUrl, setModalVideoUrl] = useState("");
@@ -92,7 +95,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
 
               return (
-                <Col key={index} md={8} lg={gridSize} sm={12} className="task-box">
+                <Col key={index} md={gridSizeMd} lg={gridSizeLg} sm={gridSizeSm} className="task-box">
                   <div className="task-box-title">
                     <Link
                       href={`/${owner}/${productSlug}/tasks/${task.publishedId}`}

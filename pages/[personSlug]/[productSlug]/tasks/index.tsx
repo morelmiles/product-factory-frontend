@@ -118,7 +118,9 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
               statusList={TASK_TYPES}
               showInitiativeName={true}
               showProductName={false}
-              gridSize={8}
+              gridSizeLg={8}
+              gridSizeMd={12}
+              gridSizeSm={24}
               pagesize={36}
             /> : (
               <h3 className="text-center mt-30">No tasks</h3>
