@@ -26,7 +26,6 @@ type Props = {
 const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction, setLoginURL}) => {
   const router = useRouter();
   const {data: authMachineData} = useQuery(GET_AM_LOGIN_URL);
-
   const menu = (
     <Menu style={{minWidth: 150}}>
       <Menu.Item key="0" className="signIn-btn">
@@ -156,7 +155,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
               </Link>
             </Menu.Item>
             <Menu.Item key="2">
-              <Link href="/">
+              <Link href="/about">
                 <a className="text-grey-9">About</a>
               </Link>
             </Menu.Item>
