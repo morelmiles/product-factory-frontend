@@ -1,7 +1,15 @@
 describe('sign In', () => {
-
-it('Test Sign In Page', () => {
-    cy.visit('http://localhost:3000/switch-test-user')
+    beforeEach(() => {
+        cy.visit('http://localhost:3000/')
+        cy.get('.ant-row').eq(1).find('button').eq(1).click()
+        cy.url().should('include', '/switch-test-user')
+        })
+    it('Test Sign In Page', () => {
+        const button = cy.get('form').find('button').eq(0)
+        button.click()
+        cy.get('.ant-message-notice-content').should('have.text', 'Please select user before clicking sign in button')
+        })
+    it('Test Sign In Page by Selecting all required fields', () => {
     cy.get('form').find('button').eq(0).should('have.text', 'Sign in')
     cy.get('form').find('span').eq(1).click()
     cy.get('.ant-select-item-option').eq(1).click()
@@ -9,6 +17,6 @@ it('Test Sign In Page', () => {
     const button = cy.get('form').find('button').eq(0)
     button.should('have.text', 'Sign in')
     button.click()
-    cy.location('host').should('eq', 'localhost:3000')
-})
+    cy.get('.ant-message-notice-content').should('have.text', 'User was successfully log in')
+    })
 })
