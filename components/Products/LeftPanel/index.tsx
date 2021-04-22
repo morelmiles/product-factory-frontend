@@ -156,7 +156,7 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
               </Row>
 
               {!isMobile ? menu : (
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={menu} trigger={['click']}>
                   <a className="ant-dropdown-link menu-dropdown-link"
                      onClick={e => e.preventDefault()}>
                     {selectedLinkTitle} <DownOutlined />
