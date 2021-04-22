@@ -19,7 +19,8 @@ export const userReducer = (
     username: '',
     id: null,
     claimedTask: null,
-    roles: []
+    roles: [],
+    loading: true,
   },
   action: BaseAction
 ) => {

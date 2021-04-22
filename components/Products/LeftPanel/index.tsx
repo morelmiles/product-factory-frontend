@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {useRouter} from 'next/router';
-import {Avatar, Button, Menu, Modal, Row, Typography, Image, Dropdown, Select} from 'antd';
+import {Avatar, Button, Menu, Modal, Row, Typography, Image, Select} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
 import {GET_PRODUCT_BY_SLUG, GET_PRODUCT_INFO_BY_ID} from '../../../graphql/queries';
 import {getProp} from '../../../utilities/filters';
 import {getInitialName, getUserRole, hasAdminRoots} from '../../../utilities/utils';
-import {EditOutlined, DownOutlined} from "@ant-design/icons";
+import {EditOutlined} from "@ant-design/icons";
 import AddOrEditProduct from "../../AddOrEditProduct";
 import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
 
@@ -41,9 +41,8 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
     {url: '/initiatives', type: 'initiatives', name: 'Initiatives'},
     {url: '/tasks', type: 'tasks', name: 'Tasks'},
     {url: '/capabilities', type: 'capabilities', name: 'Product Map'},
-    {url: '/people', type: 'people', name: 'People'},
-    {url: '/partners', type: 'partners', name: 'Commercial Partners'},
-    {url: '/ideas-and-bugs', type: 'ideas-and-bugs', name: 'Ideas & Bugs'}
+    {url: '/ideas-and-bugs', type: 'ideas-and-bugs', name: 'Ideas & Bugs'},
+    {url: '/people', type: 'people', name: 'People'}
   ];
 
   const userHasAdminRoots = hasAdminRoots((getUserRole(user.roles, productSlug)));

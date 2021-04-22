@@ -305,6 +305,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
       const {fullName, slug, id, username, productpersonSet, claimedTask} = personData.person;
       userLogInAction({
         isLoggedIn: true,
+        loading: false,
         fullName,
         slug,
         id,
@@ -320,6 +321,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     } else if (personData && personData.person === null) {
       userLogInAction({
         isLoggedIn: false,
+        loading: false,
         fullName: "",
         slug: "",
         username: "",

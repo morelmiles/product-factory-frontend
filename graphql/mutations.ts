@@ -19,6 +19,15 @@ export const CREATE_PRODUCT = gql`
   }
 `;
 
+export const CREATE_PRODUCT_REQUEST = gql`
+  mutation CreateProductRequest($productInput: ProductInput!, $file: Upload) {
+    createProductRequest(productInput: $productInput, file: $file) {
+      status
+      message
+    }
+  }
+`;
+
 export const UPDATE_PRODUCT = gql`
   mutation UpdateProduct($productInput: ProductInput!, $file: Upload) {
     updateProduct(productInput: $productInput, file: $file) {

@@ -918,4 +918,14 @@ export const GET_PRODUCT_BUGS = gql`
       voteUp
     }
   }
-`
+`;
+
+
+export const GET_PAGE_CONTENT = gql`
+  query GetPage($slug: String) {
+    page(slug: $slug) {
+      title
+      description
+    }
+  }
+`;
