@@ -62,6 +62,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
       const {fullName, slug, id, username, productpersonSet, claimedTask} = personData.person;
       userLogInAction({
         isLoggedIn: true,
+        loading: false,
         fullName,
         slug,
         id,
@@ -77,6 +78,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     } else if (personData && personData.person === null) {
       userLogInAction({
         isLoggedIn: false,
+        loading: false,
         fullName: "",
         slug: "",
         username: "",
@@ -149,11 +151,13 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                 <a className="text-grey-9">Work on Open Products</a>
               </Link>
             </Menu.Item>
-            <Menu.Item key="1">
-              <Link href="/product/add">
-                <a className="text-grey-9">Add Product</a>
-              </Link>
-            </Menu.Item>
+            {(user && user.isLoggedIn) && (
+              <Menu.Item key="1">
+                <Link href="/product/add">
+                  <a className="text-grey-9">Add Product</a>
+                </Link>
+              </Menu.Item>
+            )}
             <Menu.Item key="2">
               <Link href="/about">
                 <a className="text-grey-9">About</a>
@@ -201,9 +205,11 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                 <Col style={{marginRight: 20}}>
                   <Link className="gray-link" href="/">Work on Open Products</Link>
                 </Col>
-                <Col style={{marginRight: 20}}>
-                  <Link className="gray-link" href="/product/add">Add Product</Link>
-                </Col>
+                {(user && user.isLoggedIn) && (
+                  <Col style={{marginRight: 20}}>
+                    <Link className="gray-link" href="/product/add">Add Product</Link>
+                  </Col>
+                )}
                 <Col style={{marginRight: 20}}>
                   <Link className="gray-link" href="/about">About</Link>
                 </Col>
