@@ -53,16 +53,27 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
     }, [productPhoto]);
 
     useEffect(() => {
+      checkFileList();
+    }, [fileList]);
+
+    const checkFileList = () => {
+      let filePhoto = null;
       if (fileList.length > 0) {
         const thumbUrl = getProp(fileList[0], 'thumbUrl', null);
         const url = getProp(fileList[0], 'url', null);
 
-        if (thumbUrl) setPhoto(thumbUrl);
-        else if (url) setPhoto(url);
+        if (thumbUrl !== null) {
+          filePhoto = thumbUrl;
+          setPhoto(filePhoto);
+        } else if (url) {
+          filePhoto = url;
+        }
+        setPhoto(filePhoto);
       } else {
-        setPhoto(null);
+        setPhoto(filePhoto);
       }
-    }, [fileList]);
+      return filePhoto;
+    }
 
     const [name, setName] = useState(isEditing ? getProp(productData, 'name', '') : '');
     const [shortDescription, setShortDescription] = useState(isEditing ? getProp(productData, 'shortDescription', '') : '');
@@ -146,6 +157,8 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
         return;
       }
 
+      let filePhoto = checkFileList();
+
       setIsShowLoading(true);
 
       createProduct({
@@ -158,7 +171,7 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
             videoUrl,
             isPrivate
           },
-          file: photo
+          file: filePhoto
         }
       }).then();
     }
