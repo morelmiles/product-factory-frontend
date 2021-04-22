@@ -20,7 +20,6 @@ import RichTextEditor from "../../RichTextEditor";
 
 const {Option} = Select;
 const {TextArea} = Input;
-const { TreeNode } = TreeSelect;
 
 interface IUser {
   fullName: string
@@ -55,7 +54,6 @@ const AddTask: React.FunctionComponent<Props> = (
 ) => {
   const [title, setTitle] = useState(modalType ? task.title : '');
 
-  const [allCapabilities, setAllCapabilities] = useState([]);
   const [treeData, setTreeData] = useState<any>([]);
   const [allTags, setAllTags] = useState([]);
   const [skip, setSkip] = React.useState(false);
@@ -76,7 +74,6 @@ const AddTask: React.FunctionComponent<Props> = (
   );
   const [initiatives, setInitiatives] = useState([])
   const [editInitiative, toggleInitiative] = useState(false);
-  const [targetWorkLocation, setTargetWorkLocation] = useState(modalType ? task.targetWorkLocation : '');
   const [tags, setTags] = useState(
     modalType && task.tag ? task.tag.map((tag: any) => tag.name) : []
   );
@@ -237,10 +234,6 @@ const AddTask: React.FunctionComponent<Props> = (
       message.error("Long description is required. Please fill out description");
       return;
     }
-    if (!targetWorkLocation) {
-      message.error("Target work location is required. Please fill out target work location");
-      return;
-    }
     if (!reviewSelectValue) {
       message.error("Reviewer is required. Please fill out reviewer");
       return;
@@ -261,12 +254,11 @@ const AddTask: React.FunctionComponent<Props> = (
     setShortDescription("");
     setCapability(0);
     setInitiative(0);
-    setTargetWorkLocation('');
     setCapability([]);
     setTags([]);
     setStacks([]);
     setDependOn([]);
-    setReviewSelectValue(null);
+    setReviewSelectValue(getProp(user, 'slug', null));
   }
 
   const addNewTask = async () => {
@@ -278,7 +270,6 @@ const AddTask: React.FunctionComponent<Props> = (
       productSlug,
       initiative: initiative === 0 ? null : parseInt(initiative),
       capability: capability === 0 ? null : parseInt(capability),
-      targetWorkLocation,
       tags,
       stacks,
       dependOn,
@@ -432,15 +423,6 @@ const AddTask: React.FunctionComponent<Props> = (
             </Row>
           </>
         )}
-        <Row className='mb-15'>
-          <label>Target work location*:</label>
-          <Input
-            placeholder="Target work location"
-            value={targetWorkLocation}
-            onChange={(e) => setTargetWorkLocation(e.target.value)}
-            required
-          />
-        </Row>
         <Row className='mb-15'>
           <label>Status: </label>
           <Select

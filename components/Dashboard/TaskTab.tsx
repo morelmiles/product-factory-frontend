@@ -1,28 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import {useQuery} from '@apollo/react-hooks';
-import {GET_TASKS} from '../../graphql/queries';
-import TaskTable from '../TaskTable'
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@apollo/react-hooks";
+import { GET_TASKS } from "../../graphql/queries";
+import TaskTableTiles from "../TaskTableTiles";
 import Loading from "../Loading";
-import {TASK_TYPES} from "../../graphql/types";
+import { TASK_TYPES } from "../../graphql/types";
 import FilterModal from "../FilterModal";
-import {FilterOutlined} from "@ant-design/icons";
-import {Button} from "antd";
-
 
 type Props = {
-  setTaskNum: (value: number) => void,
-  showInitiativeName?: boolean,
-  showProductName?: boolean,
+  setTaskNum: (value: number) => void;
+  showInitiativeName?: boolean;
+  showProductName?: boolean;
+  filterModal?: boolean;
+  setFilterModal: (value: boolean) => void;
 };
 
-const TaskTab: React.FunctionComponent<Props> = (
-  {
-    setTaskNum,
-    showInitiativeName = false,
-    showProductName = false,
-  }
-) => {
-  const [filterModal, setFilterModal] = useState(false);
+const TaskTab: React.FunctionComponent<Props> = ({
+  setTaskNum,
+  showInitiativeName = false,
+  showProductName = false,
+  filterModal = false,
+  setFilterModal,
+}) => {
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
     statuses: [],
@@ -33,17 +31,17 @@ const TaskTab: React.FunctionComponent<Props> = (
     taskCreator: [],
   });
 
-  const {data, error, loading, refetch} = useQuery(GET_TASKS, {
+  const { data, error, loading, refetch } = useQuery(GET_TASKS, {
     variables: {
-      input: inputData
-    }
+      input: inputData,
+    },
   });
 
   const applyFilter = (values: any) => {
     values = Object.assign(values, {});
     setInputData(values);
     setFilterModal(false);
-  }
+  };
 
   useEffect(() => {
     if (!error && data && data.tasklisting) {
@@ -51,21 +49,16 @@ const TaskTab: React.FunctionComponent<Props> = (
     }
   });
 
-  if (loading) return <Loading/>
-  if (!data || !data.tasklisting) return <h3 className="text-center">No tasks</h3>
+  if (loading) return <Loading />;
+  if (!data || !data.tasklisting)
+    return <h3 className="text-center">No tasks</h3>;
+  const tasks = data.tasklisting;
 
   return (
-    <div>
-      <div className="text-right tasks-main" style={{marginTop: -55}}>
-        <Button
-          type="primary"
-          onClick={() => setFilterModal(!filterModal)}
-          icon={<FilterOutlined/>}
-        >Filter</Button>
-      </div>
-      <TaskTable
+    <>
+      <TaskTableTiles
         submit={() => refetch()}
-        tasks={data.tasklisting}
+        tasks={tasks}
         statusList={TASK_TYPES}
         showInitiativeName={showInitiativeName}
         showProductName={showProductName}
@@ -77,7 +70,7 @@ const TaskTab: React.FunctionComponent<Props> = (
         closeModal={() => setFilterModal(false)}
         submit={applyFilter}
       />
-    </div>
+    </>
   );
 };
 

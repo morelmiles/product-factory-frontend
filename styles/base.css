@@ -16,6 +16,11 @@ body {
     margin-left: auto;
 }
 
+.container-fluid {
+    padding-right: 50px;
+    padding-left: 50px;
+}
+
 @media (min-width: 768px) {
     .container {
         width: 750px;
@@ -31,6 +36,13 @@ body {
 @media (min-width: 1200px) {
     .container {
         width: 1170px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-right: 20px;
+        padding-left: 20px;
     }
 }
 
@@ -331,6 +343,11 @@ p:last-child {
 
 .text-center {
     text-align: center;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
 }
 
 .grey-border {

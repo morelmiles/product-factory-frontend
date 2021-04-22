@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {useRouter} from 'next/router';
-import {Avatar, Button, Menu, Modal, Row, Typography, Image} from 'antd';
+import {Avatar, Button, Menu, Modal, Row, Typography, Image, Dropdown} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
 import {GET_PRODUCT_BY_SLUG, GET_PRODUCT_INFO_BY_ID} from '../../../graphql/queries';
 import {getProp} from '../../../utilities/filters';
 import {getInitialName, getUserRole, hasAdminRoots} from '../../../utilities/utils';
-import {EditOutlined} from "@ant-design/icons";
+import {EditOutlined, DownOutlined} from "@ant-design/icons";
 import AddOrEditProduct from "../../AddOrEditProduct";
 import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
 
@@ -24,6 +24,7 @@ interface ILink {
 const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
     const router = useRouter();
     const {productSlug} = router.query;
+    const [isMobile, setIsMobile] = useState(false);
 
     const {data: productOriginal} = useQuery(GET_PRODUCT_BY_SLUG, {
       variables: {slug: productSlug},
@@ -63,12 +64,22 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
     const selectedIndex: number = links.findIndex((item: any) => {
       return router.asPath.includes(item.type);
     });
-    const selectedLink = selectedIndex === -1
-      ? links[0].type : links[selectedIndex].type;
+    const selectedLink = selectedIndex === -1 ? links[0].type : links[selectedIndex].type;
+    const selectedLinkTitle = selectedIndex === -1 ? links[0].name : links[selectedIndex].name;
 
     const goToDetail = (type: string) => {
       router.push(`/${getProp(product, 'product.owner', '')}/${productSlug}${type}`).then();
     }
+
+    const handleWindowSizeChange = () => {
+      setIsMobile(window.innerWidth < 768);
+    }
+
+    useEffect(() => {
+      handleWindowSizeChange();
+      window.addEventListener('resize', handleWindowSizeChange);
+      return () => window.removeEventListener('resize', handleWindowSizeChange)
+    }, [window]);
 
     if (loading) return null;
 
@@ -86,6 +97,20 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
       //@ts-ignore
       <Button type="danger" onClick={() => setToDelete(prev => prev + 1)}>Yes, I'm sure</Button>
     ]);
+
+
+    const menu = (
+      <Menu mode="inline" selectedKeys={[selectedLink]} >
+        {links.map((link: any) => (
+          <Menu.Item
+            key={link.type}
+            onClick={() => goToDetail(link.url)}
+          >
+            {link.name}
+          </Menu.Item>
+        ))}
+      </Menu>
+    )
 
     return (
       <>
@@ -130,16 +155,15 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
                 </Typography.Link>
               </Row>
 
-              <Menu mode="inline" selectedKeys={[selectedLink]}>
-                {links.map((link: any, index: number) => (
-                  <Menu.Item
-                    key={link.type}
-                    onClick={() => goToDetail(link.url)}
-                  >
-                    {link.name}
-                  </Menu.Item>
-                ))}
-              </Menu>
+              {!isMobile ? menu : (
+                <Dropdown overlay={menu} trigger={['click']}>
+                  <a className="ant-dropdown-link menu-dropdown-link"
+                     onClick={e => e.preventDefault()}>
+                    {selectedLinkTitle} <DownOutlined />
+                  </a>
+                </Dropdown>
+              )}
+
             </div>
           )
         }

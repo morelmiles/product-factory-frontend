@@ -12,7 +12,8 @@ import {
   GET_TASKS_BY_PRODUCT_SHORT
 } from '../../../../graphql/queries';
 import {TASK_TYPES, USER_ROLES} from '../../../../graphql/types';
-import {ACCEPT_AGREEMENT, CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK} from '../../../../graphql/mutations';
+import {ACCEPT_AGREEMENT, CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK, REJECT_TASK,
+  APPROVE_TASK} from '../../../../graphql/mutations';
 import {getProp} from '../../../../utilities/filters';
 import {EditIcon} from '../../../../components';
 import DeleteModal from '../../../../components/Products/DeleteModal';
@@ -51,6 +52,8 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
   const [deleteModal, showDeleteModal] = useState(false);
   const [leaveTaskModal, showLeaveTaskModal] = useState(false);
   const [reviewTaskModal, showReviewTaskModal] = useState(false);
+  const [rejectTaskModal, showRejectTaskModal] = useState(false);
+  const [approveTaskModal, showApproveTaskModal] = useState(false);
   const [task, setTask] = useState<any>({});
   const [taskId, setTaskId] = useState(0);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -73,8 +76,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     }
   });
 
-  const userRole = getUserRole(user.roles, productSlug);
-  const userHasManagerRoots = hasManagerRoots(userRole);
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   let {data: product} = useQuery(GET_PRODUCT_INFO_BY_ID, {variables: {slug: productSlug}});
   product = product?.product || {};
@@ -148,6 +150,44 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     },
     onError() {
       message.error("Failed to submit the task in review!").then();
+    }
+  });
+
+  const [rejectTask, {loading: rejectTaskLoading}] = useMutation(REJECT_TASK, {
+    variables: {taskId},
+    onCompleted(data) {
+      const {rejectTask} = data;
+      const responseMessage = rejectTask.message;
+      if (rejectTask.success) {
+        message.success(responseMessage).then();
+        fetchData().then();
+        showRejectTaskModal(false);
+        getPersonData();
+      } else {
+        message.error(responseMessage).then();
+      }
+    },
+    onError() {
+      message.error("Failed to reject a work!").then();
+    }
+  });
+
+  const [approveTask, {loading: approveTaskLoading}] = useMutation(APPROVE_TASK, {
+    variables: {taskId},
+    onCompleted(data) {
+      const {approveTask} = data;
+      const responseMessage = approveTask.message;
+      if (approveTask.success) {
+        message.success(responseMessage).then();
+        fetchData().then();
+        showApproveTaskModal(false);
+        getPersonData();
+      } else {
+        message.error(responseMessage).then();
+      }
+    },
+    onError() {
+      message.error("Failed to reject a work!").then();
     }
   });
 
@@ -247,8 +287,6 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     switch (status) {
       case "Claimed":
         return assignedTo ? status : "Proposed By";
-      case "Done":
-        return "Done By";
       default:
         return status;
     }
@@ -381,7 +419,32 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     )
   }
 
+  let status = TASK_TYPES[getProp(task, 'status')];
   const initiativeName = getProp(task, 'initiative.name', undefined);
+  const inReview = getProp(task, 'inReview', false);
+
+  if (inReview && status !== "Done") status = "In Review";
+
+  const showInReviewEvents = () => {
+
+    return (
+      <Row className="text-sm">
+        <div className="flex-column ml-auto mt-10">
+          <Button
+            type="primary"
+            className="mb-10"
+            style={{zIndex: 1000}}
+            onClick={() => showApproveTaskModal(true)}
+          >Approve the work</Button>
+          <Button
+            type="primary"
+            onClick={() => showRejectTaskModal(true)}
+            style={{zIndex: 1000}}
+          >Reject the work</Button>
+        </div>
+      </Row>
+    )
+  }
 
   return (
     <LeftPanelContainer>
@@ -424,17 +487,20 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                 </Col>
                 <Col md={8} className="text-right">
                   {userHasManagerRoots ? (
-                    <Col>
-                      <Button
-                        onClick={() => showDeleteModal(true)}
-                      >
-                        Delete
-                      </Button>
-                      <EditIcon
-                        className="ml-10"
-                        onClick={() => setShowEditModal(true)}
-                      />
-                    </Col>
+                    <>
+                      <Col>
+                        <Button
+                          onClick={() => showDeleteModal(true)}
+                        >
+                          Delete
+                        </Button>
+                        <EditIcon
+                          className="ml-10"
+                          onClick={() => setShowEditModal(true)}
+                        />
+                      </Col>
+                      {status === "In Review" && showInReviewEvents()}
+                    </>
                   ) : showTaskEvents()}
                 </Col>
 
@@ -453,7 +519,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                 )}
                 <Col>
                   <Row className="html-description">
-                    <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: 50}}>
+                    <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: status === "In Review" ? 100 : 50}}>
                       {
                         parse(getProp(task, 'description', ''))
                       }
@@ -482,14 +548,9 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
 
                     <Row className="text-sm mt-8">
                       {
-                        (
-                          TASK_TYPES[getProp(task, 'status')] === "Available" ||
-                          TASK_TYPES[getProp(task, 'status')] === "Draft" ||
-                          TASK_TYPES[getProp(task, 'status')] === "Pending" ||
-                          TASK_TYPES[getProp(task, 'status')] === "Blocked"
-                        ) ? (
+                        ["Available", "Draft", "Pending", "Blocked", "In Review"].includes(status) ? (
                           <strong className="my-auto">
-                            Status: {TASK_TYPES[getProp(task, 'status')]}
+                            Status: {status}
                           </strong>
                         ) : (
                           <>
@@ -659,7 +720,6 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
               {leaveTaskModal && (
                 <CustomModal
                   modal={leaveTaskModal}
-                  productSlug={''}
                   closeModal={() => showLeaveTaskModal(false)}
                   submit={() => {
                     showLeaveTaskModal(false);
@@ -674,7 +734,6 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                 reviewTaskModal && (
                   <CustomModal
                     modal={reviewTaskModal}
-                    productSlug={''}
                     closeModal={() => showReviewTaskModal(false)}
                     submit={submitTask}
                     title="Submit for review"
@@ -693,6 +752,30 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                   submit={fetchData}
                   tasks={tasks}
                 />
+              }
+              {
+                rejectTaskModal && (
+                  <CustomModal
+                    modal={rejectTaskModal}
+                    closeModal={() => showRejectTaskModal(false)}
+                    submit={rejectTask}
+                    title="Reject the work"
+                    message="Do you really want to reject the work?"
+                    submitText="Yes, reject"
+                  />
+                )
+              }
+              {
+                approveTaskModal && (
+                  <CustomModal
+                    modal={approveTaskModal}
+                    closeModal={() => showApproveTaskModal(false)}
+                    submit={approveTask}
+                    title="Approve the work"
+                    message="Do you really want to approve the work?"
+                    submitText="Yes, approve"
+                  />
+                )
               }
             </>
           )
@@ -724,9 +807,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
 });
 
-const TaskContainer = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Task);
-
-export default TaskContainer;

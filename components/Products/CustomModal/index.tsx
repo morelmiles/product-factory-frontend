@@ -1,11 +1,8 @@
 import React from 'react';
 import { Modal, Button, Select } from 'antd';
 
-const { Option } = Select;
-
 type Props = {
     modal?: boolean;
-    productSlug: string;
     closeModal: any;
     submit: Function;
     title: string;
@@ -15,7 +12,6 @@ type Props = {
 
 const CustomModal: React.SFC<Props> = ({
   modal,
-  productSlug,
   closeModal,
   submit,
   title,

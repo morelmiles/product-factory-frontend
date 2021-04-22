@@ -102,21 +102,27 @@ export const GET_TASKS = gql`
         id
         name
       }
+      inReview
       tags
       stacks
+      blocked
       hasActiveDepends
       assignedTo {
         fullName
-        name
+        username
       }
-      blocked
       product {
         name
         slug
         owner
+        videoUrl
       }
       task {
         id
+      }
+      reviewer {
+        fullName
+        username
       }
     }
   }
@@ -192,6 +198,7 @@ export const GET_CAPABILITY_BY_ID = gql`
         shortDescription
         title
         status
+        inReview
         initiative {
           id
           name
@@ -202,7 +209,11 @@ export const GET_CAPABILITY_BY_ID = gql`
         hasActiveDepends
         assignedTo {
           fullName
-          name
+          username
+        }
+        reviewer {
+          fullName
+          username
         }
         product {
           name
@@ -278,6 +289,7 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
       shortDescription
       title
       status
+      inReview
       initiative {
         id
         name
@@ -288,7 +300,11 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
       hasActiveDepends
       assignedTo {
         fullName
-        name
+        username
+      }
+      reviewer {
+        fullName
+        username
       }
       product {
         name
@@ -313,7 +329,6 @@ export const GET_TASK_BY_ID = gql`
       publishedId
       canEdit
       priority
-      targetWorkLocation
       title
       description
       shortDescription
@@ -341,15 +356,7 @@ export const GET_TASK_BY_ID = gql`
         fullName
         slug
       }
-      taskclaimSet {
-        person {
-          id
-          fullName
-          emailAddress
-          slug
-        }
-        kind
-      }
+      hasActiveDepends
       capability {
         id
         name
@@ -388,12 +395,7 @@ export const GET_TASK_BY_ID = gql`
           fullName
           slug
         }
-        taskclaimSet {
-          person {
-            slug
-            fullName
-          }
-        }
+        hasActiveDepends
       }
       relatives {
         title
@@ -417,6 +419,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       shortDescription
       title
       status
+      inReview
       initiative {
         id
         name
@@ -427,15 +430,20 @@ export const GET_TASKS_BY_PRODUCT = gql`
       hasActiveDepends
       assignedTo {
         fullName
-        name
+        username
       }
       product {
         name
         slug
         owner
+        videoUrl
       }
       task {
         id
+      }
+      reviewer {
+        fullName
+        username
       }
     }
   }

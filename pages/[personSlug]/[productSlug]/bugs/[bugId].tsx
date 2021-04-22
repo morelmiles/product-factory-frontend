@@ -34,8 +34,7 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
     variables: {id: bugId}
   });
 
-  const userRole = getUserRole(user.roles, productSlug);
-  const userHasManagerRoots = hasManagerRoots(userRole);
+  const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   const getBasePath = () => `/${personSlug}/${productSlug}`;
 
