@@ -35,7 +35,7 @@ const PageComponent: React.FunctionComponent<Props> = ({pageSlug}) => {
     <ContainerFlex>
       <Layout>
         <Header/>
-        <Row>
+        <Row className="custom-page-content">
           <Col lg={22} md={24} style={{margin: "auto", padding: "3rem 24px 1.5rem 24px"}}>
             {pageExist ? parse(content) : <NotFound404 /> }
           </Col>
