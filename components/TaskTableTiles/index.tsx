@@ -90,7 +90,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const productVideoUrl = getProp(task, "product.videoUrl", "");
               const initiativeName = getProp(task, "initiative.name", "");
               const initiativeId = getProp(task, "initiative.id", "");
-              // const assignee = getProp(task, "assignedTo", null);
+              const assignee = getProp(task, "assignedTo", null);
               const owner = getProp(task, "product.owner", "");
               const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
 
@@ -104,13 +104,13 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                     </Link>
                   </div>
                   <div className="task-box-body">
-                    {task.shortdescription && (
-                      <p className="omit">{task.shortdescription}</p>
+                    {task.shortDescription && (
+                      <p className="omit">{task.shortDescription}</p>
                     )}
-                    {task.tags && task.tags.length > 0 && (
+                    {task.stacks && task.stacks.length > 0 && (
                       <span>
                         <b className="mr-20">Required Skills</b>
-                        {task.tags.map((tag: any) => (
+                        {task.stacks.map((tag: any) => (
                           <Tag key={tag} color="default">
                             {tag}
                           </Tag>
@@ -159,7 +159,15 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                     </div>
                     <p>
                       <b className="mr-15">Status</b>
-                      <span>{taskStatus}</span>
+                      <span>{taskStatus === "Claimed" ? (
+                        <>
+                          Claimed by {assignee && (
+                            <Link href={`/${assignee.username}`}>
+                              <a>{assignee.fullName}</a>
+                            </Link>
+                          )}
+                        </>
+                      ) : taskStatus}</span>
                       {/*<b style={{ float: "right" }} className="point">*/}
                       {/*  10 Points*/}
                       {/*</b>*/}

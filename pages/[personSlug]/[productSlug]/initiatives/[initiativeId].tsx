@@ -131,7 +131,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
               </div>
             </Row>
             <Row className="html-description">
-              <Col span={10}>
+              <Col span={24}>
                 <DynamicHtml
                   className='mb-10'
                   text={getProp(initiative, 'description', '')}
