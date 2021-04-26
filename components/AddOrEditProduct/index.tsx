@@ -90,9 +90,8 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
         const messageText = getProp(res, 'createProductRequest.message', '');
 
         if (status) {
-          router.push('/').then(() => {
-            message.success(messageText).then();
-          });
+          message.success("We have received your request to add a product and will review it", 10).then();
+          router.push('/').then();
         } else {
           message.error(messageText).then();
           setIsShowLoading(false);
