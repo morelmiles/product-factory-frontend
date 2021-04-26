@@ -51,7 +51,7 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
         message.warning(responseMessage).then();
         userLogInAction({ isLoggedIn: false });
       }
-    }).catch(err => message.error("Failed to logout form the system").then());
+    }).catch(err => message.error("Failed to logout from the system").then());
   }
 
   useEffect(() => {

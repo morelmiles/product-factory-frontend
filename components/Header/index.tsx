@@ -106,7 +106,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
     },
     onError(err) {
-      message.error("Failed to logout form the system").then();
+      message.error("Failed to logout from the system").then();
     }
   });
 

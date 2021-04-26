@@ -112,8 +112,20 @@
 
 .left-panel {
     margin-bottom: 0;
-    @media (max-width: 575px) {
+    .product-page-children {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+    @media (max-width: 767px) {
         margin-bottom: 30px;
+    }
+}
+
+.product-page-children {
+    @media (max-width: 767px) {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
     }
 }
 
