@@ -38,10 +38,12 @@ const LeftPanelContainer: React.FunctionComponent = ({children}) => {
         <HeaderMenu/>
         <Content className="container product-page">
           <Row gutter={16} className='mt-30'>
-            <Col xs={24} sm={8} md={8} lg={6}>
+            <Col xs={24} sm={24} md={8} lg={6}>
               <LeftPanel/>
             </Col>
-            <Col xs={24} sm={16} md={16} lg={18} style={{paddingLeft: 32, paddingRight: 32}}>
+            <Col xs={24} sm={24} md={16} lg={18}
+                 className="product-page-children"
+                 style={{paddingLeft: 32, paddingRight: 32}}>
               {children}
             </Col>
           </Row>

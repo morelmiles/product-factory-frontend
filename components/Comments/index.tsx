@@ -8,10 +8,14 @@ import {useMutation, useQuery} from "@apollo/react-hooks";
 import {CREATE_TASK_COMMENT, CREATE_BUG_COMMENT, CREATE_IDEA_COMMENT,
   CREATE_CAPABILITY_COMMENT} from "../../graphql/mutations";
 import Link from "next/link";
+import showUnAuthModal from "../UnAuthModal";
+import {useRouter} from "next/router";
+import {connect} from "react-redux";
 
 
 const {Option} = Mentions;
 
+const actionName = "Add comment"
 
 interface IUser {
   slug: string
@@ -24,11 +28,9 @@ interface ICommentContainerProps {
 }
 
 interface ICommentsProps {
-  taskId: number
 }
 
 interface IAddCommentProps {
-  taskId: number
   submit: Function
   allUsers: IUser[]
 }
@@ -73,7 +75,8 @@ const commentGetType = {
 
 
 
-const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, allUsers, objectType}) => {
+const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, allUsers, objectType, loginUrl}) => {
+  const router = useRouter();
   const cType = commentCreateType[objectType];
   const [createComment] = cType ? useMutation(cType.mutation, {
     onCompleted(res) {
@@ -83,11 +86,24 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
         setCommentText("");
         message.success("Comment was sent").then();
       } else {
+        console.log("i here!!")
         message.error("Failed to send comment").then();
       }
     },
-    onError() {
-      message.error("Failed to send comment").then();
+    onError({ graphQLErrors, networkError }) {
+      if (graphQLErrors && graphQLErrors.length > 0) {
+        let msg = graphQLErrors[0].message;
+        if (msg === "The person is undefined, please login to perform this action") {
+          showUnAuthModal(router, actionName, loginUrl);
+        } else {
+          message.error(msg).then();
+        }
+      }
+      //@ts-ignore
+      if (networkError && networkError.length > 0) {
+        //@ts-ignore
+        message.error(networkError[0].message).then();
+      }
     }
   }
   ) : "";
@@ -166,7 +182,8 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
   )
 };
 
-const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, objectType, submit, allUsers}) => {
+const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, objectType, submit, allUsers, loginUrl}) => {
+  const router = useRouter();
   const {mutation, mutationKey} = commentCreateType[objectType];
   const [createComment] = useMutation(mutation, {
     onCompleted(res) {
@@ -178,8 +195,21 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, object
         message.error("Failed to send comment").then();
       }
     },
-    onError() {
-      message.error("Failed to send comment").then();
+    onError({ graphQLErrors, networkError }) {
+      if (graphQLErrors && graphQLErrors.length > 0) {
+        let msg = graphQLErrors[0].message;
+        if (msg === "The person is undefined, please login to perform this action") {
+          showUnAuthModal(router, actionName, loginUrl);
+        } else {
+          message.error(msg).then();
+        }
+      }
+      //@ts-ignore
+      if (networkError && networkError.length > 0) {
+        //@ts-ignore
+        message.error(networkError[0].message).then();
+      }
+
     }
   }
   );
@@ -216,7 +246,7 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, object
   )
 }
 
-const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType}) => {
+const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType, loginUrl}) => {
   const {data, error, loading, refetch} = useQuery(commentGetType[objectType], {
     variables: {objectId}
   });
@@ -239,14 +269,23 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType
     <>
       <CommentContainer comments={comments}
                         submit={refetch}
+                        loginUrl={loginUrl}
                         objectType={objectType}
                         allUsers={allUsers}/>
       <AddComment objectId={objectId}
                   submit={refetch}
+                  loginUrl={loginUrl}
                   objectType={objectType}
                   allUsers={allUsers} />
     </>
   )
 };
 
-export default Comments;
+const mapStateToProps = (state: any) => ({
+  loginUrl: state.work.loginUrl
+});
+
+export default connect(
+  mapStateToProps,
+  null
+)(Comments);

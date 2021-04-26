@@ -105,7 +105,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
 
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
-    statuses: [],
+    statuses: [2],
     tags: [],
     priority: [],
     stacks: [],

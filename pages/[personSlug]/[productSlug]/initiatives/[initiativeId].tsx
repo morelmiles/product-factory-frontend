@@ -41,7 +41,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   const [tasks, setTasks] = useState([]);
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
-    statuses: [],
+    statuses: [2],
     tags: [],
     priority: [],
     stacks: [],
