@@ -15,7 +15,7 @@ import LoginViaAM from "../LoginViaAM";
 import {LOGOUT} from "../../graphql/mutations";
 import { MenuOutlined, DownOutlined, LogoutOutlined, UserOutlined, BookOutlined } from '@ant-design/icons';
 
-
+const redirectToLocalName = "redirectTo";
 
 type Props = {
   user?: any;
@@ -54,8 +54,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
   useEffect(() => {
     if (authMachineData && authMachineData?.getAuthmachineLoginUrl) setLoginURL(authMachineData.getAuthmachineLoginUrl);
-  }, [authMachineData])
-
+  }, [authMachineData]);
 
   useEffect(() => {
     if (personData && personData.person) {
@@ -74,7 +73,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             role: USER_ROLES[role.right]
           }
         })
-      })
+      });
     } else if (personData && personData.person === null) {
       userLogInAction({
         isLoggedIn: false,
@@ -87,7 +86,17 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         roles: []
       });
     }
-  }, [personData])
+  }, [personData]);
+
+  useEffect(() => {
+    if (window.location.pathname !== "/switch-test-user") {
+      let redirectTo = localStorage.getItem(redirectToLocalName);
+      if (redirectTo) {
+        router.push(redirectTo).then();
+        localStorage.removeItem(redirectToLocalName);
+      }
+    }
+  }, []);
 
   const [logout] = useMutation(LOGOUT, {
     onCompleted(data) {
@@ -95,6 +104,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
       if (success) {
         localStorage.removeItem('userId');
         localStorage.removeItem('fullName');
+        localStorage.removeItem(redirectToLocalName);
         if (url) {
           window.location.replace(url);
         } else {

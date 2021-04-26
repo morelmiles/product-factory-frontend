@@ -36,7 +36,7 @@ const LeftPanelContainer: React.FunctionComponent = ({children}) => {
     <ContainerFlex>
       <Layout>
         <HeaderMenu/>
-        <Content className="container-fluid product-page">
+        <Content className="container product-page">
           <Row gutter={16} className='mt-30'>
             <Col xs={24} sm={24} md={8} lg={6}>
               <LeftPanel/>
