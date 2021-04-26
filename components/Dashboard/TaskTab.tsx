@@ -23,7 +23,7 @@ const TaskTab: React.FunctionComponent<Props> = ({
 }) => {
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
-    statuses: [],
+    statuses: [2],
     tags: [],
     priority: [],
     stacks: [],
