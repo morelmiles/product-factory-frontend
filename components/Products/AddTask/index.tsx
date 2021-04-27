@@ -10,7 +10,7 @@ import {
   GET_USERS
 } from "../../../graphql/queries";
 import {CREATE_TASK, UPDATE_TASK} from "../../../graphql/mutations";
-import {TASK_TYPES} from "../../../graphql/types";
+import {TASK_TYPES, TASK_PRIORITIES} from "../../../graphql/types";
 import AddInitiative from "../AddInitiative";
 import {PlusOutlined, MinusOutlined} from "@ant-design/icons";
 import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
@@ -69,6 +69,7 @@ const AddTask: React.FunctionComponent<Props> = (
   );
   const [longDescriptionClear, setLongDescriptionClear] = useState(0);
   const [status, setStatus] = useState(modalType ? task.status : 2);
+  const [priority, setPriority] = useState(modalType ? TASK_PRIORITIES.indexOf(task.priority) : "");
   const [capability, setCapability] = useState(
     modalType && task.capability ? task.capability.id : 0
   );
@@ -252,6 +253,7 @@ const AddTask: React.FunctionComponent<Props> = (
 
   const clearData = () => {
     setTitle("");
+    setPriority("");
     setStatus(2);
     setLongDescriptionClear(prev => prev + 1);
     setShortDescription("");
@@ -278,6 +280,7 @@ const AddTask: React.FunctionComponent<Props> = (
       tags,
       stacks,
       dependOn,
+      priority,
       reviewer: reviewSelectValue
     };
 
@@ -437,6 +440,19 @@ const AddTask: React.FunctionComponent<Props> = (
           >
             {TASK_TYPES.map((option: string, idx: number) => (
               <Option key={`status${idx}`} value={idx}>{option}</Option>
+            ))}
+          </Select>
+        </Row>
+        <Row className="mb-15">
+          <label>Priority: </label>
+          <Select
+            value={priority}
+            onChange={setPriority}
+            placeholder="Select priority"
+          >
+            <Option value="" disabled={true}>Select priority</Option>
+            {TASK_PRIORITIES.map((option: string, idx: number) => (
+              <Option key={`priority-${idx}`} value={idx}>{option}</Option>
             ))}
           </Select>
         </Row>
