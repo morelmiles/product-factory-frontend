@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {Modal, Row, Col, Input, Select, message, TreeSelect} from 'antd';
-import {useMutation, useQuery} from '@apollo/react-hooks';
+import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
+import {Modal, Row, Col, Input, Select, message, TreeSelect} from "antd";
+import {useMutation, useQuery} from "@apollo/react-hooks";
 import {
   GET_CAPABILITIES_BY_PRODUCT,
   GET_INITIATIVES_SHORT,
   GET_STACKS,
   GET_TAGS,
   GET_USERS
-} from '../../../graphql/queries';
-import {CREATE_TASK, UPDATE_TASK} from '../../../graphql/mutations';
-import {TASK_TYPES} from '../../../graphql/types';
-import AddInitiative from '../AddInitiative';
-import {PlusOutlined, MinusOutlined} from '@ant-design/icons';
-import {RICH_TEXT_EDITOR_WIDTH} from '../../../utilities/constants';
+} from "../../../graphql/queries";
+import {CREATE_TASK, UPDATE_TASK} from "../../../graphql/mutations";
+import {TASK_TYPES, TASK_PRIORITIES} from "../../../graphql/types";
+import AddInitiative from "../AddInitiative";
+import {PlusOutlined, MinusOutlined} from "@ant-design/icons";
+import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
 import {getProp} from "../../../utilities/filters";
 import RichTextEditor from "../../RichTextEditor";
 
@@ -52,20 +52,24 @@ const AddTask: React.FunctionComponent<Props> = (
     user
   }
 ) => {
-  const [title, setTitle] = useState(modalType ? task.title : '');
+  const [title, setTitle] = useState(modalType ? task.title : "");
 
   const [treeData, setTreeData] = useState<any>([]);
   const [allTags, setAllTags] = useState([]);
   const [skip, setSkip] = React.useState(false);
   const [allStacks, setAllStacks] = useState([]);
   const [shortDescription, setShortDescription] = useState(
-    modalType ? task.shortDescription : ''
+    modalType ? task.shortDescription : ""
   );
   const [description, setDescription] = useState(
-    modalType ? task.description : ''
+    modalType ? task.description : ""
+  );
+  const [videoUrl, setVideoUrl] = useState(
+    modalType ? task.videoUrl : ""
   );
   const [longDescriptionClear, setLongDescriptionClear] = useState(0);
   const [status, setStatus] = useState(modalType ? task.status : 2);
+  const [priority, setPriority] = useState(modalType ? TASK_PRIORITIES.indexOf(task.priority) : "");
   const [capability, setCapability] = useState(
     modalType && task.capability ? task.capability.id : 0
   );
@@ -78,23 +82,23 @@ const AddTask: React.FunctionComponent<Props> = (
     modalType && task.tag ? task.tag.map((tag: any) => tag.name) : []
   );
 
-  const [tagsSearchValue, setTagsSearchValue] = useState('');
+  const [tagsSearchValue, setTagsSearchValue] = useState("");
   const tagsSearchValueChangeHandler = (val: any) => {
     const re = /^[a-zA-Z0-9-]{0,128}$/;
 
     if (re.test(val)) {
       setTagsSearchValue(val);
-    } else if (val.length > 1 && (val[val.length - 1] === ' ' || val[val.length - 1] === ',')) {
+    } else if (val.length > 1 && (val[val.length - 1] === " " || val[val.length - 1] === ",")) {
       setTags((prev: any) => [...prev, val.slice(0, -1)]);
-      setTagsSearchValue('');
+      setTagsSearchValue("");
     } else {
-      message.warn('Tags can only include letters, numbers and -, with the max length of 128 characters').then()
+      message.warn("Tags can only include letters, numbers and -, with the max length of 128 characters").then()
     }
   };
 
   useEffect(() => {
-    if (reviewSelectValue === '') {
-      setReviewSelectValue(getProp(user, 'slug', ''));
+    if (reviewSelectValue === "") {
+      setReviewSelectValue(getProp(user, "slug", ""));
     }
   }, [user]);
 
@@ -122,7 +126,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const [createTask] = useMutation(CREATE_TASK);
   const [updateTask] = useMutation(UPDATE_TASK);
   const [allUsers, setAllUsers] = useState([]);
-  const [reviewSelectValue, setReviewSelectValue] = useState(getProp(task, 'reviewer.slug', ''));
+  const [reviewSelectValue, setReviewSelectValue] = useState(getProp(task, "reviewer.slug", ""));
   const {data: users} = useQuery(GET_USERS);
 
   const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
@@ -130,7 +134,7 @@ const AddTask: React.FunctionComponent<Props> = (
   const convertDataAndSetTree = (capabilities: any) => {
     let capabilitiesData: string = "";
     if (capabilities && capabilities.capabilities) {
-      capabilitiesData = getProp(capabilities, 'capabilities', '');
+      capabilitiesData = getProp(capabilities, "capabilities", "");
       try {
         if (capabilitiesData !== "") {
           capabilitiesData = JSON.parse(capabilitiesData);
@@ -151,15 +155,15 @@ const AddTask: React.FunctionComponent<Props> = (
 
   const formatData = (data: any) => {
     return data.map((node: any) => {
-      const nodeId = getProp(node, 'id');
+      const nodeId = getProp(node, "id");
 
       return {
         id: nodeId,
-        title: getProp(node, 'data.name'),
+        title: getProp(node, "data.name"),
         value: nodeId,
-        description: getProp(node, 'data.description', ''),
-        videoLink: getProp(node, 'data.video_link', ''),
-        children: node.children ? formatData(getProp(node, 'children', [])) : [],
+        description: getProp(node, "data.description", ""),
+        videoLink: getProp(node, "data.video_link", ""),
+        children: node.children ? formatData(getProp(node, "children", [])) : [],
         expanded: isExpandedById(nodeId)
       }
     })
@@ -170,12 +174,12 @@ const AddTask: React.FunctionComponent<Props> = (
     let isExpanded: boolean = false;
 
     data.map((node: any) => {
-      if (getProp(node, 'id') === id && getProp(node, 'expanded', false)) {
+      if (getProp(node, "id") === id && getProp(node, "expanded", false)) {
         isExpanded = true;
         return;
       }
 
-      if (getProp(node, 'children', []).length > 0) {
+      if (getProp(node, "children", []).length > 0) {
         if (isExpandedById(id, node.children)) {
           isExpanded = true;
         }
@@ -192,7 +196,7 @@ const AddTask: React.FunctionComponent<Props> = (
   });
 
   useEffect(() => {
-    setAllUsers(getProp(users, 'people', []));
+    setAllUsers(getProp(users, "people", []));
   }, [users]);
 
   useEffect(() => {
@@ -230,7 +234,7 @@ const AddTask: React.FunctionComponent<Props> = (
       message.error("Title is required. Please fill out title");
       return;
     }
-    if (!description || description === '<p></p>') {
+    if (!description || description === "<p></p>") {
       message.error("Long description is required. Please fill out description");
       return;
     }
@@ -249,22 +253,25 @@ const AddTask: React.FunctionComponent<Props> = (
 
   const clearData = () => {
     setTitle("");
+    setPriority("");
     setStatus(2);
     setLongDescriptionClear(prev => prev + 1);
     setShortDescription("");
+    setVideoUrl("");
     setCapability(0);
     setInitiative(0);
     setCapability([]);
     setTags([]);
     setStacks([]);
     setDependOn([]);
-    setReviewSelectValue(getProp(user, 'slug', null));
+    setReviewSelectValue(getProp(user, "slug", null));
   }
 
   const addNewTask = async () => {
     const input = {
       title,
       description,
+      videoUrl,
       shortDescription: shortDescription,
       status: status,
       productSlug,
@@ -273,6 +280,7 @@ const AddTask: React.FunctionComponent<Props> = (
       tags,
       stacks,
       dependOn,
+      priority,
       reviewer: reviewSelectValue
     };
 
@@ -285,8 +293,8 @@ const AddTask: React.FunctionComponent<Props> = (
           variables: {input}
         })
 
-      const modalTypeText = modalType ? 'updateTask' : 'createTask';
-      const messageText = getProp(res, `data.${modalTypeText}.message`, '');
+      const modalTypeText = modalType ? "updateTask" : "createTask";
+      const messageText = getProp(res, `data.${modalTypeText}.message`, "");
 
       if (messageText && getProp(res, `data.${modalTypeText}.status`, false)) {
         submit();
@@ -328,7 +336,7 @@ const AddTask: React.FunctionComponent<Props> = (
         width={RICH_TEXT_EDITOR_WIDTH}
         maskClosable={false}
       >
-        <Row className='mb-15'>
+        <Row className="mb-15">
           <label>Title*:</label>
           <Input
             placeholder="Title"
@@ -337,7 +345,7 @@ const AddTask: React.FunctionComponent<Props> = (
             required
           />
         </Row>
-        <Row className='mb-15'>
+        <Row className="mb-15">
           <Col span={24}>
             <label>Short Description*:</label>
           </Col>
@@ -352,7 +360,7 @@ const AddTask: React.FunctionComponent<Props> = (
             />
           </Col>
         </Row>
-        <Row style={{width: '100%', marginBottom: 25}}>
+        <Row style={{width: "100%"}}>
           <Col span={24}>
             <label>Long Description*:</label>
             <RichTextEditor initialHTMLValue={description} onChangeHTML={setDescription} clear={longDescriptionClear}/>
@@ -360,13 +368,13 @@ const AddTask: React.FunctionComponent<Props> = (
         </Row>
         {
           treeData.length > 0 && (
-            <Row className='mb-15'>
+            <Row className="mb-15">
               <label>Capability:</label>
               <TreeSelect
                 showSearch
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 value={capability ? capability : null}
-                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                 placeholder="Please select"
                 allowClear
                 treeData={treeData}
@@ -379,7 +387,7 @@ const AddTask: React.FunctionComponent<Props> = (
         }
         {initiatives && (
           <>
-            <Row justify="space-between" className='mb-5'>
+            <Row justify="space-between" className="mb-5">
               <Col>
                 <label>Initiative:</label>
               </Col>
@@ -406,7 +414,7 @@ const AddTask: React.FunctionComponent<Props> = (
                 />
               )}
             </Row>
-            <Row className='mb-15'>
+            <Row className="mb-15">
               <Select
                 onChange={setInitiative}
                 placeholder="Select initiative"
@@ -423,7 +431,7 @@ const AddTask: React.FunctionComponent<Props> = (
             </Row>
           </>
         )}
-        <Row className='mb-15'>
+        <Row className="mb-15">
           <label>Status: </label>
           <Select
             value={status}
@@ -435,7 +443,20 @@ const AddTask: React.FunctionComponent<Props> = (
             ))}
           </Select>
         </Row>
-        <Row className='mb-15'>
+        <Row className="mb-15">
+          <label>Priority: </label>
+          <Select
+            value={priority}
+            onChange={setPriority}
+            placeholder="Select priority"
+          >
+            <Option value="" disabled={true}>Select priority</Option>
+            {TASK_PRIORITIES.map((option: string, idx: number) => (
+              <Option key={`priority-${idx}`} value={idx}>{option}</Option>
+            ))}
+          </Select>
+        </Row>
+        <Row className="mb-15">
           <label>Tags:</label>
           <Select
             mode="multiple"
@@ -453,7 +474,7 @@ const AddTask: React.FunctionComponent<Props> = (
             ))}
           </Select>
         </Row>
-        <Row className='mb-15'>
+        <Row className="mb-15">
           <label>Skills Required:</label>
           <Select
             mode="multiple"
@@ -468,6 +489,15 @@ const AddTask: React.FunctionComponent<Props> = (
               </Option>
             ))}
           </Select>
+        </Row>
+        <Row className="mb-15">
+          <label>Video Link:</label>
+          <Input
+            placeholder="Video link"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            required
+          />
         </Row>
         <Row>
           <label>Dependant on:</label>

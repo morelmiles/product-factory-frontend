@@ -60,10 +60,6 @@ const TaskTable: React.FunctionComponent<Props> = (
 
               const inReview = getProp(task, 'inReview', false);
 
-              if (status === "Done") {
-                if (!hasActiveDepends) taskStatus = "Done";
-              }
-
               if (inReview && taskStatus !== "Done") {
                 taskStatus = "In Review";
               }
