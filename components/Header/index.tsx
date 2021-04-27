@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {Button, message, Row, Col, Drawer, Menu, Dropdown} from 'antd';
-import {setLoginURL, userLogInAction} from '../../lib/actions';
-import {UserState} from '../../lib/reducers/user.reducer';
-import {productionMode} from '../../utilities/constants';
+import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
+import {Button, message, Row, Col, Drawer, Menu, Dropdown} from "antd";
+import {setLoginURL, userLogInAction} from "../../lib/actions";
+import {UserState} from "../../lib/reducers/user.reducer";
+import {productionMode} from "../../utilities/constants";
 // @ts-ignore
-import Logo from '../../public/assets/logo.svg';
-import {useRouter} from 'next/router'
-import Link from 'antd/lib/typography/Link';
+import Logo from "../../public/assets/logo.svg";
+import {useRouter} from "next/router";
+import Link from "antd/lib/typography/Link";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {GET_AM_LOGIN_URL, GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
 import LoginViaAM from "../LoginViaAM";
 import {LOGOUT} from "../../graphql/mutations";
-import { MenuOutlined, DownOutlined, LogoutOutlined, UserOutlined, BookOutlined } from '@ant-design/icons';
+import { MenuOutlined, DownOutlined, LogoutOutlined, UserOutlined, BookOutlined } from "@ant-design/icons";
 
 const redirectToLocalName = "redirectTo";
 
@@ -102,8 +102,8 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     onCompleted(data) {
       const {success, message: responseMessage, url} = data.logout;
       if (success) {
-        localStorage.removeItem('userId');
-        localStorage.removeItem('fullName');
+        localStorage.removeItem("userId");
+        localStorage.removeItem("fullName");
         localStorage.removeItem(redirectToLocalName);
         if (url) {
           window.location.replace(url);
@@ -133,7 +133,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
       <Row
         className="header-mobile"
         align="middle" justify="space-between"
-        style={{height: 56, padding: '0 30px', borderBottom: '1px solid #d9d9d9'}}
+        style={{height: 56, padding: "0 30px", borderBottom: "1px solid #d9d9d9"}}
       >
         <Col>
           <Link href="/">
@@ -207,9 +207,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
       </Row>
 
 
-      <Row align="middle" justify="center" style={{height: 56, borderBottom: '1px solid #d9d9d9'}} className="header-desktop">
+      <Row align="middle" justify="center" style={{height: 56, borderBottom: "1px solid #d9d9d9"}} className="header-desktop">
         <Col xl={20} lg={22}>
-          <Row>
+          <Row className="container">
             <Col span={10}>
               <Row justify="start" align="middle">
                 <Col style={{marginRight: 20}}>

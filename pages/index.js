@@ -1,16 +1,18 @@
-import Dashboard from '../components/Dashboard';
-import Header from '../components/Header';
-import withApollo from '../lib/apolloClient'
-import ContainerFlex from '../components/ContainerFlex';
-import {Layout} from 'antd';
+import Dashboard from "../components/Dashboard";
+import Header from "../components/Header";
+import withApollo from "../lib/apolloClient";
+import ContainerFlex from "../components/ContainerFlex";
+import {Layout} from "antd";
+import Footer from "../components/Footer";
 
 
 function Home() {
     return (
         <ContainerFlex>
             <Layout>
-                <Header/>
-                <Dashboard/>
+                <Header />
+                <Dashboard />
+                <Footer />
             </Layout>
         </ContainerFlex>
     )
