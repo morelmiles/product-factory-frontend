@@ -6,6 +6,7 @@ import {useQuery} from "@apollo/react-hooks";
 import {GET_PAGE_CONTENT} from "../../graphql/queries";
 import parse from "html-react-parser";
 import NotFound404 from "../404";
+import Footer from "../Footer";
 
 type Props = {
   pageSlug: string
@@ -33,13 +34,17 @@ const PageComponent: React.FunctionComponent<Props> = ({pageSlug}) => {
 
   return (
     <ContainerFlex>
-      <Layout>
-        <Header/>
-        <Row className="custom-page-content">
-          <Col lg={22} md={24} style={{margin: "auto", padding: "3rem 24px 1.5rem 24px"}}>
-            {pageExist ? parse(content) : <NotFound404 /> }
-          </Col>
-        </Row>
+      <Layout style={{minHeight: "100vh"}}>
+        <Header />
+        <Layout.Content>
+          <Row className="custom-page-content container">
+            <Col lg={22} md={24} style={{margin: "auto", padding: "3rem 24px 1.5rem 24px"}}>
+              {pageExist ? parse(content) : <NotFound404 /> }
+            </Col>
+          </Row>
+        </Layout.Content>
+
+        <Footer />
       </Layout>
     </ContainerFlex>
   )

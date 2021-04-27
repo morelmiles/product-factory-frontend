@@ -1,35 +1,28 @@
-import React, {useEffect} from 'react';
-import Link from 'next/link';
-import {Row, Col, Card, Tag} from 'antd';
-import {useQuery} from '@apollo/react-hooks';
-import ReactPlayer from 'react-player';
-import {GET_PRODUCTS} from '../../graphql/queries';
-import {getProp} from '../../utilities/filters';
-import {TagType} from '../../graphql/types';
+import React, {useEffect} from "react";
+import Link from "next/link";
+import {Row, Col, Card, Tag} from "antd";
+import {useQuery} from "@apollo/react-hooks";
+import ReactPlayer from "react-player";
+import {GET_PRODUCTS} from "../../graphql/queries";
+import {getProp} from "../../utilities/filters";
+import {TagType} from "../../graphql/types";
 // @ts-ignore
 import CheckCircle from "../../public/assets/icons/check-circle.svg";
-import parse from 'html-react-parser';
-import {useRouter} from 'next/router';
+import parse from "html-react-parser";
+import {useRouter} from "next/router";
 import Loading from "../Loading";
 
-let pluralize = require('pluralize');
+let pluralize = require("pluralize");
 
 type Props = {
   stacksFilter: string[];
-  setProductNum: (value: number) => void;
 };
 
-const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= [], setProductNum}) => {
-  const {data, error, loading, refetch} = useQuery(GET_PRODUCTS, {
+const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= []}) => {
+  const {data, loading, refetch} = useQuery(GET_PRODUCTS, {
     fetchPolicy: "no-cache"
   });
   const router = useRouter();
-
-  useEffect(() => {
-    if (!error) {
-      setProductNum(getProp(data, 'products', []).length);
-    }
-  }, [data]);
 
   useEffect(() => {
     refetch({
@@ -40,12 +33,12 @@ const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= [], setProduc
   }, [stacksFilter]);
 
   const getAvailableTaskText = (availableTasks: number) => {
-    if (availableTasks === 0) return '';
+    if (availableTasks === 0) return "";
     return `${availableTasks} available ${pluralize("task", availableTasks)}`;
   }
 
   const getAvailableInitiativeText = (initiatives: number) => {
-    if (initiatives === 0) return '';
+    if (initiatives === 0) return "";
     return `${initiatives} available ${pluralize("initiative", initiatives)}`;
   }
 
@@ -59,11 +52,11 @@ const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= [], setProduc
   if (loading) return <Loading/>;
 
   return (
-    <Row gutter={[16, 16]} className="card product-list" style={{margin: '0 auto'}}>
+    <Row gutter={[16, 16]} className="card product-list" style={{margin: "0 auto"}}>
       {
         data && data.products.map((product: any, idx: number) => {
-          const availableTasks = getProp(product, 'availableTaskNum', 0);
-          const initiatives = getProp(product, 'initiativeSet', []).length;
+          const availableTasks = getProp(product, "availableTaskNum", 0);
+          const initiatives = getProp(product, "initiativeSet", []).length;
           return (
             <Col key={idx} xs={24} sm={12} md={12} lg={8}>
               <Card
@@ -71,34 +64,34 @@ const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= [], setProduc
                   <ReactPlayer
                     width="100%"
                     height="200px"
-                    url={product.videoUrl ? product.videoUrl : ''}
+                    url={product.videoUrl ? product.videoUrl : ""}
                   />
                 }
               >
                 <div onClick={
-                  () => goTo(`/${getProp(product, 'owner', 'products')}/${product.slug}`)
+                  () => goTo(`/${getProp(product, "owner", "products")}/${product.slug}`)
                 }>
                   <div className="pb-50">
                     {
-                      getProp(product, 'tag', []).map((tag: TagType, idx: number) => (
+                      getProp(product, "tag", []).map((tag: TagType, idx: number) => (
                         <Tag key={`tag-${idx}`}>{tag.name}</Tag>
                       ))
                     }
                     <div>
-                      <Link href={`/${getProp(product, 'owner', 'products')}/${product.slug}`}>
-                        {getProp(product, 'name', '')}
+                      <Link href={`/${getProp(product, "owner", "products")}/${product.slug}`}>
+                        {getProp(product, "name", "")}
                       </Link>
                     </div>
                     <div className="text-grey html-description">
-                      {parse(getProp(product, 'shortDescription', ''))}
+                      {parse(getProp(product, "shortDescription", ""))}
                     </div>
                   </div>
                   <div style={{
-                    position: 'absolute',
+                    position: "absolute",
                     bottom: 16
                   }}>
                     {availableTasks > 0 && (
-                      <Link href={`/${getProp(product, 'owner', 'products')}/${product.slug}/tasks`}>
+                      <Link href={`/${getProp(product, "owner", "products")}/${product.slug}/tasks`}>
                         <div>
                           <img
                             src={CheckCircle}
@@ -113,7 +106,7 @@ const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= [], setProduc
                     )}
                     <span>
                       {availableTasks > 0 && (<>&nbsp;&nbsp;</>)}
-                      <Link href={`/${getProp(product, 'owner', 'products')}/${product.slug}/initiatives`}>
+                      <Link href={`/${getProp(product, "owner", "products")}/${product.slug}/initiatives`}>
                         {getAvailableInitiativeText(initiatives)}
                       </Link>
                     </span>
