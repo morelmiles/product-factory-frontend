@@ -101,6 +101,7 @@ export const GET_TASKS = gql`
       initiative {
         id
         name
+        videoUrl
       }
       inReview
       tags
@@ -178,6 +179,7 @@ export const GET_CAPABILITY_BY_ID = gql`
           name
         }
         videoLink
+        previewVideoUrl
         attachments {
           id
           name
@@ -251,6 +253,7 @@ export const GET_INITIATIVES = gql`
       }
       availableTaskCount
       completedTaskCount
+      videoUrl
     }
   }
 `;
@@ -281,6 +284,8 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
         shortDescription
         fullDescription
       }
+      videoUrl
+      previewVideoUrl
     }
     tasks {
       id
@@ -405,6 +410,8 @@ export const GET_TASK_BY_ID = gql`
           slug
         }
       }
+      videoUrl
+      previewVideoUrl
     }
     statusList
   }
@@ -423,6 +430,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       initiative {
         id
         name
+        videoUrl
       }
       tags
       stacks

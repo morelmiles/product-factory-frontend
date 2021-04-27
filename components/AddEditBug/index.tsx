@@ -220,8 +220,6 @@ const AddEditBug: React.FunctionComponent<Props> = (
     }
   }
 
-  console.log("capabilityTreeData", capabilityTreeData)
-
   return (
     <>
       <Modal

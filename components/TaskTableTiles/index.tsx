@@ -77,10 +77,6 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
 
               const inReview = getProp(task, 'inReview', false);
 
-              if (status === "Done") {
-                if (!hasActiveDepends) taskStatus = "Done";
-              }
-
               if (inReview && taskStatus !== "Done") {
                 taskStatus = "In Review";
               }
@@ -90,6 +86,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const productVideoUrl = getProp(task, "product.videoUrl", "");
               const initiativeName = getProp(task, "initiative.name", "");
               const initiativeId = getProp(task, "initiative.id", "");
+              const initiativeVideoUrl = getProp(task, "initiative.videoUrl", "");
               const assignee = getProp(task, "assignedTo", null);
               const owner = getProp(task, "product.owner", "");
               const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
@@ -141,7 +138,10 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                         </span>
                         <br />
                         <div className="task-box-video">
-                          {/*<PlaySquareOutlined />*/}
+                          {initiativeVideoUrl !== "" &&
+                          <PlaySquareOutlined className="pointer"
+                                              onClick={() => showVideoModal(initiativeVideoUrl)} />}
+
                           <Link
                             href={`/${owner}/${productSlug}/initiatives/${initiativeId}`}
                           >
@@ -205,11 +205,21 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
         className="video-modal"
         onCancel={() => setPlaying(false)}
         footer={null}>
+        {modalVideoUrl.includes("embed") ? (
+          <div style={{position: "relative", height: "300px", width: "100%"}} className="text-center">
+              <iframe src={modalVideoUrl}
+                      frameBorder="0"
+                      allowFullScreen
+                      style={{width: "calc(100vw - 30px)", height: "300px", maxWidth: "472px"}}/>
+            </div>
+        ) : (
           <ReactPlayer url={modalVideoUrl}
                        playing={playing}
                        playsinline={true}
                        controls={true}
+                       height="300px"
                        width="100%" />
+        )}
       </Modal>
     </>
   );

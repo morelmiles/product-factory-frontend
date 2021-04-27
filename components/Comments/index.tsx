@@ -86,7 +86,6 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
         setCommentText("");
         message.success("Comment was sent").then();
       } else {
-        console.log("i here!!")
         message.error("Failed to send comment").then();
       }
     },
