@@ -105,6 +105,16 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         localStorage.removeItem("userId");
         localStorage.removeItem("fullName");
         localStorage.removeItem(redirectToLocalName);
+        userLogInAction({
+          isLoggedIn: false,
+          loading: false,
+          fullName: "",
+          slug: "",
+          username: "",
+          id: null,
+          claimedTask: null,
+          roles: []
+        });
         if (url) {
           window.location.replace(url);
         } else {
