@@ -239,17 +239,16 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
         } else {
           message.error(claimTask.claimedTaskName ?
             <div>
-              You cannot claim the task, you have an active task.
-              <br/>
-              <strong className="pointer"
-                      onClick={() => {
-                        router.push(claimTask.claimedTaskLink);
-                        message.destroy();
-                      }}>
+              You already claimed another task on this product:
+              <div className="pointer"
+                   style={{color: "#1890ff"}}
+                   onClick={() => {
+                     router.push(claimTask.claimedTaskLink);
+                     message.destroy();
+                   }}>
                 {claimTask.claimedTaskName}
-              </strong>
-              <br/>
-              Please complete another task to claim a new task.
+              </div>
+              Please complete this task before claiming a new one.
             </div>
             : responseMessage, 5).then();
         }

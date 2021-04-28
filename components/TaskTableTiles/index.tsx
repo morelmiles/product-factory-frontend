@@ -6,7 +6,7 @@ import { getProp } from "../../utilities/filters";
 import { TASK_CLAIM_TYPES } from "../../graphql/types";
 import { PlaySquareOutlined } from "@ant-design/icons";
 import Priorities from "../Priorities";
-import ReactPlayer from 'react-player';
+import ReactPlayer from "react-player";
 import { getUserRole, hasManagerRoots } from "../../utilities/utils";
 
 type Props = {
@@ -65,9 +65,9 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
         {curTasks && curTasks.length > 0 ? (
           <>
             {curTasks.map((task: any, index: number) => {
-              const status = getProp(task, 'status');
+              const status = getProp(task, "status");
               let taskStatus = statusList[status];
-              const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
+              const hasActiveDepends = getProp(task, "hasActiveDepends", false);
 
               if (hasActiveDepends) {
                 taskStatus = "Blocked";
@@ -75,7 +75,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                 taskStatus = "Available";
               }
 
-              const inReview = getProp(task, 'inReview', false);
+              const inReview = getProp(task, "inReview", false);
 
               if (inReview && taskStatus !== "Done") {
                 taskStatus = "In Review";
@@ -87,6 +87,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const initiativeName = getProp(task, "initiative.name", "");
               const initiativeId = getProp(task, "initiative.id", "");
               const initiativeVideoUrl = getProp(task, "initiative.videoUrl", "");
+              const taskVideoUrl = getProp(task, "videoUrl", "");
               const assignee = getProp(task, "assignedTo", null);
               const owner = getProp(task, "product.owner", "");
               const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
@@ -94,6 +95,9 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               return (
                 <Col key={index} md={gridSizeMd} lg={gridSizeLg} sm={gridSizeSm} className="task-box">
                   <div className="task-box-title">
+                    {taskVideoUrl !== "" &&
+                          <PlaySquareOutlined className="pointer mr-10"
+                                              onClick={() => showVideoModal(taskVideoUrl)} />}
                     <Link
                       href={`/${owner}/${productSlug}/tasks/${task.publishedId}`}
                     >
