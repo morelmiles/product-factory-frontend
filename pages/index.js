@@ -9,7 +9,7 @@ import Footer from "../components/Footer";
 function Home() {
     return (
         <ContainerFlex>
-            <Layout>
+            <Layout style={{minHeight: "100vh"}}>
                 <Header />
                 <Dashboard />
                 <Footer />

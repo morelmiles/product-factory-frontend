@@ -69,7 +69,7 @@ const AddTask: React.FunctionComponent<Props> = (
   );
   const [longDescriptionClear, setLongDescriptionClear] = useState(0);
   const [status, setStatus] = useState(modalType ? task.status : 2);
-  const [priority, setPriority] = useState(modalType ? TASK_PRIORITIES.indexOf(task.priority) : "");
+  const [priority, setPriority] = useState<string | number | null>(modalType ? TASK_PRIORITIES.indexOf(task.priority) : null);
   const [capability, setCapability] = useState(
     modalType && task.capability ? task.capability.id : 0
   );
@@ -253,7 +253,7 @@ const AddTask: React.FunctionComponent<Props> = (
 
   const clearData = () => {
     setTitle("");
-    setPriority("");
+    setPriority(null);
     setStatus(2);
     setLongDescriptionClear(prev => prev + 1);
     setShortDescription("");
@@ -450,7 +450,6 @@ const AddTask: React.FunctionComponent<Props> = (
             onChange={setPriority}
             placeholder="Select priority"
           >
-            <Option value="" disabled={true}>Select priority</Option>
             {TASK_PRIORITIES.map((option: string, idx: number) => (
               <Option key={`priority-${idx}`} value={idx}>{option}</Option>
             ))}
