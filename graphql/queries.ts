@@ -108,6 +108,7 @@ export const GET_TASKS = gql`
       stacks
       blocked
       hasActiveDepends
+      videoUrl
       assignedTo {
         fullName
         username
@@ -436,6 +437,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
       stacks
       blocked
       hasActiveDepends
+      videoUrl
       assignedTo {
         fullName
         username
