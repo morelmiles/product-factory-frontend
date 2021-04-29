@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import parse from 'html-react-parser';
-import classnames from 'classnames';
+import React, { useEffect, useState } from "react";
+import parse from "html-react-parser";
+import ShowMoreText from "react-show-more-text";
 
 type Params = {
   text: string;
@@ -11,7 +11,6 @@ type Params = {
 
 const DynamicHtml = ({ text, className, length = 150, style }: Params) => {
   const [showMore, setShowMore] = useState<boolean>(text.length > length);
-  const defaultClass: string = showMore ? 'show-ellipse' : '';
 
   useEffect(() => {
     setShowMore(text.length > length);
@@ -19,25 +18,16 @@ const DynamicHtml = ({ text, className, length = 150, style }: Params) => {
 
   return (
     <>
-      <div
-        className={classnames(defaultClass, className)}
-        style={style}
+      <ShowMoreText
+        lines={3}
+        more="Show more"
+        less="Show less"
+        className={className}
+        expanded={false}
+        anchorClass="show-more-anchor"
       >
-        {parse(text)}
-      </div>
-      {text.length > length && (
-        <div
-          style={{
-            cursor: "pointer",
-            fontSize: 12,
-            marginBottom: 10,
-            color: '#096DD9'
-          }}
-          onClick={() => {setShowMore(!showMore)}}
-        >
-          { showMore ? "Show more" : "Show less" }
-        </div>
-      )}
+      {parse(text)}
+      </ShowMoreText>
     </>
   )
 };

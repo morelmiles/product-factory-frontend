@@ -7,7 +7,6 @@ import { TASK_TYPES } from "../../graphql/types";
 import FilterModal from "../FilterModal";
 
 type Props = {
-  setTaskNum: (value: number) => void;
   showInitiativeName?: boolean;
   showProductName?: boolean;
   filterModal?: boolean;
@@ -15,7 +14,6 @@ type Props = {
 };
 
 const TaskTab: React.FunctionComponent<Props> = ({
-  setTaskNum,
   showInitiativeName = false,
   showProductName = false,
   filterModal = false,
@@ -23,7 +21,7 @@ const TaskTab: React.FunctionComponent<Props> = ({
 }) => {
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
-    statuses: [],
+    statuses: [2],
     tags: [],
     priority: [],
     stacks: [],
@@ -31,7 +29,7 @@ const TaskTab: React.FunctionComponent<Props> = ({
     taskCreator: [],
   });
 
-  const { data, error, loading, refetch } = useQuery(GET_TASKS, {
+  const { data, loading, refetch } = useQuery(GET_TASKS, {
     variables: {
       input: inputData,
     },
@@ -42,12 +40,6 @@ const TaskTab: React.FunctionComponent<Props> = ({
     setInputData(values);
     setFilterModal(false);
   };
-
-  useEffect(() => {
-    if (!error && data && data.tasklisting) {
-      setTaskNum(data.tasklisting.length);
-    }
-  });
 
   if (loading) return <Loading />;
   if (!data || !data.tasklisting)

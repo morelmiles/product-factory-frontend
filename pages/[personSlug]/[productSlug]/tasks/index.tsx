@@ -24,7 +24,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter()
   const {productSlug} = router.query
   const {user} = props;
-  const [statuses, setStatuses] = useState<Array<number>>([]);
+  const [statuses, setStatuses] = useState<Array<number>>([2]);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [filterModal, setFilterModal] = useState(false);
   const [tasks, setTasks] = useState<any>([]);

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Modal, Row, Input, Select, message, Checkbox} from 'antd';
+import {Modal, Row, Input, Select, message, Checkbox, TreeSelect} from 'antd';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {
-  GET_CAPABILITIES_BY_PRODUCT_AS_LIST, GET_PRODUCTS_SHORT
+  GET_CAPABILITIES_BY_PRODUCT, GET_PRODUCTS_SHORT
 } from '../../graphql/queries';
 import {CREATE_BUG, UPDATE_BUG} from '../../graphql/mutations';
 import {RICH_TEXT_EDITOR_WIDTH} from '../../utilities/constants';
@@ -45,7 +45,7 @@ const AddEditBug: React.FunctionComponent<Props> = (
 ) => {
   const [headline, setHeadline] = useState(editMode ? bug.headline : '');
 
-  const [allCapabilities, setAllCapabilities] = useState([]);
+  const [capabilityTreeData, setCapabilityTreeData] = useState([]);
   const [description, setDescription] = useState(editMode ? bug.description : '');
   const [descriptionClear, setDescriptionClear] = useState(0);
   const [bugType, setBugType] = useState(false);
@@ -54,10 +54,11 @@ const AddEditBug: React.FunctionComponent<Props> = (
     editMode && bug.relatedCapability ? bug.relatedCapability?.id || null : null
   );
 
-  const {data: capabilitiesData, refetch: capabilitiesRefetch} = useQuery(GET_CAPABILITIES_BY_PRODUCT_AS_LIST, {
-    variables: {productSlug},
-    fetchPolicy: "no-cache"
-  });
+  const {data: capabilitiesData, loading: capabilitiesLoading, refetch: capabilitiesRefetch} =
+    useQuery(GET_CAPABILITIES_BY_PRODUCT, {
+      variables: {productSlug},
+      fetchPolicy: "no-cache"
+    });
   const {data: productsData} = useQuery(GET_PRODUCTS_SHORT, {
     fetchPolicy: "no-cache"
   });
@@ -66,9 +67,70 @@ const AddEditBug: React.FunctionComponent<Props> = (
 
   const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
+  const formatData = (data: any) => {
+    return data.map((node: any) => {
+      const nodeId = getProp(node, 'id');
+
+      return {
+        id: nodeId,
+        title: getProp(node, 'data.name'),
+        value: nodeId,
+        description: getProp(node, 'data.description', ''),
+        videoLink: getProp(node, 'data.video_link', ''),
+        children: node.children ? formatData(getProp(node, 'children', [])) : [],
+        expanded: isExpandedById(nodeId)
+      }
+    })
+  }
+
+  const isExpandedById = (id: number, data?: any) => {
+    if (!data) data = capabilityTreeData;
+    let isExpanded: boolean = false;
+
+    data.map((node: any) => {
+      if (getProp(node, 'id') === id && getProp(node, 'expanded', false)) {
+        isExpanded = true;
+        return;
+      }
+
+      if (getProp(node, 'children', []).length > 0) {
+        if (isExpandedById(id, node.children)) {
+          isExpanded = true;
+        }
+      }
+    });
+
+    return isExpanded;
+  }
+
+  const convertDataAndSetTree = (capabilities: any) => {
+    let capabilitiesData: string = "";
+    if (capabilities && capabilities.capabilities) {
+      capabilitiesData = getProp(capabilities, 'capabilities', '');
+      try {
+
+        if (capabilitiesData !== "") {
+          capabilitiesData = JSON.parse(capabilitiesData);
+          //@ts-ignore
+          setCapabilityTreeData(capabilitiesData.length > 0 && capabilitiesData[0].children
+            //@ts-ignore
+            ? formatData(capabilitiesData[0].children) : [])
+        } else {
+          setCapabilityTreeData([]);
+        }
+      } catch (e) {
+        if (e instanceof SyntaxError) setCapabilityTreeData([]);
+      }
+    } else {
+      setCapabilityTreeData([]);
+    }
+  }
+
+  const filterTreeNode = (input: string, node: any) => node.title.toLowerCase().indexOf(input.toLowerCase()) !== -1;
+
   useEffect(() => {
-    if (capabilitiesData && capabilitiesData.capabilitiesAsList) {
-      setAllCapabilities(capabilitiesData.capabilitiesAsList);
+    if (!capabilitiesLoading && !capabilitiesData.hasOwnProperty("error")) {
+      convertDataAndSetTree(capabilitiesData);
     }
   }, [capabilitiesData]);
 
@@ -198,20 +260,18 @@ const AddEditBug: React.FunctionComponent<Props> = (
         </Row>
         <Row className='mb-15'>
           <label>Related capability:</label>
-          <Select
-            placeholder='Select a capability'
-            onChange={setCapability}
-            filterOption={filterOption}
+          <TreeSelect
             showSearch
-            value={capability}
-          >
-            <Option value={null}>-------------</Option>
-            {allCapabilities.map((option: any, idx: number) => (
-              <Option key={`cap${idx}`} value={option.id}>
-                {option.name}
-              </Option>
-            ))}
-          </Select>
+            style={{ width: '100%' }}
+            value={capability ? capability : null}
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+            placeholder="Select a capability"
+            allowClear
+            treeData={capabilityTreeData}
+            treeDefaultExpandAll
+            filterTreeNode={filterTreeNode}
+            onChange={setCapability}
+          />
         </Row>
         <Row className='mb-15'>
           <label>Is this bug security related?: </label>&nbsp;

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin, Typography, Breadcrumb} from 'antd';
+import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin, Typography, Breadcrumb, Space} from 'antd';
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation, useLazyQuery} from '@apollo/react-hooks';
@@ -31,6 +31,7 @@ import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import {UserState} from "../../../../lib/reducers/user.reducer";
 import {userLogInAction} from "../../../../lib/actions";
 import showUnAuthModal from "../../../../components/UnAuthModal";
+import VideoPlayer from "../../../../components/VideoPlayer";
 
 
 const {Panel} = Collapse;
@@ -238,17 +239,16 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
         } else {
           message.error(claimTask.claimedTaskName ?
             <div>
-              You cannot claim the task, you have an active task.
-              <br/>
-              <strong className="pointer"
-                      onClick={() => {
-                        router.push(claimTask.claimedTaskLink);
-                        message.destroy();
-                      }}>
+              You already claimed another task on this product:
+              <div className="pointer"
+                   style={{color: "#1890ff"}}
+                   onClick={() => {
+                     router.push(claimTask.claimedTaskLink);
+                     message.destroy();
+                   }}>
                 {claimTask.claimedTaskName}
-              </strong>
-              <br/>
-              Please complete another task to claim a new task.
+              </div>
+              Please complete this task before claiming a new one.
             </div>
             : responseMessage, 5).then();
         }
@@ -305,6 +305,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
       const {fullName, slug, id, username, productpersonSet, claimedTask} = personData.person;
       userLogInAction({
         isLoggedIn: true,
+        loading: false,
         fullName,
         slug,
         id,
@@ -320,6 +321,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     } else if (personData && personData.person === null) {
       userLogInAction({
         isLoggedIn: false,
+        loading: false,
         fullName: "",
         slug: "",
         username: "",
@@ -446,6 +448,8 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     )
   }
 
+  const videoLink = getProp(task, 'previewVideoUrl', null);
+
   return (
     <LeftPanelContainer>
       <Spin tip="Loading..." spinning={loading || leaveTaskLoading || claimTaskLoading || submitTaskLoading}
@@ -507,19 +511,10 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
 
               </Row>
               <Row>
-                {getProp(task, 'videoUrl', null) && (
-                  <Col>
-                    <ReactPlayer
-                      width="100%"
-                      height="170px"
-                      className="mr-10"
-                      url={getProp(task, 'videoUrl')}
-                    />
-                  </Col>
-                )}
                 <Col>
                   <Row className="html-description">
                     <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: status === "In Review" ? 100 : 50}}>
+                      {videoLink && <div className="pb-15"><VideoPlayer videoLink={videoLink} /></div>}
                       {
                         parse(getProp(task, 'description', ''))
                       }

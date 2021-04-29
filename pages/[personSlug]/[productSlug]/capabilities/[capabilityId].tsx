@@ -21,6 +21,7 @@ import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import {connect} from "react-redux";
 import parse from 'html-react-parser';
 import Comments from "../../../../components/Comments";
+import VideoPlayer from "../../../../components/VideoPlayer";
 
 
 const {Content} = Layout;
@@ -105,7 +106,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
 
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
-    statuses: [],
+    statuses: [2],
     tags: [],
     priority: [],
     stacks: [],
@@ -158,6 +159,8 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
 
   if (loading || crumbsLoading) return <Loading/>;
 
+  const videoLink = getProp(capability, 'previewVideoUrl', null);
+
   return (
     <ContainerFlex>
       <Layout>
@@ -199,18 +202,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
                   }
                 </Row>
                 <Space align="start" size={20} direction="vertical">
-                  {getProp(capability, 'videoLink', null) && (
-                    <Row>
-                      <Col span={24}>
-                        <ReactPlayer
-                          width="100%"
-                          height="170px"
-                          className="mr-10"
-                          url={getProp(capability, 'videoLink')}
-                        />
-                      </Col>
-                    </Row>
-                  )}
+                  {videoLink && <VideoPlayer videoLink={videoLink} />}
                   <Row className="html-description">
                     <Col span={24}>
                       {parse(getProp(capability, 'description', ''))}

@@ -19,8 +19,6 @@ interface IStack {
 const Dashboard: React.FunctionComponent = () => {
   const [tabkey, setTabkey] = useState("tasks");
   const [stacksFilter, setStacksFilter] = useState<any>([]);
-  const [taskNum, setTaskNum] = useState(0);
-  const [productNum, setProductNum] = useState(0);
   const [filterModal, setFilterModal] = useState(false);
   const { data: stacksData } = useQuery(GET_STACKS);
 
@@ -56,7 +54,7 @@ const Dashboard: React.FunctionComponent = () => {
   };
 
   return (
-    <Content className="container-fluid main-page">
+    <Content className="container main-page">
       <div className="mobile-select-tab">
         <Select
           style={{ width: "130px" }}
@@ -83,7 +81,6 @@ const Dashboard: React.FunctionComponent = () => {
           >
             <TabPane tab="Tasks" key="tasks">
               <TaskTab
-                setTaskNum={setTaskNum}
                 showInitiativeName={true}
                 showProductName={true}
                 setFilterModal={setFilterModal}
@@ -93,7 +90,6 @@ const Dashboard: React.FunctionComponent = () => {
             <TabPane tab="Products" key="products">
               <ProductTab
                 stacksFilter={stacksFilter}
-                setProductNum={setProductNum}
               />
             </TabPane>
             {/* <TabPane tab="Vacancies" key="vacancies">

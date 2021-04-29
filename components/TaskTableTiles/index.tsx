@@ -6,7 +6,7 @@ import { getProp } from "../../utilities/filters";
 import { TASK_CLAIM_TYPES } from "../../graphql/types";
 import { PlaySquareOutlined } from "@ant-design/icons";
 import Priorities from "../Priorities";
-import ReactPlayer from 'react-player';
+import ReactPlayer from "react-player";
 import { getUserRole, hasManagerRoots } from "../../utilities/utils";
 
 type Props = {
@@ -65,9 +65,9 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
         {curTasks && curTasks.length > 0 ? (
           <>
             {curTasks.map((task: any, index: number) => {
-              const status = getProp(task, 'status');
+              const status = getProp(task, "status");
               let taskStatus = statusList[status];
-              const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
+              const hasActiveDepends = getProp(task, "hasActiveDepends", false);
 
               if (hasActiveDepends) {
                 taskStatus = "Blocked";
@@ -75,11 +75,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                 taskStatus = "Available";
               }
 
-              const inReview = getProp(task, 'inReview', false);
-
-              if (status === "Done") {
-                if (!hasActiveDepends) taskStatus = "Done";
-              }
+              const inReview = getProp(task, "inReview", false);
 
               if (inReview && taskStatus !== "Done") {
                 taskStatus = "In Review";
@@ -90,13 +86,18 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const productVideoUrl = getProp(task, "product.videoUrl", "");
               const initiativeName = getProp(task, "initiative.name", "");
               const initiativeId = getProp(task, "initiative.id", "");
-              // const assignee = getProp(task, "assignedTo", null);
+              const initiativeVideoUrl = getProp(task, "initiative.videoUrl", "");
+              const taskVideoUrl = getProp(task, "videoUrl", "");
+              const assignee = getProp(task, "assignedTo", null);
               const owner = getProp(task, "product.owner", "");
               const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
 
               return (
                 <Col key={index} md={gridSizeMd} lg={gridSizeLg} sm={gridSizeSm} className="task-box">
                   <div className="task-box-title">
+                    {taskVideoUrl !== "" &&
+                          <PlaySquareOutlined className="pointer mr-10"
+                                              onClick={() => showVideoModal(taskVideoUrl)} />}
                     <Link
                       href={`/${owner}/${productSlug}/tasks/${task.publishedId}`}
                     >
@@ -104,13 +105,13 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                     </Link>
                   </div>
                   <div className="task-box-body">
-                    {task.shortdescription && (
-                      <p className="omit">{task.shortdescription}</p>
+                    {task.shortDescription && (
+                      <p className="omit">{task.shortDescription}</p>
                     )}
-                    {task.tags && task.tags.length > 0 && (
+                    {task.stacks && task.stacks.length > 0 && (
                       <span>
                         <b className="mr-20">Required Skills</b>
-                        {task.tags.map((tag: any) => (
+                        {task.stacks.map((tag: any) => (
                           <Tag key={tag} color="default">
                             {tag}
                           </Tag>
@@ -141,7 +142,10 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                         </span>
                         <br />
                         <div className="task-box-video">
-                          {/*<PlaySquareOutlined />*/}
+                          {initiativeVideoUrl !== "" &&
+                          <PlaySquareOutlined className="pointer"
+                                              onClick={() => showVideoModal(initiativeVideoUrl)} />}
+
                           <Link
                             href={`/${owner}/${productSlug}/initiatives/${initiativeId}`}
                           >
@@ -159,7 +163,15 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                     </div>
                     <p>
                       <b className="mr-15">Status</b>
-                      <span>{taskStatus}</span>
+                      <span>{taskStatus === "Claimed" ? (
+                        <>
+                          Claimed by {assignee && (
+                            <Link href={`/${assignee.username}`}>
+                              <a>{assignee.fullName}</a>
+                            </Link>
+                          )}
+                        </>
+                      ) : taskStatus}</span>
                       {/*<b style={{ float: "right" }} className="point">*/}
                       {/*  10 Points*/}
                       {/*</b>*/}
@@ -197,11 +209,21 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
         className="video-modal"
         onCancel={() => setPlaying(false)}
         footer={null}>
+        {modalVideoUrl.includes("embed") ? (
+          <div style={{position: "relative", height: "300px", width: "100%"}} className="text-center">
+              <iframe src={modalVideoUrl}
+                      frameBorder="0"
+                      allowFullScreen
+                      style={{width: "calc(100vw - 30px)", height: "300px", maxWidth: "472px"}}/>
+            </div>
+        ) : (
           <ReactPlayer url={modalVideoUrl}
                        playing={playing}
                        playsinline={true}
                        controls={true}
+                       height="300px"
                        width="100%" />
+        )}
       </Modal>
     </>
   );

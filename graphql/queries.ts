@@ -101,12 +101,14 @@ export const GET_TASKS = gql`
       initiative {
         id
         name
+        videoUrl
       }
       inReview
       tags
       stacks
       blocked
       hasActiveDepends
+      videoUrl
       assignedTo {
         fullName
         username
@@ -178,6 +180,7 @@ export const GET_CAPABILITY_BY_ID = gql`
           name
         }
         videoLink
+        previewVideoUrl
         attachments {
           id
           name
@@ -251,6 +254,7 @@ export const GET_INITIATIVES = gql`
       }
       availableTaskCount
       completedTaskCount
+      videoUrl
     }
   }
 `;
@@ -281,6 +285,8 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
         shortDescription
         fullDescription
       }
+      videoUrl
+      previewVideoUrl
     }
     tasks {
       id
@@ -405,6 +411,8 @@ export const GET_TASK_BY_ID = gql`
           slug
         }
       }
+      videoUrl
+      previewVideoUrl
     }
     statusList
   }
@@ -423,11 +431,13 @@ export const GET_TASKS_BY_PRODUCT = gql`
       initiative {
         id
         name
+        videoUrl
       }
       tags
       stacks
       blocked
       hasActiveDepends
+      videoUrl
       assignedTo {
         fullName
         username
@@ -918,4 +928,14 @@ export const GET_PRODUCT_BUGS = gql`
       voteUp
     }
   }
-`
+`;
+
+
+export const GET_PAGE_CONTENT = gql`
+  query GetPage($slug: String) {
+    page(slug: $slug) {
+      title
+      description
+    }
+  }
+`;

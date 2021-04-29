@@ -21,6 +21,7 @@ import AvatarIcon from "../../../../components/AvatarIcon";
 import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
 // @ts-ignore
 import FilledCircle from "../../../../public/assets/icons/filled-circle.svg";
+import VideoPlayer from "../../../../components/VideoPlayer";
 
 
 type Params = {
@@ -41,7 +42,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   const [tasks, setTasks] = useState([]);
   const [inputData, setInputData] = useState({
     sortedBy: "priority",
-    statuses: [],
+    statuses: [2],
     tags: [],
     priority: [],
     stacks: [],
@@ -89,6 +90,8 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
 
   const status = (getProp(initiative, 'status', 1) == 1) ? "Active" : "Completed";
 
+  const videoLink = getProp(initiative, 'previewVideoUrl', null);
+
   return (
     <LeftPanelContainer>
       {
@@ -131,7 +134,8 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
               </div>
             </Row>
             <Row className="html-description">
-              <Col span={10}>
+              {videoLink && <div className="pb-15"><VideoPlayer videoLink={videoLink} /></div> }
+              <Col span={24}>
                 <DynamicHtml
                   className='mb-10'
                   text={getProp(initiative, 'description', '')}

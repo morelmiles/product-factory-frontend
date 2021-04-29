@@ -2,7 +2,7 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Row, message, Input, Button, Col, Switch} from 'antd';
 import {useMutation} from '@apollo/react-hooks';
 import {useRouter} from 'next/router';
-import {CREATE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT} from '../../graphql/mutations';
+import {CREATE_PRODUCT_REQUEST, DELETE_PRODUCT, UPDATE_PRODUCT} from '../../graphql/mutations';
 import Loading from "../../components/Loading";
 import RichTextEditor from "../../components/RichTextEditor";
 import {getProp} from "../../utilities/filters";
@@ -16,12 +16,13 @@ const {TextArea} = Input;
 
 
 interface IAddOrEditProductProps {
-  isAdding?: boolean
-  isEditing?: boolean
-  productData?: any
-  toUpdate?: number
-  toDelete?: number
-  closeModal?: Function
+  isAdding?: boolean,
+  isEditing?: boolean,
+  productData?: any,
+  toUpdate?: number,
+  toDelete?: number,
+  closeModal?: Function,
+  loading?: boolean,
 }
 
 const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
@@ -30,7 +31,8 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
     isEditing = false,
     productData,
     toUpdate = 0,
-    toDelete = 0
+    toDelete = 0,
+    loading = false,
   }
   ) => {
     const router = useRouter();
@@ -51,16 +53,27 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
     }, [productPhoto]);
 
     useEffect(() => {
+      checkFileList();
+    }, [fileList]);
+
+    const checkFileList = () => {
+      let filePhoto = null;
       if (fileList.length > 0) {
         const thumbUrl = getProp(fileList[0], 'thumbUrl', null);
         const url = getProp(fileList[0], 'url', null);
 
-        if (thumbUrl) setPhoto(thumbUrl);
-        else if (url) setPhoto(url);
+        if (thumbUrl !== null) {
+          filePhoto = thumbUrl;
+          setPhoto(filePhoto);
+        } else if (url) {
+          filePhoto = url;
+        }
+        setPhoto(filePhoto);
       } else {
-        setPhoto(null);
+        setPhoto(filePhoto);
       }
-    }, [fileList]);
+      return filePhoto;
+    }
 
     const [name, setName] = useState(isEditing ? getProp(productData, 'name', '') : '');
     const [shortDescription, setShortDescription] = useState(isEditing ? getProp(productData, 'shortDescription', '') : '');
@@ -69,17 +82,16 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
     const [videoUrl, setVideoUrl] = useState(isEditing ? getProp(productData, 'videoUrl', '') : '');
     const [isPrivate, setIsPrivate] = useState(isEditing ? getProp(productData, 'isPrivate', false) : false);
 
-    const [isShowLoading, setIsShowLoading] = useState(false);
+    const [isShowLoading, setIsShowLoading] = useState(loading ? loading : false);
 
-    const [createProduct] = useMutation(CREATE_PRODUCT, {
+    const [createProduct] = useMutation(CREATE_PRODUCT_REQUEST, {
       onCompleted(res) {
-        const status = getProp(res, 'createProduct.status', false);
-        const messageText = getProp(res, 'createProduct.message', '');
+        const status = getProp(res, 'createProductRequest.status', false);
+        const messageText = getProp(res, 'createProductRequest.message', '');
 
         if (status) {
-          router.push('/').then(() => {
-            message.success(messageText).then();
-          });
+          message.success("We have received your request to add a product and will review it", 10).then();
+          router.push('/').then();
         } else {
           message.error(messageText).then();
           setIsShowLoading(false);
@@ -144,6 +156,8 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
         return;
       }
 
+      let filePhoto = checkFileList();
+
       setIsShowLoading(true);
 
       createProduct({
@@ -156,7 +170,7 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
             videoUrl,
             isPrivate
           },
-          file: photo
+          file: filePhoto
         }
       }).then();
     }
@@ -215,6 +229,10 @@ const AddOrEditProduct: React.FunctionComponent<IAddOrEditProductProps> = (
         deleteProduct().then();
       }
     }, [toDelete]);
+
+    useEffect(() => {
+      setIsShowLoading(loading);
+    }, [loading])
 
     return (
       <>

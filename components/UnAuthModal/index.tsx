@@ -3,9 +3,8 @@ import {productionMode} from "../../utilities/constants";
 
 const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
 
-  console.log("loginurl", loginUrl)
-
   const signInAction = () => {
+    saveRedirectPath();
     modal.destroy();
     if (productionMode) {
       window.location.replace(loginUrl);
@@ -14,7 +13,12 @@ const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
     }
   }
 
+  const saveRedirectPath = () => {
+    localStorage.setItem("redirectTo", window.location.pathname);
+  };
+
   const registerAction = () => {
+    saveRedirectPath();
     modal.destroy();
     window.location.replace(loginUrl);
   }
@@ -24,7 +28,7 @@ const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
     closable: true,
     content: (
       <div>
-        <p>In order to {actionName} you need to be signed in.</p>
+        <p>In order to {actionName.toLowerCase()} you need to be signed in.</p>
 
         <p>Existing Users: <a href={null} onClick={() => signInAction()}>Sign in here</a></p>
 

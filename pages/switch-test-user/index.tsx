@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import { connect } from 'react-redux';
-import { useRouter } from 'next/router';
+import React, {useEffect} from "react";
+import { connect } from "react-redux";
+import { useRouter } from "next/router";
 
-import {useMutation, useQuery} from '@apollo/react-hooks';
-import { GET_USERS } from '../../graphql/queries';
+import {useMutation, useQuery} from "@apollo/react-hooks";
+import { GET_USERS } from "../../graphql/queries";
 import { Row, Col, Button, Select, message, Layout, Typography, Form } from "antd";
 
-import { Header } from '../../components';
-import { getProp } from '../../utilities/filters';
-import { apiDomain } from '../../utilities/constants';
-import { userLogInAction } from '../../lib/actions';
-import { UserState } from '../../lib/reducers/user.reducer';
+import { Header } from "../../components";
+import { getProp } from "../../utilities/filters";
+import { userLogInAction } from "../../lib/actions";
+import { UserState } from "../../lib/reducers/user.reducer";
 import ContainerFlex from "../../components/ContainerFlex";
 import LoginViaAM from "../../components/LoginViaAM";
 import {FAKE_LOGIN} from "../../graphql/mutations";
+import Footer from "../../components/Footer";
 
 const { Option } = Select;
 
@@ -44,14 +44,14 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
       if (success) {
         message.success(responseMessage);
         userLogInAction({ isLoggedIn: success });
-        localStorage.setItem('userId', person.id);
-        localStorage.setItem('fullName', person.fullName);
+        localStorage.setItem("userId", person.id);
+        localStorage.setItem("fullName", person.fullName);
         router.push("/").then();
       } else {
         message.warning(responseMessage).then();
         userLogInAction({ isLoggedIn: false });
       }
-    }).catch(err => message.error("Failed to logout form the system").then());
+    }).catch(err => message.error("Failed to logout from the system").then());
   }
 
   useEffect(() => {
@@ -64,39 +64,42 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
 
   return (
     <ContainerFlex>
-      <Layout>
-        <Header/>
-        {(!user || !user.isLoggedIn) && !error && !loading && (
-          <Row justify="center" className='mt-40'>
-            <Col xs={20} sm={13} md={10} lg={7} xl={6} xxl={5}>
-              <Row>
-                <Typography.Title level={3}>Sign In</Typography.Title>
-              </Row>
-              <Form
-                layout="vertical"
-                onFinish={onFinish}
-                initialValues={{person: 0}}
-                form={form}
-              >
-                <Form.Item
-                  name="person"
-                  label="Select person"
-                  rules={[{required: true, message: "Please select a person"}]}
+      <Layout style={{minHeight: "100vh"}}>
+        <Header />
+        <Layout.Content>
+          {(!user || !user.isLoggedIn) && !error && !loading && (
+            <Row justify="center" className="mt-40">
+              <Col xs={20} sm={13} md={10} lg={7} xl={6} xxl={5}>
+                <Row>
+                  <Typography.Title level={3}>Sign In</Typography.Title>
+                </Row>
+                <Form
+                  layout="vertical"
+                  onFinish={onFinish}
+                  initialValues={{person: 0}}
+                  form={form}
                 >
-                  <Select>
-                    <Option value={0}>Select</Option>
-                    {getProp(data, "people", []).map((person: any, idx: number) =>
-                      <Option key={person.id} value={person.id}>{person.fullName}</Option>)}
-                  </Select>
-                </Form.Item>
-                <Form.Item className="d-flex-justify">
-                  <Button type="primary" htmlType="submit">Sign in</Button>
-                  <LoginViaAM buttonTitle="Login with AuthMachine" />
-                </Form.Item>
-              </Form>
-            </Col>
-          </Row>
-        )}
+                  <Form.Item
+                    name="person"
+                    label="Select person"
+                    rules={[{required: true, message: "Please select a person"}]}
+                  >
+                    <Select>
+                      <Option value={0}>Select</Option>
+                      {getProp(data, "people", []).map((person: any, idx: number) =>
+                        <Option key={person.id} value={person.id}>{person.fullName}</Option>)}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item className="d-flex-justify">
+                    <Button type="primary" htmlType="submit">Sign in</Button>
+                    <LoginViaAM buttonTitle="Login with AuthMachine" />
+                  </Form.Item>
+                </Form>
+              </Col>
+            </Row>
+          )}
+        </Layout.Content>
+        <Footer />
       </Layout>
     </ContainerFlex>
   );
