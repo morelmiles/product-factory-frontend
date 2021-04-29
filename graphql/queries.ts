@@ -939,3 +939,17 @@ export const GET_PAGE_CONTENT = gql`
     }
   }
 `;
+
+export const GET_CONTRIBUTOR_GUIDES = gql`
+  query GetContributorGuides($productSlug: String!)  {
+    contributorGuides(productSlug: $productSlug) {
+      id
+      title
+      description
+      stack {
+        id
+        name
+      }
+    }
+  }
+`;

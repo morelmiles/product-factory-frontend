@@ -440,3 +440,29 @@ export const VOTE_IDEA = gql`
     }
   }
 `;
+
+export const CREATE_CONTRIBUTION_GUIDE = gql`
+  mutation CreateContributionGuide($input: ContributionGuideInput!) {
+    createContributionGuide(input: $input) {
+      status
+      message
+    }
+  }
+`;
+
+export const UPDATE_CONTRIBUTION_GUIDE = gql`
+  mutation UpdateContributionGuide($id: Int!, $input: ContributionGuideInput!) {
+    updateContributionGuide(id: $id, input: $input) {
+      status
+      message
+    }
+  }
+`;
+
+export const DELETE_CONTRIBUTION_GUIDE = gql`
+  mutation DeleteContributionGuide($id: ID!) {
+    deleteContributionGuide(id: $id) {
+      isExists
+    }
+  }
+`;

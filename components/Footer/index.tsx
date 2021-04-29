@@ -8,7 +8,7 @@ import Link from "antd/lib/typography/Link";
 const Footer: React.FunctionComponent = () => {
   return (
     <>
-      <Layout.Footer style={{ textAlign: "center" }}>
+      <Layout.Footer style={{ textAlign: "center", marginTop: 40 }}>
         <Row className="container footer-container">
           <Col md={24}>
             <Row className="footer-content">

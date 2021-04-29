@@ -3,6 +3,7 @@ import LeftPanelContainer from "../../../components/HOC/withLeftPanel";
 import {Button, Col, Dropdown, Menu, Row, Space, Tabs, Typography} from "antd";
 import SettingsPolicies from "../../../components/SettingsPolicies";
 import {DownOutlined} from "@ant-design/icons";
+import SettingsContributing from "../../../components/SettingsContributing";
 
 
 const {TabPane} = Tabs;
@@ -10,17 +11,28 @@ const {TabPane} = Tabs;
 
 const Settings: React.FunctionComponent = () => {
   const pages: string[] = [
-    'Policies',
-    'Contributions',
-    'Tags'
+    "Contributions",
+    "Policies",
+    "Tags"
   ]
-  const [activePage, setActivePage] = useState('Policies')
+  const [activePage, setActivePage] = useState("Contributions");
+
+  const getActiveTab = () => {
+    switch (activePage) {
+      case "Policies":
+        return <SettingsPolicies />
+      case "Contributions":
+        return <SettingsContributing />
+      default:
+        return <Typography.Text>It will be implemented in the future</Typography.Text>
+    }
+  }
 
   return (
     <LeftPanelContainer>
       <Row style={{marginBottom: 20}}>
         <Col span={24}>
-          <Dropdown className="settings-mobile-menu" trigger={['click']} overlay={
+          <Dropdown className="settings-mobile-menu" trigger={["click"]} overlay={
             <Menu>
               {
                 pages.map((page: string, index: number) => (
@@ -29,7 +41,7 @@ const Settings: React.FunctionComponent = () => {
               }
             </Menu>
           }>
-            <Button style={{width: '100%'}}>
+            <Button style={{width: "100%"}}>
               {activePage} <DownOutlined/>
             </Button>
           </Dropdown>
@@ -44,12 +56,7 @@ const Settings: React.FunctionComponent = () => {
         </Col>
       </Row>
 
-
-      {
-        activePage === 'Policies' ?
-          <SettingsPolicies/> :
-          <Typography.Text>It will be implemented in the future</Typography.Text>
-      }
+      {getActiveTab()}
     </LeftPanelContainer>
   )
 }
