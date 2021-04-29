@@ -4,7 +4,6 @@ import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin, Typography,
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useQuery, useMutation, useLazyQuery} from '@apollo/react-hooks';
-import ReactPlayer from 'react-player'
 import {
   GET_LICENSE, GET_PERSON,
   GET_PRODUCT_INFO_BY_ID,
@@ -667,7 +666,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
               {
                 getProp(task, 'dependOn', []).length > 0 &&
                 <Collapse style={{marginTop: 30}}>
-                  <Panel header="Blocked by" key="1">
+                  <Panel header="Blocked by" key="0">
                     <List
                       bordered
                       dataSource={getProp(task, 'dependOn', [])}
@@ -698,6 +697,13 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                   </Panel>
                 </Collapse>
               }
+              {task.contributionGuide && (
+                <Collapse style={{marginTop: 30}}>
+                  <Panel header="Contributing Guide" key="2">
+                    {parse(task.contributionGuide.description)}
+                  </Panel>
+                </Collapse>
+              )}
 
               <div style={{marginTop: 30}} />
               <Comments objectId={getProp(task, 'id', 0)} objectType="task" />

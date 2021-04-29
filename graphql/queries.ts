@@ -413,6 +413,11 @@ export const GET_TASK_BY_ID = gql`
       }
       videoUrl
       previewVideoUrl
+      contributionGuide {
+        id
+        title
+        description
+      } 
     }
     statusList
   }
