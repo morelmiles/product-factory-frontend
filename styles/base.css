@@ -409,6 +409,15 @@ p:last-child {
     justify-content: space-between;
 }
 
+.d-flex-align-center {
+    display: flex;
+    align-items: center;
+}
+.d-flex-align-center.ant-btn {
+    display: flex;
+    align-items: center;
+}
+
 /* Custm CSS */
 .page-title {
     font-size: 24px;
