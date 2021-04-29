@@ -109,7 +109,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
     statuses: [2],
     tags: [],
     priority: [],
-    stacks: [],
+    // stacks: [],
     assignee: [],
     taskCreator: [],
   });
@@ -208,15 +208,15 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({user
                       {parse(getProp(capability, 'description', ''))}
                     </Col>
                   </Row>
-                  <Row>
-                    <Col span={24}>
-                      {
-                        getProp(capability, 'stacks', []).map((tag: TagType, index: number) => (
-                          <CheckableTag key={`tag-${index}`} checked={true}>{tag.name}</CheckableTag>
-                        ))
-                      }
-                    </Col>
-                  </Row>
+                  {/*<Row>*/}
+                    {/*<Col span={24}>*/}
+                    {/*  {*/}
+                    {/*    getProp(capability, 'stacks', []).map((tag: TagType, index: number) => (*/}
+                    {/*      <CheckableTag key={`tag-${index}`} checked={true}>{tag.name}</CheckableTag>*/}
+                    {/*    ))*/}
+                    {/*  }*/}
+                    {/*</Col>*/}
+                  {/*</Row>*/}
                 </Space>
 
                 <Row>

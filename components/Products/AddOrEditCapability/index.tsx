@@ -6,7 +6,7 @@ import {CREATE_CAPABILITY, UPDATE_CAPABILITY} from '../../../graphql/mutations';
 import Attachment from '../../../components/Attachment';
 import {getProp} from '../../../utilities/filters';
 import {useRouter} from "next/router";
-import {GET_STACKS} from "../../../graphql/queries";
+// import {GET_STACKS} from "../../../graphql/queries";
 import RichTextEditor from "../../RichTextEditor";
 import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
 
@@ -37,14 +37,14 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
   const router = useRouter();
   const {productSlug} = router.query;
 
-  const {data: stacksData, error: stacksError} = useQuery(GET_STACKS);
-  const [allStacks, setAllStacks] = useState([])
+  // const {data: stacksData, error: stacksError} = useQuery(GET_STACKS);
+  // const [allStacks, setAllStacks] = useState([])
 
-  useEffect(() => {
-    if (!stacksError) {
-      setAllStacks(getProp(stacksData, 'stacks', []));
-    }
-  }, [stacksData])
+  // useEffect(() => {
+  //   if (!stacksError) {
+  //     setAllStacks(getProp(stacksData, 'stacks', []));
+  //   }
+  // }, [stacksData])
 
   const [name, setName] = useState(
     modalType === 'edit' ? getProp(capability, 'name', '') : ''
@@ -52,11 +52,14 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
   const [description, setDescription] = useState(
     modalType === 'edit' ? getProp(capability, 'description', '') : ''
   );
-  const [stacks, setStacks] = useState(
-    modalType === 'edit' ? getProp(capability, 'stacks', []).map((stack: any) => (
-      stack.id
-    )) : []
-  );
+
+
+  // const [stacks, setStacks] = useState(
+  //   modalType === 'edit' ? getProp(capability, 'stacks', []).map((stack: any) => (
+  //     stack.id
+  //   )) : []
+  // );
+
   const [videoLink, setVideoLink] = useState(
     modalType === 'edit' ? getProp(capability, 'videoLink', '') : ''
   );
@@ -96,7 +99,7 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
           nodeId: capability.id,
           name,
           description,
-          stacks,
+          // stacks,
           videoLink,
           attachments: attachments.map((item: any) => item.id)
         }
@@ -119,7 +122,7 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
           nodeId: modalType === 'add-child' ? capability.id : null,
           name,
           description,
-          stacks,
+          // stacks,
           videoLink,
           attachments: attachments.map((item: any) => item.id)
         }
@@ -170,21 +173,23 @@ const AddOrEditCapability: React.FunctionComponent<Props> = (
               />
             </Col>
           </Row>
-          <Row className="mb-15">
-            <label>Stacks:</label>
-            <Select
-              placeholder="Stacks"
-              mode="multiple"
-              defaultValue={stacks}
-              onChange={setStacks}
-            >
-              {allStacks && allStacks.map((option: any, idx: number) => (
-                <Option key={`cap${idx}`} value={option.id}>
-                  {option.name}
-                </Option>
-              ))}
-            </Select>
-          </Row>
+
+          {/*<Row className="mb-15">*/}
+          {/*  <label>Stacks - remove:</label>*/}
+          {/*  <Select*/}
+          {/*    placeholder="Stacks"*/}
+          {/*    mode="multiple"*/}
+          {/*    defaultValue={stacks}*/}
+          {/*    onChange={setStacks}*/}
+          {/*  >*/}
+          {/*    {allStacks && allStacks.map((option: any, idx: number) => (*/}
+          {/*      <Option key={`cap${idx}`} value={option.id}>*/}
+          {/*        {option.name}*/}
+          {/*      </Option>*/}
+          {/*    ))}*/}
+          {/*  </Select>*/}
+          {/*</Row>*/}
+
           <Row className="mb-15">
             <label>Video link:</label>
             <Input
