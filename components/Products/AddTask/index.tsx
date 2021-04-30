@@ -38,6 +38,9 @@ type Props = {
   tasks?: Array<any>;
   stacks?: Array<any>;
   user: any;
+  initiativeID: number;
+  capabilityID: number;
+
 };
 
 const AddTask: React.FunctionComponent<Props> = (
@@ -49,7 +52,9 @@ const AddTask: React.FunctionComponent<Props> = (
     task,
     submit,
     tasks,
-    user
+    user,
+    initiativeID,
+    capabilityID,
   }
 ) => {
   const [title, setTitle] = useState(modalType ? task.title : "");
@@ -75,10 +80,10 @@ const AddTask: React.FunctionComponent<Props> = (
   const [status, setStatus] = useState(modalType ? task.status : 2);
   const [priority, setPriority] = useState<string | number | null>(modalType ? TASK_PRIORITIES.indexOf(task.priority) : null);
   const [capability, setCapability] = useState(
-    modalType && task.capability ? task.capability.id : 0
+    modalType && task.capability ? task.capability.id : parseInt(capabilityID)
   );
   const [initiative, setInitiative] = useState(
-    modalType && task.initiative ? task.initiative.id : 0
+    modalType && task.initiative ? task.initiative.id : initiativeID
   );
   const [initiatives, setInitiatives] = useState([])
   const [editInitiative, toggleInitiative] = useState(false);
