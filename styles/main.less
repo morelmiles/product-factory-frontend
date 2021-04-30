@@ -66,3 +66,30 @@ label.ant-radio-button-wrapper-checked {
 iframe {
   max-width: 100%;
 }
+
+
+.show-review-events {
+  margin-top: 10px;
+
+  button {
+    width: 142px;
+  }
+}
+
+.task-event-container {
+  @media screen and (max-width: 767px) {
+    display: flex !important;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    button {
+      margin-left: 10px;
+      margin-bottom: 10px;
+    }
+
+    .show-review-events {
+      margin-top: 0;
+
+    }
+  }
+}

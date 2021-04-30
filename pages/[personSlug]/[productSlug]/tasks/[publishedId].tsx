@@ -1,22 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin, Typography, Breadcrumb, Space} from 'antd';
+import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
+import {Row, Col, message, Button, Tag, Collapse, List, Modal, Spin, Typography, Breadcrumb} from "antd";
 import Link from "next/link";
-import {useRouter} from 'next/router';
-import {useQuery, useMutation, useLazyQuery} from '@apollo/react-hooks';
+import {useRouter} from "next/router";
+import {useQuery, useMutation, useLazyQuery} from "@apollo/react-hooks";
 import {
   GET_LICENSE, GET_PERSON,
   GET_PRODUCT_INFO_BY_ID,
   GET_TASK_BY_ID,
   GET_TASKS_BY_PRODUCT_SHORT
-} from '../../../../graphql/queries';
-import {TASK_TYPES, USER_ROLES} from '../../../../graphql/types';
+} from "../../../../graphql/queries";
+import {TASK_TYPES, USER_ROLES} from "../../../../graphql/types";
 import {ACCEPT_AGREEMENT, CLAIM_TASK, DELETE_TASK, IN_REVIEW_TASK, LEAVE_TASK, REJECT_TASK,
-  APPROVE_TASK} from '../../../../graphql/mutations';
-import {getProp} from '../../../../utilities/filters';
-import {EditIcon} from '../../../../components';
-import DeleteModal from '../../../../components/Products/DeleteModal';
-import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
+  APPROVE_TASK} from "../../../../graphql/mutations";
+import {getProp} from "../../../../utilities/filters";
+import {EditIcon} from "../../../../components";
+import DeleteModal from "../../../../components/Products/DeleteModal";
+import LeftPanelContainer from "../../../../components/HOC/withLeftPanel";
 import Attachments from "../../../../components/Attachments";
 import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
@@ -58,7 +58,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
   const [taskId, setTaskId] = useState(0);
   const [showEditModal, setShowEditModal] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const [license, setLicense] = useState('');
+  const [license, setLicense] = useState("");
 
   const [getPersonData, {data: personData}] = useLazyQuery(GET_PERSON, {
     fetchPolicy: "no-cache",
@@ -89,7 +89,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
 
   useEffect(() => {
     if (!error) {
-      setTaskId(getProp(original, 'task.id', 0));
+      setTaskId(getProp(original, "task.id", 0));
     }
   }, [original]);
 
@@ -194,10 +194,10 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
   const [acceptAgreement] = useMutation(ACCEPT_AGREEMENT, {
     variables: {productSlug},
     onCompleted(data) {
-      const messageText = getProp(data, 'agreeLicense.message', '');
-      const status = getProp(data, 'agreeLicense.status', false);
+      const messageText = getProp(data, "agreeLicense.message", "");
+      const status = getProp(data, "agreeLicense.status", false);
 
-      if (messageText !== '') {
+      if (messageText !== "") {
         if (status) {
           message.success(messageText).then();
           claimTaskEvent();
@@ -207,7 +207,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
       }
     },
     onError() {
-      message.error('Failed to accept agreement').then();
+      message.error("Failed to accept agreement").then();
     }
   })
 
@@ -217,7 +217,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
 
   useEffect(() => {
     if (!licenseError) {
-      setLicense(getProp(licenseOriginal, 'license.agreementContent', ''));
+      setLicense(getProp(licenseOriginal, "license.agreementContent", ""));
     }
   }, [licenseOriginal]);
 
@@ -281,7 +281,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
   }
 
   const getCausedBy = (assignedTo: any) => {
-    let status = TASK_TYPES[getProp(task, 'status')];
+    let status = TASK_TYPES[getProp(task, "status")];
 
     switch (status) {
       case "Claimed":
@@ -333,14 +333,14 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
 
   useEffect(() => {
     if (original) {
-      setTask(getProp(original, 'task', {}));
+      setTask(getProp(original, "task", {}));
     }
   }, [original]);
 
   if (loading) return <Loading/>
 
   const showAssignedUser = () => {
-    const assignee = getProp(task, 'assignedTo', null);
+    const assignee = getProp(task, "assignedTo", null);
     return (
       <Row className="text-sm mb-10">
         {assignee ? (
@@ -357,13 +357,13 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                   <Row align="middle" style={{marginLeft: 15}}>
                     <Col>
                       <CustomAvatar2 person={{
-                        fullname: getProp(assignee, 'fullName', ''),
-                        slug: getProp(assignee, 'slug', '')
+                        fullname: getProp(assignee, "fullName", ""),
+                        slug: getProp(assignee, "slug", "")
                       }}/>
                     </Col>
                     <Col>
-                      <Typography.Link className="text-grey-9" href={`/${getProp(assignee, 'slug', '')}`}>
-                        {getProp(assignee, 'fullName', '')}
+                      <Typography.Link className="text-grey-9" href={`/${getProp(assignee, "slug", "")}`}>
+                        {getProp(assignee, "fullName", "")}
                       </Typography.Link>
                     </Col>
                   </Row>
@@ -376,14 +376,14 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     )
   }
 
-  const assignedTo = getProp(task, 'assignedTo');
-  const stacks = getProp(task, 'stack', []);
-  const tags = getProp(task, 'tag', []);
+  const assignedTo = getProp(task, "assignedTo");
+  const stacks = getProp(task, "stack", []);
+  const tags = getProp(task, "tag", []);
 
   const showTaskEvents = () => {
-    const assignee = getProp(task, 'assignedTo', null);
-    const taskStatus = TASK_TYPES[getProp(task, 'status')];
-    const inReview = getProp(task, 'inReview', false);
+    const assignee = getProp(task, "assignedTo", null);
+    const taskStatus = TASK_TYPES[getProp(task, "status")];
+    const inReview = getProp(task, "inReview", false);
 
     return (
       <Row className="text-sm">
@@ -420,34 +420,32 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
     )
   }
 
-  let status = TASK_TYPES[getProp(task, 'status')];
-  const initiativeName = getProp(task, 'initiative.name', undefined);
-  const inReview = getProp(task, 'inReview', false);
+  let status = TASK_TYPES[getProp(task, "status")];
+  const initiativeName = getProp(task, "initiative.name", undefined);
+  const inReview = getProp(task, "inReview", false);
 
   if (inReview && status !== "Done") status = "In Review";
 
   const showInReviewEvents = () => {
 
     return (
-      <Row className="text-sm">
-        <div className="flex-column ml-auto mt-10">
-          <Button
-            type="primary"
-            className="mb-10"
-            style={{zIndex: 1000}}
-            onClick={() => showApproveTaskModal(true)}
-          >Approve the work</Button>
-          <Button
-            type="primary"
-            onClick={() => showRejectTaskModal(true)}
-            style={{zIndex: 1000}}
-          >Reject the work</Button>
-        </div>
-      </Row>
+      <div className="show-review-events">
+        <Button
+          type="primary"
+          className="mb-10"
+          style={{zIndex: 1000}}
+          onClick={() => showApproveTaskModal(true)}
+        >Approve the work</Button>
+        <Button
+          type="primary"
+          onClick={() => showRejectTaskModal(true)}
+          style={{zIndex: 1000}}
+        >Reject the work</Button>
+      </div>
     )
   }
 
-  const videoLink = getProp(task, 'previewVideoUrl', null);
+  const videoLink = getProp(task, "previewVideoUrl", null);
 
   return (
     <LeftPanelContainer>
@@ -460,7 +458,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                 getBasePath() !== "" && (
                   <Breadcrumb>
                     <Breadcrumb.Item>
-                      <a href={getBasePath()}>{getProp(product, 'name', '')}</a>
+                      <a href={getBasePath()}>{getProp(product, "name", "")}</a>
                     </Breadcrumb.Item>
                     <Breadcrumb.Item>
                       <a href={`${getBasePath()}/tasks`}>Tasks</a>
@@ -468,13 +466,13 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                     {initiativeName && (
                       <Breadcrumb.Item>
                         <a
-                          href={`/${getProp(product, 'owner', '')}/${getProp(product, 'slug', '')}/initiatives/${getProp(task, 'initiative.id', '')}`}
+                          href={`/${getProp(product, "owner", "")}/${getProp(product, "slug", "")}/initiatives/${getProp(task, "initiative.id", "")}`}
                         >
                           {initiativeName}
                         </a>
                       </Breadcrumb.Item>
                     )}
-                    <Breadcrumb.Item>{getProp(original, 'task.title', '')}</Breadcrumb.Item>
+                    <Breadcrumb.Item>{getProp(original, "task.title", "")}</Breadcrumb.Item>
                   </Breadcrumb>
                 )
               }
@@ -485,13 +483,13 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
               >
                 <Col md={16}>
                   <div className="section-title">
-                    {getProp(task, 'title', '')}
+                    {getProp(task, "title", "")}
                   </div>
                 </Col>
-                <Col md={8} className="text-right">
+                <Col md={8} span={24} className="text-right">
                   {userHasManagerRoots ? (
                     <>
-                      <Col>
+                      <Col span={24} className="task-event-container">
                         <Button
                           onClick={() => showDeleteModal(true)}
                         >
@@ -501,21 +499,19 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                           className="ml-10"
                           onClick={() => setShowEditModal(true)}
                         />
+                        {status === "In Review" && showInReviewEvents()}
                       </Col>
-                      {status === "In Review" && showInReviewEvents()}
                     </>
                   ) : showTaskEvents()}
                 </Col>
-
-
               </Row>
               <Row>
                 <Col>
                   <Row className="html-description">
-                    <Col style={{overflowX: 'auto', width: 'calc(100vw - 95px)', marginTop: status === "In Review" ? 100 : 50}}>
+                    <Col style={{overflowX: "auto", marginTop: 20}}>
                       {videoLink && <div className="pb-15"><VideoPlayer videoLink={videoLink} /></div>}
                       {
-                        parse(getProp(task, 'description', ''))
+                        parse(getProp(task, "description", ""))
                       }
                     </Col>
                   </Row>
@@ -527,14 +523,14 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                       <Row align="middle" style={{marginLeft: 15}}>
                         <Col>
                           <CustomAvatar2 person={{
-                            fullname: getProp(task, 'createdBy.fullName', ''),
-                            slug: getProp(task, 'createdBy.slug', '')
+                            fullname: getProp(task, "createdBy.fullName", ""),
+                            slug: getProp(task, "createdBy.slug", "")
                           }}/>
                         </Col>
                         <Col>
                           <Typography.Link className="text-grey-9"
-                                           href={`/${getProp(task, 'createdBy.slug', '')}`}>
-                            {getProp(task, 'createdBy.fullName', '')}
+                                           href={`/${getProp(task, "createdBy.slug", "")}`}>
+                            {getProp(task, "createdBy.fullName", "")}
                           </Typography.Link>
                         </Col>
                       </Row>
@@ -551,23 +547,23 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                             <strong className="my-auto">
                               Status: {getCausedBy(assignedTo)}
                             </strong>
-                            <div className='ml-5'>
+                            <div className="ml-5">
                               {
-                                getProp(task, 'createdBy', null) !== null && !assignedTo
+                                getProp(task, "createdBy", null) !== null && !assignedTo
                                   ? (
                                     <Row>
                                       <Col>
                                         <CustomAvatar2 person={{
-                                          fullname: getProp(task, 'createdBy.fullName', ''),
-                                          slug: getProp(task, 'createdBy.slug', '')
+                                          fullname: getProp(task, "createdBy.fullName", ""),
+                                          slug: getProp(task, "createdBy.slug", "")
                                         }}/>
                                       </Col>
                                       <div className="my-auto">
                                         {
                                           getProp(
-                                            getProp(task, 'createdBy'),
-                                            'fullName',
-                                            ''
+                                            getProp(task, "createdBy"),
+                                            "fullName",
+                                            ""
                                           )
                                         }
                                       </div>
@@ -580,7 +576,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                       }
                     </Row>
                     {
-                      getProp(task, 'priority', null) &&
+                      getProp(task, "priority", null) &&
                       <Row style={{marginTop: 10}} className="text-sm mt-8">
                         <strong className="my-auto">Priority:&nbsp;</strong>&nbsp;
                         <Priorities task={task}
@@ -589,23 +585,23 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                       </Row>
                     }
                     {
-                      getProp(task, 'reviewer.slug', null) &&
+                      getProp(task, "reviewer.slug", null) &&
                       <Row style={{marginTop: 10}} className="text-sm mt-8">
                         <strong className="my-auto">Reviewer:</strong>
 
                         <Row align="middle" style={{marginLeft: 15}}>
                           <Col>
                             <CustomAvatar2 person={{
-                              fullname: getProp(task, 'reviewer.fullName', ''),
-                              slug: getProp(task, 'reviewer.slug', '')
+                              fullname: getProp(task, "reviewer.fullName", ""),
+                              slug: getProp(task, "reviewer.slug", "")
                             }}/>
                           </Col>
                           <Col>
                             <Typography.Link
                               className="text-grey-9"
-                              href={`/${getProp(task, 'reviewer.slug', '')}`}
+                              href={`/${getProp(task, "reviewer.slug", "")}`}
                             >
-                              {getProp(task, 'reviewer.fullName', '')}
+                              {getProp(task, "reviewer.fullName", "")}
                             </Typography.Link>
                           </Col>
                         </Row>
@@ -630,7 +626,7 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                     )}
 
                     {
-                      getProp(task, 'capability.id', null) && (
+                      getProp(task, "capability.id", null) && (
                         <Row
                           className="text-sm mt-8"
                         >
@@ -638,23 +634,23 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                             Related Capability:
                           </strong>
                           <Typography.Link className="ml-5"
-                                           href={`${getBasePath()}/capabilities/${getProp(task, 'capability.id')}`}>
-                            {getProp(task, 'capability.name', '')}
+                                           href={`${getBasePath()}/capabilities/${getProp(task, "capability.id")}`}>
+                            {getProp(task, "capability.name", "")}
                           </Typography.Link>
                         </Row>
                       )
                     }
                     {
-                      getProp(task, 'initiative.id', null) && (
+                      getProp(task, "initiative.id", null) && (
                         <Row
                           className="text-sm mt-8"
                         >
                           <strong className="my-auto">Initiative:</strong>
                           <Typography.Link
                             className="ml-5"
-                            href={`${getBasePath()}/initiatives/${getProp(task, 'initiative.id')}`}
+                            href={`${getBasePath()}/initiatives/${getProp(task, "initiative.id")}`}
                           >
-                            {getProp(task, 'initiative.name', '')}
+                            {getProp(task, "initiative.name", "")}
                           </Typography.Link>
                         </Row>
                       )
@@ -664,12 +660,12 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
               </Row>
 
               {
-                getProp(task, 'dependOn', []).length > 0 &&
+                getProp(task, "dependOn", []).length > 0 &&
                 <Collapse style={{marginTop: 30}}>
                   <Panel header="Blocked by" key="0">
                     <List
                       bordered
-                      dataSource={getProp(task, 'dependOn', [])}
+                      dataSource={getProp(task, "dependOn", [])}
                       renderItem={(item: any) => (
                         <List.Item>
                           <Link
@@ -681,12 +677,12 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
                 </Collapse>
               }
               {
-                getProp(task, 'relatives', []).length > 0 &&
+                getProp(task, "relatives", []).length > 0 &&
                 <Collapse style={{marginTop: 30}}>
                   <Panel header="Dependant tasks" key="1">
                     <List
                       bordered
-                      dataSource={getProp(task, 'relatives', [])}
+                      dataSource={getProp(task, "relatives", [])}
                       renderItem={(item: any) => (
                         <List.Item>
                           <Link
@@ -706,16 +702,16 @@ const Task: React.FunctionComponent<Params> = ({user, userLogInAction, loginUrl}
               )}
 
               <div style={{marginTop: 30}} />
-              <Comments objectId={getProp(task, 'id', 0)} objectType="task" />
+              <Comments objectId={getProp(task, "id", 0)} objectType="task" />
 
-              <Attachments data={getProp(original, 'task.attachment', [])}/>
+              <Attachments data={getProp(original, "task.attachment", [])}/>
 
               {deleteModal && (
                 <DeleteModal
                   modal={deleteModal}
                   closeModal={() => showDeleteModal(false)}
                   submit={deleteTask}
-                  title='Delete task'
+                  title="Delete task"
                 />
               )}
               {leaveTaskModal && (
