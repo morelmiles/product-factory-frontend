@@ -68,14 +68,13 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const status = getProp(task, "status");
               let taskStatus = statusList[status];
               const hasActiveDepends = getProp(task, "hasActiveDepends", false);
+              const inReview = getProp(task, "inReview", false);
 
               if (hasActiveDepends) {
                 taskStatus = "Blocked";
               } else if (!hasActiveDepends && taskStatus === "Blocked") {
                 taskStatus = "Available";
               }
-
-              const inReview = getProp(task, "inReview", false);
 
               if (inReview && taskStatus !== "Done") {
                 taskStatus = "In Review";
@@ -91,6 +90,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const assignee = getProp(task, "assignedTo", null);
               const owner = getProp(task, "product.owner", "");
               const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
+              const reviewer = getProp(task, "reviewer", null);
 
               return (
                 <Col key={index} md={gridSizeMd} lg={gridSizeLg} sm={gridSizeSm} className="task-box">
@@ -168,6 +168,14 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                           Claimed by {assignee && (
                             <Link href={`/${assignee.username}`}>
                               <a>{assignee.fullName}</a>
+                            </Link>
+                          )}
+                        </>
+                      ) : taskStatus === "In Review" ? (
+                        <>
+                          In Review {reviewer && (
+                            <Link href={`/${reviewer.username}`}>
+                              <a>{reviewer.fullName}</a>
                             </Link>
                           )}
                         </>
