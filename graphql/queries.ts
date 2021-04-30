@@ -413,6 +413,11 @@ export const GET_TASK_BY_ID = gql`
       }
       videoUrl
       previewVideoUrl
+      contributionGuide {
+        id
+        title
+        description
+      } 
     }
     statusList
   }
@@ -936,6 +941,20 @@ export const GET_PAGE_CONTENT = gql`
     page(slug: $slug) {
       title
       description
+    }
+  }
+`;
+
+export const GET_CONTRIBUTOR_GUIDES = gql`
+  query GetContributorGuides($productSlug: String!)  {
+    contributorGuides(productSlug: $productSlug) {
+      id
+      title
+      description
+      stack {
+        id
+        name
+      }
     }
   }
 `;

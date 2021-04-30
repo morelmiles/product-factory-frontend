@@ -132,7 +132,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user, currentProduct
                 productSlug={params.params.productSlug}
                 closeModal={() => showDeleteModal(false)}
                 submit={deleteInitiative}
-                title="Delete iniatiative"
+                title="Delete initiative"
               />
             )}
             {
