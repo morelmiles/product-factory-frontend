@@ -577,10 +577,10 @@ const Task: React.FunctionComponent<Params> = ({
 
                       {status === "In Review" && showInReviewEvents()}
 
-                      {showTaskEvents()}
                     </Col>
                   </>
                 )}
+                {showTaskEvents()}
               </Col>
             </Row>
             <Row>
