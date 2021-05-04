@@ -449,7 +449,7 @@ const Task: React.FunctionComponent<Params> = ({
         {assignee && taskStatus !== "Done" ? (
           <>
             {assignee.id === user.id ? (
-              <div className="flex-column ml-auto">
+              <div className="flex-column ml-auto mt-10">
                 {inReview ? (
                   <div className="mb-10">The task is submitted for review</div>
                 ) : (
