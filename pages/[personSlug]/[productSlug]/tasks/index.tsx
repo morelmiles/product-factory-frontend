@@ -12,6 +12,7 @@ import Loading from "../../../../components/Loading";
 import {FilterOutlined} from "@ant-design/icons";
 import FilterModal from "../../../../components/FilterModal";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
+import Head from "next/head";
 
 type Props = {
   onClick?: () => void;
@@ -80,6 +81,10 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
   return (
+      <>
+        <Head>
+          <title>Tasks</title>
+        </Head>
     <LeftPanelContainer>
       <div>
         <Row>
@@ -137,6 +142,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
       />
 
     </LeftPanelContainer>
+      </>
   )
 };
 

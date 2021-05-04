@@ -15,6 +15,7 @@ import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import AddEditBug from "../../../../components/AddEditBug";
 import Comments from "../../../../components/Comments";
+import Head from "next/head";
 
 
 type Params = {
@@ -73,6 +74,11 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
   const fetchData = async () => await refetch();
 
   return (
+      <>
+        <Head>
+          <title>  {getProp(bug, 'headline', 'Bug')}</title>
+          <meta name="description" content={ `${getProp(bug, 'product.name', '')} ${getProp(bug, 'headline', 'Bug')}` }/>
+        </Head>
     <LeftPanelContainer>
       <Spin tip="Loading..." spinning={loading} delay={200}>
         {
@@ -208,6 +214,7 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
         }
       </Spin>
     </LeftPanelContainer>
+      </>
   );
 };
 
