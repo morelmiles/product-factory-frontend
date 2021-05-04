@@ -41,6 +41,7 @@ import parse from "html-react-parser";
 import Comments from "../../../../components/Comments";
 import VideoPlayer from "../../../../components/VideoPlayer";
 import AddTask from "../../../../components/Products/AddTask";
+import Head from "next/head";
 
 const { Content } = Layout;
 
@@ -207,11 +208,16 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({
     setFilterModal(false);
   };
 
-  if (loading || crumbsLoading) return <Loading />;
+  // if (loading || crumbsLoading) return <Loading />;
 
   const videoLink = getProp(capability, "previewVideoUrl", null);
 
   return (
+      <>
+        <Head>
+          <title>{getProp(capability, "name", "Product Map")}</title>
+          <meta name="description" content={`${getProp(capability, "name", "Product Map")}`}/>
+        </Head>
     <ContainerFlex>
       <Layout>
         <Header />
@@ -353,6 +359,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({
         submit={applyFilter}
       />
     </ContainerFlex>
+      </>
   );
 };
 

@@ -2,10 +2,15 @@ import React from 'react';
 import {Row, Col, Typography} from 'antd';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
 import ProductMapTree from "../../../../components/ProductMapTree";
+import Head from "next/head";
 
 
 const Capabilities: React.FunctionComponent = () => {
   return (
+      <>
+          <Head>
+              <title>Product Map</title>
+          </Head>
     <LeftPanelContainer>
       <Row justify="space-between" style={{marginBottom: 40}}>
         <Col>
@@ -16,6 +21,7 @@ const Capabilities: React.FunctionComponent = () => {
         <ProductMapTree/>
       </Row>
     </LeftPanelContainer>
+          </>
   );
 };
 

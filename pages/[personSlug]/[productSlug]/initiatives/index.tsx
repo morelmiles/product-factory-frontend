@@ -13,6 +13,7 @@ import InitiativeTable from "../../../../components/InitiativeTable";
 import {FilterOutlined} from "@ant-design/icons";
 import InitiativeFilterModal from "../../../../components/InitiativeFilterModal";
 import Loading from "../../../../components/Loading";
+import Head from "next/head"
 
 type Params = {
   user: any,
@@ -44,6 +45,10 @@ const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
   }
 
   return (
+      <>
+        <Head>
+          <title>Initiatives</title>
+        </Head>
     <LeftPanelContainer>
       {
         !error && (
@@ -90,6 +95,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
         )
       }
     </LeftPanelContainer>
+      </>
   );
 };
 

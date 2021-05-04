@@ -23,7 +23,7 @@ import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
 import FilledCircle from "../../../../public/assets/icons/filled-circle.svg";
 import VideoPlayer from "../../../../components/VideoPlayer";
 import AddTask from "../../../../components/Products/AddTask";
-
+import Head from "next/head";
 
 type Params = {
   user: any;
@@ -109,6 +109,12 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   const videoLink = getProp(initiative, 'previewVideoUrl', null);
 
   return (
+      <>
+
+        <Head>
+          <title>{getProp(initiative, 'name', 'Initiative')}</title>
+          <meta name="description" content={ `${getProp(initiative, "name", "")} - ${getProp(initiative, "description", "")} ` } />
+        </Head>
     <LeftPanelContainer>
       {
         !error && (
@@ -223,6 +229,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
         )
       }
     </LeftPanelContainer>
+      </>
   );
 };
 

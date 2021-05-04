@@ -18,6 +18,7 @@ import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import AddEditIdea from "../../../../components/AddEditIdea";
 import Comments from "../../../../components/Comments";
+import Head from "next/head";
 
 const getIdeaType = (ideaType: number) => {
   let searchedType = IDEA_TYPES.filter((t) => t.id === ideaType)
@@ -79,6 +80,11 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
   }, [ideaData]);
 
   return (
+      <>
+        <Head>
+          <title>  {getProp(idea, 'headline', 'idea')}</title>
+          <meta name="description" content={`${getProp(idea, 'product.name', '')} ${getProp(idea, 'headline', 'idea')}`}/>
+        </Head>
     <LeftPanelContainer>
       <Spin tip="Loading..." spinning={loading} delay={200}>
         {
@@ -213,6 +219,7 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
         }
       </Spin>
     </LeftPanelContainer>
+      </>
   );
 };
 
