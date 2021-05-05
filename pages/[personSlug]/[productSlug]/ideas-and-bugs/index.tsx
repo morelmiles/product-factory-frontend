@@ -129,6 +129,7 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
       <>
         <Head>
           <title>Ideas & Bugs</title>
+          <meta name="description" content="Ideas & Bugs" />
         </Head>
     <LeftPanelContainer>
       <div className="mb-15 d-flex-justify">

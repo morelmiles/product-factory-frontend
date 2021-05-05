@@ -84,6 +84,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
       <>
         <Head>
           <title>Tasks</title>
+          <meta name="description" content="Tasks" />
         </Head>
     <LeftPanelContainer>
       <div>

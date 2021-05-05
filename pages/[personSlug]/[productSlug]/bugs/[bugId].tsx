@@ -77,6 +77,7 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
       <>
         <Head>
           <title>  {getProp(bug, 'headline', 'Bug')}</title>
+          {/* `${getProp(bug, 'product.name', '')} ${getProp(bug, 'headline', 'Bug')}` => "Product name Bug headline" */}
           <meta name="description" content={ `${getProp(bug, 'product.name', '')} ${getProp(bug, 'headline', 'Bug')}` }/>
         </Head>
     <LeftPanelContainer>

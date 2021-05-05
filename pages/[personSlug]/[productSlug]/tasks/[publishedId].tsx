@@ -522,6 +522,7 @@ const Task: React.FunctionComponent<Params> = ({
     <>
       <Head>
         <title> {getProp(task, "title", "")} </title>
+        {/* `${getProp(task, "title", "")} - ${ getProp(product, "name", "")}` => "Task title - Product name" */}
         <meta name="description" content={ `${getProp(task, "title", "")} - ${ getProp(product, "name", "")}` } />
       </Head>
       <LeftPanelContainer>

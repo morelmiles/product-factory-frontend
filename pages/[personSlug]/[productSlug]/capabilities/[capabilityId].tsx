@@ -216,7 +216,8 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({
       <>
         <Head>
           <title>{getProp(capability, "name", "Product Map")}</title>
-          <meta name="description" content={`${getProp(capability, "name", "Product Map")}`}/>
+          {/* getProp(capability, "name", "Product Map") => "Capability name" */}
+          <meta name="description" content={getProp(capability, "name", "Product Map")}/>
         </Head>
     <ContainerFlex>
       <Layout>

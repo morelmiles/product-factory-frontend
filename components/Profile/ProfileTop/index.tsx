@@ -62,7 +62,8 @@ const ProfileTop: React.FunctionComponent = () => {
         <>
           <Head>
             <title>{getProp(data, "personProfile.person.fullName", "")}</title>
-            <meta name="description" content={`${getProp(data, "personProfile.person.fullName", "")}`} />
+            {/* getProp(data, "personProfile.person.fullName", "") => "Full name of person" */}
+            <meta name="description" content={getProp(data, "personProfile.person.fullName", "")} />
           </Head>
           <Row>
             <Col>

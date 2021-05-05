@@ -66,6 +66,7 @@ const Summary: React.FunctionComponent = () => {
     <>
       <Head>
         <title>{`Summary`}</title>
+        {/* getProp(data, "product.name", "") => Product name */}
         <meta name="description" content={getProp(data, "product.name", "")} />
       </Head>
 

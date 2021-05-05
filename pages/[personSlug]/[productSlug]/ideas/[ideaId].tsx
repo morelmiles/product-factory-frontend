@@ -83,6 +83,7 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
       <>
         <Head>
           <title>  {getProp(idea, 'headline', 'idea')}</title>
+          {/* `${getProp(idea, 'product.name', '')} ${getProp(idea, 'headline', 'idea')}` => "Product name Idea headline" */}
           <meta name="description" content={`${getProp(idea, 'product.name', '')} ${getProp(idea, 'headline', 'idea')}`}/>
         </Head>
     <LeftPanelContainer>
