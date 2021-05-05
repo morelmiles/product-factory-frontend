@@ -113,7 +113,8 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
 
         <Head>
           <title>{getProp(initiative, 'name', 'Initiative')}</title>
-          <meta name="description" content={ `${getProp(initiative, "name", "")} - ${getProp(initiative, "description", "")} ` } />
+          {/* `${getProp(initiative, "name", "")} - ${getProp(initiative, "description", "")}` => "Initiative name - Initiative description" */}
+          <meta name="description" content={ `${getProp(initiative, "name", "")} - ${getProp(initiative, "description", "")}` } />
         </Head>
     <LeftPanelContainer>
       {

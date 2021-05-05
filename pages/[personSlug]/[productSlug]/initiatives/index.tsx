@@ -48,6 +48,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
       <>
         <Head>
           <title>Initiatives</title>
+          <meta name="description" content="Initiatives" />
         </Head>
     <LeftPanelContainer>
       {

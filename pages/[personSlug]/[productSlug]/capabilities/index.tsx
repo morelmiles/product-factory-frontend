@@ -10,6 +10,7 @@ const Capabilities: React.FunctionComponent = () => {
       <>
           <Head>
               <title>Product Map</title>
+              <meta name="description" content="Product Map" />
           </Head>
     <LeftPanelContainer>
       <Row justify="space-between" style={{marginBottom: 40}}>

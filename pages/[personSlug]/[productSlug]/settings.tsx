@@ -40,6 +40,7 @@ const Settings: React.FunctionComponent = () => {
     <>
       <Head>
         <title>Settings</title>
+        <meta name="description" content="Project settings"/>
       </Head>
       <LeftPanelContainer>
         <Row style={{ marginBottom: 20 }}>
