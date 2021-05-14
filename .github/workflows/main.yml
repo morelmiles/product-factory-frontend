@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Build and deploy to production
 
 # Controls when the action will run. 
 on:
@@ -25,7 +25,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: checkout
         uses: actions/checkout@v2
-      
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -47,3 +46,14 @@ jobs:
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: set up ssh key for auth
+        run: echo "${{ secrets.PRODUCTION_UPDATER_SSH_KEY }}" > /tmp/ssh-key && chmod 600 /tmp/ssh-key
+      - name: trigger deploy
+        run: ssh -i /tmp/ssh-key -o "StrictHostKeyChecking=no" production-updater@vanhalen.openunited.com /home/production-updater/update-production.sh
+      - name: remove ssh key
+        run: rm -f /tmp/ssh-key
