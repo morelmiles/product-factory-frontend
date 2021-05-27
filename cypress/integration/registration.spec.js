@@ -1,7 +1,7 @@
 describe('registration of user', () => {
     before(() => {
-        cy.visit('http://localhost:3000/')
-        cy.get('.ant-row').eq(1).find('button').eq(1).click()
+        cy.visit('http://localhost:5000/')
+        cy.get('.ant-row').eq(1).find('button').click()
         cy.url().should('include', '/switch-test-user')
         });
     it('Test Registration Page create account', () => {
