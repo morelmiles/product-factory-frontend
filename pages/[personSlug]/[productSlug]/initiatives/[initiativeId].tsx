@@ -22,7 +22,8 @@ import CheckCircle from "../../../../public/assets/icons/check-circle.svg";
 // @ts-ignore
 import FilledCircle from "../../../../public/assets/icons/filled-circle.svg";
 import VideoPlayer from "../../../../components/VideoPlayer";
-
+import AddTask from "../../../../components/Products/AddTask";
+import Head from "next/head";
 
 type Params = {
   user: any;
@@ -35,6 +36,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
 
   const userHasManagerRoots = hasManagerRoots(getUserRole(user.roles, productSlug));
 
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [initiative, setInitiative] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
@@ -73,6 +75,20 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
     });
   }
 
+  const fetchTasks = async () => {
+    await refetch(productsVariable);
+  }
+
+  const productsVariable = {
+    productSlug,
+    input: inputData
+  };
+
+   const closeTaskModal = (flag: boolean) => {
+    setShowAddTaskModal(flag);
+    refetch(productsVariable);
+  };
+
   useEffect(() => {
     if (original && original.initiative) {
       setInitiative(original.initiative.initiative);
@@ -93,6 +109,13 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
   const videoLink = getProp(initiative, 'previewVideoUrl', null);
 
   return (
+      <>
+
+        <Head>
+          <title>{getProp(initiative, 'name', 'Initiative')}</title>
+          {/* `${getProp(initiative, "name", "")} - ${getProp(initiative, "description", "")}` => "Initiative name - Initiative description" */}
+          <meta name="description" content={ `${getProp(initiative, "name", "")} - ${getProp(initiative, "description", "")}` } />
+        </Head>
     <LeftPanelContainer>
       {
         !error && (
@@ -142,16 +165,34 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
                 />
               </Col>
             </Row>
+
             <TaskTable
               tasks={tasks}
               statusList={TASK_TYPES}
               productSlug={productSlug}
-              content={<Button type="primary"
+              content={<Col md={8} className="text-right">
+                              <Button type="primary"
                                style={{padding: "0 10px"}}
                                onClick={() => setFilterModal(!filterModal)}
-                               icon={<FilterOutlined />}>Filter</Button>}
-              submit={fetchData}
-            />
+                               icon={<FilterOutlined />}>Filter</Button>
+
+                                {userHasManagerRoots && (<><Button
+                                className="text-right add-task-btn mb-15 ml-15"
+                                onClick={() => setShowAddTaskModal(true)}
+                                >Add Task</Button>
+
+                                <AddTask
+                                    modal={showAddTaskModal}
+                                    closeModal={closeTaskModal}
+                                    tasks={tasks}
+                                    initiativeID={initiativeId}
+                                    submit={fetchTasks}
+                                    productSlug={String(productSlug)}
+                                  /></>)}
+
+                                </Col>}
+                                submit={fetchData}
+                              />
             {deleteModal && (
               <DeleteModal
                 modal={deleteModal}
@@ -189,6 +230,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
         )
       }
     </LeftPanelContainer>
+      </>
   );
 };
 

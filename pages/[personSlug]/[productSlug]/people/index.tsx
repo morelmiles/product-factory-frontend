@@ -11,6 +11,7 @@ import {Social} from "../../../../components/Profile/ProfileTop";
 import Link from "next/link";
 import Loading from "../../../../components/Loading";
 import {useRouter} from "next/router";
+import Head from "next/head";
 
 
 const peopleData = (data: any) => {
@@ -81,6 +82,12 @@ const PeopleList: React.FunctionComponent = () => {
   if (loading) return <Loading/>;
 
   return (
+      <>
+        <Head>
+          <title>People</title>
+          <meta name="description" content="People"/>
+        </Head>
+
     <LeftPanelContainer>
       {
         !error && (
@@ -110,6 +117,7 @@ const PeopleList: React.FunctionComponent = () => {
         </div>
       </div>
     </LeftPanelContainer>
+        </>
   );
 }
 

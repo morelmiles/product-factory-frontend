@@ -23,9 +23,15 @@ const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign In",
   const loginViaAM = () => {
     loadAMLogin();
     setLoading(true);
+    if (authMachineData?.getAuthmachineLoginUrl === null)
+    {
+      message.error("Error").then();
+      setLoading(false)
+    }
   }
 
-  if (loading) return <Loading />
+  if (loading && authMachineData?.getAuthmachineLoginUrl)
+    { return <Loading />}
 
   return (
     <Button className="ml-auto"

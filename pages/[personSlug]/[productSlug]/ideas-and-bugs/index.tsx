@@ -13,6 +13,7 @@ import CustomAvatar2 from "../../../../components/CustomAvatar2";
 import AddEditBug from "../../../../components/AddEditBug";
 import AddEditIdea from "../../../../components/AddEditIdea";
 import showUnAuthModal from "../../../../components/UnAuthModal";
+import Head from "next/head";
 
 type Props = {
   user: { isLoggedIn: boolean, id: string },
@@ -125,6 +126,11 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
   if (ideasLoading || bugsLoading) return <Loading/>;
 
   return (
+      <>
+        <Head>
+          <title>Ideas & Bugs</title>
+          <meta name="description" content="Ideas & Bugs" />
+        </Head>
     <LeftPanelContainer>
       <div className="mb-15 d-flex-justify">
         <Radio.Group
@@ -168,6 +174,7 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
         />
       }
     </LeftPanelContainer>
+        </>
   );
 }
 

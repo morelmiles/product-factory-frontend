@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {Modal, Row, Col, Input, Select, message, TreeSelect} from "antd";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {
-  GET_CAPABILITIES_BY_PRODUCT,
+  GET_CAPABILITIES_BY_PRODUCT, GET_CONTRIBUTOR_GUIDES,
   GET_INITIATIVES_SHORT,
   GET_STACKS,
   GET_TAGS,
@@ -38,6 +38,9 @@ type Props = {
   tasks?: Array<any>;
   stacks?: Array<any>;
   user: any;
+  initiativeID: number;
+  capabilityID: number;
+
 };
 
 const AddTask: React.FunctionComponent<Props> = (
@@ -49,7 +52,9 @@ const AddTask: React.FunctionComponent<Props> = (
     task,
     submit,
     tasks,
-    user
+    user,
+    initiativeID,
+    capabilityID,
   }
 ) => {
   const [title, setTitle] = useState(modalType ? task.title : "");
@@ -58,9 +63,13 @@ const AddTask: React.FunctionComponent<Props> = (
   const [allTags, setAllTags] = useState([]);
   const [skip, setSkip] = React.useState(false);
   const [allStacks, setAllStacks] = useState([]);
+  const [allGuides, setAllGuides] = useState([]);
   const [shortDescription, setShortDescription] = useState(
     modalType ? task.shortDescription : ""
   );
+  const [contributionGuide, setContributionGuide] = useState(
+    modalType ? task.contributionGuide?.id || null : null
+  )
   const [description, setDescription] = useState(
     modalType ? task.description : ""
   );
@@ -71,10 +80,10 @@ const AddTask: React.FunctionComponent<Props> = (
   const [status, setStatus] = useState(modalType ? task.status : 2);
   const [priority, setPriority] = useState<string | number | null>(modalType ? TASK_PRIORITIES.indexOf(task.priority) : null);
   const [capability, setCapability] = useState(
-    modalType && task.capability ? task.capability.id : 0
+    modalType && task.capability ? task.capability.id : parseInt(capabilityID)
   );
   const [initiative, setInitiative] = useState(
-    modalType && task.initiative ? task.initiative.id : 0
+    modalType && task.initiative ? task.initiative.id : initiativeID
   );
   const [initiatives, setInitiatives] = useState([])
   const [editInitiative, toggleInitiative] = useState(false);
@@ -128,6 +137,9 @@ const AddTask: React.FunctionComponent<Props> = (
   const [allUsers, setAllUsers] = useState([]);
   const [reviewSelectValue, setReviewSelectValue] = useState(getProp(task, "reviewer.slug", ""));
   const {data: users} = useQuery(GET_USERS);
+  const {data: guidesData} = useQuery(GET_CONTRIBUTOR_GUIDES, {
+    variables: {productSlug}
+  });
 
   const filterOption = (input: string, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 
@@ -214,6 +226,10 @@ const AddTask: React.FunctionComponent<Props> = (
   }, [stacksData]);
 
   useEffect(() => {
+    if (guidesData && guidesData.contributorGuides) setAllGuides(guidesData.contributorGuides)
+  }, [guidesData]);
+
+  useEffect(() => {
     if (!initiativeLoading && !!originalInitiatives && !skip) {
       setSkip(true)
     }
@@ -281,6 +297,7 @@ const AddTask: React.FunctionComponent<Props> = (
       stacks,
       dependOn,
       priority,
+      contributionGuide,
       reviewer: reviewSelectValue
     };
 
@@ -498,7 +515,7 @@ const AddTask: React.FunctionComponent<Props> = (
             required
           />
         </Row>
-        <Row>
+        <Row className="mb-15">
           <label>Dependant on:</label>
           <Select
             mode="multiple"
@@ -512,6 +529,22 @@ const AddTask: React.FunctionComponent<Props> = (
               <Option key={`cap${idx}`} value={option.task.id}>
                 {option.title}
               </Option>
+            ))}
+          </Select>
+        </Row>
+        <Row>
+          <label>Contributing Guide:</label>
+          <Select
+            onChange={setContributionGuide}
+            placeholder="Select contributing guide"
+            value={contributionGuide}
+            allowClear={true}
+          >
+            {allGuides &&
+              allGuides.map((option: {id: string, title: string}) => (
+                <Option key={`guide-${option.id}`} value={option.id}>
+                  {option.title}
+                </Option>
             ))}
           </Select>
         </Row>

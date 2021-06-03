@@ -1,10 +1,10 @@
-import React from 'react';
-import Link from 'next/link';
-import {connect} from 'react-redux';
-import {Row, Tag, Divider, Col, Typography, Empty} from 'antd';
-import {getProp} from '../../utilities/filters';
-import {TASK_CLAIM_TYPES} from '../../graphql/types';
-import {CheckCircleFilled, ThunderboltFilled} from '@ant-design/icons';
+import React from "react";
+import Link from "next/link";
+import {connect} from "react-redux";
+import {Row, Tag, Divider, Col, Typography, Empty} from "antd";
+import {getProp} from "../../utilities/filters";
+import {TASK_CLAIM_TYPES} from "../../graphql/types";
+import {CheckCircleFilled, ThunderboltFilled} from "@ant-design/icons";
 import Priorities from "../Priorities";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import CustomAvatar2 from "../CustomAvatar2";
@@ -48,9 +48,10 @@ const TaskTable: React.FunctionComponent<Props> = (
         <>
           {
             tasks.map((task: any, index: number) => {
-              const status = getProp(task, 'status');
+              const status = getProp(task, "status");
               let taskStatus = statusList[status];
-              const hasActiveDepends = getProp(task, 'hasActiveDepends', false);
+              const hasActiveDepends = getProp(task, "hasActiveDepends", false);
+              const inReview = getProp(task, "inReview", false);
 
               if (hasActiveDepends) {
                 taskStatus = "Blocked";
@@ -58,18 +59,17 @@ const TaskTable: React.FunctionComponent<Props> = (
                 taskStatus = "Available";
               }
 
-              const inReview = getProp(task, 'inReview', false);
 
               if (inReview && taskStatus !== "Done") {
                 taskStatus = "In Review";
               }
 
-              const productName = getProp(task, 'product.name', '');
-              const productSlug = getProp(task, 'product.slug', '');
-              const initiativeName = getProp(task, 'initiative.name', '');
-              const initiativeId = getProp(task, 'initiative.id', '');
-              const assignee = getProp(task, 'assignedTo', null);
-              const owner = getProp(task, 'product.owner', '');
+              const productName = getProp(task, "product.name", "");
+              const productSlug = getProp(task, "product.slug", "");
+              const initiativeName = getProp(task, "initiative.name", "");
+              const initiativeId = getProp(task, "initiative.id", "");
+              const assignee = getProp(task, "assignedTo", null);
+              const owner = getProp(task, "product.owner", "");
               const canEdit = hasManagerRoots((getUserRole(roles, productSlug)));
 
               return (
@@ -109,20 +109,20 @@ const TaskTable: React.FunctionComponent<Props> = (
                         </Col>
                       </Row>
                       <Row align="middle">
-                        {getProp(task, 'stacks', []).map((stack: any, stackIndex: number) =>
+                        {getProp(task, "stacks", []).map((stack: any, stackIndex: number) =>
                           <CheckableTag key={`stack-${stackIndex}`} checked={true}>{stack}</CheckableTag>
                         )}
-                        {getProp(task, 'tags', []).map((tag: any, tagIndex: number) =>
+                        {getProp(task, "tags", []).map((tag: any, tagIndex: number) =>
                           <Tag key={`tag${tagIndex}`}>{tag}</Tag>
                         )}
 
                         {
                           (initiativeName && showInitiativeName) &&
 
-                          <Link href={`/${getProp(task, 'product.owner', '')}/${productSlug}/initiatives/${initiativeId}`}>
+                          <Link href={`/${getProp(task, "product.owner", "")}/${productSlug}/initiatives/${initiativeId}`}>
                             <span className="text-grey-9 pointer link" style={{marginBottom: 8}}>
                               <ThunderboltFilled
-                                  style={{color: '#999', marginRight: 4, fontSize: 16}}
+                                  style={{color: "#999", marginRight: 4, fontSize: 16}}
                               />
                               {initiativeName}
                             </span>
@@ -147,22 +147,22 @@ const TaskTable: React.FunctionComponent<Props> = (
                         ) ? (
                           <>
                             {taskStatus === "Done" && (
-                              <CheckCircleFilled style={{color: '#389E0D', marginRight: 8}}/>
+                              <CheckCircleFilled style={{color: "#389E0D", marginRight: 8}}/>
                             )}
                             <span>{taskStatus}</span>
                           </>
-                        ) : inReview ? (
+                        ) : taskStatus === "In Review" ? (
                           <>
                             <div>In Review</div>
                             <div className="mt-10">
                               <div className="d-flex-end" style={{fontSize: 13}}>
                                 <CustomAvatar2
-                                  person={{fullname: getProp(task, 'reviewer.fullName', ''), slug: getProp(task, 'reviewer.username', '')}}
+                                  person={{fullname: getProp(task, "reviewer.fullName", ""), slug: getProp(task, "reviewer.username", "")}}
                                   size={35}/>
                                 <Link
-                                  href={`/${getProp(task, 'reviewer.username', '')}`}
+                                  href={`/${getProp(task, "reviewer.username", "")}`}
                                 >
-                                  <a className="text-grey-9">{getProp(task, 'reviewer.fullName', '')}</a>
+                                  <a className="text-grey-9">{getProp(task, "reviewer.fullName", "")}</a>
                                 </Link>
                               </div>
                             </div>
