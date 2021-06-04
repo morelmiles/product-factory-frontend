@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import parse from "html-react-parser";
+// @ts-ignore
 import ShowMoreText from "react-show-more-text";
 
 type Params = {
