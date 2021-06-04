@@ -19,7 +19,7 @@ describe('Edit Initiative', () => {
         cy.get('a').find('.ant-row').contains('Test Initiative').click()
         cy.wait(5000)
         cy.get('.anticon').eq(2).click()
-        cy.get('.ant-modal-content').find('.ant-input').eq(0).type('Test Initiative')
+        cy.get('.ant-modal-content').find('.ant-input').eq(0).clear().type('Test Initiative')
         cy.get('.ant-modal-content').find('.ant-input').eq(0).should('not.have.text', ' ')
         cy.get('.DraftEditor-editorContainer').clear().type('Here we are creating demo Inititaive for cypress')
         cy.get('.DraftEditor-editorContainer').should('not.have.text', ' ')
