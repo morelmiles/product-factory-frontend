@@ -9,7 +9,7 @@ type Props = {
   fullWidth?: boolean
 };
 
-const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign In",
+const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign in",
                                                       fullWidth =  false }) => {
   const [loadAMLogin, {data: authMachineData}] = useLazyQuery(GET_AM_LOGIN_URL, null, {enabled: false, manual: true});
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign In",
     if (authMachineData?.getAuthmachineLoginUrl === null)
     {
       message.error("Error").then();
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -34,7 +34,7 @@ const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign In",
     { return <Loading />}
 
   return (
-    <Button className="ml-auto"
+    <Button className="ml-auto btn-sign-in"
             style={{width: fullWidth ? "100%" : "auto"}}
             onClick={() => loginViaAM()}>{buttonTitle}</Button>
   );

@@ -828,6 +828,12 @@ export const GET_AM_LOGIN_URL = gql`
   }
 `;
 
+export const GET_AM_REGISTER_URL = gql`
+  query GetAMLink {
+    getAuthmachineRegisterUrl 
+  }
+`;
+
 export const GET_LICENSE = gql`
   query GetLicense($productSlug: String!) {
    license(productSlug: $productSlug) {
