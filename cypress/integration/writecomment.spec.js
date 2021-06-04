@@ -19,7 +19,7 @@ describe('Adding Comment', () => {
             cy.get('.rc-textarea').type('@').type('{enter}')
             cy.get('.ant-mentions').type('Test Comment')
             cy.get('.ant-mentions').should('not.have.text', ' ')
-            cy.get('.ant-spin-container').find('.ant-btn').eq(1).contains('Add Comment').click()
+            cy.get('.ant-spin-container').find('.ant-btn').eq(2).contains('Add Comment').click()
             cy.get('.ant-message-notice-content').should('have.text', 'Comment was sent')
            })
 })

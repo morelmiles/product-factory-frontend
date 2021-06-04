@@ -1,6 +1,6 @@
 describe('sign In', () => {
     beforeEach(() => {
-        cy.visit('http://localhost:5000/')
+        cy.visit('http://localhost:8080/')
         cy.get('.ant-row').eq(1).find('button').click()
         cy.url().should('include', '/switch-test-user')
         })

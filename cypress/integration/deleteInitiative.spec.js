@@ -16,7 +16,7 @@ describe('Edit Initiative', () => {
         cy.get('.ant-card-body').contains('AuthMachine').click()
         cy.get('li').eq(1).click()
         cy.wait(5000)
-        cy.get('a').find('.ant-row').contains('test').click()
+        cy.get('a').find('.ant-row').contains('Test Initiative').click()
         cy.wait(5000)
         cy.get('.anticon').eq(2).click()
         cy.get('.ant-modal-footer').find('button').contains('Delete this initiative').click()
