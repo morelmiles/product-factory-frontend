@@ -34,7 +34,7 @@ const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign in",
     { return <Loading />}
 
   return (
-    <Button className="ml-auto btn-sign-in"
+    <Button className="ml-auto btn-sign"
             style={{width: fullWidth ? "100%" : "auto"}}
             onClick={() => loginViaAM()}>{buttonTitle}</Button>
   );

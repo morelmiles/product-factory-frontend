@@ -37,7 +37,7 @@ const RegisterViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign up"
 
     return (
         <Button type={"primary"}
-                className="ml-auto"
+                className="ml-auto btn-sign"
                 style={{width: fullWidth ? "100%" : "auto", margin: margin}}
                 onClick={() => registerViaAM()}>{buttonTitle}</Button>
     );
