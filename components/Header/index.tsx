@@ -6,8 +6,6 @@ import {UserState} from "../../lib/reducers/user.reducer";
 import {productionMode} from "../../utilities/constants";
 // @ts-ignore
 import Logo from "../../public/assets/logo.svg";
-// @ts-ignore
-import SmallLogo from "../../public/assets/no-title-logo.png";
 import {useRouter} from "next/router";
 import Link from "antd/lib/typography/Link";
 import {useMutation, useQuery} from "@apollo/react-hooks";
@@ -55,15 +53,21 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
     const menuMobile = (
         <Menu theme={"light"}>
-            <Menu.Item key="0">
-                 <LoginViaAM fullWidth={true}/>
-
-            </Menu.Item>
-            <Menu.Item key="1">
-                <a href={"/"}>Open Products</a>
-            </Menu.Item>
+            {(user && user.isLoggedIn) ?
+                <Menu.Item key="0" onClick={() => logout()} className="signIn-btn">
+                    Sign out
+                </Menu.Item>
+                : (<><Menu.Item key="0">
+                    <RegisterViaAM margin={''}/>
+                </Menu.Item>
+                    <Menu.Item key="1">
+                        <LoginViaAM fullWidth={true}/>
+                    </Menu.Item></>)}
             <Menu.Item key="2">
-                <a href={"/about"}>About</a>
+                <a style={{color: '#000000 !important'}} href={"/"}>Open Products</a>
+            </Menu.Item>
+            <Menu.Item key="3">
+                <a style={{color: '#000000 !important'}} href={"/about"}>About</a>
             </Menu.Item>
         </Menu>
     )
@@ -165,11 +169,10 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             >
                 <Col>
                     <Link href="/">
-                        <img style={{width: 35, height: 35}} src={SmallLogo} alt="logo"/>
+                        <img src={Logo} alt="logo"/>
                     </Link>
                 </Col>
                 <Col>
-                    <RegisterViaAM margin={"0 15px 0 0"}/>
                     <Dropdown overlay={menuMobile}>
                         <Button style={{border: "none"}} className={"ant-dropdown-link"} icon={<MenuOutlined/>}
                                 size="large"/>
@@ -309,7 +312,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             </Row>
         </>
     );
-};
+}
 
 const mapStateToProps = (state: any) => ({
     user: state.user,
