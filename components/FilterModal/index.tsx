@@ -7,7 +7,7 @@ import {
   TASK_PRIORITIES
 } from "../../graphql/types";
 import {useQuery} from "@apollo/react-hooks";
-import {GET_STACKS, GET_TAGS, GET_USERS} from "../../graphql/queries";
+import {GET_STACKS, GET_TAGS} from "../../graphql/queries";
 import {connect} from "react-redux";
 import {WorkState} from "../../lib/reducers/work.reducer";
 import {saveTags, saveStacks, saveUsers} from "../../lib/actions";
@@ -56,7 +56,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
 
   const {data: tagsData} = useQuery(GET_TAGS);
   const {data: stacksData} = useQuery(GET_STACKS);
-  const {data: usersData} = useQuery(GET_USERS);
+  // const {data: usersData} = useQuery(GET_USERS);
 
   useEffect(() => {
     if (tagsData && tagsData.tags) saveTags({allTags: tagsData.tags})
@@ -66,9 +66,9 @@ const FilterModal: React.FunctionComponent<Props> = ({
     if (stacksData && stacksData.stacks) saveStacks({allStacks: stacksData.stacks})
   }, [stacksData]);
 
-  useEffect(() => {
-    if (usersData && usersData.people) saveUsers({allUsers: usersData.people})
-  }, [usersData]);
+  // useEffect(() => {
+  //   if (usersData && usersData.people) saveUsers({allUsers: usersData.people})
+  // }, [usersData]);
 
   useEffect(() => {
     if (user.isLoggedIn) {
@@ -162,30 +162,30 @@ const FilterModal: React.FunctionComponent<Props> = ({
                 <Option key={tag.id} value={tag.name}>{tag.name}</Option>)}
             </Select>
           </Form.Item>
-          <Form.Item name="assignee" label="Assignee">
-            <Select
-              placeholder="Select a assigned user"
-              mode="multiple"
-              showSearch={true}
-              filterOption={filterOption}
-              allowClear
-            >
-              {users.map((user: {id: string, fullName: string}) =>
-                <Option key={user.id} value={user.id}>{user.fullName}</Option>)}
-            </Select>
-          </Form.Item>
-          <Form.Item name="taskCreator" label="Task creator">
-            <Select
-              placeholder="Select a task creator"
-              mode="multiple"
-              showSearch={true}
-              filterOption={filterOption}
-              allowClear
-            >
-              {users.map((user: {id: string, fullName: string}) =>
-                <Option key={user.id} value={user.id}>{user.fullName}</Option>)}
-            </Select>
-          </Form.Item>
+          {/*<Form.Item name="assignee" label="Assignee">*/}
+          {/*  <Select*/}
+          {/*    placeholder="Select a assigned user"*/}
+          {/*    mode="multiple"*/}
+          {/*    showSearch={true}*/}
+          {/*    filterOption={filterOption}*/}
+          {/*    allowClear*/}
+          {/*  >*/}
+          {/*    {users.map((user: {id: string, fullName: string}) =>*/}
+          {/*      <Option key={user.id} value={user.id}>{user.fullName}</Option>)}*/}
+          {/*  </Select>*/}
+          {/*</Form.Item>*/}
+          {/*<Form.Item name="taskCreator" label="Task creator">*/}
+          {/*  <Select*/}
+          {/*    placeholder="Select a task creator"*/}
+          {/*    mode="multiple"*/}
+          {/*    showSearch={true}*/}
+          {/*    filterOption={filterOption}*/}
+          {/*    allowClear*/}
+          {/*  >*/}
+          {/*    {users.map((user: {id: string, fullName: string}) =>*/}
+          {/*      <Option key={user.id} value={user.id}>{user.fullName}</Option>)}*/}
+          {/*  </Select>*/}
+          {/*</Form.Item>*/}
           <Form.Item name="statuses" label="Status">
             <Select
               placeholder="Select a status"
@@ -217,7 +217,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   saveTags: (data: WorkState) => dispatch(saveTags(data)),
-  saveUsers: (data: WorkState) => dispatch(saveUsers(data)),
+  // saveUsers: (data: WorkState) => dispatch(saveUsers(data)),
   saveStacks: (data: WorkState) => dispatch(saveStacks(data)),
 });
 
