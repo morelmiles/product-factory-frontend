@@ -53,24 +53,32 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
     const menuMobile = (
         <Menu theme={"light"}>
-            {(user && user.isLoggedIn) ?
-                <Menu.Item key="0" onClick={() => logout()} className="signIn-btn">
-                    Sign out
-                </Menu.Item>
-                : (<><Menu.Item key="0">
-                    <RegisterViaAM margin={''}/>
-                </Menu.Item>
+            {(user && user.isLoggedIn) ? null :
+                (<>
+                    <Menu.Item key="0">
+                        <RegisterViaAM margin={''}/>
+                    </Menu.Item>
                     <Menu.Item key="1">
                         <LoginViaAM fullWidth={true}/>
-                    </Menu.Item></>)}
+                    </Menu.Item>
+                </>)}
             <Menu.Item key="2">
                 <a style={{color: '#000000 !important'}} href={"/"}>Open Products</a>
             </Menu.Item>
             <Menu.Item key="3">
                 <a style={{color: '#000000 !important'}} href={"/about"}>About</a>
             </Menu.Item>
-        </Menu>
-    )
+            {(user && user.isLoggedIn) ? (<>
+                <Menu.Item key="4" className="signIn-btn">
+                    <Link style={{color: '#000000 !important'}} href={`/${user?.username}`} className="text-grey-9">
+                        Your profile
+                    </Link>
+                </Menu.Item>
+                <Menu.Item key="5" onClick={() => logout()} className="signIn-btn">
+                    Sign out
+                </Menu.Item>
+            </>) : null}
+        </Menu>);
 
     const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"});
 
@@ -152,14 +160,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         }
     });
 
-    const [visible, setVisible] = useState(false);
-    const showDrawer = () => {
-        setVisible(true);
-    };
-    const onClose = () => {
-        setVisible(false);
-    };
-
     return (
         <>
             <Row
@@ -178,67 +178,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                                 size="large"/>
                     </Dropdown>
                 </Col>
-
-                {/*<Drawer*/}
-                {/*  title="Open United"*/}
-                {/*  placement="left"*/}
-                {/*  closable={false}*/}
-                {/*  onClose={onClose}*/}
-                {/*  visible={visible}*/}
-                {/*>*/}
-                {/*  <Search*/}
-                {/*    placeholder="Search for open source product or initiative"*/}
-                {/*    onSearch={onSearch}*/}
-                {/*  />*/}
-                {/*  <Menu style={{borderRight: 0}}>*/}
-                {/*    <Menu.Item key="0">*/}
-                {/*      <Link href="/">*/}
-                {/*        <a className="text-grey-9">Work on Open Products</a>*/}
-                {/*      </Link>*/}
-                {/*    </Menu.Item>*/}
-                {/*    {(user && user.isLoggedIn) && (*/}
-                {/*      <Menu.Item key="1">*/}
-                {/*        <Link href="/product/add">*/}
-                {/*          <a className="text-grey-9">Add Product</a>*/}
-                {/*        </Link>*/}
-                {/*      </Menu.Item>*/}
-                {/*    )}*/}
-                {/*    <Menu.Item key="2">*/}
-                {/*      <Link href="/about">*/}
-                {/*        <a className="text-grey-9">About</a>*/}
-                {/*      </Link>*/}
-                {/*    </Menu.Item>*/}
-                {/*    {user?.claimedTask ?*/}
-                {/*      <Menu.Item key="3">*/}
-                {/*        <Link href={user.claimedTask.link}>*/}
-                {/*          <a className="text-grey-9 truncate">*/}
-                {/*            <strong>Claimed task: </strong> {user.claimedTask.title}*/}
-                {/*          </a>*/}
-                {/*        </Link>*/}
-                {/*    </Menu.Item> : null}*/}
-                {/*    {*/}
-                {/*      user && user.isLoggedIn ? (*/}
-                {/*        <Menu.Item key="4" onClick={() => logout()} className="signIn-btn">*/}
-                {/*          Sign out*/}
-                {/*        </Menu.Item>*/}
-                {/*      ) : (*/}
-                {/*        <>*/}
-                {/*          {*/}
-                {/*            productionMode*/}
-                {/*              ? <LoginViaAM fullWidth={true} />*/}
-                {/*              : (*/}
-                {/*                <Menu.Item key="4">*/}
-                {/*                  <Link href="/switch-test-user">*/}
-                {/*                    <a className="text-grey-9">Sign in</a>*/}
-                {/*                  </Link>*/}
-                {/*                </Menu.Item>*/}
-                {/*              )*/}
-                {/*          }*/}
-                {/*        </>*/}
-                {/*      )*/}
-                {/*    }*/}
-                {/*  </Menu>*/}
-                {/*</Drawer>*/}
             </Row>
 
 
