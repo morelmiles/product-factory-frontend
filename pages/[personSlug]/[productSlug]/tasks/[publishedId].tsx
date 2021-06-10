@@ -54,6 +54,8 @@ import { userLogInAction } from "../../../../lib/actions";
 import showUnAuthModal from "../../../../components/UnAuthModal";
 import VideoPlayer from "../../../../components/VideoPlayer";
 import Head from "next/head";
+import ToReviewModal from "../../../../components/Products/ToReviewModal";
+import {UploadFile} from "antd/es/upload/interface";
 
 const { Panel } = Collapse;
 
@@ -72,6 +74,9 @@ const Task: React.FunctionComponent<Params> = ({
 }) => {
   const router = useRouter();
   const { publishedId, personSlug, productSlug } = router.query;
+
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [deliveryMessage, setDeliveryMessage] = useState('');
 
   const [agreementModalVisible, setAgreementModalVisible] = useState(false);
   const [deleteModal, showDeleteModal] = useState(false);
@@ -168,7 +173,7 @@ const Task: React.FunctionComponent<Params> = ({
   const [submitTask, { loading: submitTaskLoading }] = useMutation(
     IN_REVIEW_TASK,
     {
-      variables: { taskId },
+      variables: { taskId, fileList, deliveryMessage },
       onCompleted(data) {
         const { inReviewTask } = data;
         const responseMessage = inReviewTask.message;
@@ -322,7 +327,7 @@ const Task: React.FunctionComponent<Params> = ({
   });
 
   const claimTaskEvent = () => {
-    let userId = user.id;
+    let userId = 1;
     if (userId === undefined || userId === null) {
       showUnAuthModal(router, actionName, loginUrl);
       return;
@@ -840,13 +845,15 @@ const Task: React.FunctionComponent<Params> = ({
                 />
               )}
               {reviewTaskModal && (
-                <CustomModal
+                <ToReviewModal
                   modal={reviewTaskModal}
                   closeModal={() => showReviewTaskModal(false)}
                   submit={submitTask}
-                  title="Submit for review"
-                  message="Do you really want to submit the task for review?"
-                  submitText="Yes, submit"
+                  fileList={fileList}
+                  setFileList={setFileList}
+                  deliveryMessage={deliveryMessage}
+                  setDeliveryMessage={setDeliveryMessage}
+                  message={task.title}
                 />
               )}
               {showEditModal && (

@@ -255,8 +255,8 @@ export const CLAIM_TASK = gql`
 `;
 
 export const IN_REVIEW_TASK = gql`
-  mutation InReviewTask($taskId: Int!) {
-    inReviewTask(taskId: $taskId) {
+  mutation InReviewTask($taskId: Int!, $fileList: [Upload], $deliveryMessage: String) {
+    inReviewTask(taskId: $taskId, fileList: $fileList, deliveryMessage: $deliveryMessage) {
       success
       message
     }
