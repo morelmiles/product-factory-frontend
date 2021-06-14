@@ -56,6 +56,7 @@ import VideoPlayer from "../../../../components/VideoPlayer";
 import Head from "next/head";
 import ToReviewModal from "../../../../components/Products/ToReviewModal";
 import {UploadFile} from "antd/es/upload/interface";
+import DeliveryMessageModal from "../../../../components/Products/DeliveryMessageModal";
 
 const {Panel} = Collapse;
 
@@ -76,6 +77,7 @@ const Task: React.FunctionComponent<Params> = ({
     const {publishedId, personSlug, productSlug} = router.query;
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [files, setFiles] = useState([]);
     const [deliveryMessage, setDeliveryMessage] = useState('');
     const [deliveryModal, setDeliveryModal] = useState(false);
 
@@ -174,7 +176,7 @@ const Task: React.FunctionComponent<Params> = ({
     const [submitTask, {loading: submitTaskLoading}] = useMutation(
         IN_REVIEW_TASK,
         {
-            variables: {taskId, fileList, deliveryMessage},
+            variables: {taskId, fileList: files, deliveryMessage},
             onCompleted(data) {
                 const {inReviewTask} = data;
                 const responseMessage = inReviewTask.message;
@@ -204,6 +206,7 @@ const Task: React.FunctionComponent<Params> = ({
                     message.success(responseMessage).then();
                     fetchData().then();
                     showRejectTaskModal(false);
+                    setDeliveryModal(false);
                     getPersonData();
                 } else {
                     message.error(responseMessage).then();
@@ -226,13 +229,14 @@ const Task: React.FunctionComponent<Params> = ({
                     message.success(responseMessage).then();
                     fetchData().then();
                     showApproveTaskModal(false);
+                    setDeliveryModal(false);
                     getPersonData();
                 } else {
                     message.error(responseMessage).then();
                 }
             },
             onError() {
-                message.error("Failed to reject a work!").then();
+                message.error("Failed to approve a work!").then();
             },
         }
     );
@@ -447,487 +451,491 @@ const Task: React.FunctionComponent<Params> = ({
     const tags = getProp(task, "tag", []);
 
     const showTaskEvents = () => {
-        const assignee = getProp(task, "assignedTo", null);
-        const taskStatus = TASK_TYPES[getProp(task, "status")];
-        const inReview = getProp(task, "inReview", false);
+            const assignee = getProp(task, "assignedTo", null);
+            const taskStatus = TASK_TYPES[getProp(task, "status")];
+            const inReview = getProp(task, "inReview", false);
 
-        return (
-            <Row className="text-sm">
-                {assignee && taskStatus !== "Done" ? (
-                    <>
-                        {assignee.id === user.id ? (
-                            <div className="flex-column ml-auto mt-10">
-                                {inReview ? (
-                                    <div style={{fontSize: 14}} className="mb-10">The task is submitted for review.<br/> See <div
-                                        onClick={() => { setDeliveryModal(true);
-                                        }} style={{
-                                        display: "inline-block",
-                                        color: "#188ffe",
-                                        textDecorationLine: "underline"
-                                    }}>Delivery Message</div></div>
-                                ) : (
+            return (
+                <Row className="text-sm">
+                    {assignee && !inReview ? (
+                        <>
+                            {assignee.id === user.id ? (
+                                <div className="flex-column ml-auto mt-10">
+                                    {inReview ? null : (
+                                        <Button
+                                            type="primary"
+                                            className="mb-10"
+                                            onClick={() => showReviewTaskModal(true)}
+                                        >
+                                            Submit for review
+                                        </Button>
+                                    )}
                                     <Button
                                         type="primary"
-                                        className="mb-10"
-                                        onClick={() => showReviewTaskModal(true)}
+                                        onClick={() => showLeaveTaskModal(true)}
+                                        style={{zIndex: 1000}}
                                     >
-                                        Submit for review
+                                        Leave the task
                                     </Button>
-                                )}
-                                <Button
-                                    type="primary"
-                                    onClick={() => showLeaveTaskModal(true)}
-                                    style={{zIndex: 1000}}
-                                >
-                                    Leave the task
+                                </div>
+                            ) : null}
+                        </>
+                    ) : null}
+                    {taskStatus === "Available" && (
+                        <>
+                            <div className="flex-column ml-auto mt-10">
+                                <Button type="primary" onClick={() => claimTaskEvent()}>
+                                    Claim the task
                                 </Button>
                             </div>
-                        ) : null}
-                    </>
-                ) : null}
-                {taskStatus === "Available" && (
-                    <>
-                        <div className="flex-column ml-auto mt-10">
-                            <Button type="primary" onClick={() => claimTaskEvent()}>
-                                Claim the task
-                            </Button>
-                        </div>
-                    </>
-                )}
-            </Row>
-        );
-    }
-;
+                        </>
+                    )}
+                </Row>
+            );
+        }
+    ;
 
-let status = TASK_TYPES[getProp(task, "status")];
-const initiativeName = getProp(task, "initiative.name", undefined);
-const inReview = getProp(task, "inReview", false);
+    let status = TASK_TYPES[getProp(task, "status")];
+    const initiativeName = getProp(task, "initiative.name", undefined);
+    const inReview = getProp(task, "inReview", false);
 
-if (inReview && status !== "Done") status = "In Review";
+    if (inReview && status !== "Done") status = "In Review";
 
-const showInReviewEvents = () =>
-    {
-        return (
-            <Row className="text-sm">
-                <div className="flex-column ml-auto mt-5">
-                    <Button
-                        type="primary"
-                        className="mb-10"
-                        style={{zIndex: 1000}}
-                        onClick={() => showApproveTaskModal(true)}
-                    >
-                        Approve the work
-                    </Button>
-                    <Button
-                        type="primary"
-                        onClick={() => showRejectTaskModal(true)}
-                        style={{zIndex: 1000}}
-                    >
-                        Reject the work
-                    </Button>
-                </div>
-            </Row>
-        );
-    }
-;
-
-const videoLink = getProp(task, "previewVideoUrl", null);
-
-return (
-    <>
-        <Head>
-            <title> {getProp(task, "title", "")} </title>
-            {/* `${getProp(task, "title", "")} - ${ getProp(product, "name", "")}` => "Task title - Product name" */}
-            <meta name="description" content={`${getProp(task, "title", "")} - ${getProp(product, "name", "")}`}/>
-        </Head>
-        <LeftPanelContainer>
-            <Spin
-                tip="Loading..."
-                spinning={
-                    loading || leaveTaskLoading || claimTaskLoading || submitTaskLoading
-                }
-                delay={200}
-            >
-                {!error && (
-                    <>
-                        {getBasePath() !== "" && (
-                            <Breadcrumb>
-                                <Breadcrumb.Item>
-                                    <a href={getBasePath()}>{getProp(product, "name", "")}</a>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item>
-                                    <a href={`${getBasePath()}/tasks`}>Tasks</a>
-                                </Breadcrumb.Item>
-                                {initiativeName && (
-                                    <Breadcrumb.Item>
-                                        <a
-                                            href={`/${getProp(product, "owner", "")}/${getProp(
-                                                product,
-                                                "slug",
-                                                ""
-                                            )}/initiatives/${getProp(task, "initiative.id", "")}`}
-                                        >
-                                            {initiativeName}
-                                        </a>
-                                    </Breadcrumb.Item>
-                                )}
-                                <Breadcrumb.Item>
-                                    {getProp(original, "task.title", "")}
-                                </Breadcrumb.Item>
-                            </Breadcrumb>
-                        )}
-                        <Row
-                            justify="space-between"
-                            className="right-panel-headline strong-height"
+    const showInReviewEvents = () => {
+            return (
+                <Row className="text-sm">
+                    <div className=" mt-5">
+                        <Button
+                            type="primary"
+                            className="mb-10"
+                            style={{zIndex: 1000}}
+                            onClick={() => showApproveTaskModal(true)}
                         >
-                            <Col md={16}>
-                                <div className="section-title">
-                                    {getProp(task, "title", "")}
-                                </div>
-                            </Col>
-                            <Col md={8} className="text-right">
-                                {userHasManagerRoots && (
-                                    <>
-                                        <Col>
-                                            <Button onClick={() => showDeleteModal(true)}>
-                                                Delete
-                                            </Button>
-                                            <EditIcon
-                                                className="ml-15"
-                                                onClick={() => setShowEditModal(true)}
-                                            />
+                            Approve the work
+                        </Button>
+                        <Button
+                            type="primary"
+                            onClick={() => showRejectTaskModal(true)}
+                            style={{zIndex: 1000}}
+                        >
+                            Reject the work
+                        </Button>
+                        <div style={{ marginLeft: 67, textAlign: "left", fontSize: 14, marginTop: 9}} className="mb-10">The task is submitted for
+                            review.<br/> See <div
+                                onClick={() => {
+                                    setDeliveryModal(true);
+                                }} style={{
+                                display: "inline-block",
+                                color: "#188ffe",
+                                textDecorationLine: "underline"
+                            }}>Delivery Message</div></div>
+                    </div>
+                </Row>
+            );
+        }
+    ;
 
-                                            {status === "In Review" && showInReviewEvents()}
-                                        </Col>
-                                    </>
-                                )}
-                                {showTaskEvents()}
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Row className="html-description">
-                                    <Col
-                                        style={{
-                                            overflowX: "auto",
-                                            width: "calc(100vw - 95px)",
-                                            marginTop: status === "In Review" ? 100 : 50,
-                                        }}
-                                    >
-                                        {videoLink && (
-                                            <div className="pb-15">
-                                                <VideoPlayer videoLink={videoLink}/>
-                                            </div>
-                                        )}
-                                        {parse(getProp(task, "description", ""))}
-                                    </Col>
-                                </Row>
-                                <div className="mt-22">
-                                    {showAssignedUser()}
-                                    <Row style={{marginTop: 10}} className="text-sm mt-8">
-                                        <strong className="my-auto">Created By: </strong>
+    const videoLink = getProp(task, "previewVideoUrl", null);
 
-                                        <Row align="middle" style={{marginLeft: 15}}>
-                                            <Col>
-                                                <CustomAvatar2
-                                                    person={{
-                                                        fullname: getProp(task, "createdBy.fullName", ""),
-                                                        slug: getProp(task, "createdBy.slug", ""),
-                                                    }}
-                                                />
-                                            </Col>
-                                            <Col>
-                                                <Typography.Link
-                                                    className="text-grey-9"
-                                                    href={`/${getProp(task, "createdBy.slug", "")}`}
-                                                >
-                                                    {getProp(task, "createdBy.fullName", "")}
-                                                </Typography.Link>
-                                            </Col>
-                                        </Row>
-                                    </Row>
-
-                                    <Row className="text-sm mt-8">
-                                        {[
-                                            "Available",
-                                            "Draft",
-                                            "Pending",
-                                            "Blocked",
-                                            "In Review",
-                                        ].includes(status) ? (
-                                            <strong className="my-auto">Status: {status}</strong>
-                                        ) : (
-                                            <>
-                                                <strong className="my-auto">
-                                                    Status: {getCausedBy(assignedTo)}
-                                                </strong>
-                                                <div className="ml-5">
-                                                    {getProp(task, "createdBy", null) !== null &&
-                                                    !assignedTo ? (
-                                                        <Row>
-                                                            <Col>
-                                                                <CustomAvatar2
-                                                                    person={{
-                                                                        fullname: getProp(
-                                                                            task,
-                                                                            "createdBy.fullName",
-                                                                            ""
-                                                                        ),
-                                                                        slug: getProp(task, "createdBy.slug", ""),
-                                                                    }}
-                                                                />
-                                                            </Col>
-                                                            <div className="my-auto">
-                                                                {getProp(
-                                                                    getProp(task, "createdBy"),
-                                                                    "fullName",
-                                                                    ""
-                                                                )}
-                                                            </div>
-                                                        </Row>
-                                                    ) : null}
-                                                </div>
-                                            </>
-                                        )}
-                                    </Row>
-                                    {getProp(task, "priority", null) && (
-                                        <Row style={{marginTop: 10}} className="text-sm mt-8">
-                                            <strong className="my-auto">Priority:&nbsp;</strong>
-                                            &nbsp;
-                                            <Priorities
-                                                task={task}
-                                                submit={() => refetch()}
-                                                canEdit={userHasManagerRoots}
-                                            />
-                                        </Row>
+    return (
+        <>
+            <Head>
+                <title> {getProp(task, "title", "")} </title>
+                {/* `${getProp(task, "title", "")} - ${ getProp(product, "name", "")}` => "Task title - Product name" */}
+                <meta name="description" content={`${getProp(task, "title", "")} - ${getProp(product, "name", "")}`}/>
+            </Head>
+            <LeftPanelContainer>
+                <Spin
+                    tip="Loading..."
+                    spinning={
+                        loading || leaveTaskLoading || claimTaskLoading || submitTaskLoading
+                    }
+                    delay={200}
+                >
+                    {!error && (
+                        <>
+                            {getBasePath() !== "" && (
+                                <Breadcrumb>
+                                    <Breadcrumb.Item>
+                                        <a href={getBasePath()}>{getProp(product, "name", "")}</a>
+                                    </Breadcrumb.Item>
+                                    <Breadcrumb.Item>
+                                        <a href={`${getBasePath()}/tasks`}>Tasks</a>
+                                    </Breadcrumb.Item>
+                                    {initiativeName && (
+                                        <Breadcrumb.Item>
+                                            <a
+                                                href={`/${getProp(product, "owner", "")}/${getProp(
+                                                    product,
+                                                    "slug",
+                                                    ""
+                                                )}/initiatives/${getProp(task, "initiative.id", "")}`}
+                                            >
+                                                {initiativeName}
+                                            </a>
+                                        </Breadcrumb.Item>
                                     )}
-                                    {getProp(task, "reviewer.slug", null) && (
+                                    <Breadcrumb.Item>
+                                        {getProp(original, "task.title", "")}
+                                    </Breadcrumb.Item>
+                                </Breadcrumb>
+                            )}
+                            <Row
+                                justify="space-between"
+                                className="right-panel-headline strong-height"
+                            >
+                                <Col md={16}>
+                                    <div className="section-title">
+                                        {getProp(task, "title", "")}
+                                    </div>
+                                </Col>
+                                <Col md={8} className="text-right">
+                                    {userHasManagerRoots && (
+                                        <>
+                                            <Col>
+                                                <Button onClick={() => showDeleteModal(true)}>
+                                                    Delete
+                                                </Button>
+                                                <EditIcon
+                                                    className="ml-15"
+                                                    onClick={() => setShowEditModal(true)}
+                                                />
+
+                                                {status === "In Review" && showInReviewEvents()}
+                                            </Col>
+                                        </>
+                                    )}
+                                    {showTaskEvents()}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <Row className="html-description">
+                                        <Col
+                                            style={{
+                                                overflowX: "auto",
+                                                width: "calc(100vw - 95px)",
+                                                marginTop: status === "In Review" ? 100 : 50,
+                                            }}
+                                        >
+                                            {videoLink && (
+                                                <div className="pb-15">
+                                                    <VideoPlayer videoLink={videoLink}/>
+                                                </div>
+                                            )}
+                                            {parse(getProp(task, "description", ""))}
+                                        </Col>
+                                    </Row>
+                                    <div className="mt-22">
+                                        {showAssignedUser()}
                                         <Row style={{marginTop: 10}} className="text-sm mt-8">
-                                            <strong className="my-auto">Reviewer:</strong>
+                                            <strong className="my-auto">Created By: </strong>
 
                                             <Row align="middle" style={{marginLeft: 15}}>
                                                 <Col>
                                                     <CustomAvatar2
                                                         person={{
-                                                            fullname: getProp(
-                                                                task,
-                                                                "reviewer.fullName",
-                                                                ""
-                                                            ),
-                                                            slug: getProp(task, "reviewer.slug", ""),
+                                                            fullname: getProp(task, "createdBy.fullName", ""),
+                                                            slug: getProp(task, "createdBy.slug", ""),
                                                         }}
                                                     />
                                                 </Col>
                                                 <Col>
                                                     <Typography.Link
                                                         className="text-grey-9"
-                                                        href={`/${getProp(task, "reviewer.slug", "")}`}
+                                                        href={`/${getProp(task, "createdBy.slug", "")}`}
                                                     >
-                                                        {getProp(task, "reviewer.fullName", "")}
+                                                        {getProp(task, "createdBy.fullName", "")}
                                                     </Typography.Link>
                                                 </Col>
                                             </Row>
                                         </Row>
-                                    )}
-                                    {stacks.length > 0 && (
-                                        <Row
-                                            style={{marginTop: 10}}
-                                            className="text-sm mt-8 tag-bottom-0"
-                                        >
-                                            <strong className="my-auto">
-                                                Skills required:&nbsp;
-                                            </strong>
-                                            {stacks.map((tag: any, taskIndex: number) => (
-                                                <CheckableTag key={`tag-${taskIndex}`} checked={true}>
-                                                    {tag.name}
-                                                </CheckableTag>
-                                            ))}
-                                        </Row>
-                                    )}
 
-                                    {tags.length > 0 && (
-                                        <Row
-                                            style={{marginTop: 10}}
-                                            className="text-sm mt-8 tag-bottom-0"
-                                        >
-                                            <strong className="my-auto">Tags:&nbsp;</strong>
-                                            {tags.map((tag: any, taskIndex: number) => (
-                                                <Tag key={`stack-${taskIndex}`}>{tag.name}</Tag>
-                                            ))}
-                                        </Row>
-                                    )}
-
-                                    {getProp(task, "capability.id", null) && (
                                         <Row className="text-sm mt-8">
-                                            <strong className="my-auto">Related Capability:</strong>
-                                            <Typography.Link
-                                                className="ml-5"
-                                                href={`${getBasePath()}/capabilities/${getProp(
-                                                    task,
-                                                    "capability.id"
-                                                )}`}
-                                            >
-                                                {getProp(task, "capability.name", "")}
-                                            </Typography.Link>
+                                            {[
+                                                "Available",
+                                                "Draft",
+                                                "Pending",
+                                                "Blocked",
+                                                "In Review",
+                                            ].includes(status) ? (
+                                                <strong className="my-auto">Status: {status}</strong>
+                                            ) : (
+                                                <>
+                                                    <strong className="my-auto">
+                                                        Status: {getCausedBy(assignedTo)}
+                                                    </strong>
+                                                    <div className="ml-5">
+                                                        {getProp(task, "createdBy", null) !== null &&
+                                                        !assignedTo ? (
+                                                            <Row>
+                                                                <Col>
+                                                                    <CustomAvatar2
+                                                                        person={{
+                                                                            fullname: getProp(
+                                                                                task,
+                                                                                "createdBy.fullName",
+                                                                                ""
+                                                                            ),
+                                                                            slug: getProp(task, "createdBy.slug", ""),
+                                                                        }}
+                                                                    />
+                                                                </Col>
+                                                                <div className="my-auto">
+                                                                    {getProp(
+                                                                        getProp(task, "createdBy"),
+                                                                        "fullName",
+                                                                        ""
+                                                                    )}
+                                                                </div>
+                                                            </Row>
+                                                        ) : null}
+                                                    </div>
+                                                </>
+                                            )}
                                         </Row>
-                                    )}
-                                    {getProp(task, "initiative.id", null) && (
-                                        <Row className="text-sm mt-8">
-                                            <strong className="my-auto">Initiative:</strong>
-                                            <Typography.Link
-                                                className="ml-5"
-                                                href={`${getBasePath()}/initiatives/${getProp(
-                                                    task,
-                                                    "initiative.id"
-                                                )}`}
+                                        {getProp(task, "priority", null) && (
+                                            <Row style={{marginTop: 10}} className="text-sm mt-8">
+                                                <strong className="my-auto">Priority:&nbsp;</strong>
+                                                &nbsp;
+                                                <Priorities
+                                                    task={task}
+                                                    submit={() => refetch()}
+                                                    canEdit={userHasManagerRoots}
+                                                />
+                                            </Row>
+                                        )}
+                                        {getProp(task, "reviewer.slug", null) && (
+                                            <Row style={{marginTop: 10}} className="text-sm mt-8">
+                                                <strong className="my-auto">Reviewer:</strong>
+
+                                                <Row align="middle" style={{marginLeft: 15}}>
+                                                    <Col>
+                                                        <CustomAvatar2
+                                                            person={{
+                                                                fullname: getProp(
+                                                                    task,
+                                                                    "reviewer.fullName",
+                                                                    ""
+                                                                ),
+                                                                slug: getProp(task, "reviewer.slug", ""),
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                    <Col>
+                                                        <Typography.Link
+                                                            className="text-grey-9"
+                                                            href={`/${getProp(task, "reviewer.slug", "")}`}
+                                                        >
+                                                            {getProp(task, "reviewer.fullName", "")}
+                                                        </Typography.Link>
+                                                    </Col>
+                                                </Row>
+                                            </Row>
+                                        )}
+                                        {stacks.length > 0 && (
+                                            <Row
+                                                style={{marginTop: 10}}
+                                                className="text-sm mt-8 tag-bottom-0"
                                             >
-                                                {getProp(task, "initiative.name", "")}
-                                            </Typography.Link>
-                                        </Row>
-                                    )}
-                                </div>
-                            </Col>
-                        </Row>
-
-                        {getProp(task, "dependOn", []).length > 0 && (
-                            <Collapse style={{marginTop: 30}}>
-                                <Panel header="Blocked by" key="1">
-                                    <List
-                                        bordered
-                                        dataSource={getProp(task, "dependOn", [])}
-                                        renderItem={(item: any) => (
-                                            <List.Item>
-                                                <Link
-                                                    href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}
-                                                >
-                                                    {item.title}
-                                                </Link>
-                                            </List.Item>
+                                                <strong className="my-auto">
+                                                    Skills required:&nbsp;
+                                                </strong>
+                                                {stacks.map((tag: any, taskIndex: number) => (
+                                                    <CheckableTag key={`tag-${taskIndex}`} checked={true}>
+                                                        {tag.name}
+                                                    </CheckableTag>
+                                                ))}
+                                            </Row>
                                         )}
-                                    />
-                                </Panel>
-                            </Collapse>
-                        )}
-                        {getProp(task, "relatives", []).length > 0 && (
-                            <Collapse style={{marginTop: 30}}>
-                                <Panel header="Dependant tasks" key="1">
-                                    <List
-                                        bordered
-                                        dataSource={getProp(task, "relatives", [])}
-                                        renderItem={(item: any) => (
-                                            <List.Item>
-                                                <Link
-                                                    href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}
-                                                >
-                                                    {item.title}
-                                                </Link>
-                                            </List.Item>
+
+                                        {tags.length > 0 && (
+                                            <Row
+                                                style={{marginTop: 10}}
+                                                className="text-sm mt-8 tag-bottom-0"
+                                            >
+                                                <strong className="my-auto">Tags:&nbsp;</strong>
+                                                {tags.map((tag: any, taskIndex: number) => (
+                                                    <Tag key={`stack-${taskIndex}`}>{tag.name}</Tag>
+                                                ))}
+                                            </Row>
                                         )}
-                                    />
-                                </Panel>
-                            </Collapse>
-                        )}
 
-                        <div style={{marginTop: 30}}/>
-                        <Comments objectId={getProp(task, "id", 0)} objectType="task"/>
+                                        {getProp(task, "capability.id", null) && (
+                                            <Row className="text-sm mt-8">
+                                                <strong className="my-auto">Related Capability:</strong>
+                                                <Typography.Link
+                                                    className="ml-5"
+                                                    href={`${getBasePath()}/capabilities/${getProp(
+                                                        task,
+                                                        "capability.id"
+                                                    )}`}
+                                                >
+                                                    {getProp(task, "capability.name", "")}
+                                                </Typography.Link>
+                                            </Row>
+                                        )}
+                                        {getProp(task, "initiative.id", null) && (
+                                            <Row className="text-sm mt-8">
+                                                <strong className="my-auto">Initiative:</strong>
+                                                <Typography.Link
+                                                    className="ml-5"
+                                                    href={`${getBasePath()}/initiatives/${getProp(
+                                                        task,
+                                                        "initiative.id"
+                                                    )}`}
+                                                >
+                                                    {getProp(task, "initiative.name", "")}
+                                                </Typography.Link>
+                                            </Row>
+                                        )}
+                                    </div>
+                                </Col>
+                            </Row>
 
-                        <Attachments data={getProp(original, "task.attachment", [])}/>
+                            {getProp(task, "dependOn", []).length > 0 && (
+                                <Collapse style={{marginTop: 30}}>
+                                    <Panel header="Blocked by" key="1">
+                                        <List
+                                            bordered
+                                            dataSource={getProp(task, "dependOn", [])}
+                                            renderItem={(item: any) => (
+                                                <List.Item>
+                                                    <Link
+                                                        href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}
+                                                    >
+                                                        {item.title}
+                                                    </Link>
+                                                </List.Item>
+                                            )}
+                                        />
+                                    </Panel>
+                                </Collapse>
+                            )}
+                            {getProp(task, "relatives", []).length > 0 && (
+                                <Collapse style={{marginTop: 30}}>
+                                    <Panel header="Dependant tasks" key="1">
+                                        <List
+                                            bordered
+                                            dataSource={getProp(task, "relatives", [])}
+                                            renderItem={(item: any) => (
+                                                <List.Item>
+                                                    <Link
+                                                        href={`/${personSlug}/${item.product.slug}/tasks/${item.publishedId}`}
+                                                    >
+                                                        {item.title}
+                                                    </Link>
+                                                </List.Item>
+                                            )}
+                                        />
+                                    </Panel>
+                                </Collapse>
+                            )}
 
-                        {deleteModal && (
-                            <DeleteModal
-                                modal={deleteModal}
-                                closeModal={() => showDeleteModal(false)}
-                                submit={deleteTask}
-                                title="Delete task"
-                            />
-                        )}
-                        {leaveTaskModal && (
-                            <CustomModal
-                                modal={leaveTaskModal}
-                                closeModal={() => showLeaveTaskModal(false)}
-                                submit={() => {
-                                    showLeaveTaskModal(false);
-                                    leaveTask().then();
-                                }}
-                                title="Leave the task"
-                                message="Do you really want to leave the task?"
-                                submitText="Yes, leave"
-                            />
-                        )}
-                        {reviewTaskModal && (
-                            <ToReviewModal
-                                modal={reviewTaskModal}
-                                closeModal={() => showReviewTaskModal(false)}
-                                submit={submitTask}
-                                fileList={fileList}
-                                setFileList={setFileList}
-                                deliveryMessage={deliveryMessage}
-                                setDeliveryMessage={setDeliveryMessage}
-                                message={task.title}
-                            />
-                        )}
-                        {showEditModal && (
-                            <AddTaskContainer
-                                modal={showEditModal}
-                                productSlug={String(productSlug)}
-                                modalType={true}
-                                closeModal={setShowEditModal}
-                                task={task}
-                                submit={fetchData}
-                                tasks={tasks}
-                            />
-                        )}
-                        {rejectTaskModal && (
-                            <CustomModal
-                                modal={rejectTaskModal}
-                                closeModal={() => showRejectTaskModal(false)}
-                                submit={rejectTask}
-                                title="Reject the work"
-                                message="Do you really want to reject the work?"
-                                submitText="Yes, reject"
-                            />
-                        )}
-                        {approveTaskModal && (
-                            <CustomModal
-                                modal={approveTaskModal}
-                                closeModal={() => showApproveTaskModal(false)}
-                                submit={approveTask}
-                                title="Approve the work"
-                                message="Do you really want to approve the work?"
-                                submitText="Yes, approve"
-                            />
-                        )}
-                    </>
-                )}
+                            <div style={{marginTop: 30}}/>
+                            <Comments objectId={getProp(task, "id", 0)} objectType="task"/>
 
-                <Modal
-                    title="Contribution License Agreement"
-                    okText="I Agree"
-                    visible={agreementModalVisible}
-                    onOk={handleIAgree}
-                    onCancel={() => setAgreementModalVisible(false)}
-                    width={1000}
-                    maskClosable={false}
-                >
-                    <p className="html-description">{parse(license)}</p>
-                </Modal>
-            </Spin>
-        </LeftPanelContainer>
-    </>
-);
+                            <Attachments data={getProp(original, "task.attachment", [])}/>
+
+                            {deleteModal && (
+                                <DeleteModal
+                                    modal={deleteModal}
+                                    closeModal={() => showDeleteModal(false)}
+                                    submit={deleteTask}
+                                    title="Delete task"
+                                />
+                            )}
+                            {leaveTaskModal && (
+                                <CustomModal
+                                    modal={leaveTaskModal}
+                                    closeModal={() => showLeaveTaskModal(false)}
+                                    submit={() => {
+                                        showLeaveTaskModal(false);
+                                        leaveTask().then();
+                                    }}
+                                    title="Leave the task"
+                                    message="Do you really want to leave the task?"
+                                    submitText="Yes, leave"
+                                />
+                            )}
+                            {reviewTaskModal && (
+                                <ToReviewModal
+                                    modal={reviewTaskModal}
+                                    closeModal={() => showReviewTaskModal(false)}
+                                    submit={submitTask}
+                                    files={files}
+                                    setFiles={setFiles}
+                                    fileList={fileList}
+                                    setFileList={setFileList}
+                                    deliveryMessage={deliveryMessage}
+                                    setDeliveryMessage={setDeliveryMessage}
+                                    message={task.title}
+                                />
+                            )}
+                            {showEditModal && (
+                                <AddTaskContainer
+                                    modal={showEditModal}
+                                    productSlug={String(productSlug)}
+                                    modalType={true}
+                                    closeModal={setShowEditModal}
+                                    task={task}
+                                    submit={fetchData}
+                                    tasks={tasks}
+                                />
+                            )}
+                            {rejectTaskModal && (
+                                <CustomModal
+                                    modal={rejectTaskModal}
+                                    closeModal={() => showRejectTaskModal(false)}
+                                    submit={rejectTask}
+                                    title="Reject the work"
+                                    message="Do you really want to reject the work?"
+                                    submitText="Yes, reject"
+                                />
+                            )}
+                            {approveTaskModal && (
+                                <CustomModal
+                                    modal={approveTaskModal}
+                                    closeModal={() => showApproveTaskModal(false)}
+                                    submit={approveTask}
+                                    title="Approve the work"
+                                    message="Do you really want to approve the work?"
+                                    submitText="Yes, approve"
+                                />
+                            )}
+                            {deliveryModal && (
+                                <DeliveryMessageModal
+                                    modal={deliveryModal}
+                                    closeModal={() => setDeliveryModal(false)}
+                                    submit={approveTask}
+                                    reject={rejectTask}
+                                    taskId={taskId}/>
+                            )}
+                        </>
+                    )}
+
+                    <Modal
+                        title="Contribution License Agreement"
+                        okText="I Agree"
+                        visible={agreementModalVisible}
+                        onOk={handleIAgree}
+                        onCancel={() => setAgreementModalVisible(false)}
+                        width={1000}
+                        maskClosable={false}
+                    >
+                        <p className="html-description">{parse(license)}</p>
+                    </Modal>
+                </Spin>
+            </LeftPanelContainer>
+        </>
+    );
 };
 
-const mapStateToProps = (state: any) => (
-    {
-        user: state.user,
-            currentProduct
-    :
-        state.work.currentProduct || {},
-            loginUrl
-    :
-        state.work.loginUrl,
-    }
-);
+const mapStateToProps = (state: any) => ({
+    user: state.user,
+    currentProduct: state.work.currentProduct || {},
+    loginUrl: state.work.loginUrl,
+});
 
 const mapDispatchToProps = (dispatch: any) => (
     {

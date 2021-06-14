@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Modal, Button, Select, Typography, Row} from 'antd';
 import RichTextEditor from "../../RichTextEditor";
 import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
@@ -13,7 +13,9 @@ type Props = {
     fileList: UploadFile[],
     setFileList: Function,
     deliveryMessage: string,
-    setDeliveryMessage: Function
+    setDeliveryMessage: Function,
+    files: [],
+    setFiles: Function
 };
 
 const ToReviewModal: React.SFC<Props> = ({
@@ -23,6 +25,8 @@ const ToReviewModal: React.SFC<Props> = ({
                                              message,
                                              fileList,
                                              setFileList,
+                                             files,
+                                             setFiles,
                                              deliveryMessage,
                                              setDeliveryMessage
                                          }) => {
@@ -30,8 +34,21 @@ const ToReviewModal: React.SFC<Props> = ({
         closeModal(!modal);
     };
 
-    const handleOk = () => {
-        submit();
+    const handleOk = async () => {
+        if (fileList.length > 0) {
+            const files: unknown[] = [];
+            const fileReader = new FileReader();
+            fileList.map(async file => {
+                files.push(await new Promise(resolve => {
+                    fileReader.readAsDataURL(file.originFileObj as Blob);
+                    fileReader.onload = () => resolve(fileReader.result);
+                }));
+            });
+            setFiles(files);
+        }
+        setTimeout(() => {
+            submit();
+        }, 500);
     }
 
     return (
@@ -41,10 +58,12 @@ const ToReviewModal: React.SFC<Props> = ({
                 visible={modal}
                 onCancel={handleCancel}
                 footer={[
-                    <Button style={{borderRadius: 4, borderWidth: 0, width:76, height:32, marginRight: 8}} key="back" onClick={handleCancel}>
+                    <Button style={{borderRadius: 4, borderWidth: 0, width: 76, height: 32, marginRight: 8}} key="back"
+                            onClick={handleCancel}>
                         Cancel
                     </Button>,
-                    <Button style={{borderRadius: 4, width:79, height:32}} key="submit" type="primary" onClick={handleOk}>
+                    <Button style={{borderRadius: 4, width: 79, height: 32}} key="submit" type="primary"
+                            onClick={handleOk}>
                         Submit
                     </Button>]}
                 maskClosable={false}

@@ -3,6 +3,7 @@ import {Col, List, Row, Typography} from "antd";
 import {LinkOutlined, VideoCameraOutlined, FileOutlined, DownloadOutlined} from "@ant-design/icons";
 import ReactPlayer from "react-player";
 import Add from "../Attachment/add";
+import {apiDomain} from "../../utilities/constants";
 
 
 interface IAttachment {
@@ -64,7 +65,7 @@ const Attachments: React.FunctionComponent<IProps> = ({data, style}) => {
                           <Typography.Text>{attachment.name}</Typography.Text>
                       </Col>
                       <Col>
-                          <a href={attachment.path} download={attachment.name} target="_blank">
+                          <a href={apiDomain + attachment.path} download={attachment.name} target="_blank">
                               <DownloadOutlined/>
                           </a>
                       </Col>

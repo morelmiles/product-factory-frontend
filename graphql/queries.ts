@@ -964,3 +964,28 @@ export const GET_CONTRIBUTOR_GUIDES = gql`
     }
   }
 `;
+
+export const GET_TASK_DELIVERY_ATTEMPT = gql`
+  query GetTaskDeliveryAttempt($id: Int!) {
+    attempt(id: $id) {
+      id,
+      kind,
+      createdAt,
+      deliveryMessage,
+      isCanceled,
+      attachments {
+        id,
+        path,
+        fileType,
+        name
+      },
+      taskClaim {
+        id
+        task {
+          id, 
+          title
+        }
+      },
+    }
+  }
+`;
