@@ -17,7 +17,6 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQuery, useMutation, useLazyQuery } from "@apollo/react-hooks";
-import ReactPlayer from "react-player";
 import {
   GET_LICENSE,
   GET_PERSON,
@@ -685,6 +684,24 @@ const Task: React.FunctionComponent<Params> = ({
                           canEdit={userHasManagerRoots}
                         />
                       </Row>
+                    )}
+                    {getProp(task, "taskCategory", null) && (
+                        <Row style={{ marginTop: 10 }} className="text-sm mt-8">
+                          <strong className="my-auto">Category:&nbsp;</strong>
+                          &nbsp;
+                          <Typography className="text-grey-9">
+                            {getProp(task, "taskCategory", null)}
+                          </Typography>
+                        </Row>
+                    )}
+                    {getProp(task, "taskExpertise", null) && (
+                        <Row style={{ marginTop: 10 }} className="text-sm mt-8">
+                          <strong className="my-auto">Expertise:&nbsp;</strong>
+                          &nbsp;
+                          <Typography className="text-grey-9">
+                            {getProp(task, "taskExpertise", null)}
+                          </Typography>
+                        </Row>
                     )}
                     {getProp(task, "reviewer.slug", null) && (
                       <Row style={{ marginTop: 10 }} className="text-sm mt-8">

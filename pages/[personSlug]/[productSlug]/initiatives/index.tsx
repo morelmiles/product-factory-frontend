@@ -26,7 +26,7 @@ const InitiativeList: React.FunctionComponent<Params> = ({user}) => {
   productSlug = String(productSlug);
   const [inputData, setInputData] = useState({
     statuses: [1],
-    stacks: [],
+    category: "",
     tags: [],
   });
   const initialQueryVariables = {productSlug, input: inputData};

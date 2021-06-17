@@ -1,16 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {Modal, Button, Select, FormInstance, Form} from 'antd';
-import {
-  TASK_LIST_TYPES,
-  TASK_LIST_TYPES_FOR_CONTRIBUTOR,
-  TASK_LIST_TYPES_FOR_GUEST,
-  TASK_PRIORITIES
-} from "../../graphql/types";
+import React, {useEffect} from 'react';
+import {Modal, Button, Select, Form} from 'antd';
 import {useQuery} from "@apollo/react-hooks";
-import {GET_STACKS, GET_TAGS, GET_USERS} from "../../graphql/queries";
+import {GET_CATEGORIES, GET_TAGS} from "../../graphql/queries";
 import {connect} from "react-redux";
 import {WorkState} from "../../lib/reducers/work.reducer";
-import {saveTags, saveStacks} from "../../lib/actions";
+import {saveTags, saveCategories} from "../../lib/actions";
 
 const { Option } = Select;
 
@@ -19,9 +13,9 @@ type Props = {
   closeModal: any;
   submit: Function,
   tags: any[],
-  stacks: any[],
+  categories: any[],
   saveTags: Function,
-  saveStacks: Function,
+  saveCategories: Function,
   initialForm: any
 };
 
@@ -35,24 +29,24 @@ const InitiativeFilterModal: React.FunctionComponent<Props> = ({
   closeModal,
   submit,
   tags,
-  stacks,
+  categories,
   saveTags,
-  saveStacks,
+  saveCategories,
   initialForm
 }) => {
   const [form] = Form.useForm()
   const handleCancel = () => closeModal(!modal);
 
   const {data: tagsData} = useQuery(GET_TAGS);
-  const {data: stacksData} = useQuery(GET_STACKS);
+  const {data: categoriesData} = useQuery(GET_CATEGORIES);
 
   useEffect(() => {
     if (tagsData && tagsData.tags) saveTags({allTags: tagsData.tags})
   }, [tagsData]);
 
   useEffect(() => {
-    if (stacksData && stacksData.stacks) saveStacks({allStacks: stacksData.stacks})
-  }, [stacksData]);
+    if (categoriesData && categoriesData.categories) saveCategories({allCategories: categoriesData.categories})
+  }, [categoriesData]);
 
   const onFinish = (values: any) => submit(values);
 
@@ -61,7 +55,7 @@ const InitiativeFilterModal: React.FunctionComponent<Props> = ({
   const clearFilter = () => {
     form.resetFields();
     form.setFieldsValue({
-      stacks: [],
+      categories: [],
       tags: [],
       statuses: [1],
     });
@@ -89,16 +83,16 @@ const InitiativeFilterModal: React.FunctionComponent<Props> = ({
               name="control-ref"
               id="in-filter-form"
               onFinish={onFinish}>
-          <Form.Item name="stacks" label="Tech Stack">
+          <Form.Item name="stacks" label="Category">
             <Select
-              placeholder="Select a tech stack"
+              placeholder="Select a category"
               mode="multiple"
               showSearch={true}
               filterOption={filterOption}
               allowClear
             >
-              {stacks.map((tag: {id: string, name: string}) =>
-                <Option key={tag.id} value={tag.id}>{tag.name}</Option>)}
+              {categories.map((category: string) =>
+                <Option key={category} value={category}>{category}</Option>)}
             </Select>
           </Form.Item>
           <Form.Item name="tags" label="Tags">
@@ -133,12 +127,12 @@ const InitiativeFilterModal: React.FunctionComponent<Props> = ({
 
 const mapStateToProps = (state: any) => ({
   tags: state.work.allTags,
-  stacks: state.work.allStacks,
+  categories: state.work.allCategories,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   saveTags: (data: WorkState) => dispatch(saveTags(data)),
-  saveStacks: (data: WorkState) => dispatch(saveStacks(data)),
+  saveCategories: (data: WorkState) => dispatch(saveCategories(data)),
 });
 
 export default connect(

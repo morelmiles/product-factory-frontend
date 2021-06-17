@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Row, Col, Button, Select, Layout, Space, Tabs } from "antd";
 import ProductTab from "./ProductTab";
 import TaskTab from "./TaskTab";
-import { useQuery } from "@apollo/react-hooks";
-import { GET_STACKS } from "../../graphql/queries";
-import { getProp } from "../../utilities/filters";
-import VacancyBox from "./vacancy";
+// import { useQuery } from "@apollo/react-hooks";
+// import { getProp } from "../../utilities/filters";
+// import VacancyBox from "./vacancy";
 
 const { Option } = Select;
 const { Content } = Layout;
@@ -18,39 +17,39 @@ interface IStack {
 
 const Dashboard: React.FunctionComponent = () => {
   const [tabkey, setTabkey] = useState("tasks");
-  const [stacksFilter, setStacksFilter] = useState<any>([]);
+  // const [stacksFilter, setStacksFilter] = useState<any>([]);
   const [filterModal, setFilterModal] = useState(false);
-  const { data: stacksData } = useQuery(GET_STACKS);
 
   const onChnageKey = (key: any) => {
     setTabkey(key);
   };
 
   const extraTabButtons = () => {
-    if (tabkey === "products")
+    // if (tabkey === "products")
+    //   return (
+    //     <Space style={{ width: "100%" }}>
+    //       <Select
+    //         mode="multiple"
+    //         placeholder="Specify skills required"
+    //         style={{ minWidth: "170px", width: "auto" }}
+    //         onChange={(val) => {
+    //           setStacksFilter(val);
+    //         }}
+    //       >
+    //         {getProp(stacksData, "stacks", []).map((stack: IStack) => (
+    //           <Option key={`stack-${stack.id}`} value={stack.name}>
+    //             {stack.name}
+    //           </Option>
+    //         ))}
+    //       </Select>
+    //     </Space>
+    //   );
+    if (tabkey !== "products")
       return (
-        <Space style={{ width: "100%" }}>
-          <Select
-            mode="multiple"
-            placeholder="Specify skills required"
-            style={{ minWidth: "170px", width: "auto" }}
-            onChange={(val) => {
-              setStacksFilter(val);
-            }}
-          >
-            {getProp(stacksData, "stacks", []).map((stack: IStack) => (
-              <Option key={`stack-${stack.id}`} value={stack.name}>
-                {stack.name}
-              </Option>
-            ))}
-          </Select>
-        </Space>
+        <Button type="primary" onClick={() => setFilterModal(!filterModal)}>
+          Filter
+        </Button>
       );
-    return (
-      <Button type="primary" onClick={() => setFilterModal(!filterModal)}>
-        Filter
-      </Button>
-    );
   };
 
   return (
@@ -88,9 +87,7 @@ const Dashboard: React.FunctionComponent = () => {
               />
             </TabPane>
             <TabPane tab="Products" key="products">
-              <ProductTab
-                stacksFilter={stacksFilter}
-              />
+              <ProductTab/>
             </TabPane>
             {/* <TabPane tab="Vacancies" key="vacancies">
               <h1>This is vacancy tab</h1>

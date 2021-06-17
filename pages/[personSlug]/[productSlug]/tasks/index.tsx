@@ -34,7 +34,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     statuses,
     tags: [],
     priority: [],
-    stacks: [],
+    category: "",
     assignee: [],
     taskCreator: [],
   });
@@ -89,7 +89,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     <LeftPanelContainer>
       <div>
         <Row>
-          {userHasManagerRoots && (
+          {(
             <Col>
               <Button
                 className="text-right add-task-btn mb-15"
