@@ -22,9 +22,9 @@ export const saveUsers = (data: any): types.BaseAction => {
   }
 }
 
-export const saveStacks = (data: any): types.BaseAction => {
+export const saveCategories = (data: any): types.BaseAction => {
   return {
-    type: types.SAVE_STACKS,
+    type: types.SAVE_CATEGORIES,
     payload: data
   }
 }

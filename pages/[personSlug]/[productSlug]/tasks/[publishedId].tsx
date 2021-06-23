@@ -17,7 +17,6 @@ import {
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {useQuery, useMutation, useLazyQuery} from "@apollo/react-hooks";
-import ReactPlayer from "react-player";
 import {
     GET_LICENSE,
     GET_PERSON,
@@ -912,6 +911,79 @@ const Task: React.FunctionComponent<Params> = ({
                                     taskId={taskId}/>
                             )}
                         </>
+                      )}
+                    </Row>
+                    {getProp(task, "priority", null) && (
+                      <Row style={{ marginTop: 10 }} className="text-sm mt-8">
+                        <strong className="my-auto">Priority:&nbsp;</strong>
+                        &nbsp;
+                        <Priorities
+                          task={task}
+                          submit={() => refetch()}
+                          canEdit={userHasManagerRoots}
+                        />
+                      </Row>
+                    )}
+                    {getProp(task, "taskCategory", null) && (
+                        <Row style={{ marginTop: 10 }} className="text-sm mt-8">
+                          <strong className="my-auto">Category:&nbsp;</strong>
+                          &nbsp;
+                          <Typography className="text-grey-9">
+                            {getProp(task, "taskCategory", null)}
+                          </Typography>
+                        </Row>
+                    )}
+                    {getProp(task, "taskExpertise", null) && (
+                        <Row style={{ marginTop: 10 }} className="text-sm mt-8">
+                          <strong className="my-auto">Expertise:&nbsp;</strong>
+                          &nbsp;
+                          <Typography className="text-grey-9">
+                            {getProp(task, "taskExpertise", null)}
+                          </Typography>
+                        </Row>
+                    )}
+                    {getProp(task, "reviewer.slug", null) && (
+                      <Row style={{ marginTop: 10 }} className="text-sm mt-8">
+                        <strong className="my-auto">Reviewer:</strong>
+
+                        <Row align="middle" style={{ marginLeft: 15 }}>
+                          <Col>
+                            <CustomAvatar2
+                              person={{
+                                fullname: getProp(
+                                  task,
+                                  "reviewer.fullName",
+                                  ""
+                                ),
+                                slug: getProp(task, "reviewer.slug", ""),
+                              }}
+                            />
+                          </Col>
+                          <Col>
+                            <Typography.Link
+                              className="text-grey-9"
+                              href={`/${getProp(task, "reviewer.slug", "")}`}
+                            >
+                              {getProp(task, "reviewer.fullName", "")}
+                            </Typography.Link>
+                          </Col>
+                        </Row>
+                      </Row>
+                    )}
+                    {stacks.length > 0 && (
+                      <Row
+                        style={{ marginTop: 10 }}
+                        className="text-sm mt-8 tag-bottom-0"
+                      >
+                        <strong className="my-auto">
+                          Skills required:&nbsp;
+                        </strong>
+                        {stacks.map((tag: any, taskIndex: number) => (
+                          <CheckableTag key={`tag-${taskIndex}`} checked={true}>
+                            {tag.name}
+                          </CheckableTag>
+                        ))}
+                      </Row>
                     )}
 
                     <Modal

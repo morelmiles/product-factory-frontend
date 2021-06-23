@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const GET_PRODUCTS = gql`
-  query GetProducts($stackFilter: StackListInput) {
-    products(stackFilter: $stackFilter) {
+  query GetProducts {
+    products {
       id
       name
       owner
@@ -27,8 +27,8 @@ export const GET_PRODUCTS = gql`
 `
 
 export const GET_PRODUCTS_SHORT = gql`
-  query GetProducts($stackFilter: StackListInput) {
-    products(stackFilter: $stackFilter) {
+  query GetProducts {
+    products {
       id
       name
       slug
@@ -105,7 +105,8 @@ export const GET_TASKS = gql`
       }
       inReview
       tags
-      stacks
+      category
+      expertise
       blocked
       hasActiveDepends
       videoUrl
@@ -136,10 +137,6 @@ export const GET_CAPABILITIES = gql`
       id
       name
       description
-      stacks {
-        id
-        name
-      }
       videoLink
       breadcrumb {
         id
@@ -175,10 +172,6 @@ export const GET_CAPABILITY_BY_ID = gql`
         id
         name
         description
-        stacks {
-          id
-          name
-        }
         videoLink
         previewVideoUrl
         attachments {
@@ -207,7 +200,6 @@ export const GET_CAPABILITY_BY_ID = gql`
           name
         }
         tags
-        stacks
         blocked
         hasActiveDepends
         assignedTo {
@@ -245,10 +237,6 @@ export const GET_INITIATIVES = gql`
         website
       }
       taskTags {
-        id
-        name
-      }
-      taskStacks {
         id
         name
       }
@@ -301,7 +289,8 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
         name
       }
       tags
-      stacks
+      category
+      expertise
       blocked
       hasActiveDepends
       assignedTo {
@@ -375,10 +364,8 @@ export const GET_TASK_BY_ID = gql`
         id
         name
       }
-      stack {
-        id
-        name
-      }
+      taskCategory
+      taskExpertise
       dependOn {
         id
         title
@@ -439,7 +426,6 @@ export const GET_TASKS_BY_PRODUCT = gql`
         videoUrl
       }
       tags
-      stacks
       blocked
       hasActiveDepends
       videoUrl
@@ -471,8 +457,8 @@ export const GET_TASKS_BY_PRODUCT_COUNT = gql`
 `;
 
 export const GET_TASKS_BY_PRODUCT_SHORT = gql`
-  query GetTasksByProduct($productSlug: String, $reviewId: Int $input: TaskListInput) {
-    tasklistingByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
+  query GetTasksByProduct($productSlug: String, $input: TaskListInput) {
+    tasklistingByProduct (productSlug: $productSlug, input: $input) {
       id
       publishedId      
       title
@@ -767,14 +753,6 @@ export const GET_TAGS = gql`
   }
 `;
 
-export const GET_STACKS = gql`
-  query GetStacks {
-    stacks {
-      id
-      name
-    }
-  }
-`;
 
 export const GET_TASK_COMMENTS = gql`
   query GetTaskComments($objectId: Int!) {
@@ -957,10 +935,6 @@ export const GET_CONTRIBUTOR_GUIDES = gql`
       id
       title
       description
-      stack {
-        id
-        name
-      }
     }
   }
 `;
@@ -987,5 +961,16 @@ export const GET_TASK_DELIVERY_ATTEMPT = gql`
         }
       },
     }
+`;
+
+export const GET_CATEGORIES_LIST = gql`
+  query GetCategoriesList {
+    taskCategoryListing
+  }
+`;
+
+export const GET_CATEGORIES = gql`
+  query GetCategories {
+    categories
   }
 `;

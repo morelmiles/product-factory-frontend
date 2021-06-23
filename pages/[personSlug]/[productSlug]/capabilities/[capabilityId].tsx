@@ -143,7 +143,6 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({
     statuses: [2],
     tags: [],
     priority: [],
-    // stacks: [],
     assignee: [],
     taskCreator: [],
   });
@@ -159,7 +158,7 @@ const CapabilityDetail: React.FunctionComponent<ICapabilityDetailProps> = ({
   };
 
   const { data, error, loading, refetch } = useQuery(GET_CAPABILITY_BY_ID, {
-    variables: { nodeId: capabilityId, slug: productSlug, input: inputData },
+    variables: { nodeId: capabilityId, input: inputData },
   });
 
   const { data: crumbs, error: crumbsError, loading: crumbsLoading } = useQuery(
