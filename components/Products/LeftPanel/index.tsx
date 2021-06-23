@@ -40,7 +40,7 @@ const LeftPanel: React.FunctionComponent<ILeftPanelProps> = ({user}): any => {
     {url: '/', type: 'summary', name: 'Summary'},
     {url: '/initiatives', type: 'initiatives', name: 'Initiatives'},
     {url: '/tasks', type: 'tasks', name: 'Tasks'},
-    {url: '/capabilities', type: 'capabilities', name: 'Product Map'},
+    {url: '/capabilities', type: 'capabilities', name: 'Product Tree'},
     {url: '/ideas-and-bugs', type: 'ideas-and-bugs', name: 'Ideas & Bugs'},
     {url: '/people', type: 'people', name: 'People'}
   ];

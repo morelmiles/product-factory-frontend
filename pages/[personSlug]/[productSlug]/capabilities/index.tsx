@@ -9,13 +9,13 @@ const Capabilities: React.FunctionComponent = () => {
   return (
       <>
           <Head>
-              <title>Product Map</title>
-              <meta name="description" content="Product Map" />
+              <title>Product Tree</title>
+              <meta name="description" content="Product Tree" />
           </Head>
     <LeftPanelContainer>
       <Row justify="space-between" style={{marginBottom: 40}}>
         <Col>
-          <Typography.Text strong style={{fontSize: '1.4rem'}}>Product Map</Typography.Text>
+          <Typography.Text strong style={{fontSize: '1.4rem'}}>Product Tree</Typography.Text>
         </Col>
       </Row>
       <Row>
