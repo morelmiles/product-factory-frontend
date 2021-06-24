@@ -24,22 +24,28 @@ interface IUser {
 interface ICommentContainerProps {
   comments: IComment[]
   submit: Function
-  allUsers: IUser[]
+  allUsers: IUser[],
+  loginUrl: string
 }
 
 interface ICommentsProps {
+  loginUrl: string,
+  objectId: number,
+  objectType: string
 }
 
 interface IAddCommentProps {
   submit: Function
-  allUsers: IUser[]
+  allUsers: IUser[],
+  objectId: number,
+  loginUrl: string
 }
 
 interface IComment {
   id: number
   data: {
     person: {
-      fullname: string
+      firstName: string
       slug: string
     }
     text: string
@@ -154,7 +160,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
             key={index}
             actions={[<span key="comment-nested-reply-to"
                             onClick={() => openSendSubCommentModal(comment.id)}>Reply to</span>]}
-            author={<Link href={`/${comment.data.person.slug}`}>{comment.data.person.fullname}</Link>}
+            author={<Link href={`/${comment.data.person.slug}`}>{comment.data.person.firstName}</Link>}
             avatar={<CustomAvatar2 person={comment.data.person}/>}
             content={<CommentsText text={comment.data.text}/>}
           >
