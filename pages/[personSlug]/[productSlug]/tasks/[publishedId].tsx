@@ -433,7 +433,7 @@ const Task: React.FunctionComponent<Params> = ({
                                             className="text-grey-9"
                                             href={`/${getProp(assignee, "slug", "")}`}
                                         >
-                                            {getProp(assignee, "fullName", "")}
+                                            {getProp(assignee, "firstName", "")}
                                         </Typography.Link>
                                     </Col>
                                 </Row>
@@ -533,7 +533,6 @@ const Task: React.FunctionComponent<Params> = ({
             );
         }
     ;
-
     const videoLink = getProp(task, "previewVideoUrl", null);
 
     return (
@@ -634,7 +633,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                 <Col>
                                                     <CustomAvatar2
                                                         person={{
-                                                            fullname: getProp(task, "createdBy.fullName", ""),
+                                                            fullname: getProp(task, "createdBy.firstName", ""),
                                                             slug: getProp(task, "createdBy.slug", ""),
                                                         }}
                                                     />
@@ -644,7 +643,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                         className="text-grey-9"
                                                         href={`/${getProp(task, "createdBy.slug", "")}`}
                                                     >
-                                                        {getProp(task, "createdBy.fullName", "")}
+                                                        {getProp(task, "createdBy.firstName", "")}
                                                     </Typography.Link>
                                                 </Col>
                                             </Row>
@@ -673,7 +672,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                                         person={{
                                                                             fullname: getProp(
                                                                                 task,
-                                                                                "createdBy.fullName",
+                                                                                "createdBy.firstName",
                                                                                 ""
                                                                             ),
                                                                             slug: getProp(task, "createdBy.slug", ""),
@@ -683,7 +682,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                                 <div className="my-auto">
                                                                     {getProp(
                                                                         getProp(task, "createdBy"),
-                                                                        "fullName",
+                                                                        "firstName",
                                                                         ""
                                                                     )}
                                                                 </div>
@@ -714,7 +713,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                             person={{
                                                                 fullname: getProp(
                                                                     task,
-                                                                    "reviewer.fullName",
+                                                                    "reviewer.firstName",
                                                                     ""
                                                                 ),
                                                                 slug: getProp(task, "reviewer.slug", ""),
@@ -726,7 +725,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                             className="text-grey-9"
                                                             href={`/${getProp(task, "reviewer.slug", "")}`}
                                                         >
-                                                            {getProp(task, "reviewer.fullName", "")}
+                                                            {getProp(task, "reviewer.firstName", "")}
                                                         </Typography.Link>
                                                     </Col>
                                                 </Row>
@@ -963,7 +962,7 @@ const Task: React.FunctionComponent<Params> = ({
                               className="text-grey-9"
                               href={`/${getProp(task, "reviewer.slug", "")}`}
                             >
-                              {getProp(task, "reviewer.fullName", "")}
+                              {getProp(task, "reviewer.firstName", "")}
                             </Typography.Link>
                           </Col>
                         </Row>
