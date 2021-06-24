@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, Select, Form, Typography, Input, message} from 'antd';
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {GET_STACKS} from "../../graphql/queries";
 import {connect} from "react-redux";
 import {WorkState} from "../../lib/reducers/work.reducer";
-import {saveStacks} from "../../lib/actions";
 import RichTextEditor from "../RichTextEditor";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import "./style.less";
@@ -44,10 +42,8 @@ const ContributionGuideModal: React.FunctionComponent<Props> = ({
   let initialForm = {
     title: "",
     description: "",
-    stacks: []
   };
 
-  const {data: stacksData} = useQuery(GET_STACKS);
 
   const [createGuide] = useMutation(CREATE_CONTRIBUTION_GUIDE, {
     onCompleted(res) {
@@ -81,10 +77,6 @@ const ContributionGuideModal: React.FunctionComponent<Props> = ({
     form.resetFields();
     setLongDescriptionClear(prev => prev + 1);
   };
-
-  useEffect(() => {
-    if (stacksData && stacksData.stacks) saveStacks({allStacks: stacksData.stacks})
-  }, [stacksData]);
 
   useEffect(() => {
     if (item) {
@@ -178,11 +170,9 @@ const ContributionGuideModal: React.FunctionComponent<Props> = ({
 }
 
 const mapStateToProps = (state: any) => ({
-  stacks: state.work.allStacks,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  saveStacks: (data: WorkState) => dispatch(saveStacks(data)),
 });
 
 export default connect(
