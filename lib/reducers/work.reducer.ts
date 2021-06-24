@@ -14,7 +14,7 @@ export const workReducer = (
     currentProduct: null,
     repositories: [],
     allTags: [],
-    allStacks: [],
+    allCategories: [],
     allUsers: [],
     loginUrl: null
   },
@@ -23,7 +23,7 @@ export const workReducer = (
   switch (action.type) {
     case types.SAVE_TAGS:
     case types.SAVE_USERS:
-    case types.SAVE_STACKS:
+    case types.SAVE_CATEGORIES:
     case types.SET_CURRENT_PROJECT:
     case types.SET_USER_ROLE:
     case types.SET_LOGIN_URL:

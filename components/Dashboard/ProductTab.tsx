@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import Link from "next/link";
 import {Row, Col, Card, Tag} from "antd";
 import {useQuery} from "@apollo/react-hooks";
@@ -14,23 +14,11 @@ import Loading from "../Loading";
 
 let pluralize = require("pluralize");
 
-type Props = {
-  stacksFilter: string[];
-};
-
-const ProductTab: React.FunctionComponent<Props> = ({stacksFilter= []}) => {
-  const {data, loading, refetch} = useQuery(GET_PRODUCTS, {
+const ProductTab: React.FunctionComponent = () => {
+  const {data, loading} = useQuery(GET_PRODUCTS, {
     fetchPolicy: "no-cache"
   });
   const router = useRouter();
-
-  useEffect(() => {
-    refetch({
-      stackFilter: {
-        stacks: stacksFilter
-      }
-    });
-  }, [stacksFilter]);
 
   const getAvailableTaskText = (availableTasks: number) => {
     if (availableTasks === 0) return "";

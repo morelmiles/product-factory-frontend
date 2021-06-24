@@ -21,7 +21,7 @@ type Params = {
   currentProduct: any;
 } & RouteComponentProps;
 
-const InitiativeDetail: React.FunctionComponent<Params> = ({user, currentProduct}) => {
+const InitiativeDetail: React.FunctionComponent<Params> = ({user, currentProduct, params}) => {
   const {data: original, error, loading, refetch} = useQuery(GET_INITIATIVE_BY_ID, {
     variables: {id: params.params.initiativeId}
   });
@@ -108,13 +108,6 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user, currentProduct
               )}
             </Row>
             <Row>
-              {/* <Col>
-                <ReactPlayer
-                  width="100%"
-                  height="170px"
-                  url='https://www.youtube.com/watch?v=ysz5S6PUM-U'
-                />
-              </Col> */}
               <Col span={10} className='ml-10'>
                 <DynamicHtml
                   className='mb-10'

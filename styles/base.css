@@ -552,3 +552,13 @@ p:last-child {
 .gray-link {
     color: #262626 !important;
 }
+
+.ant-modal-content {
+    border-radius: 10px !important;
+}
+
+.ant-modal-footer {
+    border-top: 0 !important;
+    padding-bottom: 32px !important;
+    padding-right: 38px !important;
+}

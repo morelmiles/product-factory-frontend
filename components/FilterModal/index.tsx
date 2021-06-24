@@ -7,10 +7,10 @@ import {
   TASK_PRIORITIES
 } from "../../graphql/types";
 import {useQuery} from "@apollo/react-hooks";
-import {GET_STACKS, GET_TAGS} from "../../graphql/queries";
+import {GET_CATEGORIES, GET_TAGS} from "../../graphql/queries";
 import {connect} from "react-redux";
 import {WorkState} from "../../lib/reducers/work.reducer";
-import {saveTags, saveStacks, saveUsers} from "../../lib/actions";
+import {saveTags, saveCategories} from "../../lib/actions";
 import {getUserRole, hasManagerRoots} from "../../utilities/utils";
 
 const { Option } = Select;
@@ -22,10 +22,9 @@ type Props = {
   submit: Function,
   tags: any[],
   users: any[],
-  stacks: any[],
+  categories: string[],
   saveTags: Function,
-  saveStacks: Function,
-  saveUsers: Function,
+  saveCategories: Function,
   productSlug?: string,
   initialForm: any
 };
@@ -41,12 +40,10 @@ const FilterModal: React.FunctionComponent<Props> = ({
   closeModal,
   submit,
   tags,
-  users,
-  stacks,
+  categories,
   saveTags,
   productSlug,
-  saveStacks,
-  saveUsers,
+  saveCategories,
   initialForm
 }) => {
   const [form] = Form.useForm()
@@ -55,20 +52,15 @@ const FilterModal: React.FunctionComponent<Props> = ({
   const [userRoles, setUserRoles] = useState([])
 
   const {data: tagsData} = useQuery(GET_TAGS);
-  const {data: stacksData} = useQuery(GET_STACKS);
-  // const {data: usersData} = useQuery(GET_USERS);
+  const {data: categoriesData} = useQuery(GET_CATEGORIES);
 
   useEffect(() => {
     if (tagsData && tagsData.tags) saveTags({allTags: tagsData.tags})
   }, [tagsData]);
 
   useEffect(() => {
-    if (stacksData && stacksData.stacks) saveStacks({allStacks: stacksData.stacks})
-  }, [stacksData]);
-
-  // useEffect(() => {
-  //   if (usersData && usersData.people) saveUsers({allUsers: usersData.people})
-  // }, [usersData]);
+    if (categoriesData && categoriesData.categories) saveCategories({allCategories: categoriesData.categories})
+  }, [categoriesData]);
 
   useEffect(() => {
     if (user.isLoggedIn) {
@@ -89,7 +81,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
     form.resetFields();
     form.setFieldsValue({
       sortedBy: "priority",
-      stacks: [],
+      categories: [],
       tags: [],
       priority: [],
       assignee: [],
@@ -138,16 +130,16 @@ const FilterModal: React.FunctionComponent<Props> = ({
               {TASK_PRIORITIES.map((p: string, index: number) => <Option key={p} value={index}>{p}</Option>)}
             </Select>
           </Form.Item>
-          <Form.Item name="stacks" label="Skills Required">
+          <Form.Item name="stacks" label="Category">
             <Select
-              placeholder="Specify skills required"
+              placeholder="Specify category"
               mode="multiple"
               showSearch={true}
               filterOption={filterOption}
               allowClear
             >
-              {stacks.map((tag: {id: string, name: string}) =>
-                <Option key={tag.id} value={tag.name}>{tag.name}</Option>)}
+              {categories.map((category: string) =>
+                <Option key={category} value={category}>{category}</Option>)}
             </Select>
           </Form.Item>
           <Form.Item name="tags" label="Tags">
@@ -162,30 +154,6 @@ const FilterModal: React.FunctionComponent<Props> = ({
                 <Option key={tag.id} value={tag.name}>{tag.name}</Option>)}
             </Select>
           </Form.Item>
-          {/*<Form.Item name="assignee" label="Assignee">*/}
-          {/*  <Select*/}
-          {/*    placeholder="Select a assigned user"*/}
-          {/*    mode="multiple"*/}
-          {/*    showSearch={true}*/}
-          {/*    filterOption={filterOption}*/}
-          {/*    allowClear*/}
-          {/*  >*/}
-          {/*    {users.map((user: {id: string, fullName: string}) =>*/}
-          {/*      <Option key={user.id} value={user.id}>{user.fullName}</Option>)}*/}
-          {/*  </Select>*/}
-          {/*</Form.Item>*/}
-          {/*<Form.Item name="taskCreator" label="Task creator">*/}
-          {/*  <Select*/}
-          {/*    placeholder="Select a task creator"*/}
-          {/*    mode="multiple"*/}
-          {/*    showSearch={true}*/}
-          {/*    filterOption={filterOption}*/}
-          {/*    allowClear*/}
-          {/*  >*/}
-          {/*    {users.map((user: {id: string, fullName: string}) =>*/}
-          {/*      <Option key={user.id} value={user.id}>{user.fullName}</Option>)}*/}
-          {/*  </Select>*/}
-          {/*</Form.Item>*/}
           <Form.Item name="statuses" label="Status">
             <Select
               placeholder="Select a status"
@@ -212,13 +180,12 @@ const mapStateToProps = (state: any) => ({
   tags: state.work.allTags,
   user: state.user,
   users: state.work.allUsers,
-  stacks: state.work.allStacks,
+  categories: state.work.allCategories,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   saveTags: (data: WorkState) => dispatch(saveTags(data)),
-  // saveUsers: (data: WorkState) => dispatch(saveUsers(data)),
-  saveStacks: (data: WorkState) => dispatch(saveStacks(data)),
+  saveCategories: (data: WorkState) => dispatch(saveCategories(data)),
 });
 
 export default connect(

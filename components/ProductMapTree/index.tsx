@@ -126,13 +126,13 @@ const ProductMapTree: React.FunctionComponent<IProductMapTree> = ({user}) => {
   const [updateCapabilityTree] = useMutation(UPDATE_CAPABILITY_TREE, {
     onCompleted(res) {
       if (getProp(res, 'updateCapabilityTree.status', false)) {
-        message.success('Product map was updated').then();
+        message.success('Product tree was updated').then();
       } else {
-        message.error('Failed to update product map').then();
+        message.error('Failed to update product tree').then();
       }
     },
     onError() {
-      message.error('Failed to update product map').then();
+      message.error('Failed to update product tree').then();
     }
   });
 

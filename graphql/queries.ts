@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const GET_PRODUCTS = gql`
-  query GetProducts($stackFilter: StackListInput) {
-    products(stackFilter: $stackFilter) {
+  query GetProducts {
+    products {
       id
       name
       owner
@@ -27,8 +27,8 @@ export const GET_PRODUCTS = gql`
 `
 
 export const GET_PRODUCTS_SHORT = gql`
-  query GetProducts($stackFilter: StackListInput) {
-    products(stackFilter: $stackFilter) {
+  query GetProducts {
+    products {
       id
       name
       slug
@@ -105,12 +105,13 @@ export const GET_TASKS = gql`
       }
       inReview
       tags
-      stacks
+      category
+      expertise
       blocked
       hasActiveDepends
       videoUrl
       assignedTo {
-        fullName
+        firstName
         username
       }
       product {
@@ -123,7 +124,7 @@ export const GET_TASKS = gql`
         id
       }
       reviewer {
-        fullName
+        firstName
         username
       }
     }
@@ -136,10 +137,6 @@ export const GET_CAPABILITIES = gql`
       id
       name
       description
-      stacks {
-        id
-        name
-      }
       videoLink
       breadcrumb {
         id
@@ -175,10 +172,6 @@ export const GET_CAPABILITY_BY_ID = gql`
         id
         name
         description
-        stacks {
-          id
-          name
-        }
         videoLink
         previewVideoUrl
         attachments {
@@ -207,15 +200,14 @@ export const GET_CAPABILITY_BY_ID = gql`
           name
         }
         tags
-        stacks
         blocked
         hasActiveDepends
         assignedTo {
-          fullName
+          firstName
           username
         }
         reviewer {
-          fullName
+          firstName
           username
         }
         product {
@@ -245,10 +237,6 @@ export const GET_INITIATIVES = gql`
         website
       }
       taskTags {
-        id
-        name
-      }
-      taskStacks {
         id
         name
       }
@@ -301,15 +289,16 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
         name
       }
       tags
-      stacks
+      category
+      expertise
       blocked
       hasActiveDepends
       assignedTo {
-        fullName
+        firstName
         username
       }
       reviewer {
-        fullName
+        firstName
         username
       }
       product {
@@ -322,7 +311,8 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
       }
     }
   }
-}`;
+}
+`;
 
 export const GET_TASK_BY_ID = gql`
   query GetTask($productSlug: String!, $publishedId: Int!) {
@@ -330,7 +320,7 @@ export const GET_TASK_BY_ID = gql`
       id
       reviewer {
         slug
-        fullName
+        firstName
       }
       publishedId
       canEdit
@@ -342,7 +332,7 @@ export const GET_TASK_BY_ID = gql`
       inReview
       assignedTo {
         id
-        fullName,
+        firstName,
         photo,
         slug
       }
@@ -354,12 +344,12 @@ export const GET_TASK_BY_ID = gql`
       }
       createdBy {
         id
-        fullName
+        firstName
         slug
       }
       updatedBy {
         id
-        fullName
+        firstName
         slug
       }
       hasActiveDepends
@@ -375,10 +365,8 @@ export const GET_TASK_BY_ID = gql`
         id
         name
       }
-      stack {
-        id
-        name
-      }
+      taskCategory
+      taskExpertise
       dependOn {
         id
         title
@@ -398,7 +386,7 @@ export const GET_TASK_BY_ID = gql`
         }
         assignedTo {
           id
-          fullName
+          firstName
           slug
         }
         hasActiveDepends
@@ -439,12 +427,11 @@ export const GET_TASKS_BY_PRODUCT = gql`
         videoUrl
       }
       tags
-      stacks
       blocked
       hasActiveDepends
       videoUrl
       assignedTo {
-        fullName
+        firstName
         username
       }
       product {
@@ -457,7 +444,7 @@ export const GET_TASKS_BY_PRODUCT = gql`
         id
       }
       reviewer {
-        fullName
+        firstName
         username
       }
     }
@@ -471,8 +458,8 @@ export const GET_TASKS_BY_PRODUCT_COUNT = gql`
 `;
 
 export const GET_TASKS_BY_PRODUCT_SHORT = gql`
-  query GetTasksByProduct($productSlug: String, $reviewId: Int $input: TaskListInput) {
-    tasklistingByProduct (productSlug: $productSlug, reviewId: $reviewId, input: $input) {
+  query GetTasksByProduct($productSlug: String, $input: TaskListInput) {
+    tasklistingByProduct (productSlug: $productSlug, input: $input) {
       id
       publishedId      
       title
@@ -488,7 +475,7 @@ export const GET_PRODUCT_PERSONS = gql`
     productPersons(productSlug: $productSlug) {
       contributors {
         id
-        fullName
+        firstName
         emailAddress
         photo
         slug
@@ -501,7 +488,7 @@ export const GET_PRODUCT_PERSONS = gql`
       }
       productTeam {
         id
-        fullName
+        firstName
         emailAddress
         photo
         slug
@@ -519,7 +506,7 @@ export const GET_PRODUCT_PERSONS = gql`
 export const GET_PARTNERS = gql`
   query GetPartners($productSlug: String) {
     partners(productSlug: $productSlug) {
-      company {
+      organisation {
         name
         photo
       }
@@ -537,7 +524,7 @@ export const GET_USERS = gql`
     people (hideTestUsers: $hideTestUsers, showOnlyTestUsers: $showOnlyTestUsers) {
       id
       emailAddress
-      fullName
+      firstName
       slug
     }
   }
@@ -548,7 +535,7 @@ export const GET_PROFILES = gql`
     profile {
       person {
         id
-        fullName
+        firstName
         emailAddress
         photo
         slug
@@ -564,7 +551,7 @@ export const GET_PERSON_PROFILE = gql`
       id
       person {
         id
-        fullName
+        firstName
         emailAddress
         photo
         slug
@@ -584,7 +571,7 @@ export const GET_PERSON_PROFILE = gql`
           text
           createdBy {
             id
-            fullName
+            firstName
           }
           createdAt
           updatedAt
@@ -598,7 +585,7 @@ export const GET_PERSON_PROFILE = gql`
 `;
 
 export const GET_PERSON_SOCIALS = gql`
-  query GetPersonSocials($personId: Int!) {
+  query GetPersonSocials($personId: String!) {
     personSocials(personId: $personId) {
         name
         url
@@ -612,7 +599,7 @@ export const GET_REVIEWS = gql`
       id
       person {
         id
-        fullName
+        firstName
         emailAddress
         photo
         slug
@@ -635,7 +622,7 @@ export const GET_REVIEWS = gql`
       text
       createdBy {
         id
-        fullName
+        firstName
       }
       createdAt
       updatedAt
@@ -649,7 +636,7 @@ export const GET_REVIEW_BY_ID = gql`
       review {
         person {
           id
-          fullName
+          firstName
           emailAddress
           photo
           slug
@@ -679,7 +666,7 @@ export const GET_REVIEW_BY_ID = gql`
         text
         createdBy {
           id
-          fullName
+          firstName
         }
         createdAt
         updatedAt
@@ -688,7 +675,7 @@ export const GET_REVIEW_BY_ID = gql`
         id
         person {
           id
-          fullName
+          firstName
           emailAddress
           photo
           slug
@@ -717,7 +704,7 @@ export const GET_REVIEW_BY_ID = gql`
         text
         createdBy {
           id
-          fullName
+          firstName
           emailAddress
           photo
           slug
@@ -767,14 +754,6 @@ export const GET_TAGS = gql`
   }
 `;
 
-export const GET_STACKS = gql`
-  query GetStacks {
-    stacks {
-      id
-      name
-    }
-  }
-`;
 
 export const GET_TASK_COMMENTS = gql`
   query GetTaskComments($objectId: Int!) {
@@ -801,10 +780,10 @@ export const GET_CAPABILITY_COMMENTS = gql`
 `;
 
 export const GET_PERSON = gql`
-  query GetPerson($id: Int) {
+  query GetPerson($id: String) {
     person (id: $id) {
       id
-      fullName
+      firstName
       slug
       username
       productpersonSet {
@@ -856,7 +835,7 @@ export const GET_PRODUCT_IDEAS = gql`
       person {
         id
         slug
-        fullName
+        firstName
         username
       }
       voteUp
@@ -877,7 +856,7 @@ export const GET_PRODUCT_IDEA_BY_ID = gql`
       }
       person {
         id
-        fullName
+        firstName
         username
         slug
       }
@@ -905,7 +884,7 @@ export const GET_PRODUCT_BUG_BY_ID = gql`
       }
       person {
         id
-        fullName
+        firstName
         username
         slug
       }
@@ -933,7 +912,7 @@ export const GET_PRODUCT_BUGS = gql`
       person {
         id
         slug
-        fullName
+        firstName
         username
       }
       voteUp
@@ -957,10 +936,43 @@ export const GET_CONTRIBUTOR_GUIDES = gql`
       id
       title
       description
-      stack {
-        id
-        name
-      }
     }
+  }
+`;
+
+export const GET_TASK_DELIVERY_ATTEMPT = gql`
+  query GetTaskDeliveryAttempt($id: Int!) {
+    attempt(id: $id) {
+      id,
+      kind,
+      createdAt,
+      deliveryMessage,
+      isCanceled,
+      attachments {
+        id,
+        path,
+        fileType,
+        name
+      },
+      taskClaim {
+        id
+        task {
+          id, 
+          title
+        }
+      },
+    }
+  }
+`;
+
+export const GET_CATEGORIES_LIST = gql`
+  query GetCategoriesList {
+    taskCategoryListing
+  }
+`;
+
+export const GET_CATEGORIES = gql`
+  query GetCategories {
+    categories
   }
 `;

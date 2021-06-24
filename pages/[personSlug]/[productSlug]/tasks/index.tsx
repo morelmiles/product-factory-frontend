@@ -25,7 +25,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter()
   const {productSlug} = router.query
   const {user} = props;
-  const [statuses, setStatuses] = useState<Array<number>>([2]);
+  const [statuses, setStatuses] = useState<Array<number>>([2, 5]);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [filterModal, setFilterModal] = useState(false);
   const [tasks, setTasks] = useState<any>([]);
@@ -34,7 +34,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     statuses,
     tags: [],
     priority: [],
-    stacks: [],
+    category: "",
     assignee: [],
     taskCreator: [],
   });
@@ -89,7 +89,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     <LeftPanelContainer>
       <div>
         <Row>
-          {userHasManagerRoots && (
+          {(
             <Col>
               <Button
                 className="text-right add-task-btn mb-15"

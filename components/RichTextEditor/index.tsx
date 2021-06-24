@@ -126,6 +126,7 @@ const RichTextEditor: React.FunctionComponent<IRichTextEditorProps> = (
               defaultSize: {width: "100%"}
             }
           }}
+          placeholder={"Provide a desc"}
         />
       </Col>
     </Row>
