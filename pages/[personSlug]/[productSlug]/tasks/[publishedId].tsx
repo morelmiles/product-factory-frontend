@@ -912,7 +912,6 @@ const Task: React.FunctionComponent<Params> = ({
                             )}
                         </>
                       )}
-                    </Row>
                     {getProp(task, "priority", null) && (
                       <Row style={{ marginTop: 10 }} className="text-sm mt-8">
                         <strong className="my-auto">Priority:&nbsp;</strong>
