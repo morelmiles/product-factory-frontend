@@ -167,7 +167,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                         <>
                           Claimed by {assignee && (
                             <Link href={`/${assignee.username}`}>
-                              <a>{assignee.fullName}</a>
+                              <a>{assignee.firstName}</a>
                             </Link>
                           )}
                         </>
@@ -175,7 +175,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                         <>
                           In Review {reviewer && (
                             <Link href={`/${reviewer.username}`}>
-                              <a>{reviewer.fullName}</a>
+                              <a>{reviewer.firstName}</a>
                             </Link>
                           )}
                         </>

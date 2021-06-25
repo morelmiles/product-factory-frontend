@@ -157,12 +157,12 @@ const TaskTable: React.FunctionComponent<Props> = (
                             <div className="mt-10">
                               <div className="d-flex-end" style={{fontSize: 13}}>
                                 <CustomAvatar2
-                                  person={{fullname: getProp(task, "reviewer.fullName", ""), slug: getProp(task, "reviewer.username", "")}}
+                                  person={{firstName: getProp(task, "reviewer.firstName", ""), slug: getProp(task, "reviewer.username", "")}}
                                   size={35}/>
                                 <Link
                                   href={`/${getProp(task, "reviewer.username", "")}`}
                                 >
-                                  <a className="text-grey-9">{getProp(task, "reviewer.fullName", "")}</a>
+                                  <a className="text-grey-9">{getProp(task, "reviewer.firstName", "")}</a>
                                 </Link>
                               </div>
                             </div>
@@ -174,9 +174,9 @@ const TaskTable: React.FunctionComponent<Props> = (
                         <div className="mt-10">
                           <div className="d-flex-end" style={{fontSize: 13}}>
 
-                            <CustomAvatar2 person={{fullname: assignee.fullName, slug: assignee.username}} size={35}/>
+                            <CustomAvatar2 person={{firstName: assignee.firstName, slug: assignee.username}} size={35}/>
                             <Link href={`/${assignee.username}`}>
-                              <a className="text-grey-9">{assignee.fullName}</a>
+                              <a className="text-grey-9">{assignee.firstName}</a>
                             </Link>
                           </div>
                         </div>

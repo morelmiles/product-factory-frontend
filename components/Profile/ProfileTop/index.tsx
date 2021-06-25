@@ -61,22 +61,22 @@ const ProfileTop: React.FunctionComponent = () => {
       {!error && !socialsDataError && (
         <>
           <Head>
-            <title>{getProp(data, "personProfile.person.fullName", "")}</title>
-            {/* getProp(data, "personProfile.person.fullName", "") => "Full name of person" */}
-            <meta name="description" content={getProp(data, "personProfile.person.fullName", "")} />
+            <title>{getProp(data, "personProfile.person.firstName", "")}</title>
+            {/* getProp(data, "personProfile.person.firstName", "") => "Full name of person" */}
+            <meta name="description" content={getProp(data, "personProfile.person.firstName", "")} />
           </Head>
           <Row>
             <Col>
               {CustomAvatar(
                 getProp(data, "personProfile.person", null),
-                "fullName",
+                "firstName",
                 100
               )}
             </Col>
             <Col span={10}>
               <Row>
                 <strong className="page-title">
-                  {getProp(data, "personProfile.person.fullName", "")}
+                  {getProp(data, "personProfile.person.firstName", "")}
                 </strong>
               </Row>
               <Row>

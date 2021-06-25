@@ -6,7 +6,7 @@ import Link from "next/link";
 
 interface ICustomAvatar2Props {
   person: {
-    fullname: string
+      firstName: string
     slug: string
   }
   size?: number
@@ -29,7 +29,7 @@ const CustomAvatar2: React.FunctionComponent<ICustomAvatar2Props> = ({person, si
           cursor: 'pointer'
         }}
       >
-        {person.fullname && getInitialName(person.fullname)}
+        {person.firstName && getInitialName(person.firstName)}
       </Avatar>
     </Link>
   )

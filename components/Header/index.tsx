@@ -88,11 +88,11 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
     useEffect(() => {
         if (personData && personData.person) {
-            const {fullName, slug, id, username, productpersonSet, claimedTask} = personData.person;
+            const {firstName, slug, id, username, productpersonSet, claimedTask} = personData.person;
             userLogInAction({
                 isLoggedIn: true,
                 loading: false,
-                fullName,
+                firstName,
                 slug,
                 id,
                 claimedTask,
@@ -108,7 +108,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             userLogInAction({
                 isLoggedIn: false,
                 loading: false,
-                fullName: "",
+                firstName: "",
                 slug: "",
                 username: "",
                 id: null,
@@ -133,12 +133,12 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             const {success, message: responseMessage, url} = data.logout;
             if (success) {
                 localStorage.removeItem("userId");
-                localStorage.removeItem("fullName");
+                localStorage.removeItem("firstName");
                 localStorage.removeItem(redirectToLocalName);
                 userLogInAction({
                     isLoggedIn: false,
                     loading: false,
-                    fullName: "",
+                    firstName: "",
                     slug: "",
                     username: "",
                     id: null,

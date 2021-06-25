@@ -331,7 +331,7 @@ const Task: React.FunctionComponent<Params> = ({
     });
 
     const claimTaskEvent = () => {
-        let userId = 1;
+        let userId = user.id;
         if (userId === undefined || userId === null) {
             showUnAuthModal(router, actionName, loginUrl);
             return;
@@ -362,7 +362,7 @@ const Task: React.FunctionComponent<Params> = ({
     useEffect(() => {
         if (personData && personData.person) {
             const {
-                fullName,
+                firstName,
                 slug,
                 id,
                 username,
@@ -372,7 +372,7 @@ const Task: React.FunctionComponent<Params> = ({
             userLogInAction({
                 isLoggedIn: true,
                 loading: false,
-                fullName,
+                firstName,
                 slug,
                 id,
                 claimedTask,
@@ -388,7 +388,7 @@ const Task: React.FunctionComponent<Params> = ({
             userLogInAction({
                 isLoggedIn: false,
                 loading: false,
-                fullName: "",
+                firstName: "",
                 slug: "",
                 username: "",
                 id: null,
@@ -423,7 +423,7 @@ const Task: React.FunctionComponent<Params> = ({
                                     <Col>
                                         <CustomAvatar2
                                             person={{
-                                                fullname: getProp(assignee, "fullName", ""),
+                                                firstName: getProp(assignee, "firstName", ""),
                                                 slug: getProp(assignee, "slug", ""),
                                             }}
                                         />
@@ -446,7 +446,6 @@ const Task: React.FunctionComponent<Params> = ({
     };
 
     const assignedTo = getProp(task, "assignedTo");
-    const stacks = getProp(task, "stack", []);
     const tags = getProp(task, "tag", []);
 
     const showTaskEvents = () => {
@@ -461,21 +460,23 @@ const Task: React.FunctionComponent<Params> = ({
                             {assignee.id === user.id ? (
                                 <div className="flex-column ml-auto mt-10">
                                     {inReview ? null : (
-                                        <Button
-                                            type="primary"
-                                            className="mb-10"
-                                            onClick={() => showReviewTaskModal(true)}
-                                        >
-                                            Submit for review
-                                        </Button>
+                                        <>
+                                            <Button
+                                                type="primary"
+                                                className="mb-10"
+                                                onClick={() => showReviewTaskModal(true)}
+                                            >
+                                                Submit for review
+                                            </Button>
+                                            <Button
+                                                type="primary"
+                                                onClick={() => showLeaveTaskModal(true)}
+                                                style={{zIndex: 1000}}
+                                            >
+                                                Leave the task
+                                            </Button>
+                                        </>
                                     )}
-                                    <Button
-                                        type="primary"
-                                        onClick={() => showLeaveTaskModal(true)}
-                                        style={{zIndex: 1000}}
-                                    >
-                                        Leave the task
-                                    </Button>
                                 </div>
                             ) : null}
                         </>
@@ -519,7 +520,8 @@ const Task: React.FunctionComponent<Params> = ({
                         >
                             Reject the work
                         </Button>
-                        <div style={{ marginLeft: 67, textAlign: "left", fontSize: 14, marginTop: 9}} className="mb-10">The task is submitted for
+                        <div style={{marginLeft: 67, textAlign: "left", fontSize: 14, marginTop: 9}} className="mb-10">The
+                            task is submitted for
                             review.<br/> See <div
                                 onClick={() => {
                                     setDeliveryModal(true);
@@ -598,7 +600,6 @@ const Task: React.FunctionComponent<Params> = ({
                                                     className="ml-15"
                                                     onClick={() => setShowEditModal(true)}
                                                 />
-
                                                 {status === "In Review" && showInReviewEvents()}
                                             </Col>
                                         </>
@@ -633,7 +634,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                 <Col>
                                                     <CustomAvatar2
                                                         person={{
-                                                            fullname: getProp(task, "createdBy.firstName", ""),
+                                                            firstName: getProp(task, "createdBy.firstName", ""),
                                                             slug: getProp(task, "createdBy.slug", ""),
                                                         }}
                                                     />
@@ -670,7 +671,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                                 <Col>
                                                                     <CustomAvatar2
                                                                         person={{
-                                                                            fullname: getProp(
+                                                                            firstName: getProp(
                                                                                 task,
                                                                                 "createdBy.firstName",
                                                                                 ""
@@ -711,7 +712,7 @@ const Task: React.FunctionComponent<Params> = ({
                                                     <Col>
                                                         <CustomAvatar2
                                                             person={{
-                                                                fullname: getProp(
+                                                                firstName: getProp(
                                                                     task,
                                                                     "reviewer.firstName",
                                                                     ""
@@ -729,21 +730,6 @@ const Task: React.FunctionComponent<Params> = ({
                                                         </Typography.Link>
                                                     </Col>
                                                 </Row>
-                                            </Row>
-                                        )}
-                                        {stacks.length > 0 && (
-                                            <Row
-                                                style={{marginTop: 10}}
-                                                className="text-sm mt-8 tag-bottom-0"
-                                            >
-                                                <strong className="my-auto">
-                                                    Skills required:&nbsp;
-                                                </strong>
-                                                {stacks.map((tag: any, taskIndex: number) => (
-                                                    <CheckableTag key={`tag-${taskIndex}`} checked={true}>
-                                                        {tag.name}
-                                                    </CheckableTag>
-                                                ))}
                                             </Row>
                                         )}
 
@@ -910,80 +896,64 @@ const Task: React.FunctionComponent<Params> = ({
                                     taskId={taskId}/>
                             )}
                         </>
-                      )}
+                    )}
                     {getProp(task, "priority", null) && (
-                      <Row style={{ marginTop: 10 }} className="text-sm mt-8">
-                        <strong className="my-auto">Priority:&nbsp;</strong>
-                        &nbsp;
-                        <Priorities
-                          task={task}
-                          submit={() => refetch()}
-                          canEdit={userHasManagerRoots}
-                        />
-                      </Row>
+                        <Row style={{marginTop: 10}} className="text-sm mt-8">
+                            <strong className="my-auto">Priority:&nbsp;</strong>
+                            &nbsp;
+                            <Priorities
+                                task={task}
+                                submit={() => refetch()}
+                                canEdit={userHasManagerRoots}
+                            />
+                        </Row>
                     )}
                     {getProp(task, "taskCategory", null) && (
-                        <Row style={{ marginTop: 10 }} className="text-sm mt-8">
-                          <strong className="my-auto">Category:&nbsp;</strong>
-                          &nbsp;
-                          <Typography className="text-grey-9">
-                            {getProp(task, "taskCategory", null)}
-                          </Typography>
+                        <Row style={{marginTop: 10}} className="text-sm mt-8">
+                            <strong className="my-auto">Category:&nbsp;</strong>
+                            &nbsp;
+                            <Typography className="text-grey-9">
+                                {getProp(task, "taskCategory", null)}
+                            </Typography>
                         </Row>
                     )}
                     {getProp(task, "taskExpertise", null) && (
-                        <Row style={{ marginTop: 10 }} className="text-sm mt-8">
-                          <strong className="my-auto">Expertise:&nbsp;</strong>
-                          &nbsp;
-                          <Typography className="text-grey-9">
-                            {getProp(task, "taskExpertise", null)}
-                          </Typography>
+                        <Row style={{marginTop: 10}} className="text-sm mt-8">
+                            <strong className="my-auto">Expertise:&nbsp;</strong>
+                            &nbsp;
+                            <Typography className="text-grey-9">
+                                {getProp(task, "taskExpertise", null)}
+                            </Typography>
                         </Row>
                     )}
                     {getProp(task, "reviewer.slug", null) && (
-                      <Row style={{ marginTop: 10 }} className="text-sm mt-8">
-                        <strong className="my-auto">Reviewer:</strong>
+                        <Row style={{marginTop: 10}} className="text-sm mt-8">
+                            <strong className="my-auto">Reviewer:</strong>
 
-                        <Row align="middle" style={{ marginLeft: 15 }}>
-                          <Col>
-                            <CustomAvatar2
-                              person={{
-                                fullname: getProp(
-                                  task,
-                                  "reviewer.fullName",
-                                  ""
-                                ),
-                                slug: getProp(task, "reviewer.slug", ""),
-                              }}
-                            />
-                          </Col>
-                          <Col>
-                            <Typography.Link
-                              className="text-grey-9"
-                              href={`/${getProp(task, "reviewer.slug", "")}`}
-                            >
-                              {getProp(task, "reviewer.firstName", "")}
-                            </Typography.Link>
-                          </Col>
+                            <Row align="middle" style={{marginLeft: 15}}>
+                                <Col>
+                                    <CustomAvatar2
+                                        person={{
+                                            firstName: getProp(
+                                                task,
+                                                "reviewer.firstName",
+                                                ""
+                                            ),
+                                            slug: getProp(task, "reviewer.slug", ""),
+                                        }}
+                                    />
+                                </Col>
+                                <Col>
+                                    <Typography.Link
+                                        className="text-grey-9"
+                                        href={`/${getProp(task, "reviewer.slug", "")}`}
+                                    >
+                                        {getProp(task, "reviewer.firstName", "")}
+                                    </Typography.Link>
+                                </Col>
+                            </Row>
                         </Row>
-                      </Row>
                     )}
-                    {stacks.length > 0 && (
-                      <Row
-                        style={{ marginTop: 10 }}
-                        className="text-sm mt-8 tag-bottom-0"
-                      >
-                        <strong className="my-auto">
-                          Skills required:&nbsp;
-                        </strong>
-                        {stacks.map((tag: any, taskIndex: number) => (
-                          <CheckableTag key={`tag-${taskIndex}`} checked={true}>
-                            {tag.name}
-                          </CheckableTag>
-                        ))}
-                      </Row>
-                    )}
-
                     <Modal
                         title="Contribution License Agreement"
                         okText="I Agree"
@@ -1007,10 +977,8 @@ const mapStateToProps = (state: any) => ({
     loginUrl: state.work.loginUrl,
 });
 
-const mapDispatchToProps = (dispatch: any) => (
-    {
+const mapDispatchToProps = (dispatch: any) => ({
         userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
-    }
-);
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Task);

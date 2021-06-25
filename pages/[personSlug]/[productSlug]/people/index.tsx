@@ -22,7 +22,7 @@ const peopleData = (data: any) => {
         <Row>
           <Col xs={24}>
             <Row wrap={false}>
-              {CustomAvatar(person, 'fullName', 64)}
+              {CustomAvatar(person, 'firstName', 64)}
               <div style={{paddingLeft: 10}}>
                 <Row>
                   <Typography.Text
@@ -31,7 +31,7 @@ const peopleData = (data: any) => {
                     style={{fontSize: 14}}
                   >
                     <Link href={`/${getProp(person, 'slug', '')}`}>
-                      {getProp(person, 'fullName', '')}
+                      {getProp(person, 'firstName', '')}
                     </Link>
                   </Typography.Text>
                 </Row>
@@ -95,7 +95,7 @@ const PeopleList: React.FunctionComponent = () => {
             {
               getProp(data, 'productRoles', []).map((role: any, idx: number) => (
                 <React.Fragment key={randomKeys()}>
-                  {CustomAvatar(role.person, "fullName", 64, role)}
+                  {CustomAvatar(role.person, "firstName", 64, role)}
                   {
                     idx !== data.productRoles.length - 1 ? <Divider/> : null
                   }

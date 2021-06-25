@@ -146,14 +146,14 @@ const Idea: React.FunctionComponent<Params> = ({user}) => {
                           <Row align="middle" style={{marginLeft: 15}}>
                             <Col>
                               <CustomAvatar2 person={{
-                                fullname: getProp(idea, 'person.fullName', ''),
+                                firstName: getProp(idea, 'person.firstName', ''),
                                 slug: getProp(idea, 'person.slug', '')
                               }}/>
                             </Col>
                             <Col>
                               <Typography.Link className="text-grey-9"
                                                href={`/${getProp(idea, 'person.slug', '')}`}>
-                                {getProp(idea, 'person.fullName', '')}
+                                {getProp(idea, 'person.firstName', '')}
                               </Typography.Link>
                             </Col>
                           </Row>

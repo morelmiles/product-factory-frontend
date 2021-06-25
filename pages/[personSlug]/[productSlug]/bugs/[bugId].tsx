@@ -141,14 +141,14 @@ const Bug: React.FunctionComponent<Params> = ({user}) => {
                           <Row align="middle" style={{marginLeft: 15}}>
                             <Col>
                               <CustomAvatar2 person={{
-                                fullname: getProp(bug, 'person.fullName', ''),
+                                firstName: getProp(bug, 'person.firstName', ''),
                                 slug: getProp(bug, 'person.slug', '')
                               }}/>
                             </Col>
                             <Col>
                               <Typography.Link className="text-grey-9"
                                                href={`/${getProp(bug, 'person.slug', '')}`}>
-                                {getProp(bug, 'person.fullName', '')}
+                                {getProp(bug, 'person.firstName', '')}
                               </Typography.Link>
                             </Col>
                           </Row>

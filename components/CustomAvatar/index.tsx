@@ -36,7 +36,7 @@ export const CustomAvatar = (item: any, attr = "name", size: any = 'default', ro
                 role &&
                 <div className="my-auto">
                     <div className="font-bold">
-                        {attr === "fullName" ? (
+                        {attr === "firstName" ? (
                             <Link
                                 href={`/${item.slug}`}
                             >{item[attr]}</Link>
@@ -46,7 +46,7 @@ export const CustomAvatar = (item: any, attr = "name", size: any = 'default', ro
                         {role && (
                             <div className="my-auto">
                                 <div className="font-bold">
-                                    {attr === "fullName" ? (
+                                    {attr === "firstName" ? (
                                         <Link
                                             href={`/${item.slug}`}
                                         >
