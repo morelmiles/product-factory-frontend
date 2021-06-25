@@ -337,13 +337,13 @@ export const LOGOUT = gql`
 `;
 
 export const FAKE_LOGIN = gql`
-  mutation FakeLogin ($personId: Int!) {
+  mutation FakeLogin ($personId: String!) {
     fakeLogin (personId: $personId) {
       success
       message
       person {
         id
-        fullName
+        firstName
       }
     }
   }
