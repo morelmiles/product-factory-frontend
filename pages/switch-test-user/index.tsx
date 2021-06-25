@@ -45,7 +45,7 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
         message.success(responseMessage);
         userLogInAction({ isLoggedIn: success });
         localStorage.setItem("userId", person.id);
-        localStorage.setItem("fullName", person.fullName);
+        localStorage.setItem("firstName", person.firstName);
         router.push("/").then();
       } else {
         message.warning(responseMessage).then();
@@ -55,8 +55,8 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
   }
 
   useEffect(() => {
-    if (user && user.isLoggedIn && user.fullName) {
-      message.success(`${user.fullName} is logged in!`).then();
+    if (user && user.isLoggedIn && user.firstName) {
+      message.success(`${user.firstName} is logged in!`).then();
     }
   }, []);
 
@@ -87,7 +87,7 @@ const TestUser: React.FunctionComponent<Props> = ({ userLogInAction, user }) => 
                     <Select>
                       <Option value={0}>Select</Option>
                       {getProp(data, "people", []).map((person: any, idx: number) =>
-                        <Option key={person.id} value={person.id}>{person.fullName}</Option>)}
+                        <Option key={person.id} value={person.id}>{person.firstName}</Option>)}
                     </Select>
                   </Form.Item>
                   <Form.Item className="d-flex-justify">

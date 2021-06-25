@@ -70,10 +70,10 @@ const ItemList = (items: any, itemType: string, personSlug: string, productSlug:
                       <div className="d-flex-end" style={{fontSize: 13}}>
                         {user.id === person.id ? <strong>Created by You</strong> : (
                           <>
-                            <CustomAvatar2 person={{fullname: person.fullName, slug: assignPersonSlug}}
+                            <CustomAvatar2 person={{firstName: person.firstName, slug: assignPersonSlug}}
                                            size={35} />
                             <Link href={`/${assignPersonSlug}`}>
-                              {person.fullName}
+                              {person.firstName}
                             </Link>
                           </>
                         )}

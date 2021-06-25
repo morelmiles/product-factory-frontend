@@ -201,14 +201,14 @@ const ProfileItem: React.FunctionComponent = () => {
                               <Row>
                                 <Row>
                                   <Col>
-                                    {CustomAvatar(item.createdBy, 'fullName', 40)}
+                                    {CustomAvatar(item.createdBy, 'firstName', 40)}
                                   </Col>
                                   <Col>
                                     <Row>
                                       <Typography.Text
                                         strong
                                         style={{fontSize: 12}}
-                                      >{getProp(item, 'createdBy.fullName', '')}</Typography.Text>
+                                      >{getProp(item, 'createdBy.firstName', '')}</Typography.Text>
 
                                     </Row>
                                     <Row>
@@ -247,7 +247,7 @@ const ProfileItem: React.FunctionComponent = () => {
                   <div className="completed-task-section">
                     <Typography.Text strong>
                       Tasks done
-                      by {getProp(person, 'personProfile.person.fullName', '').split(' ')[0]}:
+                      by {getProp(person, 'personProfile.person.firstName', '').split(' ')[0]}:
                     </Typography.Text>
                     <Table
                       dataSource={dataSource}
