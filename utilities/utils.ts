@@ -5,10 +5,10 @@ export const randomKeys = (length: number = 7): string => {
   return Math.random().toString(36).substring(length);
 }
 
-export const getInitialName = (fullName: string): string => {
-  if (!fullName || fullName === "") return "";
+export const getInitialName = (firstName: string): string => {
+  if (!firstName || firstName === "") return "";
 
-  const names: string[] = fullName.split(" ");
+  const names: string[] = firstName.split(" ");
   const initial: string = names.length === 1
     ? names[0].charAt(0)
     : `${names[0].charAt(0)}${names[1].charAt(0)}`;

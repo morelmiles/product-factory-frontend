@@ -22,7 +22,7 @@ const {TextArea} = Input;
 const {TreeNode} = TreeSelect;
 
 interface IUser {
-    fullName: string
+    firstName: string
     slug: string
 }
 
@@ -641,7 +641,7 @@ const AddTask: React.FunctionComponent<Props> = (
                     >
                         {
                             allUsers.map((user: IUser) => (
-                                <Option key={`user-${user.slug}`} value={user.slug}>{user.fullName}</Option>
+                                <Option key={`user-${user.slug}`} value={user.slug}>{user.firstName}</Option>
                             ))
                         }
                     </Select>
