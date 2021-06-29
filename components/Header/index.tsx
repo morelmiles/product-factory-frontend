@@ -173,7 +173,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                     </Link>
                 </Col>
                 <Col>
-                    <Dropdown overlay={menuMobile}>
+                    <Dropdown trigger={["click", "hover"]} overlay={menuMobile}>
                         <Button style={{border: "none"}} className={"ant-dropdown-link"} icon={<MenuOutlined/>}
                                 size="large"/>
                     </Dropdown>
