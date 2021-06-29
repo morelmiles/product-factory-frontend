@@ -36,7 +36,6 @@ type Props = {
     task?: any;
     submit?: any;
     tasks?: Array<any>;
-    stacks?: Array<any>;
     user: any;
     initiativeID: number;
     capabilityID: number;
@@ -136,9 +135,6 @@ const AddTask: React.FunctionComponent<Props> = (
         }
     }, [user]);
 
-    const [stacks, setStacks] = useState(
-        modalType && task.stack ? task.stack.map((stack: any) => stack.id) : []
-    );
     const [dependOn, setDependOn] = useState(
         modalType && task.dependOn ? task.dependOn.map((tag: any) => tag.id) : []
     );
@@ -306,7 +302,6 @@ const AddTask: React.FunctionComponent<Props> = (
         setInitiative(0);
         setCapability([]);
         setTags([]);
-        setStacks([]);
         setDependOn([]);
         setReviewSelectValue(getProp(user, "slug", null));
         setExpertise("");
@@ -571,22 +566,6 @@ const AddTask: React.FunctionComponent<Props> = (
                         }
                     </TreeSelect>
                 </Row>
-                {/*<Row className="mb-15">*/}
-                {/*  <label>Skills Required:</label>*/}
-                {/*  <Select*/}
-                {/*    mode="multiple"*/}
-                {/*    onChange={setStacks}*/}
-                {/*    value={stacks}*/}
-                {/*    filterOption={filterOption}*/}
-                {/*    placeholder="Specify skills required"*/}
-                {/*  >*/}
-                {/*    {allStacks && allStacks.map((option: any, idx: number) => (*/}
-                {/*      <Option key={`cap${idx}`} value={option.id}>*/}
-                {/*        {option.name}*/}
-                {/*      </Option>*/}
-                {/*    ))}*/}
-                {/*  </Select>*/}
-                {/*</Row>*/}
                 <Row className="mb-15">
                     <label>Video Link:</label>
                     <Input
@@ -648,8 +627,7 @@ const AddTask: React.FunctionComponent<Props> = (
                 </Row>
             </Modal>
         </>
-    )
-        ;
+    );
 }
 
 const mapStateToProps = (state: any) => ({
