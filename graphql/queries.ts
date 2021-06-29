@@ -520,15 +520,25 @@ export const GET_PARTNERS = gql`
 `
 
 export const GET_USERS = gql`
-  query GetAllUser ($hideTestUsers: Boolean, $showOnlyTestUsers: Boolean) {
+  query GetUsers ($hideTestUsers: Boolean, $showOnlyTestUsers: Boolean) {
     people (hideTestUsers: $hideTestUsers, showOnlyTestUsers: $showOnlyTestUsers) {
       id
-      emailAddress
       firstName
       slug
     }
   }
 `;
+
+
+export const GET_COMMENT_USERS = gql`
+ query GetCommentUsers ($hideTestUsers: Boolean, $showOnlyTestUsers: Boolean, $startsWith: String) {
+   commentPeople (hideTestUsers: $hideTestUsers, showOnlyTestUsers: $showOnlyTestUsers, startsWith: $startsWith) {
+      id
+      firstName
+      slug
+    }
+ }
+`
 
 export const GET_PROFILES = gql`
   query GetProfiles {

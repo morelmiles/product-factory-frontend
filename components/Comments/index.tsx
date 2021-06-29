@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Button, Comment, Form, Mentions, message, Modal} from "antd";
 import {GET_BUG_COMMENTS, GET_IDEA_COMMENTS, GET_TASK_COMMENTS, GET_CAPABILITY_COMMENTS,
-  GET_USERS} from "../../graphql/queries";
+  GET_COMMENT_USERS} from "../../graphql/queries";
 import {getProp} from "../../utilities/filters";
 import CustomAvatar2 from "../CustomAvatar2";
 import {useMutation, useQuery} from "@apollo/react-hooks";
@@ -19,12 +19,13 @@ const actionName = "Add comment"
 
 interface IUser {
   slug: string
+  firstName: string,
+  id: string
 }
 
 interface ICommentContainerProps {
   comments: IComment[]
   submit: Function
-  allUsers: IUser[],
   loginUrl: string
 }
 
@@ -35,8 +36,7 @@ interface ICommentsProps {
 }
 
 interface IAddCommentProps {
-  submit: Function
-  allUsers: IUser[],
+  submit: Function,
   objectId: number,
   loginUrl: string
 }
@@ -81,8 +81,9 @@ const commentGetType = {
 
 
 
-const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, allUsers, objectType, loginUrl}) => {
+const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, objectType, loginUrl}) => {
   const router = useRouter();
+  const [users, setUsers] = useState<IUser[]>([]);
   const cType = commentCreateType[objectType];
   const [createComment] = cType ? useMutation(cType.mutation, {
     onCompleted(res) {
@@ -150,6 +151,27 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
       </>
     )
   }
+    const vars = {
+      hideTestUsers: true,
+      startsWith: ''
+    }
+    const {refetch: commentUsersRefetch} = useQuery(GET_COMMENT_USERS, {
+      variables: vars,
+      fetchPolicy: "no-cache"
+    });
+
+    const onMentionChange = async (val: string) => {
+      const index = val.indexOf('@');
+      if (index !== -1) {
+        const findString = val.slice(index + 1, index + 4);
+        if (findString.match(/^[a-zA-Z]+$/) && findString.length >= 3) {
+          vars.startsWith = findString;
+          const {data: commentUsersData } = await commentUsersRefetch(vars);
+          setUsers(commentUsersData.commentPeople);
+        } else setUsers([]);
+      } else setUsers([]);
+      setCommentText(val);
+    }
 
 
   return (
@@ -167,7 +189,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
             <CommentContainer comments={getProp(comment, "children", [])}
                               objectType={objectType}
                               submit={submit}
-                              allUsers={allUsers}/>
+            />
           </Comment>
         ))
       }
@@ -175,11 +197,12 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
       <Modal
         title="Reply to comment" visible={isModalVisible} onOk={addComment} onCancel={closeModal}
         maskClosable={false}>
-        <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
+        <Mentions rows={2} onChange={val => onMentionChange(val)} value={commentText}>
           {
-            allUsers.map((user) => (
+            users.length > 0 ?
+            users.map((user) => (
               <Option key={user.slug} value={user.slug}>{user.slug}</Option>
-            ))
+            )) : null
           }
         </Mentions>
       </Modal>
@@ -187,8 +210,9 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
   )
 };
 
-const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, objectType, submit, allUsers, loginUrl}) => {
+const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, objectType, submit, loginUrl}) => {
   const router = useRouter();
+  const [users, setUsers] = useState<IUser[]>([]);
   const {mutation, mutationKey} = commentCreateType[objectType];
   const [createComment] = useMutation(mutation, {
     onCompleted(res) {
@@ -231,14 +255,37 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, object
     }).then();
   }
 
+  const vars = {
+    hideTestUsers: true,
+    startsWith: ''
+  }
+  const {refetch: commentUsersRefetch} = useQuery(GET_COMMENT_USERS, {
+    variables: vars,
+    fetchPolicy: "no-cache"
+  });
+
+  const onMentionChange = async (val: string) => {
+    const index = val.indexOf('@');
+    if (index !== -1) {
+      const findString = val.slice(index + 1, index + 4);
+      if (findString.match(/^[a-zA-Z]+$/) && findString.length >= 3) {
+        vars.startsWith = findString;
+        const {data: commentUsersData } = await commentUsersRefetch(vars);
+        setUsers(commentUsersData.commentPeople);
+      } else setUsers([]);
+    } else setUsers([]);
+    setCommentText(val);
+  }
+
   return (
     <>
       <Form.Item>
-        <Mentions rows={2} onChange={val => setCommentText(val)} value={commentText}>
+        <Mentions rows={2} onChange={val => onMentionChange(val)} value={commentText}>
           {
-            allUsers.map((user) => (
+            users.length > 0 ?
+            users.map((user) => (
               <Option key={user.slug} value={user.slug}>{user.slug}</Option>
-            ))
+            )) : null
           }
         </Mentions>
       </Form.Item>
@@ -255,7 +302,6 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType
   const {data, error, loading, refetch} = useQuery(commentGetType[objectType], {
     variables: {objectId}
   });
-  const {data: users} = useQuery(GET_USERS);
 
   const [comments, setComments] = useState([]);
 
@@ -268,7 +314,6 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType
 
   }, [data]);
 
-  const allUsers = getProp(users, "people", []);
 
   return (
     <>
@@ -276,12 +321,12 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType
                         submit={refetch}
                         loginUrl={loginUrl}
                         objectType={objectType}
-                        allUsers={allUsers}/>
+      />
       <AddComment objectId={objectId}
                   submit={refetch}
                   loginUrl={loginUrl}
                   objectType={objectType}
-                  allUsers={allUsers} />
+      />
     </>
   )
 };
