@@ -562,3 +562,35 @@ p:last-child {
     padding-bottom: 32px !important;
     padding-right: 38px !important;
 }
+
+
+@media screen and (max-width: 500px) {
+    #profile-row {
+        flex-wrap: wrap!important;
+        flex-flow: column!important;
+    }
+
+    #profile-area {
+        width: 255px!important;
+    }
+
+    #profile-area-row {
+        margin-top: 30px!important;
+        flex-flow: row!important;
+    }
+
+    #profile-btn {
+        justify-content: center;
+    }
+}
+
+.skill-div {
+    display: inline-block;
+    width: min-content;
+    margin: 9px 8px;
+    background-color: #EAF5FF;
+    border: 1px solid #1890FF;
+    color: #80c1fe;
+    border-radius: 40px;
+    padding: 8px 20px;
+}

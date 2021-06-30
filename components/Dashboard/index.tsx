@@ -2,48 +2,23 @@ import React, { useState } from "react";
 import { Row, Col, Button, Select, Layout, Space, Tabs } from "antd";
 import ProductTab from "./ProductTab";
 import TaskTab from "./TaskTab";
-// import { useQuery } from "@apollo/react-hooks";
-// import { getProp } from "../../utilities/filters";
-// import VacancyBox from "./vacancy";
+import CreatePersonModal from "../CreatePersonModal";
 
 const { Option } = Select;
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
-interface IStack {
-  id: number;
-  name: string;
-}
 
 const Dashboard: React.FunctionComponent = () => {
   const [tabkey, setTabkey] = useState("tasks");
-  // const [stacksFilter, setStacksFilter] = useState<any>([]);
   const [filterModal, setFilterModal] = useState(false);
+  const [createPersonModal, setCreatePersonModal] = useState<boolean>(false);
 
   const onChnageKey = (key: any) => {
     setTabkey(key);
   };
 
   const extraTabButtons = () => {
-    // if (tabkey === "products")
-    //   return (
-    //     <Space style={{ width: "100%" }}>
-    //       <Select
-    //         mode="multiple"
-    //         placeholder="Specify skills required"
-    //         style={{ minWidth: "170px", width: "auto" }}
-    //         onChange={(val) => {
-    //           setStacksFilter(val);
-    //         }}
-    //       >
-    //         {getProp(stacksData, "stacks", []).map((stack: IStack) => (
-    //           <Option key={`stack-${stack.id}`} value={stack.name}>
-    //             {stack.name}
-    //           </Option>
-    //         ))}
-    //       </Select>
-    //     </Space>
-    //   );
     if (tabkey !== "products")
       return (
         <Button type="primary" onClick={() => setFilterModal(!filterModal)}>
@@ -70,7 +45,6 @@ const Dashboard: React.FunctionComponent = () => {
         <div className="extra">{extraTabButtons()}</div>
       </div>
       <Row gutter={50} className="mb-40">
-        {/*<Col md={18}>*/}
         <Col md={24}>
           <Tabs
             activeKey={tabkey}
@@ -89,15 +63,10 @@ const Dashboard: React.FunctionComponent = () => {
             <TabPane tab="Products" key="products">
               <ProductTab/>
             </TabPane>
-            {/* <TabPane tab="Vacancies" key="vacancies">
-              <h1>This is vacancy tab</h1>
-            </TabPane> */}
           </Tabs>
         </Col>
-        {/*<Col md={6}>*/}
-        {/*  <VacancyBox />*/}
-        {/*</Col>*/}
       </Row>
+      <CreatePersonModal modal={createPersonModal} closeModal={setCreatePersonModal}/>
     </Content>
   );
 };
