@@ -2,10 +2,21 @@ import gql from 'graphql-tag';
 
 
 export const CREATE_PERSON = gql`
-  mutation CreatePerson($firstName: String!, $lastName: String!, $bio: String!, $skills: List! $avatar: Upload) {
+  mutation CreatePerson($firstName: String!, $lastName: String!, $bio: String!, $skills: [String]! $avatar: Int) {
     createPerson(personInput: {firstName: $firstName, lastName: $lastName, bio: $bio, skills: $skills, avatar: $avatar}) {
       status
       message
+    }
+  }
+`;
+
+export const SAVE_AVATAR = gql `
+  mutation SaveAvatar($avatar: Upload!) {
+    saveAvatar(avatar: $avatar) {
+      status
+      message
+      avatarUrl
+      avatarId
     }
   }
 `;

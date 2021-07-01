@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Row, Col, Button, Select, Layout, Space, Tabs } from "antd";
 import ProductTab from "./ProductTab";
 import TaskTab from "./TaskTab";
@@ -17,6 +17,11 @@ const Dashboard: React.FunctionComponent = () => {
   const onChnageKey = (key: any) => {
     setTabkey(key);
   };
+
+  useEffect(() => {
+    let newUser = new URLSearchParams(location.search).get('new');
+    if (newUser) setCreatePersonModal(true);
+  });
 
   const extraTabButtons = () => {
     if (tabkey !== "products")
