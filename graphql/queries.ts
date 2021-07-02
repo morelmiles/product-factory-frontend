@@ -990,16 +990,16 @@ export const GET_CATEGORIES = gql`
 export const GET_PERSON_INFO = gql `
   query GetPersonInfo ($personSlug: String!) {
     personInfo (personSlug: $personSlug) {
-    id
-    firstName
-    bio
-    avatar
-    skills {
-      category
-      expertise
+      id
+      firstName
+      bio
+      avatar
+      skills {
+        category
+        expertise
+      }
     }
   }
-}
 `;
 
 export const GET_PERSON_DONE_TASKS = gql `
