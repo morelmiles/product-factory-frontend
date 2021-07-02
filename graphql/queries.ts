@@ -986,3 +986,44 @@ export const GET_CATEGORIES = gql`
     categories
   }
 `;
+
+export const GET_PERSON_INFO = gql `
+  query GetPersonInfo ($personSlug: String!) {
+    personInfo (personSlug: $personSlug) {
+    id
+    firstName
+    bio
+    avatar
+    skills {
+      category
+      expertise
+    }
+  }
+}
+`;
+
+export const GET_PERSON_DONE_TASKS = gql `
+  query GetPersonDoneTasks ($page: Int!, $personSlug: String!) {
+    personTasks (page: $page, personSlug: $personSlug) {
+      page
+      pages
+      hasNext
+      hasPrev
+      tasks {
+        id
+        title
+        productAvatar
+        date
+        skills {
+          category
+          expertise
+        }
+        reviewerPerson {
+          id
+          firstName
+          avatar
+        }
+      }
+    }
+  }
+`;
