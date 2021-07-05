@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 
 export const CREATE_PERSON = gql`
-  mutation CreatePerson($firstName: String!, $lastName: String!, $bio: String!, $skills: [String]! $avatar: Int) {
+  mutation CreatePerson($firstName: String!, $lastName: String!, $bio: String!, $skills: [Skill]! $avatar: Int) {
     createPerson(personInput: {firstName: $firstName, lastName: $lastName, bio: $bio, skills: $skills, avatar: $avatar}) {
       status
       message

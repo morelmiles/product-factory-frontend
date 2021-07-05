@@ -11,6 +11,11 @@ import {CreatePersonProps, Person} from "./interfaces";
 import {UploadFile} from "antd/es/upload/interface";
 import {apiDomain} from "../../utilities/constants";
 
+export interface Skill {
+    category: string,
+    expertise: string | null
+}
+
 
 const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
     const [form] = Form.useForm();
@@ -18,7 +23,7 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
     const [avatarId, setAvatarId] = useState<number>(-1);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [avatarUploadModal, setAvatarUploadModal] = useState<boolean>(false);
-    const [skills, setSkills] = useState<string[]>([]);
+    const [skills, setSkills] = useState<Skill[]>([]);
     const [createProfile] = useMutation(CREATE_PERSON, {
         onCompleted(data) {
             const status = getProp(data, 'createPerson.status', false);
@@ -67,7 +72,7 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
 
     return (
         <Modal
-            visible={modal}
+            visible={true}
             onCancel={cancel}
             maskClosable={false}
             footer={null}
