@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Modal, Button, message, Typography, Avatar, Col, Row, Form, Input} from "antd";
 import {useMutation} from "@apollo/react-hooks";
 import {CREATE_PERSON, SAVE_AVATAR} from "../../graphql/mutations";
