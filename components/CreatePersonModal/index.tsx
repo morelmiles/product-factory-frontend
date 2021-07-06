@@ -35,6 +35,8 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                 message.success("Person profile successfully created", 10).then();
                 closeModal(false);
                 form.resetFields();
+                setAvatarUrl('');
+                setAvatarId(-1);
                 router.push('/').then();
             } else {
                 message.error(messageText).then();
