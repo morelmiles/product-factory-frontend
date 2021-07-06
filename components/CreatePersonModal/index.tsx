@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Modal, Button, message, Typography, Avatar, Col, Row, Form, Input} from "antd";
 import {useMutation} from "@apollo/react-hooks";
 import {CREATE_PERSON, SAVE_AVATAR} from "../../graphql/mutations";
@@ -35,6 +35,8 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                 message.success("Person profile successfully created", 10).then();
                 closeModal(false);
                 form.resetFields();
+                setAvatarUrl('');
+                setAvatarId(-1);
                 router.push('/').then(() => {
                     closeModal(false);
                 });
