@@ -36,6 +36,7 @@ export const TASK_LIST_TYPES = [
   {id: 2, name: "Available"},
   {id: 3, name: "Claimed"},
   {id: 4, name: "Done"},
+  {id: 5, name: "In Review"},
 ];
 export const INITIATIVE_TYPES = ["Active", "Completed"];
 export const USER_ROLES = ["User", "Product Admin", "Product Manager", "Contributor", "Super Admin"];

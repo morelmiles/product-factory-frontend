@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Modal, Button, message, Typography, Avatar, Col, Row, Form, Input} from "antd";
 import {useMutation} from "@apollo/react-hooks";
 import {CREATE_PERSON, SAVE_AVATAR} from "../../graphql/mutations";
@@ -10,15 +10,22 @@ import AvatarUploadModal from "./AvatarUploadModal";
 import {CreatePersonProps, Person} from "./interfaces";
 import {UploadFile} from "antd/es/upload/interface";
 import {apiDomain} from "../../utilities/constants";
+import {useRouter} from "next/router";
+
+export interface Skill {
+    category: string,
+    expertise: string | null
+}
 
 
 const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
     const [form] = Form.useForm();
+    const router = useRouter();
     const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [avatarId, setAvatarId] = useState<number>(-1);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [avatarUploadModal, setAvatarUploadModal] = useState<boolean>(false);
-    const [skills, setSkills] = useState<string[]>([]);
+    const [skills, setSkills] = useState<Skill[]>([]);
     const [createProfile] = useMutation(CREATE_PERSON, {
         onCompleted(data) {
             const status = getProp(data, 'createPerson.status', false);
@@ -28,12 +35,15 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                 message.success("Person profile successfully created", 10).then();
                 closeModal(false);
                 form.resetFields();
+                setAvatarUrl('');
+                setAvatarId(-1);
+                router.push('/').then();
             } else {
                 message.error(messageText).then();
             }
         },
         onError() {
-            message.error('Error with product creation').then();
+            message.error('Error with person profile creation').then();
         }
     });
 

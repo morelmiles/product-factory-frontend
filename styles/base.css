@@ -600,12 +600,6 @@ p:last-child {
     justify-content: center!important;
 }
 
-/*.avatar-upload > .ant-upload-list > .ant-upload .ant-upload-list-picture-card-container > .ant-upload-list-item > .ant-upload-list-item-info > .ant-upload-span > .ant-upload-list-item-thumbnail {*/
-/*    border-radius: 50% !important;*/
-/*    width: 128px!important;*/
-/*    height: 128px!important;*/
-/*}*/
-
 .avatar-upload > .ant-upload-list, .ant-upload-list-picture-card > .ant-upload, .ant-upload-list-picture-card-container > .ant-upload-list-item, .ant-upload-list-item-done, .ant-upload-list-item-list-type-picture-card > .ant-upload-list-item-info {
     border-radius: 50% !important;
     width: 128px!important;
@@ -616,4 +610,14 @@ p:last-child {
 .ant-modal-header {
     border-top-left-radius: 10px!important;
     border-top-right-radius: 10px!important;
+}
+
+.skill-div *  {
+    margin: 0!important;
+    padding: 0!important;
+}
+
+.ant-select-dropdown {
+    min-width: max-content!important;
+    border-radius: 10px!important;
 }

@@ -46,7 +46,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
   saveCategories,
   initialForm
 }) => {
-  const [form] = Form.useForm()
+  const [form] = Form.useForm();
   const handleCancel = () => closeModal(!modal);
   const [userHasManagerRoots, setUserRoot] = useState(false);
   const [userRoles, setUserRoles] = useState([])
@@ -167,7 +167,6 @@ const FilterModal: React.FunctionComponent<Props> = ({
                 .map((option: { id: number, name: string }) => (
                 <Option key={`status-${option.id}`} value={option.id}>{option.name}</Option>
               ))}
-                <Option value={5}>In Review</Option>
             </Select>
           </Form.Item>
         </Form>
