@@ -37,7 +37,9 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                 form.resetFields();
                 setAvatarUrl('');
                 setAvatarId(-1);
-                router.push('/').then();
+                router.push('/').then(() => {
+                    closeModal(false);
+                });
             } else {
                 message.error(messageText).then();
             }
