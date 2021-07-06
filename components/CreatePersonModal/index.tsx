@@ -72,7 +72,7 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
 
     return (
         <Modal
-            visible={true}
+            visible={modal}
             onCancel={cancel}
             maskClosable={false}
             footer={null}
