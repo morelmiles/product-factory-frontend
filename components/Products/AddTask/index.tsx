@@ -563,14 +563,13 @@ const AddTask: React.FunctionComponent<Props> = (
                 </Row>
                 <Row className="mb-15">
                     <label>Expertise</label>
-                    {Object.keys(expertises).map((key, index) =>
-                        (<TreeSelect
-                            allowClear
-                            onChange={setExpertise}
-                            value={expertise}
-                            placeholder="Select expertise"
-                            disabled={!category}
-                        >
+                    <TreeSelect
+                        allowClear
+                        onChange={setExpertise}
+                        value={expertise}
+                        placeholder="Select expertise"
+                        disabled={!category}
+                    >
                             {
                                 Object.keys(expertises).map((currExpertise) => (
                                     <TreeNode
@@ -587,10 +586,9 @@ const AddTask: React.FunctionComponent<Props> = (
                                                 {value}
                                             </TreeNode>
                                         ))}
-                                    </TreeNode>
-                                ))
+                                    </TreeNode>))
                             }
-                        </TreeSelect>))}
+                        </TreeSelect>
                 </Row>
                 <Row className="mb-15">
                     <label>Video Link:</label>
