@@ -35,7 +35,9 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                 message.success("Person profile successfully created", 10).then();
                 closeModal(false);
                 form.resetFields();
-                router.push('/').then();
+                router.push('/').then(() => {
+                    closeModal(false);
+                });
             } else {
                 message.error(messageText).then();
             }
