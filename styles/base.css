@@ -562,3 +562,62 @@ p:last-child {
     padding-bottom: 32px !important;
     padding-right: 38px !important;
 }
+
+
+@media screen and (max-width: 500px) {
+    #profile-row {
+        flex-wrap: wrap!important;
+        flex-flow: column!important;
+    }
+
+    #profile-area {
+        width: 255px!important;
+    }
+
+    #profile-area-row {
+        margin-top: 30px!important;
+        flex-flow: row!important;
+    }
+
+    #profile-btn {
+        justify-content: center;
+    }
+}
+
+.skill-div {
+    display: inline-block;
+    width: min-content;
+    margin: 9px 8px;
+    background-color: #EAF5FF;
+    border: 1px solid #1890FF;
+    color: #80c1fe;
+    border-radius: 40px;
+    padding: 8px 20px;
+}
+
+.avatar-upload {
+    display: flex!important;
+    justify-content: center!important;
+}
+
+.avatar-upload > .ant-upload-list, .ant-upload-list-picture-card > .ant-upload, .ant-upload-list-picture-card-container > .ant-upload-list-item, .ant-upload-list-item-done, .ant-upload-list-item-list-type-picture-card > .ant-upload-list-item-info {
+    border-radius: 50% !important;
+    width: 128px!important;
+    height: 128px!important;
+    padding: 0!important;
+}
+
+.ant-modal-header {
+    border-top-left-radius: 10px!important;
+    border-top-right-radius: 10px!important;
+}
+
+.skill-div *  {
+    margin: 0!important;
+    padding: 0!important;
+}
+
+.ant-select-dropdown {
+    min-width: max-content!important;
+    border-radius: 10px!important;
+}
