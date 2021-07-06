@@ -10,6 +10,7 @@ import AvatarUploadModal from "./AvatarUploadModal";
 import {CreatePersonProps, Person} from "./interfaces";
 import {UploadFile} from "antd/es/upload/interface";
 import {apiDomain} from "../../utilities/constants";
+import {useRouter} from "next/router";
 
 export interface Skill {
     category: string,
@@ -19,6 +20,7 @@ export interface Skill {
 
 const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
     const [form] = Form.useForm();
+    const router = useRouter();
     const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [avatarId, setAvatarId] = useState<number>(-1);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -33,12 +35,13 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                 message.success("Person profile successfully created", 10).then();
                 closeModal(false);
                 form.resetFields();
+                router.push('/').then();
             } else {
                 message.error(messageText).then();
             }
         },
         onError() {
-            message.error('Error with product creation').then();
+            message.error('Error with person profile creation').then();
         }
     });
 
