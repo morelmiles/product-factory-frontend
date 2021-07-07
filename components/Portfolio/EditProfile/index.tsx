@@ -1,7 +1,7 @@
-interface EditProfileProps {
+import React from "react";
+import {EditProfileProps} from "../interfaces";
 
-}
-const EditProfile = ({}:EditProfileProps) => {
+const EditProfile = ({}: EditProfileProps) => {
     return (
         <></>
     );

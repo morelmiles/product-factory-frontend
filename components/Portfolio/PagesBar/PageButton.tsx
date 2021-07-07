@@ -1,14 +1,11 @@
+import React from "react";
 import {Button} from "antd";
+import {PageButtonProps} from "../interfaces";
 
-interface PageButtonProps {
-    number: number,
-    active: boolean
-}
-
-const PageButton = ({number, active}: PageButtonProps) => {
+const PageButton = ({number, active, changePage}: PageButtonProps) => {
     const style = active ? "" : ""
     return (
-        <Button className={style}>
+        <Button style={{margin: "36px 8px"}} key={number} className={style} onClick={() => changePage(number)}>
             {number}
         </Button>
     );
