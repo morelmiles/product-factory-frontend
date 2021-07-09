@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {EditProfileProps, Skill, Website} from "../interfaces";
-import {Button, Col, Input, message, Row, Select, Typography, Upload} from "antd";
+import {Avatar, Button, Col, Input, message, Row, Select, Typography, Upload} from "antd";
 import {UploadFile} from "antd/es/upload/interface";
 import {useRouter} from "next/router";
 import ImgCrop from "antd-img-crop";
@@ -11,7 +11,7 @@ import {UPDATE_PERSON, SAVE_AVATAR} from "../../../graphql/mutations";
 import {getProp} from "../../../utilities/filters";
 import {apiDomain} from "../../../utilities/constants";
 import SkillsArea from "./skillsArea";
-import {PlusOutlined} from "@ant-design/icons";
+import {PlusOutlined, UserOutlined} from "@ant-design/icons";
 
 const {Option} = Select;
 
@@ -25,12 +25,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
     const [avatarId, setAvatarId] = useState<number>(-1);
     const [avatarUrl, setAvatarUrl] = useState<string>(profile.avatar);
     const [uploadStatus, setUploadStatus] = useState<boolean>(false);
-    const [fileList, setFileList] = useState<UploadFile[]>([{
-        uid: '-1',
-        name: profile.avatar ? profile.avatar.split('/').slice(-1)[0] : '',
-        url: apiDomain + avatarUrl,
-        status: "done"
-    }]);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
 
     const router = useRouter();
 
@@ -38,20 +33,10 @@ const EditProfile = ({profile}: EditProfileProps) => {
         setFirstName(profile.firstName.split(' ')[0]);
         setLastName(profile.firstName.split(' ')[1]);
         setBio(profile.bio);
-        setSkills(profile.skills);
         setWebsites(profile.websites);
         setWebsiteTypes(profile.websiteTypes);
         setAvatarUrl(profile.avatar);
-        if (profile.avatar) {
-            setFileList([{
-                uid: '-1',
-                name: profile.avatar ? profile.avatar.split('/').slice(-1)[0] : '',
-                url: apiDomain + avatarUrl,
-                status: "done"
-            }]);
-        } else {
-            setFileList([]);
-        }
+        setFileList([]);
     }, [profile])
 
     const [updateProfile] = useMutation(UPDATE_PERSON, {
@@ -154,7 +139,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
     return (
         <Row gutter={[52, 0]} justify={"center"} style={{margin: "5% auto"}}>
             <Col>
-                <ImgCrop shape={'round'} modalOk={"Crop"} rotate>
+                {fileList.length > 1 || !profile.avatar ? <ImgCrop shape={'round'} modalOk={"Crop"} rotate>
                     <Upload className="avatar-upload"
                             onChange={onUploadChange}
                             fileList={fileList}
@@ -164,7 +149,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
                     >
                         {fileList.length < 1 && '+ Upload'}
                     </Upload>
-                </ImgCrop>
+                </ImgCrop> : <Avatar size={80} icon={<UserOutlined/>} src={apiDomain + profile.avatar}/>}
             </Col>
             <Col>
                 <Row gutter={[48, 0]}>
@@ -193,7 +178,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
                             <Typography.Text strong>Bio</Typography.Text>
                         </Row>
                         <Row style={{marginBottom: 20}}>
-                            <Input.TextArea style={{width: 460}} value={bio} placeholder={"Bio"}
+                            <Input.TextArea autoSize={true} style={{width: 460}} value={bio} placeholder={"Bio"}
                                             onChange={(e) => setBio(e.target.value)}/>
                         </Row>
                     </Col>
@@ -242,7 +227,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
                                 </Col>
                             </Row>
                         ))}
-                        <Row align={"middle"} style={{marginBottom: 20}}>
+                        <Row align={"middle"}>
                             <Button size={"small"}
                                     style={{fontSize: 11, border: "none", padding: 0, color: "#1890FF"}}
                                     onClick={changeWebsitesCount}><PlusOutlined style={{marginRight: 3}}/> Add

@@ -42,6 +42,7 @@ const EditPerson = (user: User) => {
     }, [profileData]);
 
     const isCurrentUser = (id: string) => {
+        return true;
         if (user.id !== id && !redirect) {
             setRedirect(true);
         }
@@ -61,7 +62,7 @@ const EditPerson = (user: User) => {
                 {isCurrentUser(profile.id) ?
                     (<Content className="main-page">
                         <EditProfile profile={profile}/>
-                        <img style={{width: "100%"}} src={footer} alt=""/>
+                        <img style={{ width: "100%"}} src={footer} alt=""/>
                     </Content>) : (<Forbidden403 personSlug={personSlug}/>)}
             </Layout>
         </ContainerFlex>

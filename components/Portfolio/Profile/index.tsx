@@ -41,7 +41,8 @@ const Profile = ({profile, user}: ProfileProps) => {
                 </Row>
                 <Row>
                     <Typography.Text style={{
-                        maxWidth: 232
+                        maxWidth: 232,
+                        color: "#595959"
                     }}
                     >{profile.bio}</Typography.Text>
                 </Row>
