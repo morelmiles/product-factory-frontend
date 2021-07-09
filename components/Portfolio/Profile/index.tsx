@@ -2,21 +2,38 @@ import React from "react";
 import {EditOutlined, UserOutlined} from "@ant-design/icons";
 import {Avatar, Button, Col, Divider, Row, Typography} from "antd";
 import {ProfileProps} from "../interfaces";
+import {useRouter} from "next/router";
+import {connect} from "react-redux";
+import {apiDomain} from "../../../utilities/constants";
 
-const Profile = ({profile, setTaskDetailModal}: ProfileProps) => {
+const Profile = ({profile, user}: ProfileProps) => {
+    const router = useRouter();
+    const {personSlug} = router.query;
+    const isCurrentUser = (id: string) => {
+        return user.id === id;
+    }
     return (
         <div style={{border: " 1px solid #E7E7E7", borderRadius: 15, padding: 14, width: 300, marginRight: 10}}>
-            <Row justify={"center"}>
-                <Avatar size={80} icon={<UserOutlined/>} src={profile.avatar}/>
-                <Button style={{float: "left", border: "none"}}
-                        size={"large"}
-                        shape="circle"
-                        onClick={() => setTaskDetailModal(true)}
-                        icon={<EditOutlined/>}/>
+            <Row>
+                <Col span={20}>
+                    <Row justify={"center"}>
+                        <Avatar size={80} icon={<UserOutlined/>} src={apiDomain + profile.avatar}/>
+                    </Row>
+                </Col>
+                <Col>
+                    <Row justify={"end"}>
+                        {isCurrentUser(profile.id) &&
+                        (<Button style={{border: "none"}}
+                                 size={"large"}
+                                 shape="circle"
+                                 onClick={() => router.push(`/${personSlug}/edit`)}
+                                 icon={<EditOutlined/>}/>)}
+                    </Row>
+                </Col>
             </Row>
             <div style={{padding: 14}}>
                 <Row>
-                    <Typography.Text style={{
+                    <Typography.Text strong style={{
                         color: "#262626",
                         fontSize: 20,
                         fontFamily: "SF Pro Display"
@@ -29,18 +46,28 @@ const Profile = ({profile, setTaskDetailModal}: ProfileProps) => {
                     >{profile.bio}</Typography.Text>
                 </Row>
                 <Row><Divider/></Row>
-                {profile.skills.length > 0 &&(<Row>
-                    <Typography.Text
-                        style={{fontSize: 14, fontFamily: "SF Pro Display", color: "#262626"}}>Skills</Typography.Text>
-                    {profile.skills.map(skill => (
-                        <div style={{padding: "5px 16px", borderRadius: 2, background: "#F5F5F5"}}>
-                            {skill.category}{skill.expertise ? `(${skill.expertise})` : null}
-                        </div>
-                    ))}
+                {profile.skills.length > 0 && (<Row justify={"start"}>
+                    <Col>
+                        <Row><Typography.Text strong
+                                              style={{
+                                                  fontSize: 14,
+                                                  fontFamily: "SF Pro Display",
+                                                  color: "#262626"
+                                              }}>Skills</Typography.Text></Row>
+                        {profile.skills.map(skill => (
+                            <Row justify={"start"}
+                                 style={{marginBottom: 3, padding: "5px 16px", borderRadius: 2, background: "#F5F5F5"}}>
+                                {skill.category}{skill.expertise ? `(${skill.expertise})` : null}
+                            </Row>
+                        ))}</Col>
                 </Row>)}
             </div>
         </div>
     );
 }
 
-export default Profile;
+const mapStateToProps = (state: any) => ({
+    user: state.user
+})
+
+export default connect(mapStateToProps, null)(Profile);

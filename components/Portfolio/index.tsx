@@ -16,7 +16,9 @@ const Portfolio = ({}: PortfolioProps) => {
         firstName: '',
         bio: '',
         avatar: '',
-        skills: []
+        skills: [],
+        websites: [],
+        websiteTypes: []
     });
     const [paginator, setPaginator] = useState<Paginator>({
         page: 1,
@@ -54,7 +56,7 @@ const Portfolio = ({}: PortfolioProps) => {
 
     return (
         <div style={{display: "flex", flexWrap: "wrap"}}>
-            <Profile profile={profile} setTaskDetailModal={setTaskDetailModal}/>
+            <Profile profile={profile} />
             <Contributions hasPrev={paginator.hasPrev} hasNext={paginator.hasNext} tasks={taskList}
                            changePage={changePage} pagesNumber={paginator.pages} activePage={paginator.page}/>
         </div>

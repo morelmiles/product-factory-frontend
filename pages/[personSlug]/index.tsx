@@ -1,6 +1,5 @@
 import React from 'react';
 import '../../styles/Profile.module.less';
-import ProfileTop from "../../components/Profile/ProfileTop";
 import Portfolio from "../../components/Portfolio";
 import {Layout} from "antd";
 import Header from "../../components/Header";
@@ -11,6 +10,7 @@ const {Content} = Layout;
 
 
 const Person: React.FunctionComponent = () => {
+
     return (
         <ContainerFlex>
             <Layout>

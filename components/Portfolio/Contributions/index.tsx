@@ -30,7 +30,7 @@ const Contributions = ({tasks, changePage, pagesNumber, activePage, hasNext, has
                             <Col>
                                 <Row>
                                     <Row align={"top"}>
-                                        <Typography.Text style={{
+                                        <Typography.Text strong style={{
                                             fontSize: 14,
                                             fontFamily: "Roboto",
                                         }}>{task.title}</Typography.Text>

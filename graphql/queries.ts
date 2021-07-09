@@ -998,6 +998,11 @@ export const GET_PERSON_INFO = gql `
         category
         expertise
       }
+      websites {
+        type
+        website
+      }
+      websiteTypes
     }
   }
 `;
