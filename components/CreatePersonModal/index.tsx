@@ -97,7 +97,7 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                                    rules={[
                                        {required: true, message: "First Name is required"},
                                    ]}>
-                            <FormInput label="First Name" type="text" name="firstName" placeholder="First name"
+                            <FormInput label="First Name" type="text" name="firstName" placeholder="Jane"
                                        value={form.getFieldValue('firstName')}/>
                         </Form.Item>
                     </Col>
@@ -106,18 +106,17 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                                    rules={[
                                        {required: true, message: "Last Name is required"},
                                    ]}>
-                            <FormInput label="Last Name" name="lastName" placeholder="Last Name" type="text"
+                            <FormInput label="Last Name" name="lastName" placeholder="Doe" type="text"
                                        value={form.getFieldValue('lastName')}/>
                         </Form.Item>
                     </Col>
                 </Row>
                 <Row id="profile-area-row" style={{flexFlow: "row-reverse"}}>
                     <Form.Item name="bio"
-                               style={{float: "right"}}
-                               rules={[
-                                   {required: true, message: "Bio is required"},
-                               ]}>
-                        <FormInput label="Add Your Bio" name="bio" placeholder="Add Your Bio" type="textarea"
+                               style={{float: "right"}}>
+                        <FormInput label="Add Your Bio" name="bio"
+                                   placeholder="Self-thought UI/UX Designer based in Rio de Janeiro. Passionate about psychology , user research and mobile design."
+                                   type="textarea"
                                    value={form.getFieldValue('bio')}/>
                     </Form.Item>
                 </Row>
