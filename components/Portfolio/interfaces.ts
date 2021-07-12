@@ -17,13 +17,24 @@ export interface Skill {
     expertise: string | null
 }
 
+export interface Product {
+    name: string
+    avatar: string
+}
+
+export interface DeliveryMessage {
+    message: string
+    attachments: Attachment[]
+}
+
 export interface Task {
     id: number
     title: string
-    productAvatar: string
     date: string
+    product: Product
     skills: Skill[]
     reviewerPerson: Reviewer
+    initiative: string
 }
 
 export interface Reviewer {
@@ -45,6 +56,9 @@ export interface EditProfileProps {
 
 export interface TaskDetailProps {
     task: Task
+    modal: boolean
+    setModal: Function
+    personSlug: string | string[] | undefined
 }
 
 export interface ProfileProps {
@@ -106,6 +120,16 @@ export interface Expertise {
 }
 
 export interface SkillExpertise {
-    skill: string,
+    skill: string
     expertise: Expertise
+}
+
+export interface Attachment {
+    path: string
+    name: string
+    type: string
+}
+
+export interface TaskDetailAttachmentsProps {
+    attachments: Attachment[]
 }

@@ -12,6 +12,11 @@ const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
     const [allCategories, setAllCategories] = useState<Category[]>([]);
     const [skillExpertise, setSkillExpertise] = useState<SkillExpertise[]>([]);
     const {data: categories} = useQuery(GET_CATEGORIES_LIST);
+    const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
+
+    useEffect(() => {
+        setCurrentSkills(skills);
+    });
 
     useEffect(() => {
         if (categories?.taskCategoryListing) {
@@ -86,8 +91,14 @@ const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
             {skillExpertise && skillExpertise.map((skillExpertise, index) => {
                 return (
                     <div key={index} className={"skill-div"}
-                         style={{backgroundColor: "#F5F5F5", borderRadius: 2, border: "none", color: "#595959", fontSize: 12,
-                         width: "max-content"}}>
+                         style={{
+                             backgroundColor: "#F5F5F5",
+                             borderRadius: 2,
+                             border: "none",
+                             color: "#595959",
+                             fontSize: 12,
+                             width: "max-content"
+                         }}>
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             <div>#</div>
                             {<TreeSelect
@@ -118,10 +129,28 @@ const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
                                 }
                             </TreeSelect>}
                         </div>
+
                     </div>
                 );
             })}
+            {currentSkills.map((skill, index) => (
+                <div key={index} className={"skill-div"}
+                     style={{
+                         backgroundColor: "#F5F5F5",
+                         borderRadius: 2,
+                         border: "none",
+                         color: "#595959",
+                         fontSize: 12,
+                         width: "max-content"
+                     }}>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                        <div>#</div>
+                        {skill.expertise}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
+
 export default SkillsArea;

@@ -37,6 +37,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
         setWebsiteTypes(profile.websiteTypes);
         setAvatarUrl(profile.avatar);
         setFileList([]);
+        setSkills(profile.skills);
     }, [profile])
 
     const [updateProfile] = useMutation(UPDATE_PERSON, {

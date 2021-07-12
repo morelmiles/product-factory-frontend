@@ -42,7 +42,6 @@ const EditPerson = (user: User) => {
     }, [profileData]);
 
     const isCurrentUser = (id: string) => {
-        return true;
         if (user.id !== id && !redirect) {
             setRedirect(true);
         }

@@ -1017,7 +1017,6 @@ export const GET_PERSON_DONE_TASKS = gql `
       tasks {
         id
         title
-        productAvatar
         date
         skills {
           category
@@ -1028,6 +1027,24 @@ export const GET_PERSON_DONE_TASKS = gql `
           firstName
           avatar
         }
+        product {
+          name
+          avatar
+        }
+        initiative
+      }
+    }
+  }
+`;
+
+export const GET_PERSON_TASK_DELIVERY_MESSAGE = gql`
+  query GetPersonDelivery ($taskId: Int!, $personSlug: String!) {
+    personTaskDeliveryMessage (taskId: $taskId, personSlug: $personSlug) {
+      message
+      attachments {
+        name
+        path
+        fileType
       }
     }
   }
