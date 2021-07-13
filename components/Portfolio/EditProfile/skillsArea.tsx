@@ -15,10 +15,8 @@ const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
     const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
 
     useEffect(() => {
-        if (currentSkills.length === 0) {
-            setCurrentSkills(skills);
-        }
-    });
+        setCurrentSkills(skills);
+    }, []);
 
     useEffect(() => {
         if (categories?.taskCategoryListing) {
