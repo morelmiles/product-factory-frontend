@@ -66,6 +66,7 @@ export interface ProfileProps {
     user: {
         id: string
     }
+    refetchProfile: Function
 }
 
 export interface PagesBarProps {
