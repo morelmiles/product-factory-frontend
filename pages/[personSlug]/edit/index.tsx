@@ -42,7 +42,7 @@ const EditPerson = (user: User) => {
     }, [profileData]);
 
     const isCurrentUser = () => {
-        console.log(user.id);
+        console.log(user);
         console.log(profile.id);
         if (user.id !== profile.id && !redirect) {
             setRedirect(true);
@@ -60,7 +60,7 @@ const EditPerson = (user: User) => {
         <ContainerFlex>
             <Layout>
                 <Header/>
-                {profile.id !== '' ? isCurrentUser() ?
+                {profile.id && user.id ? isCurrentUser() ?
                     (<Content className="main-page">
                         <EditProfile profile={profile}/>
                         <img style={{width: "100%"}} src={footer} alt=""/>
