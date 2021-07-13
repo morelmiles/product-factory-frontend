@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev -p 8080",
     "build": "next build",
     "start": "next start -p $PORT",
+    "test": "cypress run",
     "heroku-postbuild": "npm run build",
     "postinstall": "patch-package"
   },
@@ -62,6 +63,8 @@
     "@types/draftjs-to-html": "^0.8.0",
     "@types/react-redux": "^7.1.16",
     "@types/react-rte": "^0.16.1",
-    "@types/react-sortable-tree": "^0.3.12"
+    "@types/react-sortable-tree": "^0.3.12",
+    "cypress": "^7.1.0",
+    "cypress-wait-until": "^1.7.1"
   }
 }
