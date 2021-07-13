@@ -15,12 +15,8 @@ import Forbidden403 from "../../../components/403";
 
 const {Content} = Layout;
 
-interface User {
-    id: string
-}
 
-
-const EditPerson = (user: User) => {
+const EditPerson = (user: any) => {
     const router = useRouter();
     const {personSlug} = router.query;
     const [profile, setProfile] = useState<ProfileType>({
@@ -43,10 +39,8 @@ const EditPerson = (user: User) => {
     }, [profileData]);
 
     useEffect(() => {
-        console.log(profile);
-        console.log(user)
-        if (user.id && profile.id) {
-            if (user.id !== profile.id && !redirect) {
+        if (user.user && profile) {
+            if (user.user.id !== profile.id && !redirect) {
                 setRedirect(true);
             } else {
                 setIsCurrentUser(true);
@@ -65,7 +59,7 @@ const EditPerson = (user: User) => {
         <ContainerFlex>
             <Layout>
                 <Header/>
-                {user.id && profile.id ? isCurrentUser ?
+                {user.user.id && profile.id ? isCurrentUser ?
                     (<Content className="main-page">
                         <EditProfile profile={profile}/>
                         <img style={{width: "100%"}} src={footer} alt=""/>
@@ -76,7 +70,7 @@ const EditPerson = (user: User) => {
 }
 
 const mapStateToProps = (state: any) => ({
-    user: state.user.user
+    user: state.user
 })
 
 export default connect(mapStateToProps, null)(EditPerson);
