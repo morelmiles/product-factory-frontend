@@ -53,7 +53,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
             }
         },
         onError() {
-            message.error('Error with person profile creation').then();
+            message.error('Error with person profile updating').then();
         }
     });
 
