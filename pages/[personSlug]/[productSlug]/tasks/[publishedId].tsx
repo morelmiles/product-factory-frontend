@@ -693,6 +693,24 @@ const Task: React.FunctionComponent<Params> = ({
                                                 </>
                                             )}
                                         </Row>
+                                        {getProp(task, "taskCategory", null) && (
+                                            <Row style={{marginTop: 10}} className="text-sm mt-8">
+                                                <strong className="my-auto">Category:&nbsp;</strong>
+                                                &nbsp;
+                                                <Typography className="text-grey-9">
+                                                    {getProp(task, "taskCategory", null)}
+                                                </Typography>
+                                            </Row>
+                                        )}
+                                        {getProp(task, "taskExpertise", null) && (
+                                            <Row style={{marginTop: 10}} className="text-sm mt-8">
+                                                <strong className="my-auto">Expertise:&nbsp;</strong>
+                                                &nbsp;
+                                                <Typography className="text-grey-9">
+                                                    {getProp(task, "taskExpertise", null)}
+                                                </Typography>
+                                            </Row>
+                                        )}
                                         {getProp(task, "priority", null) && (
                                             <Row style={{marginTop: 10}} className="text-sm mt-8">
                                                 <strong className="my-auto">Priority:&nbsp;</strong>
@@ -897,63 +915,6 @@ const Task: React.FunctionComponent<Params> = ({
                             )}
                         </>
                     )}
-                    {getProp(task, "priority", null) && (
-                        <Row style={{marginTop: 10}} className="text-sm mt-8">
-                            <strong className="my-auto">Priority:&nbsp;</strong>
-                            &nbsp;
-                            <Priorities
-                                task={task}
-                                submit={() => refetch()}
-                                canEdit={userHasManagerRoots}
-                            />
-                        </Row>
-                    )}
-                    {getProp(task, "taskCategory", null) && (
-                        <Row style={{marginTop: 10}} className="text-sm mt-8">
-                            <strong className="my-auto">Category:&nbsp;</strong>
-                            &nbsp;
-                            <Typography className="text-grey-9">
-                                {getProp(task, "taskCategory", null)}
-                            </Typography>
-                        </Row>
-                    )}
-                    {getProp(task, "taskExpertise", null) && (
-                        <Row style={{marginTop: 10}} className="text-sm mt-8">
-                            <strong className="my-auto">Expertise:&nbsp;</strong>
-                            &nbsp;
-                            <Typography className="text-grey-9">
-                                {getProp(task, "taskExpertise", null)}
-                            </Typography>
-                        </Row>
-                    )}
-                    {getProp(task, "reviewer.slug", null) && (
-                        <Row style={{marginTop: 10}} className="text-sm mt-8">
-                            <strong className="my-auto">Reviewer:</strong>
-
-                            <Row align="middle" style={{marginLeft: 15}}>
-                                <Col>
-                                    <CustomAvatar2
-                                        person={{
-                                            firstName: getProp(
-                                                task,
-                                                "reviewer.firstName",
-                                                ""
-                                            ),
-                                            slug: getProp(task, "reviewer.slug", ""),
-                                        }}
-                                    />
-                                </Col>
-                                <Col>
-                                    <Typography.Link
-                                        className="text-grey-9"
-                                        href={`/${getProp(task, "reviewer.slug", "")}`}
-                                    >
-                                        {getProp(task, "reviewer.firstName", "")}
-                                    </Typography.Link>
-                                </Col>
-                            </Row>
-                        </Row>
-                    )}
                     <Modal
                         title="Contribution License Agreement"
                         okText="I Agree"
@@ -978,7 +939,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-        userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
+    userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Task);
