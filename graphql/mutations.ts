@@ -11,8 +11,8 @@ export const CREATE_PERSON = gql`
 `;
 
 export const UPDATE_PERSON = gql`
-  mutation UpdatePerson ($firstName: String!, $lastName: String!, $bio: String!, $skills: [SkillInput]! $avatar: Int) {
-    updatePerson(personInput: {firstName: $firstName, lastName: $lastName, bio: $bio, skills: $skills, avatar: $avatar}) {
+  mutation UpdatePerson ($firstName: String!, $lastName: String!, $bio: String!, $skills: [SkillInput]! $avatar: Int, $websites: WebsiteInput) {
+    updatePerson(personInput: {firstName: $firstName, lastName: $lastName, bio: $bio, skills: $skills, avatar: $avatar, websites: $websites}) {
       status
       message
     }
