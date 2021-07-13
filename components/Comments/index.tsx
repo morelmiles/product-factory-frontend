@@ -197,7 +197,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
       <Modal
         title="Reply to comment" visible={isModalVisible} onOk={addComment} onCancel={closeModal}
         maskClosable={false}>
-        <Mentions rows={2} onChange={val => onMentionChange(val)} value={commentText}>
+        <Mentions rows={2} onChange={val => onMentionChange(val)} value={commentText} notFoundContent={"Type a few characters to list matching users"}>
           {
             users.length > 0 ?
             users.map((user) => (
@@ -280,7 +280,7 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, object
   return (
     <>
       <Form.Item>
-        <Mentions rows={2} onChange={val => onMentionChange(val)} value={commentText}>
+        <Mentions rows={2} onChange={val => onMentionChange(val)} value={commentText} notFoundContent={"Type a few characters to list matching users"}>
           {
             users.length > 0 ?
             users.map((user) => (

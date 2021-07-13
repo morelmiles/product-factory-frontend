@@ -42,6 +42,19 @@ type Props = {
 
 };
 
+interface Category {
+    active: boolean,
+    selectable: boolean,
+    id: number,
+    expertise: Expertise,
+    name: string,
+    children: Category[]
+}
+
+interface Expertise {
+    [key: string]: string[]
+}
+
 const AddTask: React.FunctionComponent<Props> = (
     {
         modal,
@@ -107,22 +120,31 @@ const AddTask: React.FunctionComponent<Props> = (
         }
     };
 
+    const findCategory = (categories: Category[], value: string): Category | undefined => {
+        for (let category of categories) {
+            if (category.children && category.children.length > 0) {
+                const skill = findCategory(category.children, value);
+                if (skill) {
+                    return skill;
+                }
+            } else if (category.name === value) return category;
+        }
+    }
+
     useEffect(() => {
         if (category && category !== "") {
             // @ts-ignore
-            const taskCategory = allCategories.find((cat) => cat.id === category);
+            const taskCategory = findCategory(allCategories, category);
             if (taskCategory) {
                 // @ts-ignore
                 setExpertises(taskCategory.expertise);
-            }
-            else {
+            } else {
                 // @ts-ignore
                 const taskCategory = allCategories.find((cat) => cat.parent.id === category);
                 if (taskCategory) {
                     // @ts-ignore
                     setExpertises(taskCategory.expertise);
-                }
-                else {
+                } else {
                     setExpertise({});
                 }
             }
@@ -362,6 +384,13 @@ const AddTask: React.FunctionComponent<Props> = (
         setInitiatives(newData.initiatives);
     }
 
+    const makeCategoriesTree = (categories: Category[]) => {
+        return categories.map((category, index) => (
+            <TreeNode id={index} selectable={category.selectable} value={category.name} title={category.name}>
+                {category.children ? makeCategoriesTree(category.children) : null}
+            </TreeNode>));
+    }
+
     const reviewSelectChange = (val: any) => {
         setReviewSelectValue(val);
     }
@@ -529,42 +558,37 @@ const AddTask: React.FunctionComponent<Props> = (
                         placeholder="Select task category"
                         value={category}
                     >
-                        {allCategories && allCategories.map((category) => (
-                            // @ts-ignore
-                            <TreeNode selectable={!category.parent} value={category.id} title={category.name}>
-                                {category.parent ?
-                                    // @ts-ignore
-                                    <TreeNode value={category.parent.id} title={category.parent.name}/> : null}
-                            </TreeNode>
-                        ))}
+                        {allCategories && makeCategoriesTree(allCategories)}
                     </TreeSelect>
                 </Row>
                 <Row className="mb-15">
                     <label>Expertise</label>
                     <TreeSelect
                         allowClear
-                        placeholder="Select expertise"
-                        disabled={!category}
                         onChange={setExpertise}
                         value={expertise}
+                        placeholder="Select expertise"
+                        disabled={!category}
                     >
-                        {
-                            category ?
-                                // @ts-ignore
-                                Object.keys(expertises).map((key) => {
-                                    // @ts-ignore
-                                    if (Array.isArray(expertises[key])) {
-                                        return (
-                                            <TreeNode selectable={false} value={key} title={key}>
-                                                {expertises[key].map(val => (
-                                                    <TreeNode value={val} title={val}/>
-                                                ))}
+                            {
+                                Object.keys(expertises).map((currExpertise) => (
+                                    <TreeNode
+                                        value={currExpertise}
+                                        selectable={false}
+                                        title={currExpertise}
+                                    >
+                                        {(Object(expertises)[currExpertise] as string[]).map((value) => (
+                                            <TreeNode
+                                                value={value}
+                                                selectable={true}
+                                                title={value}
+                                            >
+                                                {value}
                                             </TreeNode>
-                                        )
-                                    }
-                                }) : null
-                        }
-                    </TreeSelect>
+                                        ))}
+                                    </TreeNode>))
+                            }
+                        </TreeSelect>
                 </Row>
                 <Row className="mb-15">
                     <label>Video Link:</label>
