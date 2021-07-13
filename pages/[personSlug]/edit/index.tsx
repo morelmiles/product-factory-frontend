@@ -32,6 +32,7 @@ const EditPerson = (user: User) => {
         websites: [],
         websiteTypes: []
     });
+    const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
     const [redirect, setRedirect] = useState<boolean>(false);
     const {data: profileData} = useQuery(GET_PERSON_INFO, {variables: {personSlug}});
 
@@ -41,14 +42,18 @@ const EditPerson = (user: User) => {
         }
     }, [profileData]);
 
-    const isCurrentUser = () => {
+    useEffect(() => {
         console.log(user);
         console.log(profile.id);
-        if (user.id !== profile.id && !redirect) {
-            setRedirect(true);
+        if (user.id && profile.id) {
+            if (user.id !== profile.id && !redirect) {
+                setRedirect(true);
+            } else {
+                setIsCurrentUser(true);
+            }
         }
-        return user.id === profile.id;
-    }
+    }, [profile, user]);
+
     useEffect(() => {
         if (redirect) {
             router.push('/');
@@ -60,7 +65,7 @@ const EditPerson = (user: User) => {
         <ContainerFlex>
             <Layout>
                 <Header/>
-                {profile.id && user.id ? isCurrentUser() ?
+                {user.id && profile.id ? isCurrentUser ?
                     (<Content className="main-page">
                         <EditProfile profile={profile}/>
                         <img style={{width: "100%"}} src={footer} alt=""/>
