@@ -134,3 +134,8 @@ export interface Attachment {
 export interface TaskDetailAttachmentsProps {
     attachments: Attachment[]
 }
+
+export interface TasksComponentProps {
+    tasks: Task[]
+    openTaskDetail: Function
+}
