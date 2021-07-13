@@ -27,7 +27,7 @@ const Portfolio = ({}: PortfolioProps) => {
         hasPrev: false
     });
 
-    const {data: profileData} = useQuery(GET_PERSON_INFO, {variables: {personSlug}});
+    const {data: profileData, refetch: personRefetch} = useQuery(GET_PERSON_INFO, {variables: {personSlug}});
     const {data: tasksData, refetch: tasksRefetch} = useQuery(GET_PERSON_DONE_TASKS, {
         variables: {
             page: paginator.page,
@@ -56,7 +56,7 @@ const Portfolio = ({}: PortfolioProps) => {
 
     return (
         <div style={{display: "flex", flexWrap: "wrap"}}>
-            <Profile profile={profile} />
+            <Profile refetchProfile={personRefetch} profile={profile} />
             <Contributions hasPrev={paginator.hasPrev} hasNext={paginator.hasNext} tasks={taskList}
                            changePage={changePage} pagesNumber={paginator.pages} activePage={paginator.page}/>
         </div>

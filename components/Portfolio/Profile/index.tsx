@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {EditOutlined, UserOutlined} from "@ant-design/icons";
 import {Avatar, Button, Col, Divider, Row, Typography} from "antd";
 import {ProfileProps} from "../interfaces";
@@ -6,12 +6,17 @@ import {useRouter} from "next/router";
 import {connect} from "react-redux";
 import {apiDomain} from "../../../utilities/constants";
 
-const Profile = ({profile, user}: ProfileProps) => {
+const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
     const router = useRouter();
     const {personSlug} = router.query;
     const isCurrentUser = (id: string) => {
         return user.id === id;
     }
+
+    useEffect(() => {
+        refetchProfile({personSlug});
+    }, []);
+
     return (
         <div style={{border: " 1px solid #E7E7E7", borderRadius: 15, padding: 14, width: 300, marginRight: 10}}>
             <Row>
