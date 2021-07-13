@@ -459,7 +459,7 @@ const Task: React.FunctionComponent<Params> = ({
                         <>
                             {assignee.id === user.id ? (
                                 <div className="flex-column ml-auto mt-10">
-                                    {inReview ? null : (
+                                    { (
                                         <>
                                             <Button
                                                 type="primary"
