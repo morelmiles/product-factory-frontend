@@ -986,3 +986,66 @@ export const GET_CATEGORIES = gql`
     categories
   }
 `;
+
+export const GET_PERSON_INFO = gql `
+  query GetPersonInfo ($personSlug: String!) {
+    personInfo (personSlug: $personSlug) {
+      id
+      firstName
+      bio
+      avatar
+      skills {
+        category
+        expertise
+      }
+      websites {
+        type
+        website
+      }
+      websiteTypes
+    }
+  }
+`;
+
+export const GET_PERSON_DONE_TASKS = gql `
+  query GetPersonDoneTasks ($page: Int!, $personSlug: String!) {
+    personTasks (page: $page, personSlug: $personSlug) {
+      page
+      pages
+      hasNext
+      hasPrev
+      tasks {
+        id
+        title
+        date
+        skills {
+          category
+          expertise
+        }
+        reviewerPerson {
+          id
+          firstName
+          avatar
+        }
+        product {
+          name
+          avatar
+        }
+        initiative
+      }
+    }
+  }
+`;
+
+export const GET_PERSON_TASK_DELIVERY_MESSAGE = gql`
+  query GetPersonDelivery ($taskId: Int!, $personSlug: String!) {
+    personTaskDeliveryMessage (taskId: $taskId, personSlug: $personSlug) {
+      message
+      attachments {
+        name
+        path
+        fileType
+      }
+    }
+  }
+`;

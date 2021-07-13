@@ -7,7 +7,6 @@ import {getProp} from "../../utilities/filters";
 const AvatarUploadModal = ({open, setOpen, fileList, setFileList, upload}: AvatarUpload) => {
 
     const onUploadChange = ({fileList}: any) => {
-        console.log(fileList);
         setFileList(fileList);
     }
 

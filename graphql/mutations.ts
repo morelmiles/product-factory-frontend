@@ -10,8 +10,17 @@ export const CREATE_PERSON = gql`
   }
 `;
 
-export const SAVE_AVATAR = gql `
-  mutation SaveAvatar($avatar: Upload!) {
+export const UPDATE_PERSON = gql`
+  mutation UpdatePerson ($firstName: String!, $lastName: String!, $bio: String!, $skills: [SkillInput]! $avatar: Int) {
+    updatePerson(personInput: {firstName: $firstName, lastName: $lastName, bio: $bio, skills: $skills, avatar: $avatar}) {
+      status
+      message
+    }
+  }
+`;
+
+export const SAVE_AVATAR = gql`
+  mutation SaveAvatar($avatar: String!) {
     saveAvatar(avatar: $avatar) {
       status
       message
