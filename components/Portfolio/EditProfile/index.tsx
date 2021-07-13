@@ -91,11 +91,15 @@ const EditProfile = ({profile}: EditProfileProps) => {
     }
 
     const save = () => {
+        let newSkills: any[] = [];
+        for (let skill of skills) {
+            newSkills.push({category: skill.category, expertise: skill.expertise});
+        }
         const variables = {
             firstName,
             lastName,
             bio,
-            skills,
+            skills: newSkills,
             websites,
             avatar: avatarId
         }
@@ -237,8 +241,10 @@ const EditProfile = ({profile}: EditProfileProps) => {
                     </Col>
                 </Row>
                 <Row justify={"start"} style={{marginBottom: 20}}>
-                    <Button type={"primary"} style={{width: 108, height: 33, marginRight: 20}} onClick={save}>Save</Button>
-                    <Button size={"large"} style={{width: 108, height: 33}} onClick={() => router.back()}>Cancel</Button>
+                    <Button type={"primary"} style={{width: 108, height: 33, marginRight: 20}}
+                            onClick={save}>Save</Button>
+                    <Button size={"large"} style={{width: 108, height: 33}}
+                            onClick={() => router.back()}>Cancel</Button>
                 </Row>
             </Col>
         </Row>
