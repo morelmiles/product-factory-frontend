@@ -43,6 +43,8 @@ const EditPerson = (user: User) => {
     }, [profileData]);
 
     useEffect(() => {
+        console.log(profile);
+        console.log(user)
         if (user.id && profile.id) {
             if (user.id !== profile.id && !redirect) {
                 setRedirect(true);
