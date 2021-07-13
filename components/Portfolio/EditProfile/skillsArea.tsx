@@ -15,7 +15,9 @@ const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
     const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
 
     useEffect(() => {
-        setCurrentSkills(skills);
+        if (currentSkills.length === 0) {
+            setCurrentSkills(skills);
+        }
     });
 
     useEffect(() => {
