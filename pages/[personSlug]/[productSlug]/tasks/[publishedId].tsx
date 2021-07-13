@@ -455,11 +455,11 @@ const Task: React.FunctionComponent<Params> = ({
 
             return (
                 <Row className="text-sm">
-                    {(
+                    {assignee && !inReview ? (
                         <>
                             {assignee.id === user.id ? (
                                 <div className="flex-column ml-auto mt-10">
-                                    { (
+                                    {inReview ? null : (
                                         <>
                                             <Button
                                                 type="primary"
@@ -480,7 +480,7 @@ const Task: React.FunctionComponent<Params> = ({
                                 </div>
                             ) : null}
                         </>
-                    )}
+                    ) : null}
                     {taskStatus === "Available" && (
                         <>
                             <div className="flex-column ml-auto mt-10">
