@@ -15,6 +15,12 @@ function Home() {
           name="description"
           content="Open United - OpenUnited is the place where communities - comprising contributors of all kinds - come together to create and contribute to Open Products."
         />
+        <link
+            rel="preload"
+            href="/fonts/Roboto/Roboto-Black.ttf"
+            as="font"
+            crossOrigin=""
+        />
       </Head>
       <Layout style={{ minHeight: "100vh" }}>
         <Header />
