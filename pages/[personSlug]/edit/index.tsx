@@ -43,8 +43,6 @@ const EditPerson = (user: User) => {
     }, [profileData]);
 
     useEffect(() => {
-        console.log(user);
-        console.log(profile.id);
         if (user.id && profile.id) {
             if (user.id !== profile.id && !redirect) {
                 setRedirect(true);
@@ -76,7 +74,7 @@ const EditPerson = (user: User) => {
 }
 
 const mapStateToProps = (state: any) => ({
-    user: state.user
+    user: state.user.user
 })
 
 export default connect(mapStateToProps, null)(EditPerson);
