@@ -6,7 +6,7 @@ import {GET_PERSON_INFO} from "../../../graphql/queries";
 import {useRouter} from "next/router";
 import {ProfileType} from "../../../components/Portfolio/interfaces";
 import EditProfile from "../../../components/Portfolio/EditProfile";
-import {Layout, Row, Typography} from "antd";
+import {Layout} from "antd";
 import Header from "../../../components/Header";
 import ContainerFlex from "../../../components/ContainerFlex";
 import {connect} from "react-redux";
@@ -41,11 +41,13 @@ const EditPerson = (user: User) => {
         }
     }, [profileData]);
 
-    const isCurrentUser = (id: string) => {
-        if (user.id !== id && !redirect) {
+    const isCurrentUser = () => {
+        console.log(user.id);
+        console.log(profile.id);
+        if (user.id !== profile.id && !redirect) {
             setRedirect(true);
         }
-        return user.id === id;
+        return user.id === profile.id;
     }
     useEffect(() => {
         if (redirect) {
@@ -58,11 +60,11 @@ const EditPerson = (user: User) => {
         <ContainerFlex>
             <Layout>
                 <Header/>
-                {isCurrentUser(profile.id) ?
+                {profile.id !== '' ? isCurrentUser() ?
                     (<Content className="main-page">
                         <EditProfile profile={profile}/>
-                        <img style={{ width: "100%"}} src={footer} alt=""/>
-                    </Content>) : (<Forbidden403 personSlug={personSlug}/>)}
+                        <img style={{width: "100%"}} src={footer} alt=""/>
+                    </Content>) : (<Forbidden403 personSlug={personSlug}/>) : null}
             </Layout>
         </ContainerFlex>
     );
