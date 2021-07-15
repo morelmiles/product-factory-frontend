@@ -55,10 +55,10 @@ const Contributions = ({tasks, changePage, pagesNumber, activePage, hasNext, has
             </div>
             <TaskDetail personSlug={personSlug} task={detailTask} modal={taskDetailModal}
                         setModal={setTaskDetailModal}/>
-            <Row justify={"space-around"}>
-                <PagesBar hasNext={hasNext} hasPrev={hasPrev} number={pagesNumber} active={activePage}
-                          changePage={changePage}/>
-            </Row>
+            {/*<Row justify={"space-around"}>*/}
+            {/*    <PagesBar hasNext={hasNext} hasPrev={hasPrev} number={pagesNumber} active={activePage}*/}
+            {/*              changePage={changePage}/>*/}
+            {/*</Row>*/}
         </div>
     );
 }

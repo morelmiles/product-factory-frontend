@@ -19,20 +19,23 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
 
     return (
         <div style={{border: " 1px solid #E7E7E7", borderRadius: 15, padding: 14, width: 300, marginRight: 10}}>
-            <Row>
-                <Col span={20}>
-                    <Row justify={"center"}>
-                        <Avatar size={80} icon={<UserOutlined/>} src={apiDomain + profile.avatar}/>
+            <Row style={{ position: 'relative' }}>
+                <Col style={{ width: '100%' }}>
+                    <Row justify="center">
+                        <Avatar size={100} icon={<UserOutlined/>} src={apiDomain + profile.avatar}/>
                     </Row>
                 </Col>
-                <Col>
+                <Col style={{ position: 'absolute', right: 0 }}>
                     <Row justify={"end"}>
-                        {isCurrentUser(profile.id) &&
-                        (<Button style={{border: "none"}}
+                        {
+                            isCurrentUser(profile.id) &&
+                            <Button style={{border: "none"}}
                                  size={"large"}
                                  shape="circle"
                                  onClick={() => router.push(`/${personSlug}/edit`)}
-                                 icon={<EditOutlined/>}/>)}
+                                 icon={<EditOutlined/>}
+                            />
+                        }
                     </Row>
                 </Col>
             </Row>
