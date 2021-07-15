@@ -145,7 +145,7 @@ const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
                      }}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <div>#</div>
-                        {skill.expertise}
+                        {skill.expertise ? skill.expertise : skill.category}
                     </div>
                 </div>
             ))}
