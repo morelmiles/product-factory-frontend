@@ -459,24 +459,20 @@ const Task: React.FunctionComponent<Params> = ({
                         <>
                             {assignee.id === user.id ? (
                                 <div className="flex-column ml-auto mt-10">
-                                    {inReview ? null : (
-                                        <>
-                                            <Button
-                                                type="primary"
-                                                className="mb-10"
-                                                onClick={() => showReviewTaskModal(true)}
-                                            >
-                                                Submit for review
-                                            </Button>
-                                            <Button
-                                                type="primary"
-                                                onClick={() => showLeaveTaskModal(true)}
-                                                style={{zIndex: 1000}}
-                                            >
-                                                Leave the task
-                                            </Button>
-                                        </>
-                                    )}
+                                    <Button
+                                        type="primary"
+                                        className="mb-10"
+                                        onClick={() => showReviewTaskModal(true)}
+                                    >
+                                        Submit for review
+                                    </Button>
+                                    <Button
+                                        type="primary"
+                                        onClick={() => showLeaveTaskModal(true)}
+                                        style={{zIndex: 1000}}
+                                    >
+                                        Leave the task
+                                    </Button>
                                 </div>
                             ) : null}
                         </>

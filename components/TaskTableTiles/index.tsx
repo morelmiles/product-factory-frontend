@@ -68,16 +68,11 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const status = getProp(task, "status");
               let taskStatus = statusList[status];
               const hasActiveDepends = getProp(task, "hasActiveDepends", false);
-              const inReview = getProp(task, "inReview", false);
 
               if (hasActiveDepends) {
                 taskStatus = "Blocked";
               } else if (!hasActiveDepends && taskStatus === "Blocked") {
                 taskStatus = "Available";
-              }
-
-              if (inReview && taskStatus !== "Done") {
-                taskStatus = "In Review";
               }
 
               const productName = getProp(task, "product.name", "");
