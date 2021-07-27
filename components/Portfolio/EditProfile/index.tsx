@@ -95,12 +95,16 @@ const EditProfile = ({profile}: EditProfileProps) => {
         for (let skill of skills) {
             newSkills.push({category: skill.category, expertise: skill.expertise});
         }
+        let newWebsites: any[] = [];
+        for(let website of websites) {
+            newWebsites.push({type: website.type, website: website.website})
+        }
         const variables = {
             firstName,
             lastName,
             bio,
             skills: newSkills,
-            websites,
+            websites: newWebsites,
             avatar: avatarId
         }
         updateProfile({variables: variables}).then();
