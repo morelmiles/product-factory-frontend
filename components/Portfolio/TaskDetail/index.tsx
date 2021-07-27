@@ -5,6 +5,7 @@ import {CheckCircleTwoTone, PlaySquareOutlined} from '@ant-design/icons';
 import TaskDetailAttachments from "./Attachments";
 import {useQuery} from "@apollo/react-hooks";
 import {GET_PERSON_TASK_DELIVERY_MESSAGE} from "../../../graphql/queries";
+import Link from 'next/link';
 
 
 const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
@@ -64,12 +65,16 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row>
-                        <PlaySquareOutlined/>
-                        <Typography.Text style={{
-                            fontSize: 12,
-                            color: "#1D1D1B",
-                            marginLeft: 10
-                        }}>{task.product.name}</Typography.Text>
+                        <Link href={task.product.link}>
+                            <a>
+                                <PlaySquareOutlined style={{color: "#000000", opacity: 0.8}}/>
+                                <Typography.Text style={{
+                                    fontSize: 12,
+                                    color: "#1D1D1B",
+                                    marginLeft: 10
+                                }}>{task.product.name}</Typography.Text>
+                            </a>
+                        </Link>
                     </Row>
                 </Col>
             </Row>
@@ -85,12 +90,16 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row>
-                        <PlaySquareOutlined/>
-                        <Typography.Text style={{
-                            fontSize: 12,
-                            color: "#1D1D1B",
-                            marginLeft: 10
-                        }}>{task.initiative}</Typography.Text>
+                        <Link href={task.initiative.link}>
+                            <a>
+                                <PlaySquareOutlined style={{color: "#000000", opacity: 0.8}}/>
+                                <Typography.Text style={{
+                                    fontSize: 12,
+                                    color: "#1D1D1B",
+                                    marginLeft: 10
+                                }}>{task.initiative.name}</Typography.Text>
+                            </a>
+                        </Link>
                     </Row>
                 </Col>
             </Row>

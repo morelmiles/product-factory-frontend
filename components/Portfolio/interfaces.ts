@@ -20,6 +20,12 @@ export interface Skill {
 export interface Product {
     name: string
     avatar: string
+    link: string
+}
+
+export interface Initiative {
+    name: string
+    link: string
 }
 
 export interface DeliveryMessage {
@@ -34,7 +40,7 @@ export interface Task {
     product: Product
     skills: Skill[]
     reviewerPerson: Reviewer
-    initiative: string
+    initiative: Initiative
 }
 
 export interface Reviewer {

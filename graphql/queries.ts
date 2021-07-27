@@ -1030,8 +1030,12 @@ export const GET_PERSON_DONE_TASKS = gql `
         product {
           name
           avatar
+          link
         }
-        initiative
+        initiative {
+          name
+          link
+        }
       }
     }
   }
