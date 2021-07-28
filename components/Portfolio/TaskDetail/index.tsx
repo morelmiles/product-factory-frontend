@@ -29,7 +29,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
     }, [task, personSlug]);
 
     useEffect(() => {
-        setDeliveryAttempt(deliveryMessage);
+        setDeliveryAttempt(deliveryMessage?.personTaskDeliveryMessage);
     }, [deliveryMessage])
 
     return (
