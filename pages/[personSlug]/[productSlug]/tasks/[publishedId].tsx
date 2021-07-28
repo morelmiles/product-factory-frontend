@@ -43,7 +43,6 @@ import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
 import Loading from "../../../../components/Loading";
 import parse from "html-react-parser";
-import CheckableTag from "antd/lib/tag/CheckableTag";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import AddTaskContainer from "../../../../components/Products/AddTask";
 import Comments from "../../../../components/Comments";
@@ -457,7 +456,7 @@ const Task: React.FunctionComponent<Params> = ({
                 <Row className="text-sm">
                     {assignee && !inReview ? (
                         <>
-                            {assignee.id === user.id ? (
+                            {assignee.id === user.id && taskStatus === "Claimed" ? (
                                 <div className="flex-column ml-auto mt-10">
                                     <Button
                                         type="primary"
