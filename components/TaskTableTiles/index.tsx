@@ -82,7 +82,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
               const initiativeId = getProp(task, "initiative.id", "");
               const initiativeVideoUrl = getProp(task, "initiative.videoUrl", "");
               const taskVideoUrl = getProp(task, "videoUrl", "");
-              const assignee = getProp(task, "assignedTo", null);
+              const assignee = getProp(task, "assignedToPerson", null);
               const owner = getProp(task, "product.owner", "");
               const canEdit = hasManagerRoots(getUserRole(roles, productSlug));
               const reviewer = getProp(task, "reviewer", null);
@@ -161,7 +161,7 @@ const TaskTableTiles: React.FunctionComponent<Props> = ({
                       <span>{taskStatus === "Claimed" ? (
                         <>
                           Claimed by {assignee && (
-                            <Link href={`/${assignee.username}`}>
+                            <Link href={`/${assignee.slug}`}>
                               <a>{assignee.firstName}</a>
                             </Link>
                           )}
