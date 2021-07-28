@@ -65,7 +65,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row>
-                        <Link href={task.product.link}>
+                        {task.product ? (<Link href={task.product.link}>
                             <a>
                                 <PlaySquareOutlined style={{color: "#000000", opacity: 0.8}}/>
                                 <Typography.Text style={{
@@ -74,7 +74,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                                     marginLeft: 10
                                 }}>{task.product.name}</Typography.Text>
                             </a>
-                        </Link>
+                        </Link>) : null}
                     </Row>
                 </Col>
             </Row>
@@ -90,7 +90,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row>
-                        <Link href={task.initiative.link}>
+                        {task.initiative ? (<Link href={task.initiative.link}>
                             <a>
                                 <PlaySquareOutlined style={{color: "#000000", opacity: 0.8}}/>
                                 <Typography.Text style={{
@@ -99,7 +99,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                                     marginLeft: 10
                                 }}>{task.initiative.name}</Typography.Text>
                             </a>
-                        </Link>
+                        </Link>) : null}
                     </Row>
                 </Col>
             </Row>

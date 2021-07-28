@@ -59,11 +59,6 @@ const TaskTable: React.FunctionComponent<Props> = (
                 taskStatus = "Available";
               }
 
-
-              if (inReview && taskStatus !== "Done") {
-                taskStatus = "In Review";
-              }
-
               const productName = getProp(task, "product.name", "");
               const productSlug = getProp(task, "product.slug", "");
               const initiativeName = getProp(task, "initiative.name", "");
