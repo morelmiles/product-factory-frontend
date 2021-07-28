@@ -157,7 +157,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 <Typography.Text strong>Delivery Message</Typography.Text>
             </Row>
             <Row>
-                <Typography.Text>{deliveryAttempt?.message}</Typography.Text>
+                <p dangerouslySetInnerHTML={{__html: deliveryAttempt?.message}}/>
             </Row>
             <TaskDetailAttachments attachments={deliveryAttempt?.attachments}/>
         </Modal>
