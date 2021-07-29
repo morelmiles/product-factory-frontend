@@ -1026,6 +1026,7 @@ export const GET_PERSON_DONE_TASKS = gql `
           id
           firstName
           avatar
+          link
         }
         product {
           name

@@ -47,6 +47,7 @@ export interface Reviewer {
     id: string
     firstName: string
     avatar: string
+    link: string
 }
 
 export interface Paginator {
