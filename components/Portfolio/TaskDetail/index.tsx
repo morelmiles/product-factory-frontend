@@ -50,8 +50,16 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
             </Row>}
         >
             <Row>
-                <Typography.Text
-                    style={{color: "#1890FF", fontSize: 16, fontFamily: "Roboto"}}>{task.title}</Typography.Text>
+                <Link href={task.link}>
+                    <a>
+                        <Typography.Text
+                            style={{
+                                color: "#1890FF",
+                                fontSize: 16,
+                                fontFamily: "Roboto"
+                            }}>{task.title}</Typography.Text>
+                    </a>
+                </Link>
             </Row>
             <Row align={"middle"} style={{marginTop: 13}}>
                 <Col span={3}>

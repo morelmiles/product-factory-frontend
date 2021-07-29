@@ -37,6 +37,7 @@ export interface Task {
     id: number
     title: string
     date: string
+    link: string
     product: Product
     skills: Skill[]
     reviewerPerson: Reviewer
