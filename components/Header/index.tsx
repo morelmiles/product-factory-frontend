@@ -118,16 +118,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         }
     }, [personData]);
 
-    useEffect(() => {
-        if (window.location.pathname !== "/switch-test-user") {
-            let redirectTo = localStorage.getItem(redirectToLocalName);
-            if (redirectTo) {
-                router.push(redirectTo).then();
-                localStorage.removeItem(redirectToLocalName);
-            }
-        }
-    }, []);
-
     const [logout] = useMutation(LOGOUT, {
         onCompleted(data) {
             const {success, message: responseMessage, url} = data.logout;
@@ -147,8 +137,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                 });
                 if (url) {
                     window.location.replace(url);
-                } else {
-                    router.push("/switch-test-user").then();
                 }
             } else {
                 message.error(responseMessage);
@@ -227,18 +215,8 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                                                 </a>
                                             </Dropdown>
                                         ) : (
-                                            <>{
-                                                productionMode
-                                                    ? <LoginViaAM/>
-                                                    : (
-                                                        <Button
-                                                            className="signIn-btn"
-                                                            onClick={() => router.push("/switch-test-user")}
-                                                        >
-                                                            Sign in
-                                                        </Button>
-                                                    )
-                                            }
+                                            <>
+                                                <LoginViaAM/>
                                                 <RegisterViaAM margin={"0 0 0 15px"}/>
                                             </>
                                         )
