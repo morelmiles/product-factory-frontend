@@ -1018,6 +1018,7 @@ export const GET_PERSON_DONE_TASKS = gql `
         id
         title
         date
+        link
         skills {
           category
           expertise
@@ -1026,6 +1027,7 @@ export const GET_PERSON_DONE_TASKS = gql `
           id
           firstName
           avatar
+          link
         }
         product {
           name

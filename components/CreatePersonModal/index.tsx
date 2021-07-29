@@ -117,7 +117,7 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                     <Form.Item name="bio"
                                style={{float: "right"}}>
                         <FormInput label="Add Your Bio" name="bio"
-                                   placeholder="Self-thought UI/UX Designer based in Rio de Janeiro. Passionate about psychology , user research and mobile design."
+                                   placeholder="Self-taught UI/UX Designer based in Rio de Janeiro. Passionate about psychology, user research and mobile design."
                                    type="textarea"
                                    value={form.getFieldValue('bio')}/>
                     </Form.Item>

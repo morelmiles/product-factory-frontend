@@ -50,8 +50,16 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
             </Row>}
         >
             <Row>
-                <Typography.Text
-                    style={{color: "#1890FF", fontSize: 16, fontFamily: "Roboto"}}>{task.title}</Typography.Text>
+                <Link href={task.link}>
+                    <a>
+                        <Typography.Text
+                            style={{
+                                color: "#1890FF",
+                                fontSize: 16,
+                                fontFamily: "Roboto"
+                            }}>{task.title}</Typography.Text>
+                    </a>
+                </Link>
             </Row>
             <Row align={"middle"} style={{marginTop: 13}}>
                 <Col span={3}>
@@ -115,16 +123,22 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row align={"middle"}>
-                        <Col>
-                            <Avatar style={{minWidth: 0}} size={28} src={task.product.avatar}/>
-                        </Col>
-                        <Col>
-                            <Typography.Text style={{
-                                fontSize: 12,
-                                color: "#1D1D1B",
-                                marginLeft: 10
-                            }}>{task.reviewerPerson.firstName}</Typography.Text>
-                        </Col>
+                        {task.reviewerPerson ? (<>
+                            <Col>
+                                <Avatar style={{minWidth: 0}} size={28} src={task.product.avatar}/>
+                            </Col>
+                            <Col onClick={() => setModal(false)}>
+                                <Link href={task.reviewerPerson.link ? task.reviewerPerson.link : ''}>
+                                    <a>
+                                        <Typography.Text style={{
+                                            fontSize: 12,
+                                            color: "#1D1D1B",
+                                            marginLeft: 10
+                                        }}>{task.reviewerPerson.firstName}</Typography.Text>
+                                    </a>
+                                </Link>
+                            </Col>
+                        </>) : null}
                     </Row>
                 </Col>
             </Row>

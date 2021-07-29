@@ -37,6 +37,7 @@ export interface Task {
     id: number
     title: string
     date: string
+    link: string
     product: Product
     skills: Skill[]
     reviewerPerson: Reviewer
@@ -47,6 +48,7 @@ export interface Reviewer {
     id: string
     firstName: string
     avatar: string
+    link: string
 }
 
 export interface Paginator {
