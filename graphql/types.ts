@@ -29,6 +29,7 @@ export const TASK_LIST_TYPES_FOR_CONTRIBUTOR = [
   {id: 2, name: "Available"},
   {id: 3, name: "Claimed"},
   {id: 4, name: "Done"},
+  {id: 5, name: "In Review"}
 ];
 export const TASK_LIST_TYPES = [
   {id: 0, name: "Draft"},
