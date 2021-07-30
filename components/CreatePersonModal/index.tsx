@@ -1,16 +1,19 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Modal, Button, message, Typography, Avatar, Col, Row, Form, Input} from "antd";
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation, useQuery} from "@apollo/react-hooks";
 import {CREATE_PERSON, SAVE_AVATAR} from "../../graphql/mutations";
 import {getProp} from "../../utilities/filters";
 import {EditOutlined, UserOutlined} from "@ant-design/icons";
 import FormInput from "../FormInput/FormInput";
-import SkillsArea from "../FormInput/SkillsArea";
+import SkillsArea from "../SkillsComponents/SkillsArea";
+import ExpertiseArea from "../SkillsComponents/ExpertiseArea";
 import AvatarUploadModal from "./AvatarUploadModal";
 import {CreatePersonProps, Person} from "./interfaces";
 import {UploadFile} from "antd/es/upload/interface";
 import {apiDomain} from "../../utilities/constants";
 import {useRouter} from "next/router";
+import {GET_CATEGORIES_LIST} from "../../graphql/queries";
+import {Category, SkillExpertise} from "../SkillsComponents/interfaces";
 
 export interface Skill {
     category: string,
@@ -26,6 +29,18 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [avatarUploadModal, setAvatarUploadModal] = useState<boolean>(false);
     const [skills, setSkills] = useState<Skill[]>([]);
+    const [allCategories, setAllCategories] = useState<Category[]>([]);
+    const [skillExpertise, setSkillExpertise] = useState<SkillExpertise[]>([]);
+    const [expertiseList, setExpertiseList] = useState<string[]>([]);
+
+    const {data: categories} = useQuery(GET_CATEGORIES_LIST);
+
+    useEffect(() => {
+        if (categories?.taskCategoryListing) {
+            setAllCategories(JSON.parse(categories.taskCategoryListing));
+        }
+    }, [categories]);
+
     const [createProfile] = useMutation(CREATE_PERSON, {
         onCompleted(data) {
             const status = getProp(data, 'createPerson.status', false);
@@ -117,7 +132,7 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                     <Form.Item name="bio"
                                style={{float: "right"}}>
                         <FormInput label="Add Your Bio" name="bio"
-                                   placeholder="Self-thought UI/UX Designer based in Rio de Janeiro. Passionate about psychology , user research and mobile design."
+                                   placeholder="Self-taught UI/UX Designer based in Rio de Janeiro. Passionate about psychology, user research and mobile design."
                                    type="textarea"
                                    value={form.getFieldValue('bio')}/>
                     </Form.Item>
@@ -126,7 +141,17 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                     <Form.Item name="skills"
                                style={{float: "right"}}
                     >
-                        <SkillsArea skills={skills} setSkills={setSkills}/>
+                        <SkillsArea setSkills={setSkills} allCategories={allCategories}
+                                    setExpertiseList={setExpertiseList} setSkillExpertise={setSkillExpertise}
+                                    skillExpertise={skillExpertise}/>
+                    </Form.Item>
+                </Row>
+                <Row id="profile-area-row" style={{flexFlow: "row-reverse", marginTop: 20}}>
+                    <Form.Item name="expertise"
+                               style={{float: "right"}}
+                    >
+                        <ExpertiseArea setSkills={setSkills} skillExpertise={skillExpertise}
+                                       expertiseList={expertiseList} setExpertiseList={setExpertiseList}/>
                     </Form.Item>
                 </Row>
                 <Row id="profile-btn" style={{flexFlow: "row-reverse"}}>

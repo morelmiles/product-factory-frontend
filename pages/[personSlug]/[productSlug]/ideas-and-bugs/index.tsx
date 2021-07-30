@@ -17,6 +17,8 @@ import Head from "next/head";
 
 type Props = {
   user: { isLoggedIn: boolean, id: string },
+  loginUrl: string,
+  registerUrl: string
 };
 
 const ItemList = (items: any, itemType: string, personSlug: string, productSlug: string, user: {id: string}) => {
@@ -99,7 +101,7 @@ const ItemList = (items: any, itemType: string, personSlug: string, productSlug:
 const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter();
   const {productSlug, personSlug} = router.query;
-  const {user} = props;
+  const {user, loginUrl, registerUrl} = props;
   const [mode, setMode] = useState("idea");
   const [showIdeaAddModal, setIdeaShowAddModal] = useState(false);
   const [showBugAddModal, setBugShowAddModal] = useState(false);
@@ -119,7 +121,7 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
     if (user.isLoggedIn) {
       ideaMode ? setIdeaShowAddModal(true) : setBugShowAddModal(true);
     } else {
-      showUnAuthModal(router, `Create a new ${mode}`);
+      showUnAuthModal(`Create a new ${mode}`, loginUrl, registerUrl);
     }
   };
 
@@ -180,6 +182,8 @@ const IdeasAndBugs: React.FunctionComponent<Props> = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   user: state.user,
+  loginUrl: state.work.loginUrl,
+  registerUrl: state.work.registerUrl
 });
 
 export default connect(mapStateToProps, null)(IdeasAndBugs);

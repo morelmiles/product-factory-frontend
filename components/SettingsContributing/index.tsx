@@ -62,22 +62,6 @@ const SettingsContributing: React.FunctionComponent = () => {
       render: description => parse(description)
     },
     {
-      title: "Skills",
-      key: "stack",
-      dataIndex: "stack",
-      render: stacks => (
-        <>
-          {stacks.map((stack: {id: string, name: string}) => {
-            return (
-              <Tag color="blue" key={stack.id}>
-                {stack.name}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
       title: "Action",
       key: "action",
       render: (text, record) => (

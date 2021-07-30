@@ -71,7 +71,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
     } else {
       setUserRoot(false)
     }
-  }, [user])
+  }, [user]);
 
   const onFinish = (values: any) => submit(values);
 
@@ -100,7 +100,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
           <Button key="back" onClick={clearFilter}>
             Clear Filter
           </Button>,
-          <Button key="submit" type="primary" htmlType="submit" form="filter-form">
+          <Button key="submit" type="primary" htmlType="submit" form="filter-form" onClick={() => form.submit()}>
             Filter
           </Button>,
         ]}

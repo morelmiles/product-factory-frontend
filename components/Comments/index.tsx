@@ -9,7 +9,6 @@ import {CREATE_TASK_COMMENT, CREATE_BUG_COMMENT, CREATE_IDEA_COMMENT,
   CREATE_CAPABILITY_COMMENT} from "../../graphql/mutations";
 import Link from "next/link";
 import showUnAuthModal from "../UnAuthModal";
-import {useRouter} from "next/router";
 import {connect} from "react-redux";
 
 
@@ -27,18 +26,21 @@ interface ICommentContainerProps {
   comments: IComment[]
   submit: Function
   loginUrl: string
+  registerUrl: string
 }
 
 interface ICommentsProps {
   loginUrl: string,
   objectId: number,
-  objectType: string
+  objectType: string,
+  registerUrl: string
 }
 
 interface IAddCommentProps {
   submit: Function,
   objectId: number,
-  loginUrl: string
+  loginUrl: string,
+  registerUrl: string
 }
 
 interface IComment {
@@ -81,8 +83,7 @@ const commentGetType = {
 
 
 
-const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, objectType, loginUrl}) => {
-  const router = useRouter();
+const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comments, submit, objectType, loginUrl, registerUrl}) => {
   const [users, setUsers] = useState<IUser[]>([]);
   const cType = commentCreateType[objectType];
   const [createComment] = cType ? useMutation(cType.mutation, {
@@ -100,7 +101,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
       if (graphQLErrors && graphQLErrors.length > 0) {
         let msg = graphQLErrors[0].message;
         if (msg === "The person is undefined, please login to perform this action") {
-          showUnAuthModal(router, actionName, loginUrl);
+          showUnAuthModal(actionName, loginUrl, registerUrl);
         } else {
           message.error(msg).then();
         }
@@ -210,8 +211,7 @@ const CommentContainer: React.FunctionComponent<ICommentContainerProps> = ({comm
   )
 };
 
-const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, objectType, submit, loginUrl}) => {
-  const router = useRouter();
+const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, objectType, submit, loginUrl, registerUrl}) => {
   const [users, setUsers] = useState<IUser[]>([]);
   const {mutation, mutationKey} = commentCreateType[objectType];
   const [createComment] = useMutation(mutation, {
@@ -228,7 +228,7 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, object
       if (graphQLErrors && graphQLErrors.length > 0) {
         let msg = graphQLErrors[0].message;
         if (msg === "The person is undefined, please login to perform this action") {
-          showUnAuthModal(router, actionName, loginUrl);
+          showUnAuthModal(actionName, loginUrl, registerUrl);
         } else {
           message.error(msg).then();
         }
@@ -298,7 +298,7 @@ const AddComment: React.FunctionComponent<IAddCommentProps> = ({objectId, object
   )
 }
 
-const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType, loginUrl}) => {
+const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType, loginUrl, registerUrl}) => {
   const {data, error, loading, refetch} = useQuery(commentGetType[objectType], {
     variables: {objectId}
   });
@@ -320,19 +320,22 @@ const Comments: React.FunctionComponent<ICommentsProps> = ({objectId, objectType
       <CommentContainer comments={comments}
                         submit={refetch}
                         loginUrl={loginUrl}
+                        registerUrl={registerUrl}
                         objectType={objectType}
       />
       <AddComment objectId={objectId}
                   submit={refetch}
                   loginUrl={loginUrl}
                   objectType={objectType}
+                  registerUrl={registerUrl}
       />
     </>
   )
 };
 
 const mapStateToProps = (state: any) => ({
-  loginUrl: state.work.loginUrl
+  loginUrl: state.work.loginUrl,
+  registerUrl: state.work.registerUrl
 });
 
 export default connect(

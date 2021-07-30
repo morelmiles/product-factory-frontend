@@ -50,6 +50,13 @@ export const setLoginURL = (loginUrl: string): types.BaseAction => {
   }
 }
 
+export const setRegisterURL = (registerUrl: string): types.BaseAction => {
+  return {
+    type: types.SET_REGISTER_URL,
+    payload: { registerUrl }
+  }
+}
+
 // export const addRepository = (data: any): types.BaseAction => {
 //   return {
 //     type: types.ADD_REPOSITORY,

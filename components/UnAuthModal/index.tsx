@@ -1,16 +1,11 @@
 import {Modal} from 'antd';
-import {productionMode} from "../../utilities/constants";
 
-const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
+const showUnAuthModal = (actionName: string, loginUrl="/", registerUrl="/") => {
 
   const signInAction = () => {
     saveRedirectPath();
     modal.destroy();
-    if (productionMode) {
-      window.location.replace(loginUrl);
-    } else {
-      router.push("/switch-test-user")
-    }
+    window.location.replace(loginUrl);
   }
 
   const saveRedirectPath = () => {
@@ -20,7 +15,7 @@ const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
   const registerAction = () => {
     saveRedirectPath();
     modal.destroy();
-    window.location.replace(loginUrl);
+    window.location.replace(registerUrl);
   }
 
   const modal = Modal.info({
@@ -30,9 +25,9 @@ const showUnAuthModal = (router, actionName: string, loginUrl="/") => {
       <div>
         <p>In order to {actionName.toLowerCase()} you need to be signed in.</p>
 
-        <p>Existing Users: <a href={null} onClick={() => signInAction()}>Sign in here</a></p>
+        <p>Existing Users: <a href={undefined} onClick={() => signInAction()}>Sign in here</a></p>
 
-        <p>New to OpenUnited? <a href={null} onClick={() => registerAction()}>Register here</a></p>
+        <p>New to OpenUnited? <a href={undefined} onClick={() => registerAction()}>Register here</a></p>
       </div>
     ),
     okButtonProps: { disabled: true, style: {display: "none"} },

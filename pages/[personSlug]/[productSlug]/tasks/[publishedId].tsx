@@ -43,7 +43,6 @@ import CustomModal from "../../../../components/Products/CustomModal";
 import Priorities from "../../../../components/Priorities";
 import Loading from "../../../../components/Loading";
 import parse from "html-react-parser";
-import CheckableTag from "antd/lib/tag/CheckableTag";
 import {getUserRole, hasManagerRoots} from "../../../../utilities/utils";
 import AddTaskContainer from "../../../../components/Products/AddTask";
 import Comments from "../../../../components/Comments";
@@ -65,12 +64,15 @@ type Params = {
     user?: any;
     currentProduct: any;
     loginUrl: string;
+    registerUrl: string;
+    userLogInAction: Function
 };
 
 const Task: React.FunctionComponent<Params> = ({
                                                    user,
                                                    userLogInAction,
                                                    loginUrl,
+                                                    registerUrl
                                                }) => {
     const router = useRouter();
     const {publishedId, personSlug, productSlug} = router.query;
@@ -317,7 +319,7 @@ const Task: React.FunctionComponent<Params> = ({
                 if (
                     msg === "The person is undefined, please login to perform this action"
                 ) {
-                    showUnAuthModal(router, actionName, loginUrl);
+                    showUnAuthModal(actionName, loginUrl, registerUrl);
                 } else {
                     message.error(msg).then();
                 }
@@ -333,7 +335,7 @@ const Task: React.FunctionComponent<Params> = ({
     const claimTaskEvent = () => {
         let userId = user.id;
         if (userId === undefined || userId === null) {
-            showUnAuthModal(router, actionName, loginUrl);
+            showUnAuthModal(actionName, loginUrl, registerUrl);
             return;
         }
 
@@ -457,26 +459,22 @@ const Task: React.FunctionComponent<Params> = ({
                 <Row className="text-sm">
                     {assignee && !inReview ? (
                         <>
-                            {assignee.id === user.id ? (
+                            {assignee.id === user.id && taskStatus === "Claimed" ? (
                                 <div className="flex-column ml-auto mt-10">
-                                    {inReview ? null : (
-                                        <>
-                                            <Button
-                                                type="primary"
-                                                className="mb-10"
-                                                onClick={() => showReviewTaskModal(true)}
-                                            >
-                                                Submit for review
-                                            </Button>
-                                            <Button
-                                                type="primary"
-                                                onClick={() => showLeaveTaskModal(true)}
-                                                style={{zIndex: 1000}}
-                                            >
-                                                Leave the task
-                                            </Button>
-                                        </>
-                                    )}
+                                    <Button
+                                        type="primary"
+                                        className="mb-10"
+                                        onClick={() => showReviewTaskModal(true)}
+                                    >
+                                        Submit for review
+                                    </Button>
+                                    <Button
+                                        type="primary"
+                                        onClick={() => showLeaveTaskModal(true)}
+                                        style={{zIndex: 1000}}
+                                    >
+                                        Leave the task
+                                    </Button>
                                 </div>
                             ) : null}
                         </>
@@ -936,6 +934,7 @@ const mapStateToProps = (state: any) => ({
     user: state.user,
     currentProduct: state.work.currentProduct || {},
     loginUrl: state.work.loginUrl,
+    registerUrl: state.work.registerUrl
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
