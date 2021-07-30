@@ -7,6 +7,7 @@ export interface ProfileType {
     firstName: string
     bio: string
     avatar: string
+    slug: string
     skills: Skill[]
     websites: Website[]
     websiteTypes: string[]

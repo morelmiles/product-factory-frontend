@@ -44,8 +44,15 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
                     <Typography.Text strong style={{
                         color: "#262626",
                         fontSize: 20,
-                        fontFamily: "SF Pro Display"
+                        fontFamily: "Roboto"
                     }}>{profile.firstName}</Typography.Text>
+                </Row>
+                <Row>
+                    <Typography.Text style={{
+                        color: "#595959",
+                        fontSize: 12,
+                        fontFamily: "Roboto"
+                    }}>@{profile.slug}</Typography.Text>
                 </Row>
                 <Row>
                     <Typography.Text style={{
