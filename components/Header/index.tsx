@@ -5,7 +5,7 @@ import {setLoginURL, setRegisterURL, userLogInAction} from "../../lib/actions";
 import {UserState} from "../../lib/reducers/user.reducer";
 // @ts-ignore
 import Logo from "../../public/assets/logo.svg";
-import Link from "antd/lib/typography/Link";
+import Link from "next/link";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {GET_AM_LOGIN_URL, GET_AM_REGISTER_URL, GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
@@ -179,15 +179,15 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                         <Col span={10}>
                             <Row justify="start" align="middle">
                                 <Col style={{marginRight: 20}}>
-                                    <Link className="gray-link" href="/">Work on Open Products</Link>
+                                    <Link href="/"><a><div className="gray-link">Work on Open Products</div></a></Link>
                                 </Col>
                                 {(user && user.isLoggedIn) && (
                                     <Col style={{marginRight: 20}}>
-                                        <Link className="gray-link" href="/product/add">Add Product</Link>
+                                        <Link href="/product/add"><a><div className="gray-link">Add Product</div></a></Link>
                                     </Col>
                                 )}
                                 <Col style={{marginRight: 20}}>
-                                    <Link className="gray-link" href="/about">About</Link>
+                                    <Link href="/about"><a><div className="gray-link">About</div></a></Link>
                                 </Col>
                             </Row>
                         </Col>
