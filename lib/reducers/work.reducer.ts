@@ -16,7 +16,8 @@ export const workReducer = (
     allTags: [],
     allCategories: [],
     allUsers: [],
-    loginUrl: null
+    loginUrl: null,
+    registerUrl: null
   },
   action: types.BaseAction
 ) => {
@@ -27,6 +28,7 @@ export const workReducer = (
     case types.SET_CURRENT_PROJECT:
     case types.SET_USER_ROLE:
     case types.SET_LOGIN_URL:
+    case types.SET_REGISTER_URL:
       return { ...state, ...action.payload };
     case types.ADD_REPOSITORY:
       const newRepositories = Object.assign([], state.repositories);

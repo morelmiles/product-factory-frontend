@@ -64,12 +64,15 @@ type Params = {
     user?: any;
     currentProduct: any;
     loginUrl: string;
+    registerUrl: string;
+    userLogInAction: Function
 };
 
 const Task: React.FunctionComponent<Params> = ({
                                                    user,
                                                    userLogInAction,
                                                    loginUrl,
+                                                    registerUrl
                                                }) => {
     const router = useRouter();
     const {publishedId, personSlug, productSlug} = router.query;
@@ -316,7 +319,7 @@ const Task: React.FunctionComponent<Params> = ({
                 if (
                     msg === "The person is undefined, please login to perform this action"
                 ) {
-                    showUnAuthModal(router, actionName, loginUrl);
+                    showUnAuthModal(actionName, loginUrl, registerUrl);
                 } else {
                     message.error(msg).then();
                 }
@@ -332,7 +335,7 @@ const Task: React.FunctionComponent<Params> = ({
     const claimTaskEvent = () => {
         let userId = user.id;
         if (userId === undefined || userId === null) {
-            showUnAuthModal(router, actionName, loginUrl);
+            showUnAuthModal(actionName, loginUrl, registerUrl);
             return;
         }
 
@@ -931,6 +934,7 @@ const mapStateToProps = (state: any) => ({
     user: state.user,
     currentProduct: state.work.currentProduct || {},
     loginUrl: state.work.loginUrl,
+    registerUrl: state.work.registerUrl
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
