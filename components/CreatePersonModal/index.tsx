@@ -101,7 +101,7 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
             closable={false}
         >
             <Form form={form} onFinish={submit}>
-                <Typography style={{fontSize: 24, fontFamily: "SF Pro Display"}}>Create Your Profile</Typography>
+                <Typography style={{fontSize: 24, fontFamily: "Roboto"}}>Create Your Profile</Typography>
                 <Row id={"profile-row"} style={{display: "flex", flexWrap: "nowrap"}}>
                     <Col style={{marginTop: 32, marginRight: 25}}>
                         <Avatar size={80} icon={<UserOutlined/>} src={avatarUrl}/>
