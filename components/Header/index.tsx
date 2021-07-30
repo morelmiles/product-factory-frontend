@@ -1,15 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {connect} from "react-redux";
-import {Button, message, Row, Col, Drawer, Menu, Dropdown} from "antd";
-import {setLoginURL, userLogInAction} from "../../lib/actions";
+import {Button, message, Row, Col, Menu, Dropdown} from "antd";
+import {setLoginURL, setRegisterURL, userLogInAction} from "../../lib/actions";
 import {UserState} from "../../lib/reducers/user.reducer";
-import {productionMode} from "../../utilities/constants";
 // @ts-ignore
 import Logo from "../../public/assets/logo.svg";
-import {useRouter} from "next/router";
 import Link from "antd/lib/typography/Link";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {GET_AM_LOGIN_URL, GET_PERSON} from "../../graphql/queries";
+import {GET_AM_LOGIN_URL, GET_AM_REGISTER_URL, GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
 import LoginViaAM from "../LoginViaAM";
 import RegisterViaAM from "../RegisterViaAM";
@@ -21,12 +19,13 @@ const redirectToLocalName = "redirectTo";
 type Props = {
     user?: any;
     userLogInAction?: any;
-    setLoginURL: (loginUrl: string) => void
+    setLoginURL: (loginUrl: string) => void;
+    setRegisterURL: (registerUrl: string) => void;
 };
 
-const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction, setLoginURL}) => {
-    const router = useRouter();
-    const {data: authMachineData} = useQuery(GET_AM_LOGIN_URL);
+const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction, setLoginURL, setRegisterURL}) => {
+    const {data: authMachineLoginData} = useQuery(GET_AM_LOGIN_URL);
+    const {data: authMachineRegisterData} = useQuery(GET_AM_REGISTER_URL);
     const menu = (
         <Menu style={{minWidth: 150}}>
             <Menu.Item key="0" className="signIn-btn">
@@ -83,8 +82,12 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"});
 
     useEffect(() => {
-        if (authMachineData && authMachineData?.getAuthmachineLoginUrl) setLoginURL(authMachineData.getAuthmachineLoginUrl);
-    }, [authMachineData]);
+        if (authMachineLoginData && authMachineLoginData?.getAuthmachineLoginUrl) setLoginURL(authMachineLoginData.getAuthmachineLoginUrl);
+    }, [authMachineLoginData]);
+
+    useEffect(() => {
+        if (authMachineRegisterData && authMachineRegisterData?.getAuthmachineRegisterUrl) setRegisterURL(authMachineRegisterData.getAuthmachineRegisterUrl);
+    }, [authMachineRegisterData])
 
     useEffect(() => {
         if (personData && personData.person) {
@@ -238,6 +241,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
     setLoginURL: (loginUrl: string) => dispatch(setLoginURL(loginUrl)),
+    setRegisterURL: (registerUrl: string) => dispatch(setRegisterURL(registerUrl))
 });
 
 const HeaderMenu = connect(
