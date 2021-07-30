@@ -39,31 +39,32 @@ const EditPerson = (user: any) => {
         }
     }, [profileData]);
 
-    // useEffect(() => {
-    //     if (user.user && profile.id) {
-    //         if (user.user.id !== profile.id && !redirect) {
-    //             setRedirect(true);
-    //         } else {
-    //             setIsCurrentUser(true);
-    //         }
-    //     }
-    // }, [profile, user]);
-    //
-    // useEffect(() => {
-    //     if (redirect) {
-    //         router.push('/');
-    //     }
-    // }, [redirect]);
+    useEffect(() => {
+        if (user.user && profile.id) {
+            if (user.user.id !== profile.id && !redirect) {
+                setRedirect(true);
+            } else {
+                setIsCurrentUser(true);
+            }
+        }
+    }, [profile, user]);
+
+    useEffect(() => {
+        if (redirect) {
+            router.push('/');
+        }
+    }, [redirect]);
 
 
     return (
         <ContainerFlex>
             <Layout>
                 <Header/>
+                {user.user.id && profile.id ? isCurrentUser ?
                     (<Content className="main-page">
                         <EditProfile profile={profile}/>
                         <img style={{width: "100%"}} src={footer} alt=""/>
-                    </Content>)
+                    </Content>) : (<Forbidden403 personSlug={personSlug}/>) : null}
             </Layout>
         </ContainerFlex>
     );

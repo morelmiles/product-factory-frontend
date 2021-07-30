@@ -5,12 +5,19 @@ import {TreeSelect} from "antd";
 import {TreeNode} from "antd/lib/tree-select";
 import {Category, Skill, ExpertiseAreaInterface} from "../../interfaces";
 
-const ExpertiseArea = ({skills, setSkills, allCategories, skillExpertise, expertiseList, setExpertiseList}: ExpertiseAreaInterface) => {
+const ExpertiseArea = ({
+                           skills,
+                           setSkills,
+                           allCategories,
+                           skillExpertise,
+                           expertiseList,
+                           setExpertiseList
+                       }: ExpertiseAreaInterface) => {
     const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
 
     useEffect(() => {
-        setCurrentSkills(skills);
-    }, []);
+        if (currentSkills.length < 1) setCurrentSkills(skills);
+    }, [currentSkills]);
 
     const expertiseSelectChange = (skill: string, value: string, index: number) => {
         setSkills((prevState: Skill[]) => {
@@ -121,6 +128,8 @@ const ExpertiseArea = ({skills, setSkills, allCategories, skillExpertise, expert
                     </div>
                 </div>
             ))}
+            {currentSkills.length > 0 || skillExpertise.length > 0 ? null :
+                <p style={{color: "rgb(195, 195, 195)", margin: "5px 10px"}}>Add Expertise</p>}
         </div>
     );
 };
