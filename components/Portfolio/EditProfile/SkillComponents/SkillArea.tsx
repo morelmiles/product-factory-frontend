@@ -92,7 +92,7 @@ const SkillsArea = ({
                     </div>
                 );
             })}
-            {currentSkills.map((skill, index) => (
+            {currentSkills && currentSkills.map((skill, index) => (
                 <div key={index} className={"skill-div"}
                      style={{
                          backgroundColor: "#F5F5F5",
