@@ -994,6 +994,7 @@ export const GET_PERSON_INFO = gql `
       firstName
       bio
       avatar
+      slug
       skills {
         category
         expertise
