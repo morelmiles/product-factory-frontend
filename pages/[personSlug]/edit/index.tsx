@@ -23,6 +23,7 @@ const EditPerson = (user: any) => {
         id: '',
         firstName: '',
         bio: '',
+        slug: '',
         avatar: '',
         skills: [],
         websites: [],
