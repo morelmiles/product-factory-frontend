@@ -29,15 +29,17 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     const menu = (
         <Menu style={{minWidth: 150}}>
             <Menu.Item key="0" className="signIn-btn">
-                <Link href={`/${user?.username}`} className="text-grey-9">
-                    <UserOutlined/> Your profile
+                <Link href={`/${user?.username}`}>
+                    <a className="text-grey-9">
+                        <UserOutlined/> Your profile
+                    </a>
                 </Link>
             </Menu.Item>
             {user?.claimedTask ?
                 <Menu.Item key="1">
-                    <Link href={user.claimedTask.link} className="text-grey-9">
-                        <BookOutlined/>
+                    <Link href={user.claimedTask.link}>
                         <a className="text-grey-9">
+                            <BookOutlined/>
                             <strong>Claimed task:</strong><br/>
                             <div className="truncate" style={{width: 200}}>{user.claimedTask.title}</div>
                         </a>
@@ -62,15 +64,21 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                     </Menu.Item>
                 </>)}
             <Menu.Item key="2">
-                <a style={{color: '#000000 !important'}} href={"/"}>Open Products</a>
+                <Link href={"/"}>
+                    <a style={{color: '#000000 !important'}}>Open Products</a>
+                </Link>
             </Menu.Item>
             <Menu.Item key="3">
-                <a style={{color: '#000000 !important'}} href={"/about"}>About</a>
+                <Link href={"/about"}>
+                    <a style={{color: '#000000 !important'}}>About</a>
+                </Link>
             </Menu.Item>
             {(user && user.isLoggedIn) ? (<>
                 <Menu.Item key="4" className="signIn-btn">
-                    <Link style={{color: '#000000 !important'}} href={`/${user?.username}`} className="text-grey-9">
-                        Your profile
+                    <Link href={`/${user?.username}`}>
+                        <a style={{color: '#000000 !important'}} className="text-grey-9">
+                            Your profile
+                        </a>
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="5" onClick={() => logout()} className="signIn-btn">
@@ -160,7 +168,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             >
                 <Col>
                     <Link href="/">
-                        <img src={Logo} alt="logo"/>
+                        <a>
+                            <img src={Logo} alt="logo"/>
+                        </a>
                     </Link>
                 </Col>
                 <Col>
@@ -179,15 +189,27 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                         <Col span={10}>
                             <Row justify="start" align="middle">
                                 <Col style={{marginRight: 20}}>
-                                    <Link href="/"><a><div className="gray-link">Work on Open Products</div></a></Link>
+                                    <Link href="/">
+                                        <a className="gray-link">
+                                            Work on Open Products
+                                        </a>
+                                    </Link>
                                 </Col>
                                 {(user && user.isLoggedIn) && (
                                     <Col style={{marginRight: 20}}>
-                                        <Link href="/product/add"><a><div className="gray-link">Add Product</div></a></Link>
+                                        <Link href="/product/add">
+                                            <a className="gray-link">
+                                                Add Product
+                                            </a>
+                                        </Link>
                                     </Col>
                                 )}
                                 <Col style={{marginRight: 20}}>
-                                    <Link href="/about"><a><div className="gray-link">About</div></a></Link>
+                                    <Link href="/about">
+                                        <a className="gray-link">
+                                            About
+                                        </a>
+                                    </Link>
                                 </Col>
                             </Row>
                         </Col>
@@ -195,7 +217,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                         <Col span={4}>
                             <Row justify="center">
                                 <Link href="/">
-                                    <img src={Logo} alt="logo"/>
+                                    <a>
+                                        <img src={Logo} alt="logo"/>
+                                    </a>
                                 </Link>
                             </Row>
                         </Col>
