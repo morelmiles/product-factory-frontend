@@ -113,6 +113,19 @@ export interface Skill {
 export interface SkillsAreaInterface {
     skills: Skill[]
     setSkills: Function
+    allCategories: Category[]
+    setExpertiseList: Function
+    skillExpertise: SkillExpertise[]
+    setSkillExpertise: Function
+}
+
+export interface ExpertiseAreaInterface {
+    skills: Skill[]
+    setSkills: Function
+    allCategories: Category[]
+    skillExpertise: SkillExpertise[]
+    expertiseList: string[]
+    setExpertiseList: Function
 }
 
 export interface Category {
