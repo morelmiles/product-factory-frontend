@@ -5,18 +5,27 @@ import {TreeSelect} from "antd";
 import {TreeNode} from "antd/lib/tree-select";
 import {Category, Skill, ExpertiseAreaInterface} from "../../interfaces";
 
-const ExpertiseArea = ({skills, setSkills, allCategories, skillExpertise, expertiseList, setExpertiseList}: ExpertiseAreaInterface) => {
+const ExpertiseArea = ({
+                           skills,
+                           setSkills,
+                           allCategories,
+                           skillExpertise,
+                           expertiseList,
+                           setExpertiseList
+                       }: ExpertiseAreaInterface) => {
     const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
 
     useEffect(() => {
-        setCurrentSkills(skills);
-    }, []);
+        if (currentSkills.length < 1) {
+            setCurrentSkills(skills);
+            setExpertiseList(skills.map(skill => skill.expertise ? skill.expertise : skill.category));
+        }
+    }, [skills]);
 
     const expertiseSelectChange = (skill: string, value: string, index: number) => {
         setSkills((prevState: Skill[]) => {
-            let {category, expertise} = prevState[index];
-            expertise = value;
-            return [...prevState.slice(0, index), {category, expertise}, ...prevState.slice(index + 1)];
+            let {category} = prevState[index];
+            return [...prevState.slice(0, index), {category, value}, ...prevState.slice(index + 1)];
         });
         setExpertiseList((prevState: string[]) => [...prevState.slice(0, index), value, ...prevState.slice(index + 1)]);
     }
@@ -28,8 +37,19 @@ const ExpertiseArea = ({skills, setSkills, allCategories, skillExpertise, expert
             </TreeNode>));
     }
 
+    const findCategory = (categories: Category[], value: string): Category | undefined => {
+        for (let category of categories) {
+            if (category.children && category.children.length > 0) {
+                const skill = findCategory(category.children, value);
+                if (skill) {
+                    return skill;
+                }
+            } else if (category.name === value) return category;
+        }
+    }
+
     const findExpertise = (category: string) => {
-        return (allCategories.find(c => c.name === category) as Category).expertise;
+        return (findCategory(allCategories, category) as Category).expertise;
     }
 
     return (
@@ -61,7 +81,7 @@ const ExpertiseArea = ({skills, setSkills, allCategories, skillExpertise, expert
                                             selectable={false}
                                             title={expertise}
                                         >
-                                            {(Object(skillExpertise.expertise)[expertise] as string[]).map((value, index) => (
+                                            {(Object(skillExpertise.expertise)[expertise] as string[]).map((value) => (
                                                 <TreeNode
                                                     value={value}
                                                     selectable={true}
@@ -121,6 +141,8 @@ const ExpertiseArea = ({skills, setSkills, allCategories, skillExpertise, expert
                     </div>
                 </div>
             ))}
+            {currentSkills.length > 0 || skillExpertise.length > 0 ? null :
+                <p style={{color: "rgb(195, 195, 195)", margin: "5px 10px"}}>Add Expertise</p>}
         </div>
     );
 };

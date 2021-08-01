@@ -16,8 +16,8 @@ const SkillsArea = ({
     const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
 
     useEffect(() => {
-        setCurrentSkills(skills);
-    }, []);
+        if (currentSkills.length < 1) setCurrentSkills(skills);
+    }, [skills]);
 
     const categorySelectChange = (value: string) => {
         if (!checkCategoryExists(value)) {

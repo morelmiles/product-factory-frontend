@@ -46,9 +46,8 @@ const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
 
     const expertiseSelectChange = (skill: string, value: string, index: number) => {
         setSkills((prevState: Skill[]) => {
-            let {category, expertise} = prevState[index];
-            expertise = value;
-            return [...prevState.slice(0, index), {category, expertise}, ...prevState.slice(index + 1)];
+            let {category} = prevState[index];
+            return [...prevState.slice(0, index), {category, value}, ...prevState.slice(index + 1)];
         });
         setExpertiseList(prevState => [...prevState.slice(0, index), value, ...prevState.slice(index + 1)]);
     }
