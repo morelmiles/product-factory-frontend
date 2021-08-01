@@ -62,7 +62,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Link>
             </Row>
             <Row align={"middle"} style={{marginTop: 13}}>
-                <Col span={3}>
+                <Col style={{marginRight: 10}}>
                     <Row>
                         <Typography.Text style={{
                             fontSize: 12,
@@ -87,7 +87,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
             </Row>
             <Row align={"middle"} style={{marginTop: 13}}>
-                <Col span={3}>
+                <Col style={{marginRight: 10}}>
                     <Row>
                         <Typography.Text style={{
                             fontSize: 12,
@@ -112,7 +112,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
             </Row>
             <Row align={"middle"} style={{marginTop: 13}}>
-                <Col span={3}>
+                <Col style={{marginRight: 10}}>
                     <Row>
                         <Typography.Text style={{
                             fontSize: 12,
@@ -123,22 +123,20 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row align={"middle"}>
-                        {task.reviewerPerson ? (<>
-                            <Col>
-                                <Avatar style={{minWidth: 0}} size={28} src={task.product.avatar}/>
-                            </Col>
-                            <Col onClick={() => setModal(false)}>
-                                <Link href={task.reviewerPerson.link ? task.reviewerPerson.link : ''}>
-                                    <a>
+                        {task.reviewerPerson ? (
+                            <Link href={task.reviewerPerson.link ? task.reviewerPerson.link : ''}>
+                                <a>
+                                    <Col onClick={() => setModal(false)}>
+                                        <Avatar style={{minWidth: 0}} size={28} src={task.product.avatar}/>
                                         <Typography.Text style={{
                                             fontSize: 12,
                                             color: "#1D1D1B",
                                             marginLeft: 10
                                         }}>{task.reviewerPerson.firstName}</Typography.Text>
-                                    </a>
-                                </Link>
-                            </Col>
-                        </>) : null}
+                                    </Col>
+                                </a>
+                            </Link>
+                        ) : null}
                     </Row>
                 </Col>
             </Row>
