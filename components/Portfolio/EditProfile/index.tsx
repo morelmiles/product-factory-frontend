@@ -61,7 +61,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
         })
         setSkillExpertise(currentSkillExpertise);
         setExpertiseList(profile.skills.map(skill => skill.expertise ? skill.expertise : skill.category))
-    }, [profile])
+    }, [profile, categories])
 
     const [updateProfile] = useMutation(UPDATE_PERSON, {
         onCompleted(data) {
