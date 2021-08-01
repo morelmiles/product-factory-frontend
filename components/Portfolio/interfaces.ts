@@ -144,7 +144,7 @@ export interface Expertise {
 
 export interface SkillExpertise {
     skill: string
-    expertise: Expertise[]
+    expertise: Expertise
 }
 
 export interface Attachment {

@@ -14,7 +14,7 @@ import SkillsArea from "./SkillComponents/SkillArea";
 import ExpertiseArea from "./SkillComponents/ExpertiseArea";
 import {PlusOutlined, UserOutlined} from "@ant-design/icons";
 import {GET_CATEGORIES_LIST} from "../../../graphql/queries";
-import {findCategory, findExpertise} from "../helpers";
+import {findExpertise} from "../helpers";
 
 const {Option} = Select;
 
