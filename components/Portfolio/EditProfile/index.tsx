@@ -58,7 +58,9 @@ const EditProfile = ({profile}: EditProfileProps) => {
                 skill: skill.category,
                 expertise: findExpertise(skill.category, allCategories)
             })
-        })
+        });
+        console.log(profile.skills);
+        console.log(currentSkillExpertise);
         setSkillExpertise(currentSkillExpertise);
         setExpertiseList(profile.skills.map(skill => skill.expertise ? skill.expertise : skill.category))
     }, [profile, categories])
