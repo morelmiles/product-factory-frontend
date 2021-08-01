@@ -9,13 +9,13 @@ import Contributions from "./Contributions";
 const Portfolio = ({}: PortfolioProps) => {
     const router = useRouter();
     const {personSlug} = router.query;
-    const [taskDetailModal, setTaskDetailModal] = useState<boolean>(false);
     const [taskList, setTaskList] = useState<Task[]>([]);
     const [profile, setProfile] = useState<ProfileType>({
         id: '',
         firstName: '',
         bio: '',
         avatar: '',
+        slug: "",
         skills: [],
         websites: [],
         websiteTypes: []
@@ -44,8 +44,9 @@ const Portfolio = ({}: PortfolioProps) => {
     useEffect(() => {
         if (tasksData?.personTasks) {
             let data = tasksData.personTasks;
-            setTaskList(data.tasks);
-            setPaginator({...data});
+            // setTaskList(data.tasks);
+            setTaskList(data);
+            // setPaginator({...data});
         }
     }, [tasksData]);
 
