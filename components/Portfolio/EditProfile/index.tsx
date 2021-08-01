@@ -36,6 +36,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
     const {data: categories} = useQuery(GET_CATEGORIES_LIST);
 
     useEffect(() => {
+        console.log("category list", categories?.taskCategoryListing);
         if (categories?.taskCategoryListing) {
             setAllCategories(JSON.parse(categories.taskCategoryListing));
         }
