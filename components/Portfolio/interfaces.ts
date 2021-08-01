@@ -107,26 +107,8 @@ export interface Skill {
     expertise: string | null
 }
 
-export interface SkillAreaInterface {
-    skills: Skill[]
-    setSkills: Function
-}
-
-export interface SkillsAreaInterface {
-    setSkills: Function
-    allCategories: Category[]
-    setExpertiseList: Function
-    skillExpertise: SkillExpertise[]
-    setSkillExpertise: Function
-}
-
-export interface ExpertiseAreaInterface {
-    setSkills: Function
-    allCategories: Category[]
-    skillExpertise: SkillExpertise[]
-    expertiseList: string[]
-    setExpertiseList: Function
-    setSkillExpertise: Function
+export interface Expertise {
+    [key: string]: string[]
 }
 
 export interface Category {
@@ -136,10 +118,6 @@ export interface Category {
     expertise: Expertise,
     name: string,
     children: Category[]
-}
-
-export interface Expertise {
-    [key: string]: string[]
 }
 
 export interface SkillExpertise {
@@ -160,4 +138,26 @@ export interface TaskDetailAttachmentsProps {
 export interface TasksComponentProps {
     tasks: Task[]
     openTaskDetail: Function
+}
+
+export interface ExpertiseAreaInterface {
+    setSkills: Function
+    allCategories: Category[]
+    skillExpertise: SkillExpertise[]
+    expertiseList: string[]
+    setExpertiseList: Function
+    setSkillExpertise: Function
+}
+
+export interface SkillAreaInterface {
+    skills: Skill[]
+    setSkills: Function
+}
+
+export interface SkillsAreaInterface {
+    setSkills: Function
+    allCategories: Category[]
+    setExpertiseList: Function
+    skillExpertise: SkillExpertise[]
+    setSkillExpertise: Function
 }
