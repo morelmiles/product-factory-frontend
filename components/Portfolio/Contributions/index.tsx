@@ -19,13 +19,19 @@ const Contributions = ({tasks, changePage, pagesNumber, activePage, hasNext, has
         reviewerPerson: {
             id: "",
             firstName: "",
-            avatar: ""
+            avatar: "",
+            link: ""
         },
         product: {
             name: "",
-            avatar: ""
+            avatar: "",
+            link: ""
         },
-        initiative: ""
+        initiative: {
+            link: "",
+            name: ""
+        },
+        link: ""
     });
 
     const openTaskDetail = (index: number) => {

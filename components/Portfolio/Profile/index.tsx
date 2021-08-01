@@ -18,22 +18,29 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
     }, []);
 
     return (
-        <div style={{border: " 1px solid #E7E7E7", borderRadius: 15, padding: 14, width: 300, marginRight: 10}}>
-            <Row style={{ position: 'relative' }}>
-                <Col style={{ width: '100%' }}>
+        <div style={{
+            border: " 1px solid #E7E7E7",
+            borderRadius: 15,
+            padding: 14,
+            width: 300,
+            marginRight: 10,
+            height: "max-content"
+        }}>
+            <Row style={{position: 'relative'}}>
+                <Col style={{width: '100%'}}>
                     <Row justify="center">
                         <Avatar size={100} icon={<UserOutlined/>} src={apiDomain + profile.avatar}/>
                     </Row>
                 </Col>
-                <Col style={{ position: 'absolute', right: 0 }}>
+                <Col style={{position: 'absolute', right: 0}}>
                     <Row justify={"end"}>
                         {
                             isCurrentUser(profile.id) &&
                             <Button style={{border: "none"}}
-                                 size={"large"}
-                                 shape="circle"
-                                 onClick={() => router.push(`/${personSlug}/edit`)}
-                                 icon={<EditOutlined/>}
+                                    size={"large"}
+                                    shape="circle"
+                                    onClick={() => router.push(`/${personSlug}/edit`)}
+                                    icon={<EditOutlined/>}
                             />
                         }
                     </Row>
@@ -84,6 +91,6 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
 
 const mapStateToProps = (state: any) => ({
     user: state.user
-})
+});
 
 export default connect(mapStateToProps, null)(Profile);
