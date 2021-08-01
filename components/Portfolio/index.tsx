@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import Profile from "./Profile";
-import {Paginator, PortfolioProps, ProfileType, Task} from "./interfaces";
+import {Paginator, ProfileType, Task} from "./interfaces";
 import {GET_PERSON_INFO, GET_PERSON_DONE_TASKS} from "../../graphql/queries";
 import {useQuery} from "@apollo/react-hooks";
 import {useRouter} from "next/router";
 import Contributions from "./Contributions";
 
-const Portfolio = ({}: PortfolioProps) => {
+const Portfolio = () => {
     const router = useRouter();
     const {personSlug} = router.query;
     const [taskList, setTaskList] = useState<Task[]>([]);

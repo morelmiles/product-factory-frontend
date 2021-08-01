@@ -1,26 +1,20 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 // @ts-ignore
 import styles from "./FormInput.scss";
 import {message, TreeSelect} from "antd";
-import {TreeNode} from "antd/lib/tree-select";
-import {Category, Skill, SkillExpertise, SkillsAreaInterface} from "../../interfaces";
+import {Skill, SkillExpertise, SkillsAreaInterface} from "../../interfaces";
+import {checkCategoryExists, findCategory, makeCategoriesTree} from "../../helpers";
 
 const SkillsArea = ({
-                        skills,
                         setSkills,
                         allCategories,
                         setExpertiseList,
                         setSkillExpertise,
                         skillExpertise
                     }: SkillsAreaInterface) => {
-    const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
-
-    useEffect(() => {
-        if (currentSkills.length < 1) setCurrentSkills(skills);
-    }, [skills]);
 
     const categorySelectChange = (value: string) => {
-        if (!checkCategoryExists(value)) {
+        if (!checkCategoryExists(value, skillExpertise)) {
             const skill = findCategory(allCategories, value);
             if (skill) {
                 const newSkill = {
@@ -39,28 +33,6 @@ const SkillsArea = ({
         }
     }
 
-    const findCategory = (categories: Category[], value: string): Category | undefined => {
-        for (let category of categories) {
-            if (category.children && category.children.length > 0) {
-                const skill = findCategory(category.children, value);
-                if (skill) {
-                    return skill;
-                }
-            } else if (category.name === value) return category;
-        }
-    }
-
-    const checkCategoryExists = (category: string): boolean => {
-        return skillExpertise.find(skill => skill.skill === category) !== undefined;
-    }
-
-    const makeCategoriesTree = (categories: Category[]) => {
-        return categories.map((category, index) => (
-            <TreeNode id={index} selectable={category.selectable} value={category.name} title={category.name}>
-                {category.children ? makeCategoriesTree(category.children) : null}
-            </TreeNode>));
-    }
-
     return (
         <div id="profile-area" style={{width: 460, minHeight: 80, border: "1px solid #d9d9d9"}}>
             <TreeSelect
@@ -74,25 +46,7 @@ const SkillsArea = ({
             >
                 {allCategories && makeCategoriesTree(allCategories)}
             </TreeSelect>
-            {skillExpertise && skillExpertise.map((skillExpertise, index) => {
-                return (
-                    <div key={index} className={"skill-div"}
-                         style={{
-                             backgroundColor: "#F5F5F5",
-                             borderRadius: 2,
-                             border: "none",
-                             color: "#595959",
-                             fontSize: 12,
-                             width: "max-content"
-                         }}>
-                        <div style={{display: 'flex', alignItems: 'center'}}>
-                            <div>#</div>
-                            {skillExpertise.skill}
-                        </div>
-                    </div>
-                );
-            })}
-            {currentSkills && currentSkills.map((skill, index) => (
+            {skillExpertise && skillExpertise.map((skillExpertise, index) => (
                 <div key={index} className={"skill-div"}
                      style={{
                          backgroundColor: "#F5F5F5",
@@ -104,7 +58,7 @@ const SkillsArea = ({
                      }}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <div>#</div>
-                        {skill.category}
+                        {skillExpertise.skill}
                     </div>
                 </div>
             ))}
