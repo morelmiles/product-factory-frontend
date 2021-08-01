@@ -4,6 +4,7 @@ import React from "react";
 
 export const findExpertise = (category: string, allCategories: Category[]) => {
     const searchingCategory = (findCategory(allCategories, category) as Category);
+    console.log(searchingCategory);
     return searchingCategory && searchingCategory.expertise ? searchingCategory.expertise : {};
 }
 
