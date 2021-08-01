@@ -4,15 +4,12 @@ import styles from "./FormInput.scss";
 import {TreeSelect} from "antd";
 import {TreeNode} from "antd/lib/tree-select";
 import {Skill, ExpertiseAreaInterface} from "../../interfaces";
-import {findExpertise} from "../../helpers";
 
 const ExpertiseArea = ({
-                           allCategories,
                            setSkills,
                            skillExpertise,
                            expertiseList,
                            setExpertiseList,
-                           setSkillExpertise
                        }: ExpertiseAreaInterface) => {
 
     const expertiseSelectChange = (skill: string, value: string, index: number) => {
@@ -25,7 +22,7 @@ const ExpertiseArea = ({
 
     return (
         <div id="profile-area" style={{width: 460, minHeight: 80, border: "1px solid #d9d9d9"}}>
-            {skillExpertise && skillExpertise.map((skillExpertise, index) => {
+            {skillExpertise.length > 0 ? skillExpertise.map((skillExpertise, index) => {
                 return (
                     <div key={index} className={"skill-div"}
                          style={{
@@ -69,50 +66,7 @@ const ExpertiseArea = ({
 
                     </div>
                 );
-            })}
-            {/*{currentSkills && currentSkills.map((skill, index) => (*/}
-            {/*    <div key={index} className={"skill-div"}*/}
-            {/*         style={{*/}
-            {/*             backgroundColor: "#F5F5F5",*/}
-            {/*             borderRadius: 2,*/}
-            {/*             border: "none",*/}
-            {/*             fontSize: 12,*/}
-            {/*             width: "max-content"*/}
-            {/*         }}>*/}
-            {/*        <div style={{display: 'flex', alignItems: 'center', color: "#595959"}}>*/}
-            {/*            <div>#</div>*/}
-            {/*            {<TreeSelect*/}
-            {/*                style={{width: 120, minWidth: "max-content", color: "#595959",}}*/}
-            {/*                allowClear={false}*/}
-            {/*                onChange={(value) => expertiseSelectChange(skill.category, value, index)}*/}
-            {/*                value={expertiseList[index]}*/}
-            {/*                bordered={false}*/}
-            {/*                showArrow={false}>*/}
-            {/*                {*/}
-            {/*                    Object.keys(findExpertise(skill.category)).map((expertise) => (*/}
-            {/*                        <TreeNode*/}
-            {/*                            value={expertise}*/}
-            {/*                            selectable={false}*/}
-            {/*                            title={expertise}*/}
-            {/*                        >*/}
-            {/*                            {(Object(findExpertise(skill.category))[expertise] as string[]).map((value, index) => (*/}
-            {/*                                <TreeNode*/}
-            {/*                                    value={value}*/}
-            {/*                                    selectable={true}*/}
-            {/*                                    title={value}*/}
-            {/*                                >*/}
-            {/*                                    {value}*/}
-            {/*                                </TreeNode>*/}
-            {/*                            ))}*/}
-            {/*                        </TreeNode>*/}
-            {/*                    ))*/}
-            {/*                }*/}
-            {/*            </TreeSelect>}*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*))}*/}
-            {skillExpertise.length > 0 ? null :
-                <p style={{color: "rgb(195, 195, 195)", margin: "5px 10px"}}>Add Expertise</p>}
+            }) : <p style={{color: "rgb(195, 195, 195)", margin: "5px 10px"}}>Add Expertise</p>}
         </div>
     );
 };
