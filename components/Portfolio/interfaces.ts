@@ -1,12 +1,9 @@
-export interface PortfolioProps {
-
-}
-
 export interface ProfileType {
     id: string
     firstName: string
     bio: string
     avatar: string
+    slug: string
     skills: Skill[]
     websites: Website[]
     websiteTypes: string[]
@@ -110,9 +107,26 @@ export interface Skill {
     expertise: string | null
 }
 
-export interface SkillsAreaInterface {
+export interface SkillAreaInterface {
     skills: Skill[]
     setSkills: Function
+}
+
+export interface SkillsAreaInterface {
+    setSkills: Function
+    allCategories: Category[]
+    setExpertiseList: Function
+    skillExpertise: SkillExpertise[]
+    setSkillExpertise: Function
+}
+
+export interface ExpertiseAreaInterface {
+    setSkills: Function
+    allCategories: Category[]
+    skillExpertise: SkillExpertise[]
+    expertiseList: string[]
+    setExpertiseList: Function
+    setSkillExpertise: Function
 }
 
 export interface Category {

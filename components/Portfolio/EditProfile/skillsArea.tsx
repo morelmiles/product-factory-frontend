@@ -5,9 +5,9 @@ import {message, TreeSelect} from "antd";
 import {useQuery} from "@apollo/react-hooks";
 import {GET_CATEGORIES_LIST} from "../../../graphql/queries";
 import {TreeNode} from "antd/lib/tree-select";
-import {Category, Skill, SkillExpertise, SkillsAreaInterface} from "../interfaces";
+import {Category, Skill, SkillExpertise, SkillAreaInterface} from "../interfaces";
 
-const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
+const SkillsArea = ({skills, setSkills}: SkillAreaInterface) => {
     const [expertiseList, setExpertiseList] = useState<string[]>([]);
     const [allCategories, setAllCategories] = useState<Category[]>([]);
     const [skillExpertise, setSkillExpertise] = useState<SkillExpertise[]>([]);
@@ -46,9 +46,8 @@ const SkillsArea = ({skills, setSkills}: SkillsAreaInterface) => {
 
     const expertiseSelectChange = (skill: string, value: string, index: number) => {
         setSkills((prevState: Skill[]) => {
-            let {category, expertise} = prevState[index];
-            expertise = value;
-            return [...prevState.slice(0, index), {category, expertise}, ...prevState.slice(index + 1)];
+            let {category} = prevState[index];
+            return [...prevState.slice(0, index), {category, expertise: value}, ...prevState.slice(index + 1)];
         });
         setExpertiseList(prevState => [...prevState.slice(0, index), value, ...prevState.slice(index + 1)]);
     }

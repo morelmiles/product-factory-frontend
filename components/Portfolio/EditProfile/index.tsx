@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {EditProfileProps, Skill, Website} from "../interfaces";
+import {Category, EditProfileProps, Expertise, Skill, SkillExpertise, Website} from "../interfaces";
 import {Avatar, Button, Col, Input, message, Row, Select, Typography, Upload} from "antd";
 import {UploadFile} from "antd/es/upload/interface";
 import {useRouter} from "next/router";
@@ -10,8 +10,11 @@ import {useMutation, useQuery} from "@apollo/react-hooks";
 import {UPDATE_PERSON, SAVE_AVATAR} from "../../../graphql/mutations";
 import {getProp} from "../../../utilities/filters";
 import {apiDomain} from "../../../utilities/constants";
-import SkillsArea from "./skillsArea";
+import SkillsArea from "./SkillComponents/SkillArea";
+import ExpertiseArea from "./SkillComponents/ExpertiseArea";
 import {PlusOutlined, UserOutlined} from "@ant-design/icons";
+import {GET_CATEGORIES_LIST} from "../../../graphql/queries";
+import {findExpertise} from "../helpers";
 
 const {Option} = Select;
 
@@ -26,6 +29,17 @@ const EditProfile = ({profile}: EditProfileProps) => {
     const [avatarUrl, setAvatarUrl] = useState<string>(profile.avatar);
     const [uploadStatus, setUploadStatus] = useState<boolean>(false);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [allCategories, setAllCategories] = useState<Category[]>([]);
+    const [skillExpertise, setSkillExpertise] = useState<SkillExpertise[]>([]);
+    const [expertiseList, setExpertiseList] = useState<string[]>([]);
+
+    const {data: categories} = useQuery(GET_CATEGORIES_LIST);
+
+    useEffect(() => {
+        if (categories?.taskCategoryListing) {
+            setAllCategories(JSON.parse(categories.taskCategoryListing));
+        }
+    }, [categories]);
 
     const router = useRouter();
 
@@ -38,6 +52,15 @@ const EditProfile = ({profile}: EditProfileProps) => {
         setAvatarUrl(profile.avatar);
         setFileList([]);
         setSkills(profile.skills);
+        const currentSkillExpertise: SkillExpertise[] = [];
+        profile.skills.map(skill => {
+            currentSkillExpertise.push({
+                skill: skill.category,
+                expertise: findExpertise(skill.category, allCategories)
+            })
+        })
+        setSkillExpertise(currentSkillExpertise);
+        setExpertiseList(profile.skills.map(skill => skill.expertise ? skill.expertise : skill.category))
     }, [profile])
 
     const [updateProfile] = useMutation(UPDATE_PERSON, {
@@ -96,7 +119,7 @@ const EditProfile = ({profile}: EditProfileProps) => {
             newSkills.push({category: skill.category, expertise: skill.expertise});
         }
         let newWebsites: any[] = [];
-        for(let website of websites) {
+        for (let website of websites) {
             newWebsites.push({type: website.type, website: website.website})
         }
         const variables = {
@@ -198,7 +221,23 @@ const EditProfile = ({profile}: EditProfileProps) => {
                             <Typography.Text strong>Skills</Typography.Text>
                         </Row>
                         <Row style={{marginBottom: 20}}>
-                            <SkillsArea skills={skills} setSkills={setSkills}/>
+                            <SkillsArea setSkills={setSkills}
+                                        skillExpertise={skillExpertise}
+                                        setExpertiseList={setExpertiseList} setSkillExpertise={setSkillExpertise}
+                                        allCategories={allCategories}/>
+                        </Row>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Row justify={"start"} style={{marginBottom: 20}}>
+                            <Typography.Text strong>Expertise</Typography.Text>
+                        </Row>
+                        <Row style={{marginBottom: 20}}>
+                            <ExpertiseArea setSkills={setSkills} setSkillExpertise={setSkillExpertise}
+                                           allCategories={allCategories}
+                                           skillExpertise={skillExpertise} expertiseList={expertiseList}
+                                           setExpertiseList={setExpertiseList}/>
                         </Row>
                     </Col>
                 </Row>

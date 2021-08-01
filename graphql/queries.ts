@@ -994,6 +994,7 @@ export const GET_PERSON_INFO = gql `
       firstName
       bio
       avatar
+      slug
       skills {
         category
         expertise
@@ -1007,37 +1008,67 @@ export const GET_PERSON_INFO = gql `
   }
 `;
 
+// export const GET_PERSON_DONE_TASKS = gql `
+//   query GetPersonDoneTasks ($page: Int!, $personSlug: String!) {
+//     personTasks (page: $page, personSlug: $personSlug) {
+//       page
+//       pages
+//       hasNext
+//       hasPrev
+//       tasks {
+//         id
+//         title
+//         date
+//         link
+//         skills {
+//           category
+//           expertise
+//         }
+//         reviewerPerson {
+//           id
+//           firstName
+//           avatar
+//           link
+//         }
+//         product {
+//           name
+//           avatar
+//           link
+//         }
+//         initiative {
+//           name
+//           link
+//         }
+//       }
+//     }
+//   }
+// `;
+
 export const GET_PERSON_DONE_TASKS = gql `
-  query GetPersonDoneTasks ($page: Int!, $personSlug: String!) {
-    personTasks (page: $page, personSlug: $personSlug) {
-      page
-      pages
-      hasNext
-      hasPrev
-      tasks {
+  query GetPersonDoneTasks ($personSlug: String!) {
+    personTasks (personSlug: $personSlug) {
+      id
+      title
+      date
+      link
+      skills {
+        category
+        expertise
+      }
+      reviewerPerson {
         id
-        title
-        date
+        firstName
+        avatar
         link
-        skills {
-          category
-          expertise
-        }
-        reviewerPerson {
-          id
-          firstName
-          avatar
-          link
-        }
-        product {
-          name
-          avatar
-          link
-        }
-        initiative {
-          name
-          link
-        }
+      }
+      product {
+        name
+        avatar
+        link
+      }
+      initiative {
+        name
+        link
       }
     }
   }
