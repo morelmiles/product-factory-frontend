@@ -3,8 +3,7 @@ import {TreeNode} from "antd/lib/tree-select";
 import React from "react";
 
 export const findExpertise = (category: string, allCategories: Category[]) => {
-    const searchingCategory = (findCategory(allCategories, category) as Category);
-    console.log(searchingCategory);
+    const searchingCategory = findCategory(allCategories, category);
     return searchingCategory && searchingCategory.expertise ? searchingCategory.expertise : {};
 }
 
