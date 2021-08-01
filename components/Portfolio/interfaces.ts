@@ -111,8 +111,12 @@ export interface Skill {
     expertise: string | null
 }
 
-export interface SkillsAreaInterface {
+export interface SkillAreaInterface {
     skills: Skill[]
+    setSkills: Function
+}
+
+export interface SkillsAreaInterface {
     setSkills: Function
     allCategories: Category[]
     setExpertiseList: Function
@@ -121,12 +125,12 @@ export interface SkillsAreaInterface {
 }
 
 export interface ExpertiseAreaInterface {
-    skills: Skill[]
     setSkills: Function
     allCategories: Category[]
     skillExpertise: SkillExpertise[]
     expertiseList: string[]
     setExpertiseList: Function
+    setSkillExpertise: Function
 }
 
 export interface Category {
@@ -144,7 +148,7 @@ export interface Expertise {
 
 export interface SkillExpertise {
     skill: string
-    expertise: Expertise
+    expertise: Expertises
 }
 
 export interface Attachment {

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Category, EditProfileProps, Skill, SkillExpertise, Website} from "../interfaces";
+import {Category, EditProfileProps, Expertise, Skill, SkillExpertise, Website} from "../interfaces";
 import {Avatar, Button, Col, Input, message, Row, Select, Typography, Upload} from "antd";
 import {UploadFile} from "antd/es/upload/interface";
 import {useRouter} from "next/router";
@@ -14,6 +14,7 @@ import SkillsArea from "./SkillComponents/SkillArea";
 import ExpertiseArea from "./SkillComponents/ExpertiseArea";
 import {PlusOutlined, UserOutlined} from "@ant-design/icons";
 import {GET_CATEGORIES_LIST} from "../../../graphql/queries";
+import {findCategory, findExpertise} from "../helpers";
 
 const {Option} = Select;
 
@@ -51,6 +52,15 @@ const EditProfile = ({profile}: EditProfileProps) => {
         setAvatarUrl(profile.avatar);
         setFileList([]);
         setSkills(profile.skills);
+        const currentSkillExpertise: SkillExpertise[] = [];
+        profile.skills.map(skill => {
+            currentSkillExpertise.push({
+                skill: skill.category,
+                expertise: findExpertise(skill.category, allCategories)
+            })
+        })
+        setSkillExpertise(currentSkillExpertise);
+        setExpertiseList(profile.skills.map(skill => skill.expertise ? skill.expertise : skill.category))
     }, [profile])
 
     const [updateProfile] = useMutation(UPDATE_PERSON, {
@@ -211,7 +221,8 @@ const EditProfile = ({profile}: EditProfileProps) => {
                             <Typography.Text strong>Skills</Typography.Text>
                         </Row>
                         <Row style={{marginBottom: 20}}>
-                            <SkillsArea skills={skills} setSkills={setSkills} skillExpertise={skillExpertise}
+                            <SkillsArea setSkills={setSkills}
+                                        skillExpertise={skillExpertise}
                                         setExpertiseList={setExpertiseList} setSkillExpertise={setSkillExpertise}
                                         allCategories={allCategories}/>
                         </Row>
@@ -223,7 +234,8 @@ const EditProfile = ({profile}: EditProfileProps) => {
                             <Typography.Text strong>Expertise</Typography.Text>
                         </Row>
                         <Row style={{marginBottom: 20}}>
-                            <ExpertiseArea skills={skills} setSkills={setSkills} allCategories={allCategories}
+                            <ExpertiseArea setSkills={setSkills} setSkillExpertise={setSkillExpertise}
+                                           allCategories={allCategories}
                                            skillExpertise={skillExpertise} expertiseList={expertiseList}
                                            setExpertiseList={setExpertiseList}/>
                         </Row>
