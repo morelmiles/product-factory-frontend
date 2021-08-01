@@ -16,14 +16,16 @@ const ExpertiseArea = ({
     const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
 
     useEffect(() => {
-        if (currentSkills.length < 1) setCurrentSkills(skills);
-    }, [currentSkills]);
+        if (currentSkills.length < 1) {
+            setCurrentSkills(skills);
+            setExpertiseList(skills.map(skill => skill.expertise ? skill.expertise : skill.category));
+        }
+    }, [skills]);
 
     const expertiseSelectChange = (skill: string, value: string, index: number) => {
         setSkills((prevState: Skill[]) => {
-            let {category, expertise} = prevState[index];
-            expertise = value;
-            return [...prevState.slice(0, index), {category, expertise}, ...prevState.slice(index + 1)];
+            let {category} = prevState[index];
+            return [...prevState.slice(0, index), {category, value}, ...prevState.slice(index + 1)];
         });
         setExpertiseList((prevState: string[]) => [...prevState.slice(0, index), value, ...prevState.slice(index + 1)]);
     }
@@ -35,8 +37,19 @@ const ExpertiseArea = ({
             </TreeNode>));
     }
 
+    const findCategory = (categories: Category[], value: string): Category | undefined => {
+        for (let category of categories) {
+            if (category.children && category.children.length > 0) {
+                const skill = findCategory(category.children, value);
+                if (skill) {
+                    return skill;
+                }
+            } else if (category.name === value) return category;
+        }
+    }
+
     const findExpertise = (category: string) => {
-        return (allCategories.find(c => c.name === category) as Category).expertise;
+        return (findCategory(allCategories, category) as Category).expertise;
     }
 
     return (
@@ -68,7 +81,7 @@ const ExpertiseArea = ({
                                             selectable={false}
                                             title={expertise}
                                         >
-                                            {(Object(skillExpertise.expertise)[expertise] as string[]).map((value, index) => (
+                                            {(Object(skillExpertise.expertise)[expertise] as string[]).map((value) => (
                                                 <TreeNode
                                                     value={value}
                                                     selectable={true}
