@@ -1,7 +1,3 @@
-export interface PortfolioProps {
-
-}
-
 export interface ProfileType {
     id: string
     firstName: string
@@ -148,7 +144,7 @@ export interface Expertise {
 
 export interface SkillExpertise {
     skill: string
-    expertise: Expertises
+    expertise: Expertise[]
 }
 
 export interface Attachment {
