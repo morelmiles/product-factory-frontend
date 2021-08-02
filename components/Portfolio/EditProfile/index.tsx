@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Category, EditProfileProps, Skill, SkillExpertise, Website} from "../interfaces";
+import {Category, EditProfileProps, Expertise, Skill, SkillExpertise, Website} from "../interfaces";
 import {Avatar, Button, Col, Input, message, Row, Select, Typography, Upload} from "antd";
 import {UploadFile} from "antd/es/upload/interface";
 import {useRouter} from "next/router";
@@ -44,26 +44,24 @@ const EditProfile = ({profile}: EditProfileProps) => {
     const router = useRouter();
 
     useEffect(() => {
-        if (allCategories) {
-            setFirstName(profile.firstName.split(' ')[0]);
-            setLastName(profile.firstName.split(' ')[1]);
-            setBio(profile.bio);
-            setWebsites(profile.websites);
-            setWebsiteTypes(profile.websiteTypes);
-            setAvatarUrl(profile.avatar);
-            setFileList([]);
-            setSkills(profile.skills);
-            const currentSkillExpertise: SkillExpertise[] = [];
-            profile.skills.map(skill => {
-                currentSkillExpertise.push({
-                    skill: skill.category,
-                    expertise: findExpertise(skill.category, allCategories)
-                });
-            });
-            setSkillExpertise(currentSkillExpertise);
-            setExpertiseList(profile.skills.map(skill => skill.expertise ? skill.expertise : skill.category));
-        }
-    }, [profile, allCategories]);
+        setFirstName(profile.firstName.split(' ')[0]);
+        setLastName(profile.firstName.split(' ')[1]);
+        setBio(profile.bio);
+        setWebsites(profile.websites);
+        setWebsiteTypes(profile.websiteTypes);
+        setAvatarUrl(profile.avatar);
+        setFileList([]);
+        setSkills(profile.skills);
+        const currentSkillExpertise: SkillExpertise[] = [];
+        profile.skills.map(skill => {
+            currentSkillExpertise.push({
+                skill: skill.category,
+                expertise: findExpertise(skill.category, allCategories)
+            })
+        })
+        setSkillExpertise(currentSkillExpertise);
+        setExpertiseList(profile.skills.map(skill => skill.expertise ? skill.expertise : skill.category))
+    }, [profile])
 
     const [updateProfile] = useMutation(UPDATE_PERSON, {
         onCompleted(data) {
