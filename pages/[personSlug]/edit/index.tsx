@@ -62,7 +62,7 @@ const EditPerson = (user: any) => {
                 <Header/>
                 {user.user.id && profile.id ? isCurrentUser ?
                     (<Content className="main-page">
-                        <EditProfile profile={profile}/>
+                        <EditProfile profile={profile} setProfile={setProfile}/>
                         <img style={{width: "100%"}} src={footer} alt=""/>
                     </Content>) : (<Forbidden403 personSlug={personSlug}/>) : null}
             </Layout>

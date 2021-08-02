@@ -30,6 +30,15 @@ export const SAVE_AVATAR = gql`
   }
 `;
 
+export const DELETE_AVATAR = gql`
+  mutation DeleteAvatar($personSlug: String!) {
+    deleteAvatar(personSlug: $personSlug) {
+      status
+      message
+    }
+  }
+`;
+
 export const CREATE_PRODUCT = gql`
   mutation CreateProduct($productInput: ProductInput!, $file: Upload) {
     createProduct(productInput: $productInput, file: $file) {
