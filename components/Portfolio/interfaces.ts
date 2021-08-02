@@ -57,6 +57,7 @@ export interface Paginator {
 
 export interface EditProfileProps {
     profile: ProfileType
+    setProfile: Function
 }
 
 export interface TaskDetailProps {
