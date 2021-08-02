@@ -59,16 +59,11 @@ const TaskTable: React.FunctionComponent<Props> = (
                 taskStatus = "Available";
               }
 
-
-              if (inReview && taskStatus !== "Done") {
-                taskStatus = "In Review";
-              }
-
               const productName = getProp(task, "product.name", "");
               const productSlug = getProp(task, "product.slug", "");
               const initiativeName = getProp(task, "initiative.name", "");
               const initiativeId = getProp(task, "initiative.id", "");
-              const assignee = getProp(task, "assignedTo", null);
+              const assignee = getProp(task, "assignedToPerson", null);
               const owner = getProp(task, "product.owner", "");
               const canEdit = hasManagerRoots((getUserRole(roles, productSlug)));
 
@@ -174,8 +169,8 @@ const TaskTable: React.FunctionComponent<Props> = (
                         <div className="mt-10">
                           <div className="d-flex-end" style={{fontSize: 13}}>
 
-                            <CustomAvatar2 person={{firstName: assignee.firstName, slug: assignee.username}} size={35}/>
-                            <Link href={`/${assignee.username}`}>
+                            <CustomAvatar2 person={{firstName: assignee.firstName, slug: assignee.slug}} size={35}/>
+                            <Link href={`/${assignee.slug}`}>
                               <a className="text-grey-9">{assignee.firstName}</a>
                             </Link>
                           </div>

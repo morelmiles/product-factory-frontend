@@ -5,6 +5,7 @@ import {CheckCircleTwoTone, PlaySquareOutlined} from '@ant-design/icons';
 import TaskDetailAttachments from "./Attachments";
 import {useQuery} from "@apollo/react-hooks";
 import {GET_PERSON_TASK_DELIVERY_MESSAGE} from "../../../graphql/queries";
+import Link from 'next/link';
 
 
 const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
@@ -28,7 +29,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
     }, [task, personSlug]);
 
     useEffect(() => {
-        setDeliveryAttempt(deliveryMessage);
+        setDeliveryAttempt(deliveryMessage?.personTaskDeliveryMessage);
     }, [deliveryMessage])
 
     return (
@@ -49,11 +50,19 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
             </Row>}
         >
             <Row>
-                <Typography.Text
-                    style={{color: "#1890FF", fontSize: 16, fontFamily: "Roboto"}}>{task.title}</Typography.Text>
+                <Link href={task.link}>
+                    <a>
+                        <Typography.Text
+                            style={{
+                                color: "#1890FF",
+                                fontSize: 16,
+                                fontFamily: "Roboto"
+                            }}>{task.title}</Typography.Text>
+                    </a>
+                </Link>
             </Row>
             <Row align={"middle"} style={{marginTop: 13}}>
-                <Col span={3}>
+                <Col style={{marginRight: 10}}>
                     <Row>
                         <Typography.Text style={{
                             fontSize: 12,
@@ -64,17 +73,21 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row>
-                        <PlaySquareOutlined/>
-                        <Typography.Text style={{
-                            fontSize: 12,
-                            color: "#1D1D1B",
-                            marginLeft: 10
-                        }}>{task.product.name}</Typography.Text>
+                        {task.product ? (<Link href={task.product.link}>
+                            <a>
+                                <PlaySquareOutlined style={{color: "#000000", opacity: 0.8}}/>
+                                <Typography.Text style={{
+                                    fontSize: 12,
+                                    color: "#1D1D1B",
+                                    marginLeft: 10
+                                }}>{task.product.name}</Typography.Text>
+                            </a>
+                        </Link>) : null}
                     </Row>
                 </Col>
             </Row>
             <Row align={"middle"} style={{marginTop: 13}}>
-                <Col span={3}>
+                <Col style={{marginRight: 10}}>
                     <Row>
                         <Typography.Text style={{
                             fontSize: 12,
@@ -85,17 +98,21 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row>
-                        <PlaySquareOutlined/>
-                        <Typography.Text style={{
-                            fontSize: 12,
-                            color: "#1D1D1B",
-                            marginLeft: 10
-                        }}>{task.initiative}</Typography.Text>
+                        {task.initiative ? (<Link href={task.initiative.link}>
+                            <a>
+                                <PlaySquareOutlined style={{color: "#000000", opacity: 0.8}}/>
+                                <Typography.Text style={{
+                                    fontSize: 12,
+                                    color: "#1D1D1B",
+                                    marginLeft: 10
+                                }}>{task.initiative.name}</Typography.Text>
+                            </a>
+                        </Link>) : null}
                     </Row>
                 </Col>
             </Row>
             <Row align={"middle"} style={{marginTop: 13}}>
-                <Col span={3}>
+                <Col style={{marginRight: 10}}>
                     <Row>
                         <Typography.Text style={{
                             fontSize: 12,
@@ -106,16 +123,20 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 </Col>
                 <Col>
                     <Row align={"middle"}>
-                        <Col>
-                            <Avatar style={{minWidth: 0}} size={28} src={task.product.avatar}/>
-                        </Col>
-                        <Col>
-                            <Typography.Text style={{
-                                fontSize: 12,
-                                color: "#1D1D1B",
-                                marginLeft: 10
-                            }}>{task.reviewerPerson.firstName}</Typography.Text>
-                        </Col>
+                        {task.reviewerPerson ? (
+                            <Link href={task.reviewerPerson.link ? task.reviewerPerson.link : ''}>
+                                <a>
+                                    <Col onClick={() => setModal(false)}>
+                                        <Avatar style={{minWidth: 0}} size={28} src={task.product.avatar}/>
+                                        <Typography.Text style={{
+                                            fontSize: 12,
+                                            color: "#1D1D1B",
+                                            marginLeft: 10
+                                        }}>{task.reviewerPerson.firstName}</Typography.Text>
+                                    </Col>
+                                </a>
+                            </Link>
+                        ) : null}
                     </Row>
                 </Col>
             </Row>
@@ -148,7 +169,7 @@ const TaskDetail = ({modal, setModal, task, personSlug}: TaskDetailProps) => {
                 <Typography.Text strong>Delivery Message</Typography.Text>
             </Row>
             <Row>
-                <Typography.Text>{deliveryAttempt?.message}</Typography.Text>
+                <p dangerouslySetInnerHTML={{__html: deliveryAttempt?.message}}/>
             </Row>
             <TaskDetailAttachments attachments={deliveryAttempt?.attachments}/>
         </Modal>

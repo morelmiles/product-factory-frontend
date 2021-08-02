@@ -1,12 +1,9 @@
-export interface PortfolioProps {
-
-}
-
 export interface ProfileType {
     id: string
     firstName: string
     bio: string
     avatar: string
+    slug: string
     skills: Skill[]
     websites: Website[]
     websiteTypes: string[]
@@ -20,6 +17,12 @@ export interface Skill {
 export interface Product {
     name: string
     avatar: string
+    link: string
+}
+
+export interface Initiative {
+    name: string
+    link: string
 }
 
 export interface DeliveryMessage {
@@ -31,16 +34,18 @@ export interface Task {
     id: number
     title: string
     date: string
+    link: string
     product: Product
     skills: Skill[]
     reviewerPerson: Reviewer
-    initiative: string
+    initiative: Initiative
 }
 
 export interface Reviewer {
     id: string
     firstName: string
     avatar: string
+    link: string
 }
 
 export interface Paginator {
@@ -102,9 +107,8 @@ export interface Skill {
     expertise: string | null
 }
 
-export interface SkillsAreaInterface {
-    skills: Skill[]
-    setSkills: Function
+export interface Expertise {
+    [key: string]: string[]
 }
 
 export interface Category {
@@ -114,10 +118,6 @@ export interface Category {
     expertise: Expertise,
     name: string,
     children: Category[]
-}
-
-export interface Expertise {
-    [key: string]: string[]
 }
 
 export interface SkillExpertise {
@@ -138,4 +138,26 @@ export interface TaskDetailAttachmentsProps {
 export interface TasksComponentProps {
     tasks: Task[]
     openTaskDetail: Function
+}
+
+export interface ExpertiseAreaInterface {
+    setSkills: Function
+    allCategories: Category[]
+    skillExpertise: SkillExpertise[]
+    expertiseList: string[]
+    setExpertiseList: Function
+    setSkillExpertise: Function
+}
+
+export interface SkillAreaInterface {
+    skills: Skill[]
+    setSkills: Function
+}
+
+export interface SkillsAreaInterface {
+    setSkills: Function
+    allCategories: Category[]
+    setExpertiseList: Function
+    skillExpertise: SkillExpertise[]
+    setSkillExpertise: Function
 }

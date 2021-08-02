@@ -110,9 +110,9 @@ export const GET_TASKS = gql`
       blocked
       hasActiveDepends
       videoUrl
-      assignedTo {
+      assignedToPerson {
         firstName
-        username
+        slug
       }
       product {
         name
@@ -202,9 +202,9 @@ export const GET_CAPABILITY_BY_ID = gql`
         tags
         blocked
         hasActiveDepends
-        assignedTo {
+        assignedToPerson {
           firstName
-          username
+          slug
         }
         reviewer {
           firstName
@@ -293,9 +293,9 @@ query GetInitiative($id: Int!, $input: TaskListInput!) {
       expertise
       blocked
       hasActiveDepends
-      assignedTo {
+      assignedToPerson {
         firstName
-        username
+        slug
       }
       reviewer {
         firstName
@@ -332,8 +332,8 @@ export const GET_TASK_BY_ID = gql`
       inReview
       assignedTo {
         id
-        firstName,
-        photo,
+        firstName
+        photo
         slug
       }
       attachment {
@@ -430,9 +430,9 @@ export const GET_TASKS_BY_PRODUCT = gql`
       blocked
       hasActiveDepends
       videoUrl
-      assignedTo {
+      assignedToPerson {
         firstName
-        username
+        slug
       }
       product {
         name
@@ -994,6 +994,7 @@ export const GET_PERSON_INFO = gql `
       firstName
       bio
       avatar
+      slug
       skills {
         category
         expertise
@@ -1007,31 +1008,67 @@ export const GET_PERSON_INFO = gql `
   }
 `;
 
+// export const GET_PERSON_DONE_TASKS = gql `
+//   query GetPersonDoneTasks ($page: Int!, $personSlug: String!) {
+//     personTasks (page: $page, personSlug: $personSlug) {
+//       page
+//       pages
+//       hasNext
+//       hasPrev
+//       tasks {
+//         id
+//         title
+//         date
+//         link
+//         skills {
+//           category
+//           expertise
+//         }
+//         reviewerPerson {
+//           id
+//           firstName
+//           avatar
+//           link
+//         }
+//         product {
+//           name
+//           avatar
+//           link
+//         }
+//         initiative {
+//           name
+//           link
+//         }
+//       }
+//     }
+//   }
+// `;
+
 export const GET_PERSON_DONE_TASKS = gql `
-  query GetPersonDoneTasks ($page: Int!, $personSlug: String!) {
-    personTasks (page: $page, personSlug: $personSlug) {
-      page
-      pages
-      hasNext
-      hasPrev
-      tasks {
+  query GetPersonDoneTasks ($personSlug: String!) {
+    personTasks (personSlug: $personSlug) {
+      id
+      title
+      date
+      link
+      skills {
+        category
+        expertise
+      }
+      reviewerPerson {
         id
-        title
-        date
-        skills {
-          category
-          expertise
-        }
-        reviewerPerson {
-          id
-          firstName
-          avatar
-        }
-        product {
-          name
-          avatar
-        }
-        initiative
+        firstName
+        avatar
+        link
+      }
+      product {
+        name
+        avatar
+        link
+      }
+      initiative {
+        name
+        link
       }
     }
   }

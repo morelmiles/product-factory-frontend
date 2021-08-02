@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Col, Divider, Radio, Row, Space, Typography} from 'antd';
+import {Col, Divider, Row, Space, Typography} from 'antd';
 import {useQuery} from '@apollo/react-hooks';
 import {GET_PRODUCT_PERSONS} from '../../../../graphql/queries';
 import {getProp} from '../../../../utilities/filters';
 import {randomKeys} from '../../../../utilities/utils';
 import {CustomAvatar} from '../../../../components';
 import LeftPanelContainer from '../../../../components/HOC/withLeftPanel';
-import {RadioChangeEvent} from "antd/es";
 import {Social} from "../../../../components/Profile/ProfileTop";
 import Link from "next/link";
 import Loading from "../../../../components/Loading";

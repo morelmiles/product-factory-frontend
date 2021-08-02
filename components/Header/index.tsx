@@ -1,15 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {connect} from "react-redux";
-import {Button, message, Row, Col, Drawer, Menu, Dropdown} from "antd";
-import {setLoginURL, userLogInAction} from "../../lib/actions";
+import {Button, message, Row, Col, Menu, Dropdown} from "antd";
+import {setLoginURL, setRegisterURL, userLogInAction} from "../../lib/actions";
 import {UserState} from "../../lib/reducers/user.reducer";
-import {productionMode} from "../../utilities/constants";
 // @ts-ignore
 import Logo from "../../public/assets/logo.svg";
-import {useRouter} from "next/router";
-import Link from "antd/lib/typography/Link";
+import Link from "next/link";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {GET_AM_LOGIN_URL, GET_PERSON} from "../../graphql/queries";
+import {GET_AM_LOGIN_URL, GET_AM_REGISTER_URL, GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
 import LoginViaAM from "../LoginViaAM";
 import RegisterViaAM from "../RegisterViaAM";
@@ -21,24 +19,27 @@ const redirectToLocalName = "redirectTo";
 type Props = {
     user?: any;
     userLogInAction?: any;
-    setLoginURL: (loginUrl: string) => void
+    setLoginURL: (loginUrl: string) => void;
+    setRegisterURL: (registerUrl: string) => void;
 };
 
-const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction, setLoginURL}) => {
-    const router = useRouter();
-    const {data: authMachineData} = useQuery(GET_AM_LOGIN_URL);
+const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction, setLoginURL, setRegisterURL}) => {
+    const {data: authMachineLoginData} = useQuery(GET_AM_LOGIN_URL);
+    const {data: authMachineRegisterData} = useQuery(GET_AM_REGISTER_URL);
     const menu = (
         <Menu style={{minWidth: 150}}>
             <Menu.Item key="0" className="signIn-btn">
-                <Link href={`/${user?.username}`} className="text-grey-9">
-                    <UserOutlined/> Your profile
+                <Link href={`/${user?.username}`}>
+                    <a className="text-grey-9">
+                        <UserOutlined/> Your profile
+                    </a>
                 </Link>
             </Menu.Item>
             {user?.claimedTask ?
                 <Menu.Item key="1">
-                    <Link href={user.claimedTask.link} className="text-grey-9">
-                        <BookOutlined/>
+                    <Link href={user.claimedTask.link}>
                         <a className="text-grey-9">
+                            <BookOutlined/>
                             <strong>Claimed task:</strong><br/>
                             <div className="truncate" style={{width: 200}}>{user.claimedTask.title}</div>
                         </a>
@@ -63,15 +64,21 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                     </Menu.Item>
                 </>)}
             <Menu.Item key="2">
-                <a style={{color: '#000000 !important'}} href={"/"}>Open Products</a>
+                <Link href={"/"}>
+                    <a style={{color: '#000000 !important'}}>Open Products</a>
+                </Link>
             </Menu.Item>
             <Menu.Item key="3">
-                <a style={{color: '#000000 !important'}} href={"/about"}>About</a>
+                <Link href={"/about"}>
+                    <a style={{color: '#000000 !important'}}>About</a>
+                </Link>
             </Menu.Item>
             {(user && user.isLoggedIn) ? (<>
                 <Menu.Item key="4" className="signIn-btn">
-                    <Link style={{color: '#000000 !important'}} href={`/${user?.username}`} className="text-grey-9">
-                        Your profile
+                    <Link href={`/${user?.username}`}>
+                        <a style={{color: '#000000 !important'}} className="text-grey-9">
+                            Your profile
+                        </a>
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="5" onClick={() => logout()} className="signIn-btn">
@@ -83,8 +90,12 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"});
 
     useEffect(() => {
-        if (authMachineData && authMachineData?.getAuthmachineLoginUrl) setLoginURL(authMachineData.getAuthmachineLoginUrl);
-    }, [authMachineData]);
+        if (authMachineLoginData && authMachineLoginData?.getAuthmachineLoginUrl) setLoginURL(authMachineLoginData.getAuthmachineLoginUrl);
+    }, [authMachineLoginData]);
+
+    useEffect(() => {
+        if (authMachineRegisterData && authMachineRegisterData?.getAuthmachineRegisterUrl) setRegisterURL(authMachineRegisterData.getAuthmachineRegisterUrl);
+    }, [authMachineRegisterData])
 
     useEffect(() => {
         if (personData && personData.person) {
@@ -118,16 +129,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         }
     }, [personData]);
 
-    useEffect(() => {
-        if (window.location.pathname !== "/switch-test-user") {
-            let redirectTo = localStorage.getItem(redirectToLocalName);
-            if (redirectTo) {
-                router.push(redirectTo).then();
-                localStorage.removeItem(redirectToLocalName);
-            }
-        }
-    }, []);
-
     const [logout] = useMutation(LOGOUT, {
         onCompleted(data) {
             const {success, message: responseMessage, url} = data.logout;
@@ -147,8 +148,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                 });
                 if (url) {
                     window.location.replace(url);
-                } else {
-                    router.push("/switch-test-user").then();
                 }
             } else {
                 message.error(responseMessage);
@@ -169,7 +168,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             >
                 <Col>
                     <Link href="/">
-                        <img src={Logo} alt="logo"/>
+                        <a>
+                            <img src={Logo} alt="logo"/>
+                        </a>
                     </Link>
                 </Col>
                 <Col>
@@ -188,15 +189,27 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                         <Col span={10}>
                             <Row justify="start" align="middle">
                                 <Col style={{marginRight: 20}}>
-                                    <Link className="gray-link" href="/">Work on Open Products</Link>
+                                    <Link href="/">
+                                        <a className="gray-link">
+                                            Work on Open Products
+                                        </a>
+                                    </Link>
                                 </Col>
                                 {(user && user.isLoggedIn) && (
                                     <Col style={{marginRight: 20}}>
-                                        <Link className="gray-link" href="/product/add">Add Product</Link>
+                                        <Link href="/product/add">
+                                            <a className="gray-link">
+                                                Add Product
+                                            </a>
+                                        </Link>
                                     </Col>
                                 )}
                                 <Col style={{marginRight: 20}}>
-                                    <Link className="gray-link" href="/about">About</Link>
+                                    <Link href="/about">
+                                        <a className="gray-link">
+                                            About
+                                        </a>
+                                    </Link>
                                 </Col>
                             </Row>
                         </Col>
@@ -204,7 +217,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                         <Col span={4}>
                             <Row justify="center">
                                 <Link href="/">
-                                    <img src={Logo} alt="logo"/>
+                                    <a>
+                                        <img src={Logo} alt="logo"/>
+                                    </a>
                                 </Link>
                             </Row>
                         </Col>
@@ -227,18 +242,8 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                                                 </a>
                                             </Dropdown>
                                         ) : (
-                                            <>{
-                                                productionMode
-                                                    ? <LoginViaAM/>
-                                                    : (
-                                                        <Button
-                                                            className="signIn-btn"
-                                                            onClick={() => router.push("/switch-test-user")}
-                                                        >
-                                                            Sign in
-                                                        </Button>
-                                                    )
-                                            }
+                                            <>
+                                                <LoginViaAM/>
                                                 <RegisterViaAM margin={"0 0 0 15px"}/>
                                             </>
                                         )
@@ -260,6 +265,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     userLogInAction: (data: UserState) => dispatch(userLogInAction(data)),
     setLoginURL: (loginUrl: string) => dispatch(setLoginURL(loginUrl)),
+    setRegisterURL: (registerUrl: string) => dispatch(setRegisterURL(registerUrl))
 });
 
 const HeaderMenu = connect(

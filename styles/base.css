@@ -646,3 +646,7 @@ p:last-child {
         display: block;
     }
 }
+
+.ant-avatar {
+  min-width: auto !important;
+}
