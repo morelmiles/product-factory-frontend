@@ -26,7 +26,7 @@ const FormInput = ({label, placeholder, type, onChange, value}: FormInputInterfa
             <label className={labelClass}>{label}</label>
             {
                 type === 'textarea' ?
-                    <Input.TextArea placeholder={placeholder} onChange={onChange}
+                    <Input.TextArea placeholder={placeholder} onChange={onChange} value={value}
                                     style={{borderRadius: 10, width: 371, minHeight: 80}}/> :
                     <Input size="large" placeholder={placeholder} value={value} type={type} onChange={onChange}
                            style={{borderRadius: 10}}/>

@@ -9,11 +9,6 @@ export interface ProfileType {
     websiteTypes: string[]
 }
 
-export interface Skill {
-    category: string
-    expertise: string | null
-}
-
 export interface Product {
     name: string
     avatar: string
@@ -105,7 +100,7 @@ export interface Website {
 
 export interface Skill {
     category: string,
-    expertise: string | null
+    expertise: null | string[]
 }
 
 export interface Expertise {

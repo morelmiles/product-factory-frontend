@@ -20,7 +20,7 @@ export interface Expertise {
 }
 
 export interface SkillExpertise {
-    skill: string,
+    skill: string[],
     expertise: Expertise
 }
 
