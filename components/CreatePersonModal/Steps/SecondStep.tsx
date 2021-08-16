@@ -12,8 +12,6 @@ const SecondStep = ({
                         setSkills,
                         skillExpertise,
                         setSkillExpertise,
-                        expertiseList,
-                        setExpertiseList
                     }: SecondStepProps) => {
 
     const finish = () => {
