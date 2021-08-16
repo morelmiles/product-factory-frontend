@@ -4,7 +4,7 @@ import {Col, Row, TreeSelect, Typography} from "antd";
 import {TreeNode} from "antd/lib/tree-select";
 import {Skill} from "../../Portfolio/interfaces";
 
-const ExpertiseTable = ({setSkills, skillExpertise}: ExpertiseTableProps) => {
+const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps) => {
 
     const expertiseSelectChange = (skill: string, value: string[], index: number) => {
         setSkills((prevState: Skill[]) => {
@@ -17,12 +17,12 @@ const ExpertiseTable = ({setSkills, skillExpertise}: ExpertiseTableProps) => {
         <>
             <Row>
                 <Col>
-                    <Row style={{backgroundColor: '#FAFAFA', padding: '11px 42px', minWidth: 200}}>
+                    <Row style={{backgroundColor: '#FAFAFA', padding: '11px 42px', minWidth: 220}}>
                         Skill
                     </Row>
                 </Col>
                 <Col>
-                    <Row style={{backgroundColor: '#FAFAFA', padding: '11px 42px', minWidth: 200}}>
+                    <Row style={{backgroundColor: '#FAFAFA', padding: '11px 42px', minWidth: 220}}>
                         Expertise
                     </Row>
                 </Col>
@@ -33,9 +33,10 @@ const ExpertiseTable = ({setSkills, skillExpertise}: ExpertiseTableProps) => {
                         <Row style={{borderBottom: '1px solid #FAFAFA', height: "100%", alignItems: "center"}}
                              key={index}>
                             <Typography.Text style={{
-                                fontSize: 9,
+                                fontSize: 11,
                                 minWidth: 200,
                                 padding: 5,
+                                width: "max-content"
                             }}>{skillExp.skill[0].slice(0, 12) + '... > ' + skillExp.skill[1]}</Typography.Text>
                         </Row>
                     </Col>
@@ -43,10 +44,11 @@ const ExpertiseTable = ({setSkills, skillExpertise}: ExpertiseTableProps) => {
                         <Row style={{borderBottom: '1px solid #FAFAFA'}} key={index}>
                             <TreeSelect
                                 key={index}
-                                style={{minWidth: 200, padding: 5}}
+                                style={{minWidth: 200, padding: 5, width: "max-content"}}
                                 allowClear={false}
                                 onChange={(value) => expertiseSelectChange(skillExp.skill[1], value as string[], index)}
                                 placeholder={"Please Select Expertise"}
+                                value={skills[index].expertise ? skills[index].expertise : []}
                                 multiple
                                 bordered
                                 showArrow>

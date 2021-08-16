@@ -15,20 +15,29 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
     }
 
     const categorySelectChange = (value: string[]) => {
-        if (!checkCategoryExists(value[value.length - 1])) {
-            const skill = findCategory(allCategories, value[value.length - 1]);
-            if (skill) {
-                const newSkill = {
-                    category: skill[0].name,
-                    expertise: null
-                };
-                const newSkillExpertise = {
-                    skill: [skill[1].name, skill[0].name],
-                    expertise: skill[0].expertise
+        if (value.length < skillExpertise.length) {
+            const findSkill = skillExpertise.map(skillExp => skillExp.skill[1]).filter(skill => !value.includes(skill))[0];
+            const index = skillExpertise.findIndex(skillExp => skillExp.skill[1] === findSkill);
+            if (index > -1) {
+                setSkills((prevState: Skill[]) => [...prevState.slice(0, index), ...prevState.slice(index + 1)]);
+                setSkillExpertise((prevState: SkillExpertise[]) => [...prevState.slice(0, index), ...prevState.slice(index + 1)]);
+            }
+        } else {
+            if (!checkCategoryExists(value[value.length - 1])) {
+                const skill = findCategory(allCategories, value[value.length - 1]);
+                if (skill) {
+                    const newSkill = {
+                        category: skill[0].name,
+                        expertise: null
+                    };
+                    const newSkillExpertise = {
+                        skill: [skill[1].name, skill[0].name],
+                        expertise: skill[0].expertise
+                    }
+                    setSkills((prevState: Skill[]) => [...prevState, newSkill]);
+                    setSkillExpertise((prevState: SkillExpertise[]) => [...prevState, newSkillExpertise]);
+                    message.success("Please select expertise for this category", 10).then();
                 }
-                setSkills((prevState: Skill[]) => [...prevState, newSkill]);
-                setSkillExpertise((prevState: SkillExpertise[]) => [...prevState, newSkillExpertise]);
-                message.success("Please select expertise for this category", 10).then();
             }
         }
     }

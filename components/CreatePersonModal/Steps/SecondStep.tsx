@@ -12,6 +12,7 @@ const SecondStep = ({
                         setSkills,
                         skillExpertise,
                         setSkillExpertise,
+                        skills
                     }: SecondStepProps) => {
 
     const finish = () => {
@@ -45,7 +46,7 @@ const SecondStep = ({
                     tasks.</Typography.Text>
             </Row>
             <Row style={{marginBottom: 35}}>
-                <ExpertiseTable skillExpertise={skillExpertise} setSkills={setSkills}/>
+                <ExpertiseTable skillExpertise={skillExpertise} setSkills={setSkills} skills={skills}/>
             </Row>
             <Row justify={"space-between"}>
                 <Button style={{border: "none"}} icon={<LeftOutlined/>} onClick={() => previous(0)}

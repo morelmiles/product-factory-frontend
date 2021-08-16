@@ -91,6 +91,7 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
                     skillExpertise={skillExpertise}
                     setSkillExpertise={setSkillExpertise}
                     allCategories={allCategories}
+                    skills={skills}
         />
     ]
 
