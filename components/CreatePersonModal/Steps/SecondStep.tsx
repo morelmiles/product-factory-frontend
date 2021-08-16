@@ -41,13 +41,13 @@ const SecondStep = ({
                 <Typography.Text style={{fontSize: 15, marginBottom: 15}}>Specify expertise
                     (recommended)</Typography.Text>
             </Row>
-            <Row>
+            <Row style={{marginBottom: 20}}>
                 <Typography.Text style={{fontSize: 8, marginBottom: 25}}>These skills are featured on your profile and
                     can also be used to match you with
                     tasks.</Typography.Text>
             </Row>
-            <Row>
-                <ExpertiseTable skillExpertise={skillExpertise} setSkills={setSkills} expertiseList={expertiseList} setExpertiseList={setExpertiseList}/>
+            <Row style={{marginBottom: 35}}>
+                <ExpertiseTable skillExpertise={skillExpertise} setSkills={setSkills}/>
             </Row>
             <Row justify={"space-between"}>
                 <Button style={{border: "none"}} icon={<LeftOutlined/>} onClick={() => previous(0)}

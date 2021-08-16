@@ -40,8 +40,6 @@ export interface SecondStepProps {
     allCategories: Category[]
     skillExpertise: SkillExpertise[]
     setSkillExpertise: Function
-    expertiseList: string[]
-    setExpertiseList: Function
 }
 
 export interface StepSwitcherProps {
@@ -67,6 +65,4 @@ export interface SkillsSelectProps {
 export interface ExpertiseTableProps {
     setSkills: Function
     skillExpertise: SkillExpertise[]
-    expertiseList: string[]
-    setExpertiseList: Function
 }

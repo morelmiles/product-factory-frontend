@@ -14,17 +14,17 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
             </TreeNode>));
     }
 
-    const categorySelectChange = (value: string) => {
-        if (!checkCategoryExists(value)) {
-            const skill = findCategory(allCategories, value);
+    const categorySelectChange = (value: string[]) => {
+        if (!checkCategoryExists(value[value.length - 1])) {
+            const skill = findCategory(allCategories, value[value.length - 1]);
             if (skill) {
                 const newSkill = {
-                    category: skill.name,
+                    category: skill[0].name,
                     expertise: null
                 };
                 const newSkillExpertise = {
-                    skill: skill.name,
-                    expertise: skill.expertise
+                    skill: [skill[1].name, skill[0].name],
+                    expertise: skill[0].expertise
                 }
                 setSkills((prevState: Skill[]) => [...prevState, newSkill]);
                 setSkillExpertise((prevState: SkillExpertise[]) => [...prevState, newSkillExpertise]);
@@ -33,19 +33,19 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
         }
     }
 
-    const findCategory = (categories: Category[], value: string): Category | undefined => {
+    const findCategory = (categories: Category[], value: string): Category[] | undefined => {
         for (let category of categories) {
             if (category.children && category.children.length > 0) {
                 const skill = findCategory(category.children, value);
                 if (skill) {
-                    return skill;
+                    return [skill[0], category]
                 }
-            } else if (category.name === value) return category;
+            } else if (category.name === value) return [category, category];
         }
     }
 
     const checkCategoryExists = (category: string): boolean => {
-        return skillExpertise.find(skill => skill.skill === category) !== undefined;
+        return skillExpertise.find(skill => skill.skill[1] === category) !== undefined;
     }
 
     return (
@@ -55,7 +55,7 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
             placeholder="Please select skills"
             showArrow
             bordered
-            style={{width: 250, color: "#c3c3c3"}}
+            style={{width: 250}}
             multiple={true}
         >
             {allCategories && makeCategoriesTree(allCategories)}

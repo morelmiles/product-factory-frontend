@@ -33,7 +33,6 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
     const [skills, setSkills] = useState<Skill[]>([]);
     const [allCategories, setAllCategories] = useState<Category[]>([]);
     const [skillExpertise, setSkillExpertise] = useState<SkillExpertise[]>([]);
-    const [expertiseList, setExpertiseList] = useState<string[]>([]);
 
     const {data: categories} = useQuery(GET_CATEGORIES_LIST);
 
@@ -75,26 +74,25 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
         closeModal(false);
     }
 
-    const steps = {
-        0: <FirstStep avatarUrl={avatarUrl}
-                      setAvatarUrl={setAvatarUrl}
-                      setAvatarId={setAvatarId}
-                      setStep={setStep}
-                      firstName={firstName}
-                      setFirstName={setFirstName}
-                      lastName={lastName}
-                      setLastName={setLastName}
-                      bio={bio}
-                      setBio={setBio}/>,
-        1: <SecondStep previous={setStep}
-                       submit={submit}
-                       setSkills={setSkills}
-                       skillExpertise={skillExpertise}
-                       setSkillExpertise={setSkillExpertise}
-                       allCategories={allCategories}
-                       expertiseList={expertiseList}
-                       setExpertiseList={setExpertiseList}/>
-    }
+    const steps = [
+        <FirstStep avatarUrl={avatarUrl}
+                   setAvatarUrl={setAvatarUrl}
+                   setAvatarId={setAvatarId}
+                   setStep={setStep}
+                   firstName={firstName}
+                   setFirstName={setFirstName}
+                   lastName={lastName}
+                   setLastName={setLastName}
+                   bio={bio}
+                   setBio={setBio}/>,
+        <SecondStep previous={setStep}
+                    submit={submit}
+                    setSkills={setSkills}
+                    skillExpertise={skillExpertise}
+                    setSkillExpertise={setSkillExpertise}
+                    allCategories={allCategories}
+        />
+    ]
 
     const getStep = (step: number) => {
         return steps[step];
