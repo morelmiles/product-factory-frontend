@@ -13,6 +13,43 @@ const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps
         });
     }
 
+
+    const expertiseTree = (index: number, skillExp) => {
+        return (
+            <TreeSelect
+                key={index}
+                style={{minWidth: 200, padding: 5, width: "max-content"}}
+                allowClear={false}
+                onChange={(value) => expertiseSelectChange(skillExp.skill[1], value as string[], index)}
+                placeholder={"Please Select Expertise"}
+                value={skills[index].expertise ? skills[index].expertise : []}
+                multiple
+                bordered
+                showArrow>
+                {
+
+                    Object.keys(skillExp.expertise).map((expertise) => (
+                        <TreeNode
+                            value={expertise}
+                            selectable={false}
+                            title={expertise}
+                        >
+                            {(Object(skillExp.expertise)[expertise] as string[]).map((value) => (
+                                <TreeNode
+                                    value={value}
+                                    selectable={true}
+                                    title={value}
+                                >
+                                    {value}
+                                </TreeNode>
+                            ))}
+                        </TreeNode>
+                    ))
+                }
+            </TreeSelect>
+        )
+    }
+
     return (
         <>
             <Row>
@@ -28,7 +65,7 @@ const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps
                 </Col>
             </Row>
             {skillExpertise.length > 0 && skillExpertise.map((skillExp, index) => (
-                <>
+                <Row>
                     <Col>
                         <Row style={{borderBottom: '1px solid #FAFAFA', height: "100%", alignItems: "center"}}
                              key={index}>
@@ -41,40 +78,12 @@ const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps
                         </Row>
                     </Col>
                     <Col>
-                        <Row style={{borderBottom: '1px solid #FAFAFA'}} key={index}>
-                            <TreeSelect
-                                key={index}
-                                style={{minWidth: 200, padding: 5, width: "max-content"}}
-                                allowClear={false}
-                                onChange={(value) => expertiseSelectChange(skillExp.skill[1], value as string[], index)}
-                                placeholder={"Please Select Expertise"}
-                                value={skills[index].expertise ? skills[index].expertise : []}
-                                multiple
-                                bordered
-                                showArrow>
-                                {
-                                    Object.keys(skillExp.expertise).map((expertise) => (
-                                        <TreeNode
-                                            value={expertise}
-                                            selectable={false}
-                                            title={expertise}
-                                        >
-                                            {(Object(skillExp.expertise)[expertise] as string[]).map((value) => (
-                                                <TreeNode
-                                                    value={value}
-                                                    selectable={true}
-                                                    title={value}
-                                                >
-                                                    {value}
-                                                </TreeNode>
-                                            ))}
-                                        </TreeNode>
-                                    ))
-                                }
-                            </TreeSelect>
+                        <Row style={{borderBottom: '1px solid #FAFAFA', height: "100%", alignItems: "center"}} key={index}>
+                            {skillExpertise[index] > 0 ? expertiseTree(index, skillExp) : <Typography.Text>No selections available</Typography.Text>}
+
                         </Row>
                     </Col>
-                </>
+                </Row>
             ))}
         </>
     );

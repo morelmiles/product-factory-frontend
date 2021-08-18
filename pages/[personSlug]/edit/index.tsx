@@ -60,11 +60,10 @@ const EditPerson = (user: any) => {
         <ContainerFlex>
             <Layout>
                 <Header/>
-                {user.user.id && profile.id ? isCurrentUser ?
-                    (<Content className="main-page">
+                <Content className="main-page">
                         <EditProfile profile={profile} setProfile={setProfile}/>
                         <img style={{width: "100%"}} src={footer} alt=""/>
-                    </Content>) : (<Forbidden403 personSlug={personSlug}/>) : null}
+                    </Content>
             </Layout>
         </ContainerFlex>
     );
