@@ -5,14 +5,12 @@ import {TreeNode} from "antd/lib/tree-select";
 import {Skill} from "../../Portfolio/interfaces";
 
 const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps) => {
-
     const expertiseSelectChange = (skill: string, value: string[], index: number) => {
         setSkills((prevState: Skill[]) => {
             let {category} = prevState[index];
             return [...prevState.slice(0, index), {category, expertise: value}, ...prevState.slice(index + 1)];
         });
     }
-
 
     const expertiseTree = (index: number, skillExp) => {
         return (
@@ -74,12 +72,14 @@ const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps
                                 minWidth: 200,
                                 padding: 5,
                                 width: "max-content"
-                            }}>{skillExp.skill[0].slice(0, 12) + '... > ' + skillExp.skill[1]}</Typography.Text>
+                            }}>{skillExp.skill[0].slice(0, 12) + '... > ' + skillExp.skill[1]} </Typography.Text>
                         </Row>
                     </Col>
                     <Col>
-                        <Row style={{borderBottom: '1px solid #FAFAFA', height: "100%", alignItems: "center"}} key={index}>
-                            {skillExpertise[index] > 0 ? expertiseTree(index, skillExp) : <Typography.Text>No selections available</Typography.Text>}
+                        <Row style={{borderBottom: '1px solid #FAFAFA', height: "100%", alignItems: "center"}}
+                             key={index}>
+                            {Object.keys(skillExp.expertise).length > 0 ? expertiseTree(index, skillExp) :
+                                <Typography.Text>No selections available</Typography.Text>}
 
                         </Row>
                     </Col>

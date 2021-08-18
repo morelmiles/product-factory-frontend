@@ -59,7 +59,6 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
             message.error('Error with person profile updating').then();
         }
     });
-
     useEffect(() => {
         if (categories?.taskCategoryListing) {
             setAllCategories(JSON.parse(categories.taskCategoryListing));
@@ -90,7 +89,8 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
             const currentSkillExpertise: SkillExpertise[] = [];
             profile.skills.map(skill => {
                 currentSkillExpertise.push({
-                    skill: skill.category,
+                    // update database to avoid this
+                    skill: [skill.category, skill.category],
                     expertise: findExpertise(skill.category, allCategories)
                 });
             });
@@ -98,7 +98,7 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
             setExpertiseList(profile.skills.map(skill => skill.expertise ? skill.expertise : skill.category));
         }
     }, [profile, allCategories]);
-
+    
     const [updateProfile] = useMutation(UPDATE_PERSON, {
         onCompleted(data) {
             const status = getProp(data, 'updatePerson.status', false);
@@ -203,7 +203,7 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
             return [...prevState.slice(0, index), newObj, ...prevState.slice(index + 1)];
         });
     }
-    console.log(avatarUrl)
+     
     return (
         <>
             <Row gutter={[52, 0]} justify={"center"} style={{margin: "5% auto"}}>
@@ -265,6 +265,7 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
                                 skillExpertise={skillExpertise}
                                 setSkillExpertise={setSkillExpertise}
                                 allCategories={allCategories}
+                                skills={skills}
                             />
                         </Col>
                     </Row>

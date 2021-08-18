@@ -62,6 +62,7 @@ export interface SkillsSelectProps {
     allCategories: Category[]
     skillExpertise: SkillExpertise[]
     setSkillExpertise: Function
+    skills: string[],
 }
 
 export interface ExpertiseTableProps {

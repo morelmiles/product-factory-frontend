@@ -5,7 +5,7 @@ import {Category, SkillExpertise} from "../../SkillsComponents/interfaces";
 import {Skill} from "../index";
 import {SkillsSelectProps} from "../interfaces";
 
-const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExpertise}: SkillsSelectProps) => {
+const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExpertise, skills}: SkillsSelectProps) => {
 
     const makeCategoriesTree = (categories: Category[]) => {
         return categories.map((category, index) => (
@@ -56,7 +56,6 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
     const checkCategoryExists = (category: string): boolean => {
         return skillExpertise.find(skill => skill.skill[1] === category) !== undefined;
     }
-
     return (
         <TreeSelect
             allowClear={false}
@@ -66,6 +65,9 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
             bordered
             style={{width: 250}}
             multiple={true}
+            value={skills.map(obj => {
+                return obj.category
+            })}
         >
             {allCategories && makeCategoriesTree(allCategories)}
         </TreeSelect>
