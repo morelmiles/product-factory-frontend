@@ -2,7 +2,7 @@ import React from "react";
 import {message, TreeSelect} from "antd";
 import {TreeNode} from "antd/lib/tree-select";
 import {Category, SkillExpertise} from "../../SkillsComponents/interfaces";
-import {Skill} from "../index";
+import {Skill} from '../../CreatePersonModal/interfaces'
 import {SkillsSelectProps} from "../interfaces";
 
 const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExpertise, skills}: SkillsSelectProps) => {
@@ -65,9 +65,9 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
             bordered
             style={{width: 250}}
             multiple={true}
-            value={skills.map(obj => {
+            value={skills ? skills.map(obj => {
                 return obj.category
-            })}
+            }) : []}
         >
             {allCategories && makeCategoriesTree(allCategories)}
         </TreeSelect>

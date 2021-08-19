@@ -11,10 +11,7 @@ import FirstStep from "./Steps/FirstStep";
 import SecondStep from "./Steps/SecondStep";
 import StepWidget from "./Steps/StepSwitcher/StepSwitcher";
 
-export interface Skill {
-    category: string,
-    expertise: string | null
-}
+
 
 
 const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {

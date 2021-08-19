@@ -5,7 +5,7 @@ import {message, TreeSelect} from "antd";
 import {useQuery} from "@apollo/react-hooks";
 import {GET_CATEGORIES_LIST} from "../../graphql/queries";
 import {TreeNode} from "antd/lib/tree-select";
-import {Skill} from "../CreatePersonModal";
+import {Skill} from "../CreatePersonModal/interfaces";
 
 
 interface SkillsAreaInterface {

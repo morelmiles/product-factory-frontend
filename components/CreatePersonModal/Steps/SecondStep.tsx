@@ -34,7 +34,9 @@ const SecondStep = ({
                 <SkillsSelect setSkills={setSkills}
                               allCategories={allCategories}
                               skillExpertise={skillExpertise}
-                              setSkillExpertise={setSkillExpertise}/>
+                              setSkillExpertise={setSkillExpertise}
+                              skills={skills}
+                />
             </Row>
             <Row>
                 <Typography.Text style={{fontSize: 15, marginBottom: 15}}>Specify expertise
