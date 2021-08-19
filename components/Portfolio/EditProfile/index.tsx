@@ -89,9 +89,8 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
             const currentSkillExpertise: SkillExpertise[] = [];
             profile.skills.map(skill => {
                 currentSkillExpertise.push({
-                    // update database to avoid this
-                    skill: [skill.category, skill.category],
-                    expertise: findExpertise(skill.category, allCategories)
+                    skill: skill.category,
+                    expertise: findExpertise(skill.category[1], allCategories)
                 });
             });
             setSkillExpertise(currentSkillExpertise);

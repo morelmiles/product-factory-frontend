@@ -66,7 +66,7 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
             style={{width: 250}}
             multiple={true}
             value={skills ? skills.map(obj => {
-                return obj.category
+                return typeof obj.category === 'string' ? obj.category : obj.category[1]
             }) : []}
         >
             {allCategories && makeCategoriesTree(allCategories)}
