@@ -3,7 +3,7 @@ import {Modal, message, Form, Typography} from "antd";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {CREATE_PERSON} from "../../graphql/mutations";
 import {getProp} from "../../utilities/filters";
-import {CreatePersonProps, Person} from "./interfaces";
+import {CreatePersonProps, Person, Skill} from "./interfaces";
 import {useRouter} from "next/router";
 import {GET_CATEGORIES_LIST} from "../../graphql/queries";
 import {Category, SkillExpertise} from "../SkillsComponents/interfaces";
@@ -11,10 +11,6 @@ import FirstStep from "./Steps/FirstStep";
 import SecondStep from "./Steps/SecondStep";
 import StepWidget from "./Steps/StepSwitcher/StepSwitcher";
 
-export interface Skill {
-    category: string,
-    expertise: string | null
-}
 
 
 const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
