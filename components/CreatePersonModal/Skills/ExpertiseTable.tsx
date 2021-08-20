@@ -79,7 +79,7 @@ const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps
                     </Col>
                     <Col>
                         <Row style={{borderBottom: '1px solid #FAFAFA', height: "100%", alignItems: "center"}} key={index}>
-                            {skillExpertise[index] > 0 ? expertiseTree(index, skillExp) : <Typography.Text>No selections available</Typography.Text>}
+                            {Object.keys(skillExp.expertise).length > 0 ? expertiseTree(index, skillExp) : <Typography.Text>No selection available</Typography.Text>}
 
                         </Row>
                     </Col>
