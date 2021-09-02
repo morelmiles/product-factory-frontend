@@ -1,37 +1,34 @@
 import React, {useEffect, useState} from "react";
-import {Modal, Button, message, Typography, Avatar, Col, Row, Form, Input} from "antd";
+import {Modal, message, Form, Typography} from "antd";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {CREATE_PERSON, SAVE_AVATAR} from "../../graphql/mutations";
+import {CREATE_PERSON} from "../../graphql/mutations";
 import {getProp} from "../../utilities/filters";
-import {EditOutlined, UserOutlined} from "@ant-design/icons";
-import FormInput from "../FormInput/FormInput";
-import SkillsArea from "../SkillsComponents/SkillsArea";
-import ExpertiseArea from "../SkillsComponents/ExpertiseArea";
-import AvatarUploadModal from "./AvatarUploadModal";
-import {CreatePersonProps, Person} from "./interfaces";
-import {UploadFile} from "antd/es/upload/interface";
-import {apiDomain} from "../../utilities/constants";
+import {CreatePersonProps, Person, Skill} from "./interfaces";
 import {useRouter} from "next/router";
 import {GET_CATEGORIES_LIST} from "../../graphql/queries";
 import {Category, SkillExpertise} from "../SkillsComponents/interfaces";
+import FirstStep from "./Steps/FirstStep";
+import SecondStep from "./Steps/SecondStep";
+import StepWidget from "./Steps/StepSwitcher/StepSwitcher";
 
-export interface Skill {
-    category: string,
-    expertise: string | null
-}
 
 
 const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
     const [form] = Form.useForm();
     const router = useRouter();
+
+    const [step, setStep] = useState<number>(0);
+
     const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [avatarId, setAvatarId] = useState<number>(-1);
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [avatarUploadModal, setAvatarUploadModal] = useState<boolean>(false);
+
+    const [firstName, setFirstName] = useState<string>('');
+    const [lastName, setLastName] = useState<string>('');
+    const [bio, setBio] = useState<string>('');
+
     const [skills, setSkills] = useState<Skill[]>([]);
     const [allCategories, setAllCategories] = useState<Category[]>([]);
     const [skillExpertise, setSkillExpertise] = useState<SkillExpertise[]>([]);
-    const [expertiseList, setExpertiseList] = useState<string[]>([]);
 
     const {data: categories} = useQuery(GET_CATEGORIES_LIST);
 
@@ -64,32 +61,38 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
         }
     });
 
-    const [saveAvatar] = useMutation(SAVE_AVATAR, {
-        onCompleted(data) {
-            const status = getProp(data, 'saveAvatar.status', false);
-            const messageText = getProp(data, 'saveAvatar.message', '');
-
-            if (status) {
-                message.success("Avatar successfully uploaded", 10).then();
-                setAvatarUrl(apiDomain + data.saveAvatar.avatarUrl);
-                setAvatarId(data.saveAvatar.avatarId);
-                setAvatarUploadModal(false);
-            } else {
-                message.error(messageText).then();
-            }
-        },
-        onError() {
-            message.error('Upload file failed').then();
-        }
-    });
-
-    const submit = (values: Person) => {
-        createProfile({variables: {...values, skills, avatar: avatarId}});
+    const submit = () => {
+        createProfile({variables: {firstName, lastName, bio, skills, avatar: avatarId}});
     }
 
 
     const cancel = () => {
         closeModal(false);
+    }
+
+    const steps = [
+        <FirstStep avatarUrl={avatarUrl}
+                   setAvatarUrl={setAvatarUrl}
+                   setAvatarId={setAvatarId}
+                   setStep={setStep}
+                   firstName={firstName}
+                   setFirstName={setFirstName}
+                   lastName={lastName}
+                   setLastName={setLastName}
+                   bio={bio}
+                   setBio={setBio}/>,
+        <SecondStep previous={setStep}
+                    submit={submit}
+                    setSkills={setSkills}
+                    skillExpertise={skillExpertise}
+                    setSkillExpertise={setSkillExpertise}
+                    allCategories={allCategories}
+                    skills={skills}
+        />
+    ]
+
+    const getStep = (step: number) => {
+        return steps[step];
     }
 
     return (
@@ -99,70 +102,14 @@ const CreatePersonModal = ({modal, closeModal}: CreatePersonProps) => {
             maskClosable={false}
             footer={null}
             closable={false}
+            width={600}
         >
-            <Form form={form} onFinish={submit}>
-                <Typography style={{fontSize: 24, fontFamily: "Roboto"}}>Create Your Profile</Typography>
-                <Row id={"profile-row"} style={{display: "flex", flexWrap: "nowrap"}}>
-                    <Col style={{marginTop: 32, marginRight: 25}}>
-                        <Avatar size={80} icon={<UserOutlined/>} src={avatarUrl}/>
-                        <Button style={{position: "absolute", left: 55}} type="primary" shape="circle"
-                                onClick={() => setAvatarUploadModal(true)}
-                                icon={<EditOutlined/>}/>
-                    </Col>
-                    <Col style={{maxWidth: 177, maxHeight: 51, marginTop: 32, marginRight: 17}}>
-                        <Form.Item name="firstName"
-                                   rules={[
-                                       {required: true, message: "First Name is required"},
-                                   ]}>
-                            <FormInput label="First Name" type="text" name="firstName" placeholder="Jane"
-                                       value={form.getFieldValue('firstName')}/>
-                        </Form.Item>
-                    </Col>
-                    <Col style={{maxWidth: 177, maxHeight: 51, marginTop: 32}}>
-                        <Form.Item name="lastName"
-                                   rules={[
-                                       {required: true, message: "Last Name is required"},
-                                   ]}>
-                            <FormInput label="Last Name" name="lastName" placeholder="Doe" type="text"
-                                       value={form.getFieldValue('lastName')}/>
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row id="profile-area-row" style={{flexFlow: "row-reverse"}}>
-                    <Form.Item name="bio"
-                               style={{float: "right"}}>
-                        <FormInput label="Add Your Bio" name="bio"
-                                   placeholder="Self-taught UI/UX Designer based in Rio de Janeiro. Passionate about psychology, user research and mobile design."
-                                   type="textarea"
-                                   value={form.getFieldValue('bio')}/>
-                    </Form.Item>
-                </Row>
-                <Row id="profile-area-row" style={{flexFlow: "row-reverse", marginTop: 20}}>
-                    <Form.Item name="skills"
-                               style={{float: "right"}}
-                    >
-                        <SkillsArea setSkills={setSkills} allCategories={allCategories}
-                                    setExpertiseList={setExpertiseList} setSkillExpertise={setSkillExpertise}
-                                    skillExpertise={skillExpertise}/>
-                    </Form.Item>
-                </Row>
-                <Row id="profile-area-row" style={{flexFlow: "row-reverse", marginTop: 20}}>
-                    <Form.Item name="expertise"
-                               style={{float: "right"}}
-                    >
-                        <ExpertiseArea setSkills={setSkills} skillExpertise={skillExpertise}
-                                       expertiseList={expertiseList} setExpertiseList={setExpertiseList}/>
-                    </Form.Item>
-                </Row>
-                <Row id="profile-btn" style={{flexFlow: "row-reverse"}}>
-                    <Button style={{padding: "0 44px", fontSize: 16, borderRadius: 10}} type="primary" size="large"
-                            htmlType="submit">
-                        Save
-                    </Button>
-                </Row>
-            </Form>
-            <AvatarUploadModal open={avatarUploadModal} setOpen={setAvatarUploadModal} upload={saveAvatar}
-                               fileList={fileList} setFileList={setFileList}/>
+            <div style={{margin: "5%"}}>
+                <Typography.Title style={{textAlign: "center", fontFamily: "Roboto", fontSize: 20}}>Complete Your
+                    Profile</Typography.Title>
+                <StepWidget first={step === 1 || step === 2} second={step === 2} step={step}/>
+                {getStep(step)}
+            </div>
         </Modal>
     )
 }

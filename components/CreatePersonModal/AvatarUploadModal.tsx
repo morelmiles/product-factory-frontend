@@ -48,17 +48,20 @@ const AvatarUploadModal = ({open, setOpen, fileList, setFileList, upload}: Avata
                 setFileList([]);
             }}
             footer={[
-                <Button style={{padding: "0 44px", fontSize: 16, borderRadius: 10}} key="back" size="large"
-                        onClick={() => {
-                            setOpen(false);
-                            setFileList([]);
-                        }}>
-                    Back
-                </Button>,
-                <Button style={{padding: "0 44px", fontSize: 16, borderRadius: 10}} key="submit" size="large"
-                        type="primary" onClick={submit}>
-                    Submit
-                </Button>
+                <div style={{display: "flex", justifyContent: "space-between", marginLeft: '5%', marginRight: '2%'}}>
+                    <Button style={{padding: "0 44px", fontSize: 16, borderRadius: 10}} key="back" size="large"
+                            onClick={() => {
+                                setOpen(false);
+                                setFileList([]);
+                            }}>
+                        Back
+                    </Button>
+                    <Button style={{padding: "0 44px", fontSize: 16, borderRadius: 10}} key="submit" size="large"
+                            type="primary" onClick={submit}>
+                        Submit
+                    </Button>
+                </div>
+
             ]}
             maskClosable={false}
         >
