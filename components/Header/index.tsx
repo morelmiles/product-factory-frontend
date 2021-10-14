@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import {connect} from "react-redux";
 import {Button, message, Row, Col, Menu, Dropdown} from "antd";
 import {setLoginURL, setRegisterURL, userLogInAction} from "../../lib/actions";
@@ -6,7 +6,7 @@ import {UserState} from "../../lib/reducers/user.reducer";
 // @ts-ignore
 import Logo from "../../public/assets/logo.svg";
 import Link from "next/link";
-import {useMutation, useQuery} from "@apollo/react-hooks";
+import {useMutation, useQuery, useLazyQuery} from "@apollo/react-hooks";
 import {GET_AM_LOGIN_URL, GET_AM_REGISTER_URL, GET_PERSON} from "../../graphql/queries";
 import {USER_ROLES} from "../../graphql/types";
 import LoginViaAM from "../LoginViaAM";
@@ -26,6 +26,8 @@ type Props = {
 const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAction, setLoginURL, setRegisterURL}) => {
     const {data: authMachineLoginData} = useQuery(GET_AM_LOGIN_URL);
     const {data: authMachineRegisterData} = useQuery(GET_AM_REGISTER_URL);
+    const [loadPerson, {data: getPersonData}] = useLazyQuery(GET_PERSON, {fetchPolicy: "no-cache"});
+
     const menu = (
         <Menu style={{minWidth: 150}}>
             <Menu.Item key="0" className="signIn-btn">
@@ -87,7 +89,18 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             </>) : null}
         </Menu>);
 
-    const {data: personData} = useQuery(GET_PERSON, {fetchPolicy: "no-cache"});
+    const [personData, setPersonData] = useState(null);
+
+    const updatePersonData = (updated_data) => {
+        if(updated_data) {
+            setPersonData(updated_data);
+        }
+    }
+
+    useEffect(() => { 
+        if(getPersonData)
+            setPersonData(getPersonData) 
+    }, [getPersonData]);
 
     useEffect(() => {
         if (authMachineLoginData && authMachineLoginData?.getAuthmachineLoginUrl) setLoginURL(authMachineLoginData.getAuthmachineLoginUrl);
@@ -95,11 +108,21 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
     useEffect(() => {
         if (authMachineRegisterData && authMachineRegisterData?.getAuthmachineRegisterUrl) setRegisterURL(authMachineRegisterData.getAuthmachineRegisterUrl);
-    }, [authMachineRegisterData])
+    }, [authMachineRegisterData]);
+
+    useEffect(() => {
+        if(localStorage && localStorage.getItem('userId')) {
+            loadPerson({
+                variables: { "id": localStorage.getItem('userId') }
+            });
+        }
+    },[]);
 
     useEffect(() => {
         if (personData && personData.person) {
             const {firstName, slug, id, username, productpersonSet, claimedTask} = personData.person;
+            localStorage.setItem("userId", id);
+            localStorage.setItem("firstName", firstName);
             userLogInAction({
                 isLoggedIn: true,
                 loading: false,
@@ -243,7 +266,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                                             </Dropdown>
                                         ) : (
                                             <>
-                                                <LoginViaAM/>
+                                                <LoginViaAM updatePersonData={updatePersonData}/>
                                                 <RegisterViaAM margin={"0 0 0 15px"}/>
                                             </>
                                         )
