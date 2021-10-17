@@ -110,37 +110,6 @@ const AddTask: React.FunctionComponent<Props> = (
         }
     };
 
-    // const findCategory = (categories: Category[], value: string): Category | undefined => {
-    //     for (let category of categories) {
-    //         if (category.children && category.children.length > 0) {
-    //             const skill = findCategory(category.children, value);
-    //             if (skill) {
-    //                 return skill;
-    //             }
-    //         } else if (category.name === value) return category;
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     if (category && category !== "") {
-    //         // @ts-ignore
-    //         const taskCategory = findCategory(allCategories, category);
-    //         if (taskCategory) {
-    //             // @ts-ignore
-    //             setExpertises(taskCategory.expertise);
-    //         } else {
-    //             // @ts-ignore
-    //             const taskCategory = allCategories.find((cat) => cat.parent.id === category);
-    //             if (taskCategory) {
-    //                 // @ts-ignore
-    //                 setExpertises(taskCategory.expertise);
-    //             } else {
-    //                 setExpertise({});
-    //             }
-    //         }
-    //     }
-    // }, [category]);
-
     useEffect(() => {
         if (reviewSelectValue === "") {
             setReviewSelectValue(getProp(user, "slug", ""));
@@ -161,7 +130,6 @@ const AddTask: React.FunctionComponent<Props> = (
     const {data: capabilitiesData, loading: capabilitiesLoading} = useQuery(GET_CAPABILITIES_BY_PRODUCT, {
         variables: {productSlug}
     });
-    // const {data: categories} = useQuery(GET_CATEGORIES_LIST);
     const {data: categories} = useQuery(GET_CATEGORIES);
     const {data: tagsData} = useQuery(GET_TAGS, {
         variables: {productSlug}
@@ -378,22 +346,12 @@ const AddTask: React.FunctionComponent<Props> = (
         setInitiatives(newData.initiatives);
     }
 
-    // const makeCategoriesTree = (categories: Category[]) => {
-    //     return categories.map((category, index) => (
-    //         <TreeNode id={index} selectable={category.selectable} value={category.name} title={category.name}>
-    //             {category.children ? makeCategoriesTree(category.children) : null}
-    //         </TreeNode>));
-    // }
-
     const reviewSelectChange = (val: any) => {
         setReviewSelectValue(val);
     }
 
     const filterTreeNode = (input: string, node: any) => node.title.toLowerCase().indexOf(input.toLowerCase()) !== -1;
 
-    // @ts-ignore
-    // @ts-ignore
-    // @ts-ignore
     // @ts-ignore
     return (
         <>
