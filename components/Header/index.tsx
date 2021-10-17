@@ -91,9 +91,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
     const [personData, setPersonData] = useState(null);
 
-    const updatePersonData = (updated_data) => {
-        if(updated_data) {
-            setPersonData(updated_data);
+    const updatePersonData = (updatedData) => {
+        if(updatedData) {
+            setPersonData(updatedData);
         }
     }
 
@@ -115,6 +115,9 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
             loadPerson({
                 variables: { "id": localStorage.getItem('userId') }
             });
+        }
+        else {
+            loadPerson();
         }
     },[]);
 
@@ -249,12 +252,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
 
                         <Col span={10}>
                             <Row align="middle" justify="end">
-                                {/*<Col style={{marginRight: 10}}>*/}
-                                {/*  <Search*/}
-                                {/*    placeholder="Search for open source product or initiative"*/}
-                                {/*    onSearch={onSearch}*/}
-                                {/*  />*/}
-                                {/*</Col>*/}
                                 <Col>
                                     {
                                         user && user.isLoggedIn ? (
