@@ -511,7 +511,7 @@ const AddTask: React.FunctionComponent<Props> = (
                     >
                         {
                             allCategories.map((cat: any) => (
-                                <Option key={`category-${cat.id}`} value={cat.id}>{cat.category}</Option>
+                                <Option key={`category-${cat.id}`} value={cat.id}>{cat.name}</Option>
                             ))
                         }
                     </Select>
