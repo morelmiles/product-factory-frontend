@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {Modal, Row, Col, Input, Select, message, TreeSelect} from "antd";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {
-    GET_CAPABILITIES_BY_PRODUCT, GET_CATEGORIES, GET_CONTRIBUTOR_GUIDES,
+    GET_CAPABILITIES_BY_PRODUCT, GET_CATEGORIES_LIST, GET_CONTRIBUTOR_GUIDES,
     GET_INITIATIVES_SHORT,
     GET_TAGS,
     GET_USERS
@@ -15,6 +15,7 @@ import {PlusOutlined, MinusOutlined} from "@ant-design/icons";
 import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
 import {getProp} from "../../../utilities/filters";
 import RichTextEditor from "../../RichTextEditor";
+
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -40,6 +41,15 @@ type Props = {
     capabilityID: number;
 
 };
+
+interface Category {
+    active: boolean,
+    selectable: boolean,
+    id: number,
+    expertise: Expertise,
+    name: string,
+    children: Category[]
+}
 
 interface Expertise {
     [key: string]: string[]
@@ -110,6 +120,37 @@ const AddTask: React.FunctionComponent<Props> = (
         }
     };
 
+    const findCategory = (categories: Category[], value: string): Category | undefined => {
+        for (let category of categories) {
+            if (category.children && category.children.length > 0) {
+                const skill = findCategory(category.children, value);
+                if (skill) {
+                    return skill;
+                }
+            } else if (category.name === value) return category;
+        }
+    }
+
+    useEffect(() => {
+        if (category && category !== "") {
+            // @ts-ignore
+            const taskCategory = findCategory(allCategories, category);
+            if (taskCategory) {
+                // @ts-ignore
+                setExpertises(taskCategory.expertise);
+            } else {
+                // @ts-ignore
+                const taskCategory = allCategories.find((cat) => cat.parent.id === category);
+                if (taskCategory) {
+                    // @ts-ignore
+                    setExpertises(taskCategory.expertise);
+                } else {
+                    setExpertise({});
+                }
+            }
+        }
+    }, [category]);
+
     useEffect(() => {
         if (reviewSelectValue === "") {
             setReviewSelectValue(getProp(user, "slug", ""));
@@ -130,7 +171,7 @@ const AddTask: React.FunctionComponent<Props> = (
     const {data: capabilitiesData, loading: capabilitiesLoading} = useQuery(GET_CAPABILITIES_BY_PRODUCT, {
         variables: {productSlug}
     });
-    const {data: categories} = useQuery(GET_CATEGORIES);
+    const {data: categories} = useQuery(GET_CATEGORIES_LIST);
     const {data: tagsData} = useQuery(GET_TAGS, {
         variables: {productSlug}
     });
@@ -149,7 +190,6 @@ const AddTask: React.FunctionComponent<Props> = (
         let capabilitiesData: string = "";
         if (capabilities && capabilities.capabilities) {
             capabilitiesData = getProp(capabilities, "capabilities", "");
-
             try {
                 if (capabilitiesData !== "") {
                     capabilitiesData = JSON.parse(capabilitiesData);
@@ -215,10 +255,8 @@ const AddTask: React.FunctionComponent<Props> = (
     }, [users]);
 
     useEffect(() => {
-        if (categories?.categories) {
-            let cats = []
-            categories.categories.map((cat) => {cats.push(JSON.parse(cat.replace(/'/g, '"'))) })
-            setAllCategories(cats);
+        if (categories?.taskCategoryListing) {
+            setAllCategories(JSON.parse(categories.taskCategoryListing));
         }
     }, [categories])
 
@@ -307,7 +345,7 @@ const AddTask: React.FunctionComponent<Props> = (
             priority,
             contributionGuide,
             reviewer: reviewSelectValue,
-            category: category ? allCategories.find((cat) => cat.id === category).category : "",
+            category: category ? findCategory(allCategories, category).id : "",
             expertise
         };
 
@@ -346,12 +384,22 @@ const AddTask: React.FunctionComponent<Props> = (
         setInitiatives(newData.initiatives);
     }
 
+    const makeCategoriesTree = (categories: Category[]) => {
+        return categories.map((category, index) => (
+            <TreeNode id={index} selectable={category.selectable} value={category.name} title={category.name}>
+                {category.children ? makeCategoriesTree(category.children) : null}
+            </TreeNode>));
+    }
+
     const reviewSelectChange = (val: any) => {
         setReviewSelectValue(val);
     }
 
     const filterTreeNode = (input: string, node: any) => node.title.toLowerCase().indexOf(input.toLowerCase()) !== -1;
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     // @ts-ignore
     return (
         <>
@@ -504,18 +552,14 @@ const AddTask: React.FunctionComponent<Props> = (
                 </Row>
                 <Row className="mb-15">
                     <label>Task category</label>
-                    <Select
+                    <TreeSelect
+                        allowClear
                         onChange={setCategory}
                         placeholder="Select task category"
                         value={category}
                     >
-                        {
-                            allCategories.map((cat: any) => (
-                                <Option key={`category-${cat.id}`} value={cat.id}>{cat.name}</Option>
-                            ))
-                        }
-                    </Select>
-
+                        {allCategories && makeCategoriesTree(allCategories)}
+                    </TreeSelect>
                 </Row>
                 <Row className="mb-15">
                     <label>Expertise</label>

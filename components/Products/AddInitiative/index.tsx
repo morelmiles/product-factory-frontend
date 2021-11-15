@@ -7,7 +7,9 @@ import {getProp} from "../../../utilities/filters";
 import {RICH_TEXT_EDITOR_WIDTH} from "../../../utilities/constants";
 import RichTextEditor from "../../RichTextEditor";
 
+
 const {Option} = Select;
+
 
 type Props = {
   modal?: boolean;
@@ -150,11 +152,11 @@ const AddInitiative: React.FunctionComponent<Props> = (
               <Row className="mb-15">
                 <label>Status:</label>
                 <Select
-                  defaultValue={INITIATIVE_TYPES[status-1]}
+                  defaultValue={status}
                   onChange={setStatus}
                 >
                   {INITIATIVE_TYPES.map((option: any, idx: number) => (
-                    <Option key={`cap${idx}`} value={idx + 1} selected>
+                    <Option key={`cap${idx}`} value={idx + 1}>
                       {option}
                     </Option>
                   ))}
