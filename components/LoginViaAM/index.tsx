@@ -44,6 +44,7 @@ const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign in",
 
   const loginViaAM = () => {
     setLoading(true);
+    
     if (process.env.APPLICATION_MODE === 'development') {
       fake_login({variables: 
         { "personId": process.env.TEST_USER, }

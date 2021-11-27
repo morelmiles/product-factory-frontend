@@ -987,6 +987,13 @@ export const GET_CATEGORIES = gql`
   }
 `;
 
+export const GET_EXPERTISES_LIST = gql`
+  query GetExpertisesList {
+    expertisesListing
+  }
+`;
+
+
 export const GET_PERSON_INFO = gql `
   query GetPersonInfo ($personSlug: String!) {
     personInfo (personSlug: $personSlug) {
