@@ -366,7 +366,10 @@ export const GET_TASK_BY_ID = gql`
         name
       }
       taskCategory
-      taskExpertise
+      taskExpertise {
+        id
+        name
+      }
       dependOn {
         id
         title

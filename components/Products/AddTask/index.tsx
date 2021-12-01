@@ -83,8 +83,9 @@ const AddTask: React.FunctionComponent<Props> = (
     const [shortDescription, setShortDescription] = useState(
         modalType ? task.shortDescription : ""
     );
+    
     const [category, setCategory] = useState(modalType ? task.taskCategory : "");
-    const [expertise, setExpertise] = useState(modalType ? task.expertise : []);
+    const [expertise, setExpertise] = useState([]);
     const [contributionGuide, setContributionGuide] = useState(
         modalType ? task.contributionGuide?.id || null : null
     );
@@ -250,25 +251,44 @@ const AddTask: React.FunctionComponent<Props> = (
                 // @ts-ignore
                 var ae = [];
                 for(let expertise of allExpertises){
-                    console.log(taskCategory['id'], expertise.category)
                     if(expertise.category === taskCategory['id']) {
                         ae.push(expertise);
                     }
                 }
                 setAvailableExpertises(ae);
-
-            } else {
-                // @ts-ignore
-                const taskCategory = allCategories.find((cat) => cat.parent.id === category);
-                if (taskCategory) {
-                    // @ts-ignore
-                    // setExpertises(taskCategory.expertise);
-                } else {
-                    setExpertise({});
-                }
-            }
+                setExpertise([]);
+            } 
         }
     }, [category]);
+
+    useEffect(() => {
+        if(allExpertises.length) {
+            if (category && category !== "" && allCategories.length) {
+                // @ts-ignore
+                const taskCategory = findCategory(allCategories, category, null);
+                if (taskCategory) {
+                    // @ts-ignore
+                    var ae = [];
+                    for(let expertise of allExpertises){
+                        if(expertise.category === taskCategory['id']) {
+                            ae.push(expertise);
+                        }
+                    }
+                    setAvailableExpertises(ae);    
+                }
+            }            
+        }
+
+    }, [allExpertises])
+
+    useEffect(() =>{
+        if(availableExpertises.length && task.taskExpertise && task.taskExpertise.length) {
+            var exp = [];
+            task.taskExpertise.map((ex) => {exp.push(parseInt(ex.id))});
+            setExpertise(exp);
+        }
+
+    }, [availableExpertises])
 
     useEffect(() => {
         if (categories?.taskCategoryListing) {
