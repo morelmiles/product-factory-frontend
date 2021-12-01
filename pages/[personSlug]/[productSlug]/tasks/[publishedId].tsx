@@ -705,7 +705,12 @@ const Task: React.FunctionComponent<Params> = ({
                                                 <strong className="my-auto">Expertise:&nbsp;</strong>
                                                 &nbsp;
                                                 <Typography className="text-grey-9">
-                                                    {getProp(task, "taskExpertise", null)}
+                                                    {
+                                                        getProp(task, "taskExpertise", null).map((exp, index) =>
+                                                            <span>{index > 0?',':''} {exp.name}</span>
+                                                        ) 
+
+                                                    }
                                                 </Typography>
                                             </Row>
                                         )}
