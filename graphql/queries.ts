@@ -366,7 +366,10 @@ export const GET_TASK_BY_ID = gql`
         name
       }
       taskCategory
-      taskExpertise
+      taskExpertise {
+        id
+        name
+      }
       dependOn {
         id
         title
@@ -986,6 +989,13 @@ export const GET_CATEGORIES = gql`
     categories
   }
 `;
+
+export const GET_EXPERTISES_LIST = gql`
+  query GetExpertisesList {
+    expertisesListing
+  }
+`;
+
 
 export const GET_PERSON_INFO = gql `
   query GetPersonInfo ($personSlug: String!) {
