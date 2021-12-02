@@ -282,7 +282,8 @@ const AddTask: React.FunctionComponent<Props> = (
     }, [allExpertises])
 
     useEffect(() =>{
-        if(availableExpertises.length && task.taskExpertise && task.taskExpertise.length) {
+        // only update expertise list when updating a task
+        if(availableExpertises.length && task && task.taskExpertise && task.taskExpertise.length) {
             var exp = [];
             task.taskExpertise.map((ex) => {exp.push(parseInt(ex.id))});
             setExpertise(exp);
