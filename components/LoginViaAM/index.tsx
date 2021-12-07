@@ -16,7 +16,7 @@ const LoginViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign in",
                                                       fullWidth =  false,
                                                       updatePersonData }) => {
   
-  const [loadAMLogin, {data: authMachineData}] = useLazyQuery(GET_AM_LOGIN_URL, null, {enabled: false, manual: true});
+  const [loadAMLogin, {data: authMachineData}] = useLazyQuery(GET_AM_LOGIN_URL);
   const [loading, setLoading] = useState(false);
 
   const [fake_login, { data: fakeLoginData }] = useMutation(FAKE_LOGIN);

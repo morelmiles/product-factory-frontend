@@ -13,7 +13,7 @@ type Props = {
 const RegisterViaAM: React.FunctionComponent<Props> = ({ buttonTitle = "Sign up",
                                                         fullWidth =  false ,
                                                        margin = ""}) => {
-    const [loadAMRegister, {data: authMachineData}] = useLazyQuery(GET_AM_REGISTER_URL, null, {enabled: false, manual: true});
+    const [loadAMRegister, {data: authMachineData}] = useLazyQuery(GET_AM_REGISTER_URL);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
