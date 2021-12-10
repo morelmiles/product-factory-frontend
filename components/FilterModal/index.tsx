@@ -130,7 +130,7 @@ const FilterModal: React.FunctionComponent<Props> = ({
               {TASK_PRIORITIES.map((p: string, index: number) => <Option key={p} value={index}>{p}</Option>)}
             </Select>
           </Form.Item>
-          <Form.Item name="stacks" label="Category">
+          <Form.Item name="categories" label="Category">
             <Select
               placeholder="Specify category"
               mode="multiple"
@@ -138,8 +138,13 @@ const FilterModal: React.FunctionComponent<Props> = ({
               filterOption={filterOption}
               allowClear
             >
-              {categories.map((category: string) =>
-                <Option key={category} value={category}>{category}</Option>)}
+              {categories.map((category: string) => {
+                category = JSON.parse(category.replace(/"/g, '^').replace(/'/g, '"').replace(/^/g, "'").replace(/'/g, ''));
+                return (
+                  <Option key={category.id} value={category.id}>{category.name}</Option>
+                )
+              })
+              }
             </Select>
           </Form.Item>
           <Form.Item name="tags" label="Tags">
