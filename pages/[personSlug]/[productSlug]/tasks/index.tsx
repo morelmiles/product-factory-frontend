@@ -34,7 +34,7 @@ const TasksPage: React.FunctionComponent<Props> = (props: Props) => {
     statuses,
     tags: [],
     priority: [],
-    category: "",
+    categories: [],
     assignee: [],
     taskCreator: [],
   });
