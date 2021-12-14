@@ -6,7 +6,8 @@ import {
     GET_CAPABILITIES_BY_PRODUCT, GET_CATEGORIES_LIST, GET_CONTRIBUTOR_GUIDES,
     GET_INITIATIVES_SHORT,
     GET_TAGS,
-    GET_USERS
+    GET_USERS,
+    GET_EXPERTISES_LIST,
 } from "../../../graphql/queries";
 import {CREATE_TASK, UPDATE_TASK} from "../../../graphql/mutations";
 import {TASK_TYPES, TASK_PRIORITIES} from "../../../graphql/types";
@@ -45,14 +46,15 @@ type Props = {
 interface Category {
     active: boolean,
     selectable: boolean,
-    id: number,
-    expertise: Expertise,
     name: string,
     children: Category[]
 }
 
 interface Expertise {
-    [key: string]: string[]
+    selectable: boolean,
+    id: number,
+    name: string,
+    children: Expertise[]
 }
 
 const AddTask: React.FunctionComponent<Props> = (
@@ -75,16 +77,18 @@ const AddTask: React.FunctionComponent<Props> = (
     const [allTags, setAllTags] = useState([]);
     const [skip, setSkip] = React.useState(false);
     const [allCategories, setAllCategories] = React.useState([]);
+    const [allExpertises, setAllExpertises] = React.useState([]);
+    const [availableExpertises, setAvailableExpertises] = React.useState([]);
     const [allGuides, setAllGuides] = useState([]);
     const [shortDescription, setShortDescription] = useState(
         modalType ? task.shortDescription : ""
     );
+    
     const [category, setCategory] = useState(modalType ? task.taskCategory : "");
-    const [expertise, setExpertise] = useState(modalType ? task.expertise : "");
-    const [expertises, setExpertises] = useState({});
+    const [expertise, setExpertise] = useState([]);
     const [contributionGuide, setContributionGuide] = useState(
         modalType ? task.contributionGuide?.id || null : null
-    )
+    );
     const [description, setDescription] = useState(
         modalType ? task.description : ""
     );
@@ -95,7 +99,7 @@ const AddTask: React.FunctionComponent<Props> = (
     const [status, setStatus] = useState(modalType ? task.status : 2);
     const [priority, setPriority] = useState<string | number | null>(modalType ? TASK_PRIORITIES.indexOf(task.priority) : null);
     const [capability, setCapability] = useState(
-        modalType && task.capability ? task.capability.id : parseInt(capabilityID)
+        modalType && task.capability ? task.capability.id : capabilityID
     );
     const [initiative, setInitiative] = useState(
         modalType && task.initiative ? task.initiative.id : initiativeID
@@ -120,37 +124,6 @@ const AddTask: React.FunctionComponent<Props> = (
         }
     };
 
-    const findCategory = (categories: Category[], value: string): Category | undefined => {
-        for (let category of categories) {
-            if (category.children && category.children.length > 0) {
-                const skill = findCategory(category.children, value);
-                if (skill) {
-                    return skill;
-                }
-            } else if (category.name === value) return category;
-        }
-    }
-
-    useEffect(() => {
-        if (category && category !== "") {
-            // @ts-ignore
-            const taskCategory = findCategory(allCategories, category);
-            if (taskCategory) {
-                // @ts-ignore
-                setExpertises(taskCategory.expertise);
-            } else {
-                // @ts-ignore
-                const taskCategory = allCategories.find((cat) => cat.parent.id === category);
-                if (taskCategory) {
-                    // @ts-ignore
-                    setExpertises(taskCategory.expertise);
-                } else {
-                    setExpertise({});
-                }
-            }
-        }
-    }, [category]);
-
     useEffect(() => {
         if (reviewSelectValue === "") {
             setReviewSelectValue(getProp(user, "slug", ""));
@@ -172,6 +145,7 @@ const AddTask: React.FunctionComponent<Props> = (
         variables: {productSlug}
     });
     const {data: categories} = useQuery(GET_CATEGORIES_LIST);
+    const {data: expertises} = useQuery(GET_EXPERTISES_LIST);
     const {data: tagsData} = useQuery(GET_TAGS, {
         variables: {productSlug}
     });
@@ -254,11 +228,80 @@ const AddTask: React.FunctionComponent<Props> = (
         setAllUsers(getProp(users, "people", []));
     }, [users]);
 
+
+    const findCategory = (categories: Category[], value: string, parent: Category): Category | undefined => {
+        for (let category of categories) {
+            if (category.children && category.children.length > 0) {
+                const skill = findCategory(category.children, value, category);
+                if (skill) {
+                    return skill;
+                }
+            } else if (category.name === value) {
+                category['parent'] = parent;
+                return category;
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (category && category !== "" && allCategories.length) {
+            // @ts-ignore
+            const taskCategory = findCategory(allCategories, category, null);
+            if (taskCategory) {
+                // @ts-ignore
+                var ae = [];
+                for(let expertise of allExpertises){
+                    if(expertise.category === taskCategory['id']) {
+                        ae.push(expertise);
+                    }
+                }
+                setAvailableExpertises(ae);
+                setExpertise([]);
+            } 
+        }
+    }, [category]);
+
+    useEffect(() => {
+        if(allExpertises.length) {
+            if (category && category !== "" && allCategories.length) {
+                // @ts-ignore
+                const taskCategory = findCategory(allCategories, category, null);
+                if (taskCategory) {
+                    // @ts-ignore
+                    var ae = [];
+                    for(let expertise of allExpertises){
+                        if(expertise.category === taskCategory['id']) {
+                            ae.push(expertise);
+                        }
+                    }
+                    setAvailableExpertises(ae);    
+                }
+            }            
+        }
+
+    }, [allExpertises])
+
+    useEffect(() =>{
+        // only update expertise list when updating a task
+        if(availableExpertises.length && task && task.taskExpertise && task.taskExpertise.length) {
+            var exp = [];
+            task.taskExpertise.map((ex) => {exp.push(parseInt(ex.id))});
+            setExpertise(exp);
+        }
+
+    }, [availableExpertises])
+
     useEffect(() => {
         if (categories?.taskCategoryListing) {
             setAllCategories(JSON.parse(categories.taskCategoryListing));
         }
-    }, [categories])
+    }, [categories]);
+
+    useEffect(() => {
+        if (expertises?.expertisesListing) {
+            setAllExpertises(JSON.parse(expertises.expertisesListing));
+        }
+    }, [expertises])
 
     useEffect(() => {
         if (!capabilitiesLoading && !capabilitiesData.hasOwnProperty("error")) {
@@ -269,7 +312,6 @@ const AddTask: React.FunctionComponent<Props> = (
     useEffect(() => {
         if (tagsData && tagsData.tags) setAllTags(tagsData.tags)
     }, [tagsData]);
-
 
     useEffect(() => {
         if (guidesData && guidesData.contributorGuides) setAllGuides(guidesData.contributorGuides)
@@ -345,7 +387,7 @@ const AddTask: React.FunctionComponent<Props> = (
             priority,
             contributionGuide,
             reviewer: reviewSelectValue,
-            category: category ? allCategories.find((cat) => cat.id === category).name : "",
+            category: category ? findCategory(allCategories, category, null).id : "",
             expertise
         };
 
@@ -388,6 +430,13 @@ const AddTask: React.FunctionComponent<Props> = (
         return categories.map((category, index) => (
             <TreeNode id={index} selectable={category.selectable} value={category.name} title={category.name}>
                 {category.children ? makeCategoriesTree(category.children) : null}
+            </TreeNode>));
+    }
+
+    const makeExpertisesTree = (expertises: Expertise[]) => {
+        return expertises.map((expertise, index) => (
+            <TreeNode id={index} selectable={expertise.selectable} value={expertise.id} title={expertise.name}>
+                {expertise.children ? makeExpertisesTree(expertise.children) : null}
             </TreeNode>));
     }
 
@@ -551,7 +600,7 @@ const AddTask: React.FunctionComponent<Props> = (
                     </Select>
                 </Row>
                 <Row className="mb-15">
-                    <label>Task category</label>
+                    <label>Task category:</label>
                     <TreeSelect
                         allowClear
                         onChange={setCategory}
@@ -562,32 +611,16 @@ const AddTask: React.FunctionComponent<Props> = (
                     </TreeSelect>
                 </Row>
                 <Row className="mb-15">
-                    <label>Expertise</label>
+                    <label>Expertise:</label>
                     <TreeSelect
                         allowClear
                         onChange={setExpertise}
                         value={expertise}
                         placeholder="Select expertise"
                         disabled={!category}
+                        multiple
                     >
-                            {
-                                Object.keys(expertises).map((currExpertise) => (
-                                    <TreeNode
-                                        value={currExpertise}
-                                        selectable={false}
-                                        title={currExpertise}
-                                    >
-                                        {(Object(expertises)[currExpertise] as string[]).map((value) => (
-                                            <TreeNode
-                                                value={value}
-                                                selectable={true}
-                                                title={value}
-                                            >
-                                                {value}
-                                            </TreeNode>
-                                        ))}
-                                    </TreeNode>))
-                            }
+                        {availableExpertises && makeExpertisesTree(availableExpertises)}
                         </TreeSelect>
                 </Row>
                 <Row className="mb-15">

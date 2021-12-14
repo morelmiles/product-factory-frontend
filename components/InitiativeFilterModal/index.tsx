@@ -83,7 +83,7 @@ const InitiativeFilterModal: React.FunctionComponent<Props> = ({
               name="control-ref"
               id="in-filter-form"
               onFinish={onFinish}>
-          <Form.Item name="stacks" label="Category">
+          <Form.Item name="categories" label="Category">
             <Select
               placeholder="Select a category"
               mode="multiple"
@@ -91,8 +91,13 @@ const InitiativeFilterModal: React.FunctionComponent<Props> = ({
               filterOption={filterOption}
               allowClear
             >
-              {categories.map((category: string) =>
-                <Option key={category} value={category}>{category}</Option>)}
+              {categories.map((category: string) => {
+                category = JSON.parse(category.replace(/"/g, '^').replace(/'/g, '"').replace(/^/g, "'").replace(/'/g, ''));
+                return (
+                  <Option key={category.id} value={category.id}>{category.name}</Option>
+                )
+              })
+              }
             </Select>
           </Form.Item>
           <Form.Item name="tags" label="Tags">

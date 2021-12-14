@@ -47,7 +47,7 @@ const InitiativeDetail: React.FunctionComponent<Params> = ({user}) => {
     statuses: [2],
     tags: [],
     priority: [],
-    category: "",
+    categories: [],
     assignee: [],
     taskCreator: [],
   });

@@ -12,23 +12,26 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Authentication and dummy data for Development
 
-## Learn More
+The back-end provides a set of dummy data to get you up and running with some contents to help development. Necessary commands can be found in the back-end repository to import those data.
 
-To learn more about Next.js, take a look at the following resources:
+The front-end app provides dummy authentication to help login without OpenUnited Login in a local development environment. To use that, please create a file named `.env.development` in the project root directory and add the following two lines:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+APPLICATION_MODE=development
+TEST_USER=UUID_OF_USER_FROM_DUMMY_DATA
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The `TEST_USER` should contain the UUID of the user that will be logged in when you click on the sign in button. After importing the dummy data, please get he generated UUID of a user from the `id` column of the `talent_person` table and use that.
 
-## Deploy on Vercel
+Then start the dev server using command:
+```
+yarn dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+You can now sign is as the `TEST_USER` by clicking on the `Sing In` button and use the app as an authenticated user.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+

@@ -63,6 +63,7 @@ module.exports = withPlugins([
     {
       env: {
         APPLICATION_MODE: process.env.APPLICATION_MODE,
+        TEST_USER: process.env.TEST_USER,
       },
     }
 ])

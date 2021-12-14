@@ -24,7 +24,7 @@ const TaskTab: React.FunctionComponent<Props> = ({
     statuses: [2],
     tags: [],
     priority: [],
-    category: "",
+    categories: [],
     assignee: [],
     taskCreator: [],
   });
