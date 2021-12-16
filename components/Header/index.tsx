@@ -27,6 +27,14 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
     const {data: authMachineLoginData} = useQuery(GET_AM_LOGIN_URL);
     const {data: authMachineRegisterData} = useQuery(GET_AM_REGISTER_URL);
     const [loadPerson, {data: getPersonData}] = useLazyQuery(GET_PERSON, {fetchPolicy: "no-cache"});
+   
+    const [personData, setPersonData] = useState(null);
+
+    const updatePersonData = (updatedData) => {
+        if(updatedData) {
+            setPersonData(updatedData);
+        }
+    }
 
     const menu = (
         <Menu style={{minWidth: 150}}>
@@ -62,7 +70,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                         <RegisterViaAM margin={''}/>
                     </Menu.Item>
                     <Menu.Item key="1">
-                        <LoginViaAM fullWidth={true}/>
+                        <LoginViaAM fullWidth={true} updatePersonData={updatePersonData}/>
                     </Menu.Item>
                 </>)}
             <Menu.Item key="2">
@@ -88,14 +96,6 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                 </Menu.Item>
             </>) : null}
         </Menu>);
-
-    const [personData, setPersonData] = useState(null);
-
-    const updatePersonData = (updatedData) => {
-        if(updatedData) {
-            setPersonData(updatedData);
-        }
-    }
 
     useEffect(() => { 
         if(getPersonData)
