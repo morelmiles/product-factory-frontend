@@ -64,7 +64,7 @@ const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps
                     </Row>
                 </Col>
             </Row>
-            {skillExpertise.length > 0 && skillExpertise.map((skillExp, index) => (
+            {skillExpertise && skillExpertise.length > 0 && skillExpertise.map((skillExp, index) => (
                 <Row>
                     <Col>
                         <Row style={{borderBottom: '1px solid #FAFAFA', height: "100%", alignItems: "center"}}

@@ -13,7 +13,7 @@ import {apiDomain} from "../../../utilities/constants";
 import SkillsArea from "./SkillComponents/SkillArea";
 import ExpertiseArea from "./SkillComponents/ExpertiseArea";
 import {DeleteOutlined, PlusOutlined, UserOutlined, UploadOutlined} from "@ant-design/icons";
-import {GET_CATEGORIES_LIST} from "../../../graphql/queries";
+import {GET_CATEGORIES_LIST, GET_EXPERTISES_LIST} from "../../../graphql/queries";
 import {findExpertise} from "../helpers";
 import SkillsSelect from "../../CreatePersonModal/Skills/SkillsSelect"
 import ExpertiseTable from "../../CreatePersonModal/Skills/ExpertiseTable"
@@ -34,10 +34,12 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
     const [uploadStatus, setUploadStatus] = useState<boolean>(false);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [allCategories, setAllCategories] = useState<Category[]>([]);
+    const [allExpertises, setAllExpertises] = useState([]);
     const [skillExpertise, setSkillExpertise] = useState<SkillExpertise[]>([]);
     const [expertiseList, setExpertiseList] = useState<string[]>([]);
 
     const {data: categories} = useQuery(GET_CATEGORIES_LIST);
+    const {data: expertises} = useQuery(GET_EXPERTISES_LIST);
     const [deleteAvatar] = useMutation(DELETE_AVATAR, {
         onCompleted(data) {
             const status = getProp(data, 'deleteAvatar.status', false);
@@ -65,6 +67,12 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
             setAllCategories(JSON.parse(categories.taskCategoryListing));
         }
     }, [categories]);
+
+    useEffect(() => {
+        if (expertises?.expertisesListing) {
+            setAllExpertises(JSON.parse(expertises.expertisesListing));
+        }
+    }, [expertises])
 
     const router = useRouter();
     let {personSlug} = router.query;
@@ -264,6 +272,7 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
                                 skillExpertise={skillExpertise}
                                 setSkillExpertise={setSkillExpertise}
                                 allCategories={allCategories}
+                                allExpertises={allExpertises}
                                 skills={skills}
                             />
                         </Col>
@@ -283,7 +292,8 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
                         <ExpertiseTable
                             skills={skills}
                             setSkills={setSkills}
-                            skillExpertise={skillExpertise}/>
+                            skillExpertise={skillExpertise}
+                        />
                     </div>
 
                     <Row>

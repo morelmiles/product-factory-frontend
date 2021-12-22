@@ -5,7 +5,9 @@ import {Category, SkillExpertise} from "../../SkillsComponents/interfaces";
 import {Skill} from "../index";
 import {SkillsSelectProps} from "../interfaces";
 
-const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExpertise, skills}: SkillsSelectProps) => {
+const SkillsSelect = ({allCategories, allExpertises, setSkills, setSkillExpertise, skillExpertise, skills}: SkillsSelectProps) => {
+    
+    console.log('all expertises...', allExpertises)
 
     const makeCategoriesTree = (categories: Category[]) => {
         return categories.map((category, index) => (
@@ -30,9 +32,21 @@ const SkillsSelect = ({allCategories, setSkills, setSkillExpertise, skillExperti
                         category: [skill[1].name, skill[0].name],
                         expertise: null
                     };
+
+                    var expertiseSelections = {}//{'tools': ["figma", "adobe xd", "invision"], 'design-systems': ["ant-design", "material-design"]}
+                    
+                    for(var i=0; i<allExpertises.length; i++) {
+                        if(allExpertises['category'] == skill[0].id) {
+                            var childExpertises = []
+                            allExpertises['children'].map((child) => {childExpertises.push(child['name'])})
+                            expertiseSelections[allExpertises['name']] = childExpertises
+                        }
+                    }
+                    console.log(skill, expertiseSelections)
+
                     const newSkillExpertise = {
                         skill: [skill[1].name, skill[0].name],
-                        expertise: skill[0].expertise
+                        expertise: expertiseSelections
                     }
                     setSkills((prevState: Skill[]) => [...prevState, newSkill]);
                     setSkillExpertise((prevState: SkillExpertise[]) => [...prevState, newSkillExpertise]);

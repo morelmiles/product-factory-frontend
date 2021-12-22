@@ -60,6 +60,7 @@ export interface StepProps {
 export interface SkillsSelectProps {
     setSkills: Function
     allCategories: Category[]
+    allExpertises: string[]
     skillExpertise: SkillExpertise[]
     setSkillExpertise: Function
     skills: Skill[]
