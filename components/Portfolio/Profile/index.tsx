@@ -80,7 +80,7 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
                         {profile.skills.map(skill => (
                             <Row justify={"start"}
                                  style={{marginBottom: 3, padding: "5px 16px", borderRadius: 2, background: "#F5F5F5"}}>
-                                {skill.category} {skill.expertise ? `(${skill.expertise})` : null}
+                                {skill.category[0]} {`->`} {skill.category[1]} {skill.expertise ? `(${skill.expertise})` : null}
                             </Row>
                         ))}</Col>
                 </Row>)}

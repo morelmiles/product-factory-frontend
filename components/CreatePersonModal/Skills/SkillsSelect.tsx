@@ -2,13 +2,10 @@ import React from "react";
 import {message, TreeSelect} from "antd";
 import {TreeNode} from "antd/lib/tree-select";
 import {Category, SkillExpertise} from "../../SkillsComponents/interfaces";
-import {Skill} from "../index";
 import {SkillsSelectProps} from "../interfaces";
 
 const SkillsSelect = ({allCategories, allExpertises, setSkills, setSkillExpertise, skillExpertise, skills}: SkillsSelectProps) => {
     
-    console.log('all expertises...', allExpertises)
-
     const makeCategoriesTree = (categories: Category[]) => {
         return categories.map((category, index) => (
             <TreeNode id={index} selectable={category.selectable} value={category.name} title={category.name}>
@@ -21,7 +18,7 @@ const SkillsSelect = ({allCategories, allExpertises, setSkills, setSkillExpertis
             const findSkill = skillExpertise.map(skillExp => skillExp.skill[1]).filter(skill => !value.includes(skill))[0];
             const index = skillExpertise.findIndex(skillExp => skillExp.skill[1] === findSkill);
             if (index > -1) {
-                setSkills((prevState: Skill[]) => [...prevState.slice(0, index), ...prevState.slice(index + 1)]);
+                setSkills((prevState: string[]) => [...prevState.slice(0, index), ...prevState.slice(index + 1)]);
                 setSkillExpertise((prevState: SkillExpertise[]) => [...prevState.slice(0, index), ...prevState.slice(index + 1)]);
             }
         } else {
@@ -33,16 +30,14 @@ const SkillsSelect = ({allCategories, allExpertises, setSkills, setSkillExpertis
                         expertise: null
                     };
 
-                    var expertiseSelections = {}//{'tools': ["figma", "adobe xd", "invision"], 'design-systems': ["ant-design", "material-design"]}
-                    
+                    var expertiseSelections = []
                     for(var i=0; i<allExpertises.length; i++) {
-                        if(allExpertises['category'] == skill[0].id) {
+                        if(allExpertises[i]['category'] === skill[0].id) {
                             var childExpertises = []
-                            allExpertises['children'].map((child) => {childExpertises.push(child['name'])})
-                            expertiseSelections[allExpertises['name']] = childExpertises
+                            allExpertises[i]['children'].map((child) => {childExpertises.push(child['name'])})
+                            expertiseSelections[ allExpertises[i]['name'] ] = childExpertises
                         }
                     }
-                    console.log(skill, expertiseSelections)
 
                     const newSkillExpertise = {
                         skill: [skill[1].name, skill[0].name],

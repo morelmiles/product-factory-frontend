@@ -14,7 +14,7 @@ import SkillsArea from "./SkillComponents/SkillArea";
 import ExpertiseArea from "./SkillComponents/ExpertiseArea";
 import {DeleteOutlined, PlusOutlined, UserOutlined, UploadOutlined} from "@ant-design/icons";
 import {GET_CATEGORIES_LIST, GET_EXPERTISES_LIST} from "../../../graphql/queries";
-import {findExpertise} from "../helpers";
+import {findCategory} from "../helpers";
 import SkillsSelect from "../../CreatePersonModal/Skills/SkillsSelect"
 import ExpertiseTable from "../../CreatePersonModal/Skills/ExpertiseTable"
 import AvatarUploadModal from '../../CreatePersonModal/AvatarUploadModal'
@@ -25,7 +25,7 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
     const [firstName, setFirstName] = useState<string>(profile.firstName.split(' ')[0]);
     const [lastName, setLastName] = useState<string>(profile.firstName.split(' ')[1]);
     const [bio, setBio] = useState<string>(profile.bio);
-    const [skills, setSkills] = useState<Skill[]>(profile.skills);
+    const [skills, setSkills] = useState<string[]>(profile.skills);
     const [websites, setWebsites] = useState<Website[]>(profile.websites);
     const [websiteTypes, setWebsiteTypes] = useState<string[]>(profile.websiteTypes);
     const [avatarId, setAvatarId] = useState<number>(-1);
@@ -36,7 +36,6 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
     const [allCategories, setAllCategories] = useState<Category[]>([]);
     const [allExpertises, setAllExpertises] = useState([]);
     const [skillExpertise, setSkillExpertise] = useState<SkillExpertise[]>([]);
-    const [expertiseList, setExpertiseList] = useState<string[]>([]);
 
     const {data: categories} = useQuery(GET_CATEGORIES_LIST);
     const {data: expertises} = useQuery(GET_EXPERTISES_LIST);
@@ -97,16 +96,26 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
             setSkills(profile.skills);
             const currentSkillExpertise: SkillExpertise[] = [];
             profile.skills.map(skill => {
+                var expertiseSelections = []
+                var skillCat = findCategory(allCategories, skill.category[1])
+                if(allExpertises) {
+                   for(var i=0; i<allExpertises.length; i++) {
+                        if(allExpertises[i]['category'] === skillCat.id) {
+                            var childExpertises = []
+                            allExpertises[i]['children'].map((child) => {childExpertises.push(child['name'])})
+                            expertiseSelections[ allExpertises[i]['name'] ] = childExpertises
+                        }
+                    }
+                }
+
                 currentSkillExpertise.push({
                     skill: skill.category,
-                    expertise: findExpertise(typeof skill.category === 'string' ?
-                        skill.category : skill.category[1], allCategories)
+                    expertise: expertiseSelections,
                 });
             });
             setSkillExpertise(currentSkillExpertise);
-            setExpertiseList(profile.skills.map(skill => skill.expertise ? skill.expertise : skill.category));
         }
-    }, [profile, allCategories]);
+    }, [profile, allCategories, allExpertises]);
     const [updateProfile] = useMutation(UPDATE_PERSON, {
         onCompleted(data) {
             const status = getProp(data, 'updatePerson.status', false);

@@ -27,7 +27,6 @@ const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps
                 bordered
                 showArrow>
                 {
-
                     Object.keys(skillExp.expertise).map((expertise) => (
                         <TreeNode
                             value={expertise}
