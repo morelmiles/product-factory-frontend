@@ -4,7 +4,7 @@ export interface ProfileType {
     bio: string
     avatar: string
     slug: string
-    skills: Skill[]
+    skills: any[]
     websites: Website[]
     websiteTypes: string[]
 }
@@ -118,7 +118,7 @@ export interface Category {
 
 export interface SkillExpertise {
     skill: string
-    expertise: Expertise
+    expertise: string[]
 }
 
 export interface Attachment {
