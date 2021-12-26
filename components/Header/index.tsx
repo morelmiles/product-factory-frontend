@@ -198,6 +198,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                     <Link href="/">
                         <a>
                             <img src={Logo} alt="logo"/>
+                            <img src={BetaTag} alt="beta" style={{paddingLeft: '5px'}}/>
                         </a>
                     </Link>
                 </Col>
@@ -247,7 +248,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                                     <Link href="/">
                                         <a>
                                             <img src={Logo} alt="logo"/>
-                                            <img src={BetaTag} alt="beta" height={18} style={{paddingLeft: '5px'}}/>
+                                            <img src={BetaTag} alt="beta" style={{paddingLeft: '5px'}}/>
                                         </a>
                                     </Link>
                             </Row>
@@ -277,12 +278,13 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                     </Row>
                 </Col>
             </Row>
+
             <Row align="middle" justify="center" >
                 <Col xl={20} lg={22} style={{textAlign: 'center', paddingTop: '10px'}}>
                     <span>Join us on </span>
-                    <Link href="https://discord.gg/T3xevYvWey">
-                        <a><img height={25} src={DiscordLogo} alt="discord"/></a>
-                    </Link>
+                    <a href="https://discord.gg/T3xevYvWey" target="_blank">
+                        <img height={25} src={DiscordLogo} alt="discord"/>
+                    </a>
                 </Col>
             </Row>
         </>
