@@ -6,7 +6,7 @@ import {UserState} from "../../lib/reducers/user.reducer";
 // @ts-ignore
 import Logo from "../../public/assets/logo.svg";
 import DiscordLogo from "../../public/assets/discord-logo.png";
-import BetaTag from "../../public/assets/beta-tag.png";
+import BetaTag from "../../public/assets/beta-tag.svg";
 import Link from "next/link";
 import {useMutation, useQuery, useLazyQuery} from "@apollo/react-hooks";
 import {GET_AM_LOGIN_URL, GET_AM_REGISTER_URL, GET_PERSON} from "../../graphql/queries";
@@ -198,7 +198,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                     <Link href="/">
                         <a>
                             <img src={Logo} alt="logo"/>
-                            <img src={BetaTag} alt="beta" style={{paddingLeft: '5px'}}/>
+                            <img height={20} src={BetaTag} alt="beta" style={{paddingLeft: '5px'}}/>
                         </a>
                     </Link>
                 </Col>
@@ -248,7 +248,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                                     <Link href="/">
                                         <a>
                                             <img src={Logo} alt="logo"/>
-                                            <img src={BetaTag} alt="beta" style={{paddingLeft: '5px'}}/>
+                                            <img height={20} src={BetaTag} alt="beta" style={{paddingLeft: '5px'}}/>
                                         </a>
                                     </Link>
                             </Row>
