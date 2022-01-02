@@ -1,18 +1,16 @@
 import React, {useEffect, useState} from "react";
-import {Category, EditProfileProps, ProfileType, Skill, SkillExpertise, Website} from "../interfaces";
+import {EditProfileProps, ProfileType, Website} from "../interfaces";
+import {Category, Skill, SkillExpertise} from "../../SkillsComponents/interfaces";
 import {Avatar, Button, Col, Input, message, Row, Select, Typography, Upload} from "antd";
 import {UploadFile} from "antd/es/upload/interface";
 import {useRouter} from "next/router";
-import ImgCrop from "antd-img-crop";
 import 'antd/es/modal/style';
 import 'antd/es/slider/style';
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {UPDATE_PERSON, SAVE_AVATAR, DELETE_AVATAR} from "../../../graphql/mutations";
 import {getProp} from "../../../utilities/filters";
 import {apiDomain} from "../../../utilities/constants";
-import SkillsArea from "./SkillComponents/SkillArea";
-import ExpertiseArea from "./SkillComponents/ExpertiseArea";
-import {DeleteOutlined, PlusOutlined, UserOutlined, UploadOutlined} from "@ant-design/icons";
+import {PlusOutlined, UserOutlined, UploadOutlined} from "@ant-design/icons";
 import {GET_CATEGORIES_LIST, GET_EXPERTISES_LIST} from "../../../graphql/queries";
 import {findCategory} from "../helpers";
 import SkillsSelect from "../../CreatePersonModal/Skills/SkillsSelect"
@@ -25,7 +23,7 @@ const EditProfile = ({profile, setProfile}: EditProfileProps) => {
     const [firstName, setFirstName] = useState<string>(profile.firstName.split(' ')[0]);
     const [lastName, setLastName] = useState<string>(profile.firstName.split(' ')[1]);
     const [bio, setBio] = useState<string>(profile.bio);
-    const [skills, setSkills] = useState<string[]>(profile.skills);
+    const [skills, setSkills] = useState<Skill[]>(profile.skills);
     const [websites, setWebsites] = useState<Website[]>(profile.websites);
     const [websiteTypes, setWebsiteTypes] = useState<string[]>(profile.websiteTypes);
     const [avatarId, setAvatarId] = useState<number>(-1);

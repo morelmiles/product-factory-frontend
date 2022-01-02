@@ -1,3 +1,5 @@
+import {Category, Expertise, Skill, SkillExpertise} from '../SkillsComponents/interfaces'
+
 export interface ProfileType {
     id: string
     firstName: string
@@ -97,29 +99,6 @@ export interface ContributionsProps {
 export interface Website {
     type: number
     website: string
-}
-
-export interface Skill {
-    category: string,
-    expertise: null | string[]
-}
-
-export interface Expertise {
-    [key: string]: string[]
-}
-
-export interface Category {
-    active: boolean,
-    selectable: boolean,
-    id: number,
-    expertise: Expertise,
-    name: string,
-    children: Category[]
-}
-
-export interface SkillExpertise {
-    skill: string
-    expertise: string[]
 }
 
 export interface Attachment {
