@@ -2,7 +2,7 @@ import React from "react";
 import {ExpertiseTableProps} from "../interfaces";
 import {Col, Row, TreeSelect, Typography} from "antd";
 import {TreeNode} from "antd/lib/tree-select";
-import {Skill} from "../../Portfolio/interfaces";
+import {Skill} from "../../SkillsComponents/interfaces";
 
 const ExpertiseTable = ({skills, setSkills, skillExpertise}: ExpertiseTableProps) => {
 

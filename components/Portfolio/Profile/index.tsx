@@ -24,6 +24,7 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
             padding: 14,
             width: 300,
             marginRight: 10,
+            marginBottom: 20,
             height: "max-content"
         }}>
             <Row style={{position: 'relative'}}>

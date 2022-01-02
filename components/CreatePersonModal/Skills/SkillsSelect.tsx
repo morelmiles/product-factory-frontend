@@ -1,7 +1,7 @@
 import React from "react";
 import {message, TreeSelect} from "antd";
 import {TreeNode} from "antd/lib/tree-select";
-import {Category, SkillExpertise} from "../../SkillsComponents/interfaces";
+import {Category, Skill, SkillExpertise} from "../../SkillsComponents/interfaces";
 import {SkillsSelectProps} from "../interfaces";
 
 const SkillsSelect = ({allCategories, allExpertises, setSkills, setSkillExpertise, skillExpertise, skills}: SkillsSelectProps) => {
