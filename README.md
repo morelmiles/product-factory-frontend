@@ -32,6 +32,6 @@ Then start the dev server using command:
 yarn dev
 ```
 
-You can now sign is as the `TEST_USER` by clicking on the `Sing In` button and use the app as an authenticated user.
+You can now sign in as the `TEST_USER` by clicking on the `Sign In` button and use the app as an authenticated user.
 
 
