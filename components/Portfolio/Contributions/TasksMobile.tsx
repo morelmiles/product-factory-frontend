@@ -1,5 +1,5 @@
 import {TasksComponentProps} from "../interfaces";
-import {Avatar, Button, Col, Row, Typography} from "antd";
+import {Avatar, Button, Col, Row, Divider, Typography} from "antd";
 import React from "react";
 
 const TasksMobile = ({tasks, openTaskDetail}: TasksComponentProps) => {
@@ -17,7 +17,7 @@ const TasksMobile = ({tasks, openTaskDetail}: TasksComponentProps) => {
                             }}>{task.title}</Typography.Text>
                         </Row>
                         <Row align={"middle"} justify={"space-between"}>
-                            <Col>
+                            <Col style={{marginLeft:'10px', marginTop:'10px'}}>
                                 <Typography.Text style={{fontSize: 12, fontFamily: "Roboto"}}>
                                     {task.expertise.length === 0 
                                     ?
@@ -53,6 +53,7 @@ const TasksMobile = ({tasks, openTaskDetail}: TasksComponentProps) => {
                             </Col>
                         </Row>
                     </Col>
+                    <Divider/>
                 </Row>)
             )}
         </>
