@@ -32,7 +32,7 @@ const TasksDesktop = ({tasks, openTaskDetail}: TasksComponentProps) => {
                                                 <Typography.Text style={{fontSize: 12, fontFamily: "Roboto"}}>
                                                     {task.expertise.length === 0 
                                                     ?
-                                                        <Col style={{marginLeft:'5px', marginBottom:'10px', fontFamily:'Roboto', fontSize:'12px', borderRadius:'3px', backgroundColor:'rgb(245, 245, 245)', color:'rgb(89, 89, 89)', padding:'3px', paddingLeft:'5px', paddingRight:'5px', alignSelf:'start'}}>{task.category ? task.category.name : '' }</Col>
+                                                        null
                                                     : 
                                                         <Col style={{marginLeft:'0px', marginBottom:'10px', fontFamily:'Roboto', fontSize:'12px', borderRadius:'3px', backgroundColor:'rgb(245, 245, 245)', color:'rgb(89, 89, 89)', padding:'3px', paddingLeft:'5px', paddingRight:'5px', alignSelf:'start'}}>{task.category.name + ' ' + '(' + task.expertise.map((exp, index) => index === 0 ? exp.name : ' ' + exp.name  )+ ')'}</Col>
                                                     }
