@@ -28,8 +28,9 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
         skill.expertise && skill.expertise.map((expertise) => {
             expertises.push(expertise)
         })
-        if(expertises.length > 0)
-        uniq_category_expertise.push(skill.category[skill.category.length -1 ] + ' (' + expertises.join(', ') + ') ')
+        if(expertises.length > 0){
+            uniq_category_expertise.push(skill.category[skill.category.length -1 ] + ' (' + expertises.join(', ') + ') ')
+        }
     })
 
     return (
