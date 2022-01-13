@@ -53,7 +53,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         );
 
         notification.open({
-          message: 'Your Privacy',
+          message: <b>Your Privacy</b>,
           description:
             <>
                 <p>OpenUnited uses cookies for security.</p>
