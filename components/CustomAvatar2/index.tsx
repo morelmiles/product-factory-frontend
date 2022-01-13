@@ -44,7 +44,7 @@ export const CustomAvatar2 = ({person, size = 40}:ICustomAvatar2Props) => {
           lineHeight: `${size}px`,
           userSelect: 'none',
           cursor: 'pointer'
-          }} src={`${apiDomain.toString().replace('8000', '3000')}/${profile.slug}.png`}/>
+          }} src={apiDomain + profile.avatar}/>
     </Link>
   )
 }
