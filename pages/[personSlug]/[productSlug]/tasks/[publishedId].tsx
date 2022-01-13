@@ -423,12 +423,7 @@ const Task: React.FunctionComponent<Params> = ({
                                 <strong className="my-auto">Assigned to: </strong>
                                 <Row align="middle" style={{marginLeft: 15}}>
                                     <Col>
-                                        <CustomAvatar2
-                                            person={{
-                                                firstName: getProp(assignee, "firstName", ""),
-                                                slug: getProp(assignee, "slug", ""),
-                                            }}
-                                        />
+                                        <CustomAvatar2 person={{firstName: getProp(assignee, "firstName", ""),slug: getProp(assignee, "slug", "")}}/>
                                     </Col>
                                     <Col>
                                         <Typography.Link
