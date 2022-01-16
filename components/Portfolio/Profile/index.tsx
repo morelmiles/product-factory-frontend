@@ -8,17 +8,20 @@ import {apiDomain} from "../../../utilities/constants";
 
 function ExpertiseSkills({skill}) {
     if(typeof(skill) === 'string'){
-        return <Col style={{marginLeft:'5px', marginBottom:'10px', borderRadius:'3px', fontSize:'12px', fontFamily:'Roboto', backgroundColor:'rgb(245, 245, 245)', color:'rgb(89, 89, 89)', padding:'3px', paddingLeft:'5px', paddingRight:'5px', alignSelf:'start'}}>{skill}</Col> 
+        return <Col className="expertises">{skill}</Col> 
     }
     else {
-        return <Col style={{marginLeft:'0px', marginBottom:'10px', borderRadius:'3px', fontSize:'12px', fontFamily:'Roboto', backgroundColor:'rgb(245, 245, 245)', color:'rgb(89, 89, 89)', padding:'3px', paddingLeft:'0px', paddingRight:'5px', alignSelf:'start'}}>({skill.map((expertise, index) => index < (skill.length - 1) ? expertise + ', ' : expertise)})</Col> 
+        return <Col className="expertises">({skill.map((expertise, index) => index < (skill.length - 1) ? expertise + ', ' : expertise)})</Col> 
     }
 }
 
 //This method return only the unique categories and expertises, and put together a categorie string with their respective expertises
 const getUniqCategoryExpertise = (profileSkills) => {
-    let uniq_category_expertise = [] 
 
+    let uniq_category_expertise = [] 
+    const arrayForSort = [...profileSkills]
+    profileSkills = arrayForSort.sort((a:any, b:any) => a.category[0].localeCompare(b.category[0]));
+    
     profileSkills.map((skill) => {
         let expertises = []
         skill.category.map((category, index) => {
@@ -52,15 +55,7 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
     let uniqCategoryExpertise = getUniqCategoryExpertise(profile.skills)
 
     return (
-        <div style={{
-            border: " 1px solid #E7E7E7",
-            borderRadius: 15,
-            padding: 14,
-            width: 300,
-            marginRight: 10,
-            marginBottom: 20,
-            height: "max-content"
-        }}>
+        <div className="portfolio-profile" >
             <Row style={{position: 'relative'}}>
                 <Col style={{width: '100%'}}>
                     <Row justify="center">

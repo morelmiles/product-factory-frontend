@@ -320,7 +320,7 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
                                         user && user.isLoggedIn ? (
                                             <Dropdown overlay={menu} placement="bottomRight" className="ml-15">
                                                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                                    <Avatar size={35} style={{marginRight:'5px'}} icon={<UserOutlined/>} src={apiDomain + profile != null ? profile.avatar : ''}/>
+                                                    <Avatar size={35} style={{marginRight:'5px'}} icon={<UserOutlined/>} src={profile ? profile.avatar : ''}/>
                                                     <strong className="text-grey-9">{user.username}</strong>
                                                     <DownOutlined className="text-grey-9 ml-5"/>
                                                 </a>
