@@ -6,12 +6,13 @@ import {useRouter} from "next/router";
 import {connect} from "react-redux";
 import {apiDomain} from "../../../utilities/constants";
 
+
 function ExpertiseSkills({skill}) {
-    if(skill.includes('_sub_')){
-        return <Col className="expertises_sub">{skill.replace('_sub_', '')}</Col> 
+    if(skill.subcategory){
+        return <Col className="expertises_sub">{skill.value}</Col> 
     }
     else {
-        return <Col className="expertises">{skill}</Col>
+        return <Col className="expertises">{skill.value}</Col>
     }
 }
 
@@ -24,18 +25,26 @@ const getUniqCategoryExpertise = (profileSkills) => {
     
     profileSkills.map((skill) => {
         skill.category.map((category, index) => {
-            console.log(skill)
-            const findCategory = uniq_category_expertise.filter((el) => el === category)
+            const findCategory = uniq_category_expertise.filter((el) => el.value === category)
             if(findCategory.length == 0) {
                 if (index < (skill.category.length - 1)) {
-                    uniq_category_expertise.push(category)
+                    uniq_category_expertise.push({
+                                                    subcategory:false,
+                                                    value:category
+                                                 })
                 }
                 else {
                     if (skill.expertise) {
-                        uniq_category_expertise.push('_sub_'+category + ' (' + skill.expertise.join(', ') + ') ')
+                        uniq_category_expertise.push({
+                                                        subcategory:true,
+                                                        value:category + ' (' + skill.expertise.join(', ') + ') '
+                                                     })
                     }
                     else {
-                        uniq_category_expertise.push('_sub_'+category)
+                        uniq_category_expertise.push({
+                                                        subcategory:true,
+                                                        value:category
+                                                     })
                     }   
                 }
             }
