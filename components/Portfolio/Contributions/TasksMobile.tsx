@@ -1,5 +1,5 @@
 import {TasksComponentProps} from "../interfaces";
-import {Avatar, Button, Col, Row, Typography} from "antd";
+import {Avatar, Button, Col, Row, Divider, Typography} from "antd";
 import React from "react";
 
 const TasksMobile = ({tasks, openTaskDetail}: TasksComponentProps) => {
@@ -17,20 +17,20 @@ const TasksMobile = ({tasks, openTaskDetail}: TasksComponentProps) => {
                             }}>{task.title}</Typography.Text>
                         </Row>
                         <Row align={"middle"} justify={"space-between"}>
-                            {task.skills && task.skills.map((skill) => (<Col>
+                            <Col style={{marginLeft:'10px', marginTop:'10px'}}>
                                 <Typography.Text style={{fontSize: 12, fontFamily: "Roboto"}}>
-                                    {skill.category} {skill.expertise ? `$(${skill.expertise})` : null}
+                                    {task.expertise.length === 0 
+                                    ?
+                                        null
+                                    : 
+                                        <Col className="expertises">{task.category.name + ' ' + '(' + task.expertise.map((exp, index) => index === 0 ? exp.name : ' ' + exp.name  )+ ')'}</Col>
+                                    }
                                 </Typography.Text>
-                            </Col>))}
+                            </Col>
                         </Row>
                         <Row justify={"space-between"} align={"middle"}>
                             <Col style={{marginLeft: 30}}>
-                                <Typography.Text style={{
-                                    fontSize: 14,
-                                    fontFamily: "Roboto",
-                                    color: "rgba(0, 0, 0, 0.45)",
-                                    marginRight: 9
-                                }}>
+                                <Typography.Text className="days-ago">
                                     {task.date} days ago
                                 </Typography.Text>
                             </Col>
@@ -39,15 +39,11 @@ const TasksMobile = ({tasks, openTaskDetail}: TasksComponentProps) => {
                                     padding: 0,
                                     border: "none"
                                 }} onClick={() => openTaskDetail(index)}>
-                                    <Typography.Text style={{
-                                        textDecoration: "underline #1D1D1B",
-                                        color: "#1D1D1B",
-                                        fontSize: 14,
-                                        fontFamily: "Roboto",
-                                    }}>View Delivery Details</Typography.Text></Button>
+                                    <Typography.Text className="delivery-details">View Delivery Details</Typography.Text></Button>
                             </Col>
                         </Row>
                     </Col>
+                    <Divider/>
                 </Row>)
             )}
         </>
