@@ -6,6 +6,54 @@ import {useRouter} from "next/router";
 import {connect} from "react-redux";
 import {apiDomain} from "../../../utilities/constants";
 
+
+function ExpertiseSkills({skill}) {
+    if(skill.subcategory){
+        return <Col className="expertises_sub">{skill.value}</Col> 
+    }
+    else {
+        return <Col className="expertises">{skill.value}</Col>
+    }
+}
+
+//This method return only the unique categories and expertises, and put together a categorie string with their respective expertises
+const getUniqCategoryExpertise = (profileSkills) => {
+
+    let uniq_category_expertise = [] 
+    const arrayForSort = [...profileSkills]
+    profileSkills = arrayForSort.sort((a:any, b:any) => a.category[0].localeCompare(b.category[0]));
+    
+    profileSkills.map((skill) => {
+        skill.category.map((category, index) => {
+            const findCategory = uniq_category_expertise.filter((el) => el.value === category)
+            if(findCategory.length == 0) {
+                if (index < (skill.category.length - 1)) {
+                    uniq_category_expertise.push({
+                                                    subcategory:false,
+                                                    value:category
+                                                 })
+                }
+                else {
+                    if (skill.expertise) {
+                        uniq_category_expertise.push({
+                                                        subcategory:true,
+                                                        value:category + ' (' + skill.expertise.join(', ') + ') '
+                                                     })
+                    }
+                    else {
+                        uniq_category_expertise.push({
+                                                        subcategory:true,
+                                                        value:category
+                                                     })
+                    }   
+                }
+            }
+        })
+    })
+
+    return uniq_category_expertise;
+}
+
 const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
     const router = useRouter();
     const {personSlug} = router.query;
@@ -17,16 +65,10 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
         refetchProfile({personSlug});
     }, []);
 
+    let uniqCategoryExpertise = getUniqCategoryExpertise(profile.skills)
+
     return (
-        <div style={{
-            border: " 1px solid #E7E7E7",
-            borderRadius: 15,
-            padding: 14,
-            width: 300,
-            marginRight: 10,
-            marginBottom: 20,
-            height: "max-content"
-        }}>
+        <div className="portfolio-profile" >
             <Row style={{position: 'relative'}}>
                 <Col style={{width: '100%'}}>
                     <Row justify="center">
@@ -70,20 +112,22 @@ const Profile = ({profile, user, refetchProfile}: ProfileProps) => {
                     >{profile.bio}</Typography.Text>
                 </Row>
                 <Row><Divider/></Row>
-                {profile.skills.length > 0 && (<Row justify={"start"}>
+                {uniqCategoryExpertise.length > 0 && (<Row justify={"start"}>
                     <Col>
-                        <Row><Typography.Text strong
-                                              style={{
-                                                  fontSize: 14,
-                                                  fontFamily: "SF Pro Display",
-                                                  color: "#262626"
-                                              }}>Skills</Typography.Text></Row>
-                        {profile.skills.map(skill => (
-                            <Row justify={"start"}
-                                 style={{marginBottom: 3, padding: "5px 16px", borderRadius: 2, background: "#F5F5F5"}}>
-                                {skill.category[0]} {`->`} {skill.category[1]} {skill.expertise ? `(${skill.expertise})` : null}
-                            </Row>
-                        ))}</Col>
+                        <Row>
+                            <Typography.Text strong
+                                            style={{
+                                                fontSize: 14,
+                                                fontFamily: "Roboto",
+                                                color: "#262626"
+                                            }}>Skills</Typography.Text>
+                        </Row>
+                        <Row>
+                            {uniqCategoryExpertise && uniqCategoryExpertise.map((skill) =>
+                                <ExpertiseSkills skill={skill}/>
+                            )}
+                        </Row>
+                    </Col>
                 </Row>)}
             </div>
         </div>
