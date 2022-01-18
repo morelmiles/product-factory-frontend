@@ -7,11 +7,11 @@ import {connect} from "react-redux";
 import {apiDomain} from "../../../utilities/constants";
 
 function ExpertiseSkills({skill}) {
-    if(typeof(skill) === 'string'){
-        return <Col className="expertises">{skill}</Col> 
+    if(skill.includes('_sub_')){
+        return <Col className="expertises_sub">{skill.replace('_sub_', '')}</Col> 
     }
     else {
-        return <Col className="expertises">({skill.map((expertise, index) => index < (skill.length - 1) ? expertise + ', ' : expertise)})</Col> 
+        return <Col className="expertises">{skill}</Col>
     }
 }
 
@@ -23,19 +23,23 @@ const getUniqCategoryExpertise = (profileSkills) => {
     profileSkills = arrayForSort.sort((a:any, b:any) => a.category[0].localeCompare(b.category[0]));
     
     profileSkills.map((skill) => {
-        let expertises = []
         skill.category.map((category, index) => {
+            console.log(skill)
             const findCategory = uniq_category_expertise.filter((el) => el === category)
-            if(findCategory.length == 0 && index < (skill.category.length - 1)) {
-                uniq_category_expertise.push(category)
+            if(findCategory.length == 0) {
+                if (index < (skill.category.length - 1)) {
+                    uniq_category_expertise.push(category)
+                }
+                else {
+                    if (skill.expertise) {
+                        uniq_category_expertise.push('_sub_'+category + ' (' + skill.expertise.join(', ') + ') ')
+                    }
+                    else {
+                        uniq_category_expertise.push('_sub_'+category)
+                    }   
+                }
             }
         })
-        skill.expertise && skill.expertise.map((expertise) => {
-            expertises.push(expertise)
-        })
-        if(expertises.length > 0){
-            uniq_category_expertise.push(skill.category[skill.category.length -1 ] + ' (' + expertises.join(', ') + ') ')
-        }
     })
 
     return uniq_category_expertise;
