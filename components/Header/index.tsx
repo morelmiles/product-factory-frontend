@@ -75,24 +75,25 @@ const HeaderMenuContainer: React.FunctionComponent<Props> = ({user, userLogInAct
         );
 
         notification.open({
-          message: <b>Your Privacy</b>,
-          description:
-            <>
-                <p>OpenUnited uses cookies for security.</p>
-                <p>All cookies in use are essential.</p>
-                <p>
-                    For more information, you may wish to 
-                    read our <a href="https://openunited.com/privacy-policy" target="_blank">privacy policy</a>.
-                </p>
-            </>,
-            
-          duration: 0,
-          btn: confirmBtn,
-          key: key,
+            message: <b>Your Privacy</b>,
+            description:
+                <>
+                    <p>OpenUnited uses cookies for security.</p>
+                    <p>All cookies in use are essential.</p>
+                    <p>
+                        For more information, you may wish to 
+                        read our <a href="https://openunited.com/privacy-policy" target="_blank">privacy policy</a>.
+                    </p>
+                </>,                
+            duration: 0,
+            btn: confirmBtn,
+            key: key,
         });
     };
 
     useEffect(() => {
+        notification.config({maxCount: 1});
+
         if(!cookies.cookie_consent)
             showCookiePopup();
     }, []);
